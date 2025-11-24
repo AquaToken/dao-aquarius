@@ -4,15 +4,15 @@ import styled from 'styled-components';
 
 import { ModalProps } from 'types/modal';
 
-import { COLORS } from 'web/styles';
-
 import Button from 'basics/buttons/Button';
 import Checkbox from 'basics/inputs/Checkbox';
 import { ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
+import { COLORS } from 'styles/style-constants';
+
 const CheckboxBlock = styled.div`
     padding: 1.5rem 0 1.6rem;
-    border-bottom: 0.1rem dashed ${COLORS.gray};
+    border-bottom: 0.1rem dashed ${COLORS.gray100};
 `;
 
 const StyledButton = styled(Button)`

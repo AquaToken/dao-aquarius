@@ -19,14 +19,14 @@ import { StellarService, ToastService } from 'services/globalServices';
 
 import { ModalProps } from 'types/modal';
 
-import { flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints } from 'web/styles';
-
 import Alert from 'basics/Alert';
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
 import Select, { Option } from 'basics/inputs/Select';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
+
+import { flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { ProposalSimple } from 'pages/governance/api/types';
 
@@ -49,13 +49,13 @@ const ProposalCost = styled.div`
 
 const Label = styled.div`
     line-height: 2.8rem;
-    color: #6b6c83;
+    color: ${COLORS.textGray};
 `;
 
 const Amount = styled.div`
     line-height: 2.8rem;
     text-align: right;
-    color: #000636;
+    color: ${COLORS.textTertiary};
 `;
 
 const SectionDate = styled.div`
@@ -155,11 +155,11 @@ const PublishProposalModal = ({
         }
 
         try {
-            const op = StellarService.createBurnAquaOperation(CREATE_PROPOSAL_COST.toString());
+            const op = StellarService.op.createBurnAquaOperation(CREATE_PROPOSAL_COST.toString());
             const hash = sha256(proposal.text);
-            const memoHash = StellarService.createMemo(MemoHash, hash);
+            const memoHash = StellarService.tx.createMemo(MemoHash, hash);
 
-            const tx = await StellarService.buildTx(account, op, memoHash);
+            const tx = await StellarService.tx.buildTx(account, op, memoHash);
 
             const dateNow = new Date().toISOString();
             const dateEnd = new Date(Date.now() + period).toISOString();

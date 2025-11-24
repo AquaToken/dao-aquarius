@@ -1,18 +1,18 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 
-import { WalletConnectService } from 'services/globalServices';
+import { AuthService } from 'services/globalServices';
 
 import { ModalProps } from 'types/modal';
 
-import Aqua from 'assets/aqua-logo-small.svg';
-import ArrowsIcon from 'assets/icon-arrows-circle.svg';
+import Aqua from 'assets/aqua/aqua-logo.svg';
+import ArrowsIcon from 'assets/icons/arrows/arrows-circle-16.svg';
 
 import DotsLoader from 'basics/loaders/DotsLoader';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
-import { flexAllCenter, respondDown } from '../../mixins';
-import { Breakpoints, COLORS } from '../../styles';
+import { flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 const IconsBlock = styled.div`
     ${flexAllCenter};
@@ -38,7 +38,7 @@ const AppLogo = styled.img`
 
 const Connecting = styled.div`
     ${flexAllCenter};
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin-bottom: 4rem;
 `;
 
@@ -52,7 +52,7 @@ const SessionRequestModal = ({
             <ModalTitle>Connecting</ModalTitle>
             <ModalDescription>
                 The connection request was sent to {name}. Confirm the request in the app and
-                continue with {WalletConnectService.selfMeta.name}.
+                continue with {AuthService.walletConnect.selfMeta.name}.
             </ModalDescription>
             <IconsBlock>
                 <AquaLogo />

@@ -1,12 +1,12 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { flexAllCenter } from 'web/mixins';
-import { COLORS } from 'web/styles';
-
-import SwapIcon from 'assets/icon-arrows-circle.svg';
+import SwapIcon from 'assets/icons/arrows/arrows-circle-16.svg';
 
 import PageLoader from 'basics/loaders/PageLoader';
+
+import { flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     position: absolute;
@@ -15,7 +15,7 @@ const Container = styled.div`
     height: 4rem;
     width: 4rem;
     border-radius: 50%;
-    border: 0.1rem solid ${COLORS.gray};
+    border: 0.1rem solid ${COLORS.gray100};
     background-color: ${COLORS.white};
     display: flex;
     align-items: center;
@@ -24,7 +24,7 @@ const Container = styled.div`
     transform: translate(-50%, -50%);
 
     &:hover {
-        border: 0.1rem solid ${COLORS.grayText};
+        border: 0.1rem solid ${COLORS.textGray};
     }
 `;
 

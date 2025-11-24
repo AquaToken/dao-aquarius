@@ -10,11 +10,11 @@ import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
 import { ClassicToken, Token, TokenType } from 'types/token';
 
-import { flexAllCenter } from 'web/mixins';
-import { COLORS } from 'web/styles';
+import UnknownLogo from 'assets/tokens/asset-unknown-logo.svg';
+import SorobanLogo from 'assets/tokens/soroban-token-logo.svg';
 
-import UnknownLogo from 'assets/asset-unknown-logo.svg';
-import SorobanLogo from 'assets/soroban-token-logo.svg';
+import { flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 import { CircleLoader } from './loaders';
 
@@ -45,8 +45,25 @@ export const bigLogoStyles = (isCircle: boolean) => css`
     border-radius: ${isCircle ? '50%' : '0.5rem'};
 `;
 
-const Logo = styled.img<{ $isSmall?: boolean; $isBig?: boolean; $isCircle?: boolean }>`
-    ${({ $isSmall, $isBig, $isCircle }) => {
+export const customLogoSize = (size: number) => css`
+    height: ${size}rem;
+    width: ${size}rem;
+    max-height: ${size}rem;
+    max-width: ${size}rem;
+    min-width: ${size}rem;
+    border-radius: 50%;
+`;
+
+const Logo = styled.img<{
+    $isSmall?: boolean;
+    $isBig?: boolean;
+    $isCircle?: boolean;
+    $size?: number;
+}>`
+    ${({ $isSmall, $isBig, $isCircle, $size }) => {
+        if ($size) {
+            return customLogoSize($size);
+        }
         if ($isSmall) {
             return smallLogoStyles($isCircle);
         }
@@ -57,8 +74,16 @@ const Logo = styled.img<{ $isSmall?: boolean; $isBig?: boolean; $isCircle?: bool
     }}
 `;
 
-const Unknown = styled(UnknownLogo)<{ $isSmall?: boolean; $isBig?: boolean; $isCircle?: boolean }>`
-    ${({ $isSmall, $isBig, $isCircle }) => {
+const Unknown = styled(UnknownLogo)<{
+    $isSmall?: boolean;
+    $isBig?: boolean;
+    $isCircle?: boolean;
+    $size?: number;
+}>`
+    ${({ $isSmall, $isBig, $isCircle, $size }) => {
+        if ($size) {
+            return customLogoSize($size);
+        }
         if ($isSmall) {
             return smallLogoStyles($isCircle);
         }
@@ -69,8 +94,16 @@ const Unknown = styled(UnknownLogo)<{ $isSmall?: boolean; $isBig?: boolean; $isC
     }}
 `;
 
-const Soroban = styled(SorobanLogo)<{ $isSmall?: boolean; $isBig?: boolean; $isCircle?: boolean }>`
-    ${({ $isSmall, $isBig, $isCircle }) => {
+const Soroban = styled(SorobanLogo)<{
+    $isSmall?: boolean;
+    $isBig?: boolean;
+    $isCircle?: boolean;
+    $size?: number;
+}>`
+    ${({ $isSmall, $isBig, $isCircle, $size }) => {
+        if ($size) {
+            return customLogoSize($size);
+        }
         if ($isSmall) {
             return smallLogoStyles($isCircle);
         }
@@ -96,7 +129,7 @@ const LogoLoaderContainer = styled.div<{
         return logoStyles($isCircle);
     }}
     ${flexAllCenter};
-    background-color: ${COLORS.descriptionText};
+    background-color: ${COLORS.textSecondary};
 `;
 
 const LogoLoader = styled(CircleLoader)`
@@ -108,12 +141,14 @@ const AssetLogo = ({
     isSmall,
     isBig,
     isCircle,
+    size,
     ...props
 }: {
     asset: Token;
     isSmall?: boolean;
     isBig?: boolean;
     isCircle?: boolean;
+    size?: number;
 }) => {
     const [isErrorLoad, setIsErrorLoad] = useState(false);
 
@@ -153,6 +188,7 @@ const AssetLogo = ({
             $isSmall={isSmall}
             $isBig={isBig}
             $isCircle={isCircle}
+            $size={size}
             onError={() => {
                 setIsErrorLoad(true);
             }}

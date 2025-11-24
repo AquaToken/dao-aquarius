@@ -7,8 +7,8 @@ import Button from 'basics/buttons/Button';
 import { IconFail } from 'basics/icons';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
-import { respondDown } from '../../mixins';
-import { Breakpoints } from '../../styles';
+import { respondDown } from 'styles/mixins';
+import { Breakpoints } from 'styles/style-constants';
 
 const Title = styled(ModalTitle)`
     margin-top: 2.4rem;

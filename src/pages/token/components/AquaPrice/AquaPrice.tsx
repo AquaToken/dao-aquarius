@@ -10,11 +10,12 @@ import { StellarService } from 'services/globalServices';
 
 import { ExpertAssetData } from 'types/api-stellar-expert';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
-import Changes24 from 'basics/Changes24';
 import { DotsLoader } from 'basics/loaders';
+
+import Changes24 from 'components/Changes24';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     display: flex;
@@ -30,8 +31,9 @@ const Container = styled.div`
         rgba(234, 191, 255, 0.0447917) 77.08%,
         rgba(234, 191, 255, 0) 100%
     );
+    width: 34rem;
 
-    border: 0.1rem solid ${COLORS.lightPurple};
+    border: 0.1rem solid ${COLORS.purple100};
 
     backdrop-filter: blur(80px);
     -webkit-backdrop-filter: blur(80px);
@@ -41,7 +43,7 @@ const Container = styled.div`
         top: calc(100% + 3.6rem);
         left: 0;
         right: unset;
-        color: ${COLORS.paragraphText};
+        color: ${COLORS.textTertiary};
         width: 34rem;
     `}
 
@@ -72,7 +74,7 @@ const AquaPrice = ({ ...props }) => {
     const [expertData, setExpertData] = useState<ExpertAssetData>(undefined);
 
     useEffect(() => {
-        StellarService.getAquaUsdPrice().then(res => {
+        StellarService.price.getAquaUsdPrice().then(res => {
             setPrice(res.toFixed(7));
         });
         getAssetDetails(getAquaAssetData().aquaStellarAsset).then(res => {

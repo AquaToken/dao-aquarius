@@ -1,6 +1,6 @@
 import { formatBalance } from 'helpers/format-number';
 
-import { QuestionType } from 'basics/FAQ';
+import { QuestionType } from 'components/FAQ';
 
 import {
     APPROVED_PROPOSAL_REWARD,

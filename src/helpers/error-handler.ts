@@ -2,7 +2,7 @@
 
 import { AxiosError } from 'axios';
 
-import { LEDGER_CANCEL_ERROR } from 'services/ledger.service';
+import { LEDGER_CANCEL_ERROR } from 'constants/ledger';
 
 import { TxFailed } from 'types/stellar';
 

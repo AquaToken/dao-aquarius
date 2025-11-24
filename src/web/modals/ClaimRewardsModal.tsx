@@ -11,16 +11,13 @@ import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 import { SorobanService, ToastService } from 'services/globalServices';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { ModalProps } from 'types/modal';
 import { Int128Parts } from 'types/stellar';
 
-import { flexAllCenter, flexColumn, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
-import Warning from 'assets/icon-warning-orange.svg';
+import Warning from 'assets/icons/status/warning-16.svg';
 
 import { Button } from 'basics/buttons';
 import { Checkbox } from 'basics/inputs';
@@ -28,6 +25,9 @@ import { PageLoader } from 'basics/loaders';
 import Market from 'basics/Market';
 import { ModalDescription, ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms';
 import Table, { CellAlign } from 'basics/Table';
+
+import { flexAllCenter, flexColumn, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const CheckboxMobile = styled(Checkbox)`
     display: none;
@@ -38,13 +38,19 @@ const CheckboxMobile = styled(Checkbox)`
     `}
 `;
 
+const WarningOrange = styled(Warning)`
+    path {
+        fill: ${COLORS.orange500};
+    }
+`;
+
 const Container = styled.div`
     height: 20rem;
     ${flexAllCenter};
     flex-direction: column;
 
     span {
-        color: ${COLORS.grayText};
+        color: ${COLORS.textGray};
         margin-top: 0.8rem;
         margin-bottom: auto;
     }
@@ -147,7 +153,7 @@ const ClaimRewardsModal = ({ confirm, close }: ModalProps<never>) => {
                             body={rewards.map(item => ({
                                 key: item.id,
                                 style: { marginBottom: '1.6rem' },
-                                mobileBackground: COLORS.lightGray,
+                                mobileBackground: COLORS.gray50,
                                 rowItems: [
                                     {
                                         children: (
@@ -241,7 +247,7 @@ const ClaimRewardsModal = ({ confirm, close }: ModalProps<never>) => {
                     </>
                 ) : (
                     <Container>
-                        <Warning />
+                        <WarningOrange />
                         <span>Nothing to claim</span>
                         <Button fullWidth isBig onClick={() => close()}>
                             close

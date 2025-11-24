@@ -7,14 +7,14 @@ import { formatBalance } from 'helpers/format-number';
 
 import { PoolIncentives, PoolProcessed } from 'types/amm';
 
-import { flexAllCenter, flexColumn, flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS, FONT_SIZE, hexWithOpacity } from 'web/styles';
-
-import Arrows from 'assets/icon-arrows.svg';
-import Crown from 'assets/icon-crown.svg';
+import Arrows from 'assets/icons/arrows/arrows-swap.svg';
+import Crown from 'assets/icons/objects/icon-crown.svg';
 
 import AssetLogo from 'basics/AssetLogo';
 import Tooltip from 'basics/Tooltip';
+
+import { flexAllCenter, flexColumn, flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS, FONT_SIZE, hexWithOpacity } from 'styles/style-constants';
 
 const Container = styled.div`
     display: flex;
@@ -27,11 +27,11 @@ const BlockWithIcon = styled.div`
     height: 2.4rem;
     width: 2.4rem;
     border-radius: 0.6rem;
-    background-color: ${COLORS.extralightPurple};
+    background-color: ${COLORS.purple50};
 `;
 
 const Divider = styled.div`
-    border-left: 0.1rem solid ${hexWithOpacity(COLORS.grayText, 20)};
+    border-left: 0.1rem solid ${hexWithOpacity(COLORS.textGray, 20)};
     height: 1.7rem;
 `;
 
@@ -69,8 +69,8 @@ const TooltipInner = styled.div`
 const TooltipSectionTitle = styled.div`
     display: flex;
     align-items: center;
-    ${FONT_SIZE.xs}
-    color: ${COLORS.purple};
+    ${FONT_SIZE.xxs}
+    color: ${COLORS.purple500};
     text-transform: uppercase;
     gap: 0.8rem;
     margin-bottom: 1.6rem;
@@ -79,7 +79,7 @@ const TooltipSectionTitle = styled.div`
 const TooltipRow = styled.div`
     ${flexRowSpaceBetween};
     ${FONT_SIZE.sm}
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 
     &:not(:last-child) {
         margin-bottom: 1.6rem;
@@ -88,7 +88,7 @@ const TooltipRow = styled.div`
 
     ${respondDown(Breakpoints.xs)`
         gap: 0.8rem;
-        ${FONT_SIZE.xs}
+        ${FONT_SIZE.xxs}
     `}
 `;
 
@@ -99,7 +99,7 @@ const TooltipToken = styled.div`
 `;
 
 const TooltipDivider = styled.div`
-    border-top: 0.1rem dashed ${COLORS.gray};
+    border-top: 0.1rem dashed ${COLORS.gray100};
     margin: 1.6rem 0;
 `;
 
@@ -201,7 +201,7 @@ const RewardsTokens = ({ pool, myRewards, myIncentives }: Props) => {
             }
             withoutPadding
             background={COLORS.white}
-            color={COLORS.paragraphText}
+            color={COLORS.textTertiary}
             showOnHover
         >
             <Container>

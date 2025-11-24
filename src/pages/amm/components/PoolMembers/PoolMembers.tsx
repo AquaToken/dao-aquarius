@@ -11,14 +11,15 @@ import { useUpdateIndex } from 'hooks/useUpdateIndex';
 
 import { PoolBalance } from 'types/amm';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
-import LinkIcon from 'assets/icon-external-link.svg';
+import LinkIcon from 'assets/icons/nav/icon-external-link-16.svg';
 
 import PageLoader from 'basics/loaders/PageLoader';
 import Pagination from 'basics/Pagination';
-import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
+
+import PublicKeyWithIcon from 'components/PublicKeyWithIcon';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
 
@@ -30,7 +31,7 @@ const Title = styled.h3`
 const Row = styled.div`
     display: flex;
     align-items: center;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin: 1rem 0;
     height: 2.8rem;
 
@@ -49,7 +50,7 @@ const LinkToExpert = styled.a`
     justify-content: space-between;
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     text-decoration: none;
     width: 22rem;
 

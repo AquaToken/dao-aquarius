@@ -1,0 +1,2 @@
+export const MARKET_KEY_SIGNER_WEIGHT = 1;
+export const MARKET_KEY_THRESHOLD = 10;

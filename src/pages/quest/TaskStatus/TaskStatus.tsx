@@ -1,10 +1,10 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { COLORS } from 'web/styles';
+import Present from 'assets/icons/objects/icon-present-white-25x24.svg';
+import Success from 'assets/icons/status/success-white-14.svg';
 
-import Present from 'assets/icon-precent-white.svg';
-import Success from 'assets/icon-success-white.svg';
+import { COLORS } from 'styles/style-constants';
 
 const Container = styled.div<{ $isComplete: boolean }>`
     display: flex;
@@ -13,7 +13,7 @@ const Container = styled.div<{ $isComplete: boolean }>`
     align-items: center;
     padding: 0 1rem;
     border-radius: 4.5rem;
-    background-color: ${({ $isComplete }) => ($isComplete ? COLORS.green : COLORS.purple)};
+    background-color: ${({ $isComplete }) => ($isComplete ? COLORS.green500 : COLORS.purple500)};
     font-weight: 700;
     font-size: 1.6rem;
     line-height: 100%;
@@ -24,7 +24,7 @@ const Container = styled.div<{ $isComplete: boolean }>`
 
 const SuccessIcon = styled(Success)`
     path {
-        stroke: ${COLORS.green};
+        stroke: ${COLORS.green500};
     }
 `;
 

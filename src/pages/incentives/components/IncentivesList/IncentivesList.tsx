@@ -6,11 +6,12 @@ import { IncentivesRoutes } from 'constants/routes';
 import {
     AddBribeButton,
     Container,
-    PlusIcon,
-    Title,
     TitleBlock,
+    Title,
     ToggleGroupStyled,
-} from 'pages/bribes/components/BribesPage/BribesList/BribesList';
+    PlusIcon,
+} from 'web/pages/bribes/pages/BribesPage/components/BribesList/BribesList.styled';
+
 import IncentivesTable from 'pages/incentives/components/IncentivesTable/IncentivesTable';
 
 enum Tab {

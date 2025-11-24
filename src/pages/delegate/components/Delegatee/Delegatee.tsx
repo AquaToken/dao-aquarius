@@ -8,13 +8,13 @@ import { truncateString } from 'helpers/truncate-string';
 
 import { Delegatee as DelegateeType } from 'types/delegate';
 
-import { cardBoxShadow, flexRowSpaceBetween, respondDown, respondUp } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
-import Arrow from 'assets/icon-arrow-down.svg';
+import Arrow from 'assets/icons/arrows/arrow-down-16.svg';
 
 import Identicon from 'basics/Identicon';
 import Label from 'basics/Label';
+
+import { cardBoxShadow, flexRowSpaceBetween, respondDown, respondUp } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { GOV_ICE, UP_ICE } from 'pages/vote/components/MainPage/MainPage';
 
@@ -28,7 +28,7 @@ const Container = styled.div<{ $isSelected: boolean }>`
     margin-bottom: 2.4rem;
     cursor: pointer;
     border: ${({ $isSelected }) =>
-        `0.2rem solid ${$isSelected ? COLORS.purple : COLORS.transparent}`};
+        `0.2rem solid ${$isSelected ? COLORS.purple500 : COLORS.transparent}`};
     position: relative;
 
     ${respondDown(Breakpoints.lg)`
@@ -50,7 +50,7 @@ const Main = styled.div<{ $isSelected: boolean }>`
     ${respondDown(Breakpoints.lg)`
         flex-direction: column;
         border-bottom: ${({ $isSelected }) =>
-            $isSelected ? `0.1rem solid ${COLORS.lightGray}` : 'none'};
+            $isSelected ? `0.1rem solid ${COLORS.gray50}` : 'none'};
         padding-bottom: ${({ $isSelected }) => ($isSelected ? '2.4rem' : '0')};
     `}
 `;
@@ -63,7 +63,7 @@ const Header = styled.div`
         font-weight: 700;
         font-size: 1.6rem;
         line-height: 2.8rem;
-        color: ${COLORS.titleText};
+        color: ${COLORS.textPrimary};
         display: flex;
         gap: 0.8rem;
         align-items: center;
@@ -75,11 +75,11 @@ const Header = styled.div`
 
     span {
         margin-left: auto;
-        color: ${COLORS.grayText};
+        color: ${COLORS.textGray};
     }
 
     b {
-        color: ${COLORS.titleText};
+        color: ${COLORS.textPrimary};
     }
 
     ${respondDown(Breakpoints.lg)`
@@ -106,19 +106,19 @@ const MobileAmount = styled.span`
 
 const Bio = styled.p`
     margin-top: 2.4rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin-bottom: 0;
 `;
 
 const Trusted = styled.span`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const AffiliateProject = styled.span`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 
     b {
-        color: ${COLORS.titleText};
+        color: ${COLORS.textPrimary};
     }
 `;
 
@@ -188,12 +188,12 @@ const Delegatee = forwardRef(
                             </span>
                         ) : (
                             <span>
-                                {!!+delegatee.managed_ice[getAssetString(UP_ICE)] && (
+                                {!!+delegatee.managed_ice?.[getAssetString(UP_ICE)] && (
                                     <span>
                                         Market Voting Power:{' '}
                                         <b>
                                             {formatBalance(
-                                                delegatee.managed_ice[getAssetString(UP_ICE)],
+                                                delegatee.managed_ice?.[getAssetString(UP_ICE)],
                                                 true,
                                             )}{' '}
                                             dICE
@@ -201,14 +201,16 @@ const Delegatee = forwardRef(
                                     </span>
                                 )}
 
-                                {!!+delegatee.managed_ice[getAssetString(GOV_ICE)] && (
+                                {!!+delegatee.managed_ice?.[getAssetString(GOV_ICE)] && (
                                     <>
                                         <br />
                                         <span>
                                             DAO Voting Power:{' '}
                                             <b>
                                                 {formatBalance(
-                                                    delegatee.managed_ice[getAssetString(GOV_ICE)],
+                                                    delegatee.managed_ice?.[
+                                                        getAssetString(GOV_ICE)
+                                                    ],
                                                     true,
                                                 )}{' '}
                                                 gdICE
@@ -229,12 +231,12 @@ const Delegatee = forwardRef(
                     ) : (
                         <MobileAmount>
                             <span>
-                                {!!+delegatee.managed_ice[getAssetString(UP_ICE)] && (
+                                {!!+delegatee.managed_ice?.[getAssetString(UP_ICE)] && (
                                     <span>
                                         Market Voting Power:{' '}
                                         <b>
                                             {formatBalance(
-                                                delegatee.managed_ice[getAssetString(UP_ICE)],
+                                                delegatee.managed_ice?.[getAssetString(UP_ICE)],
                                                 true,
                                             )}{' '}
                                             dICE
@@ -242,14 +244,16 @@ const Delegatee = forwardRef(
                                     </span>
                                 )}
 
-                                {!!+delegatee.managed_ice[getAssetString(GOV_ICE)] && (
+                                {!!+delegatee.managed_ice?.[getAssetString(GOV_ICE)] && (
                                     <>
                                         <br />
                                         <span>
                                             DAO Voting Power:{' '}
                                             <b>
                                                 {formatBalance(
-                                                    delegatee.managed_ice[getAssetString(GOV_ICE)],
+                                                    delegatee.managed_ice?.[
+                                                        getAssetString(GOV_ICE)
+                                                    ],
                                                     true,
                                                 )}{' '}
                                                 gdICE
@@ -264,15 +268,17 @@ const Delegatee = forwardRef(
                     {delegatee.description && <Bio>{delegatee.description}</Bio>}
 
                     <BottomRow>
-                        {Object.values(delegatee.delegated).length > 0 ? (
+                        {delegatee.delegated && Object.values(delegatee.delegated).length > 0 ? (
                             <Trusted>
                                 Trusted by{' '}
                                 <b>
                                     {delegatee?.overall_delegated_stat?.unique_delegators ??
-                                        delegatee.delegated[getAssetString(UP_ICE)]}
+                                        delegatee.delegated?.[getAssetString(UP_ICE)]}
                                 </b>{' '}
                                 account
-                                {(delegatee.delegated[getAssetString(UP_ICE)] ?? 0) > 1 ? 's' : ''}
+                                {(delegatee.delegated?.[getAssetString(UP_ICE)] ?? 0) > 1
+                                    ? 's'
+                                    : ''}
                             </Trusted>
                         ) : (
                             <div />

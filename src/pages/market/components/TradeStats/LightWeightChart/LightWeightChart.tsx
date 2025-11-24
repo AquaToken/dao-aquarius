@@ -10,12 +10,12 @@ import { useDebounce } from 'hooks/useDebounce';
 
 import { StellarService } from 'services/globalServices';
 
-import { Asset } from 'types/stellar';
-
-import { flexAllCenter } from 'web/mixins';
-import { COLORS } from 'web/styles';
+import { ClassicToken } from 'types/token';
 
 import PageLoader from 'basics/loaders/PageLoader';
+
+import { flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 const Chart = styled.div`
     display: flex;
@@ -26,7 +26,7 @@ const Chart = styled.div`
 
 const Loader = styled.div`
     ${flexAllCenter};
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
     font-size: 1.6rem;
     position: absolute;
     top: 0;
@@ -50,7 +50,7 @@ const Statistic = styled.div<{ $isUp: boolean }>`
 const StatisticLabel = styled.span`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     margin-right: 0.8rem;
 `;
 
@@ -161,8 +161,8 @@ const processNextData = (newData, oldData, period) => {
 const LIMIT = 50;
 
 interface LightWeightChartProps {
-    base: Asset;
-    counter: Asset;
+    base: ClassicToken;
+    counter: ClassicToken;
     period: number;
 }
 
@@ -208,13 +208,13 @@ const LightWeightChart = ({ base, counter, period }: LightWeightChartProps): Rea
         }
 
         const chartInstance = createChart('lightweight', {
-            layout: { background: { color: COLORS.lightGray }, textColor: COLORS.titleText },
+            layout: { background: { color: COLORS.gray50 }, textColor: COLORS.textPrimary },
             rightPriceScale: {
                 autoScale: true,
                 invertScale: false,
                 alignLabels: true,
                 borderVisible: true,
-                borderColor: COLORS.placeholder,
+                borderColor: COLORS.gray200,
                 scaleMargins: {
                     top: 0.1,
                     bottom: 0.2,
@@ -226,20 +226,20 @@ const LightWeightChart = ({ base, counter, period }: LightWeightChartProps): Rea
                 lockVisibleTimeRangeOnResize: true,
                 rightBarStaysOnScroll: true,
                 borderVisible: true,
-                borderColor: COLORS.placeholder,
+                borderColor: COLORS.gray200,
                 visible: true,
                 timeVisible: true,
             },
             crosshair: {
                 vertLine: {
-                    color: COLORS.purple,
+                    color: COLORS.purple500,
                     width: 1,
                     style: 3,
                     visible: true,
                     labelVisible: true,
                 },
                 horzLine: {
-                    color: COLORS.purple,
+                    color: COLORS.purple500,
                     width: 1,
                     style: 3,
                     visible: true,
@@ -249,12 +249,12 @@ const LightWeightChart = ({ base, counter, period }: LightWeightChartProps): Rea
             },
             grid: {
                 vertLines: {
-                    color: COLORS.placeholder,
+                    color: COLORS.gray200,
                     style: LineStyle.SparseDotted,
                     visible: true,
                 },
                 horzLines: {
-                    color: COLORS.placeholder,
+                    color: COLORS.gray200,
                     style: LineStyle.SparseDotted,
                     visible: true,
                 },
@@ -314,15 +314,15 @@ const LightWeightChart = ({ base, counter, period }: LightWeightChartProps): Rea
         const endDate = Date.now();
         const startDate = endDate - AGGREGATIONS_DEPS[period];
 
-        StellarService.getTradeAggregations(base, counter, startDate, endDate, period, LIMIT).then(
-            res => {
+        StellarService.horizon
+            .getTradeAggregations(base, counter, startDate, endDate, period, LIMIT)
+            .then(res => {
                 setTradeAggregations(res.records);
                 if (res.records.length === LIMIT) {
                     setNextTradeAggregations(res.next);
                 }
                 setLoading(false);
-            },
-        );
+            });
     }, [period]);
 
     useEffect(() => {

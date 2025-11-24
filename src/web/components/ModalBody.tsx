@@ -14,11 +14,11 @@ import useOnClickOutside from 'hooks/useOutsideClick';
 
 import { ModalProps } from 'types/modal';
 
-import CloseIcon from 'assets/icon-close.svg';
-import ArrowRight from 'assets/icon-link-arrow.svg';
+import ArrowRight from 'assets/icons/arrows/arrow-alt2-16.svg';
+import CloseIcon from 'assets/icons/nav/icon-close-16.svg';
 
-import { customScroll, flexAllCenter, respondDown } from '../mixins';
-import { Breakpoints, COLORS, Z_INDEX } from '../styles';
+import { cardBoxShadow, flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS, Z_INDEX } from 'styles/style-constants';
 
 const ModalWrapper = styled.div`
     position: fixed;
@@ -43,7 +43,7 @@ const ModalWrapper = styled.div`
 const ModalInner = styled.div<{ $withBackground: boolean; $isShow: boolean }>`
     border-radius: 1rem;
     background: ${COLORS.white};
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
+    ${cardBoxShadow};
     padding: ${({ $withBackground }) => ($withBackground ? '0 0 1rem' : '6.4rem 0 0')};
     animation: ${({ $isShow }) => ($isShow ? 'opening 300ms' : 'closing 300ms')};
     position: relative;
@@ -97,8 +97,7 @@ const CloseButton = styled.div<{ $withBackground: boolean }>`
     cursor: pointer;
     padding: 2.5rem;
     box-sizing: border-box;
-    background-color: ${({ $withBackground }) =>
-        $withBackground ? COLORS.white : COLORS.lightGray};
+    background-color: ${({ $withBackground }) => ($withBackground ? COLORS.white : COLORS.gray50)};
     border-radius: 1rem;
 
     ${respondDown(Breakpoints.md)`
@@ -108,6 +107,10 @@ const CloseButton = styled.div<{ $withBackground: boolean }>`
 
 const ArrowLeft = styled(ArrowRight)`
     transform: rotate(180deg);
+
+    path {
+        fill: ${COLORS.purple500};
+    }
 `;
 
 const BackButton = styled(CloseButton)`
@@ -115,7 +118,7 @@ const BackButton = styled(CloseButton)`
 `;
 
 const BackgroundBlock = styled.div`
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     max-height: 28.2rem;
     overflow: hidden;
     margin-bottom: 4rem;

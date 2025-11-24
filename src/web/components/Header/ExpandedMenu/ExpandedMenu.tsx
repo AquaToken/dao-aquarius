@@ -2,17 +2,17 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import { cardBoxShadow, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
-import Arrow from 'assets/icon-arrow-down.svg';
+import Arrow from 'assets/icons/arrows/arrow-down-16.svg';
 
 import { ActiveProposals } from 'components/Header/ActiveProposals/ActiveProposals';
 import { linkStyles } from 'components/Header/Header';
 
+import { cardBoxShadow, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
+
 const Menu = styled.div`
     position: relative;
-    padding: 0 2.4rem;
+    padding: 0 1rem;
 
     ${respondDown(Breakpoints.lg)`
         padding: 0 1.2rem;
@@ -34,7 +34,7 @@ const MenuHead = styled.div`
 const MenuHeadTitle = styled.div`
     ${linkStyles};
     font-size: 1.6rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     display: flex;
     align-items: center;
     gap: 0.8rem;

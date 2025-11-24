@@ -8,18 +8,18 @@ import { MainRoutes } from 'constants/routes';
 
 import { ModalProps } from 'types/modal';
 
-import { flexAllCenter } from 'web/mixins';
-import { COLORS } from 'web/styles';
-
-import Tick from 'assets/icon-tick-16.svg';
+import Tick from 'assets/icons/small-icons/check/icon-check-16.svg';
 
 import { Button } from 'basics/buttons';
 import { ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
+import { flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
+
 const Description = styled.p`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const List = styled.ul`
@@ -34,7 +34,7 @@ const ListItem = styled.li`
     gap: 0.8rem;
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin-bottom: 1.6rem;
 `;
 
@@ -43,7 +43,7 @@ const IconWrapper = styled.div`
     height: 3.2rem;
     width: 3.2rem;
     border-radius: 50%;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
 
     svg {
         width: 1.6rem;
@@ -52,7 +52,7 @@ const IconWrapper = styled.div`
 `;
 
 const ButtonBlock = styled.div`
-    border-top: 0.1rem dashed ${COLORS.gray};
+    border-top: 0.1rem dashed ${COLORS.gray100};
     padding-top: 3.3rem;
     margin-top: 3.3rem;
 

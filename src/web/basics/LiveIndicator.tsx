@@ -1,6 +1,6 @@
 import styled, { keyframes, css } from 'styled-components';
 
-import { COLORS } from 'web/styles';
+import { COLORS } from 'styles/style-constants';
 
 type LiveIndicatorProps = {
     size?: number;
@@ -66,14 +66,14 @@ const Halo = styled.span<{
               `}
 `;
 
-const LiveIndicator: React.FC<LiveIndicatorProps> = ({
+const LiveIndicator = ({
     size = 20,
-    color = COLORS.green,
+    color = COLORS.green500,
     active = true,
     periodSec = 1.5,
     ariaLabel = 'Live',
     className,
-}) => (
+}: LiveIndicatorProps) => (
     <Root
         className={className}
         $size={size}

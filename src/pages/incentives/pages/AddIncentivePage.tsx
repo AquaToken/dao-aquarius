@@ -1,9 +1,7 @@
 import { addDays, startOfDay } from 'date-fns';
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import DatePicker from 'react-datepicker';
 import styled from 'styled-components';
-import 'react-datepicker/dist/react-datepicker.css';
 
 import { findSwapPath, getAssetsList, getPoolsForIncentives } from 'api/amm';
 
@@ -12,15 +10,12 @@ import {
     MAX_INCENTIVES_TOKENS_PER_POOL,
     MAX_TOKEN_AMOUNT,
 } from 'constants/incentives';
-import { MINUTE } from 'constants/intervals';
+import { DAY } from 'constants/intervals';
 import { IncentivesRoutes } from 'constants/routes';
 
 import { contractValueToAmount } from 'helpers/amount';
 import { getAquaAssetData } from 'helpers/assets';
-import {
-    convertLocalDateToUTCIgnoringTimezone,
-    convertUTCToLocalDateIgnoringTimezone,
-} from 'helpers/date';
+import { convertUTCToLocalDateIgnoringTimezone } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 import { getTokensFromCache } from 'helpers/token';
 
@@ -29,27 +24,22 @@ import { useDebounce } from 'hooks/useDebounce';
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { ModalService } from 'services/globalServices';
-import { getIncentivesConfig, getPoolIncentivesMap } from 'services/soroban/contracts/ammContract';
+import { ModalService, SorobanService, ToastService } from 'services/globalServices';
 
 import { PoolProcessed } from 'types/amm';
 import { Token } from 'types/token';
 
-import { DatePickerStyles } from 'web/DatePickerStyles';
-import { respondDown } from 'web/mixins';
 import ConfirmIncentiveModal from 'web/modals/ConfirmIncentiveModal';
-import { Breakpoints, COLORS } from 'web/styles';
+import { DurationInput } from 'web/pages/bribes/pages/AddBribePage/AddBribePage.styled';
 
-import ArrowLeft from 'assets/icon-arrow-left.svg';
-import Fail from 'assets/icon-fail.svg';
-import Success from 'assets/icon-success.svg';
+import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
+import Fail from 'assets/icons/status/fail-red.svg';
+import Success from 'assets/icons/status/success.svg';
 
 import Alert from 'basics/Alert';
-import AssetPicker from 'basics/asset-picker/AssetPicker';
+import AssetPicker from 'basics/asset-pickers/AssetPicker';
 import Button from 'basics/buttons/Button';
-import CircleButton from 'basics/buttons/CircleButton';
-import ExternalLink from 'basics/ExternalLink';
-import { Select } from 'basics/inputs';
+import { DatePicker, Select } from 'basics/inputs';
 import Input from 'basics/inputs/Input';
 import { CircleLoader, PageLoader } from 'basics/loaders';
 import Market from 'basics/Market';
@@ -57,30 +47,47 @@ import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import ChooseLoginMethodModal from 'modals/auth/ChooseLoginMethodModal';
 
+import { PageContainer } from 'styles/commonPageStyles';
+import { flexColumn, flexRowSpaceBetween, respondDown } from 'styles/mixins';
 import {
-    Back,
-    Background,
-    Content,
-    MainBlock,
-    Title,
-    Description,
-    Form,
-    FormSection,
-    FormSectionTitle,
-    FormSectionDescription,
-    FormWrap,
-    FormRow,
     DashIcon,
-} from 'pages/bribes/pages/AddBribePage';
+    Form,
+    FormBackButton,
+    FormPageContentWrap,
+    FormPageHeaderDescription,
+    FormPageHeaderTitle,
+    FormPageHeaderWrap,
+    FormRow,
+    FormSection,
+    FormSectionDescription,
+    FormSectionTitle,
+    FormWrap,
+} from 'styles/sharedFormPage.styled';
+import { Breakpoints, COLORS, FONT_SIZE } from 'styles/style-constants';
 
-const ExternalLinkStyled = styled(ExternalLink)`
-    ${respondDown(Breakpoints.md)`
-            padding: 0 1.6rem;
-        `}
+const OptionsRow = styled.div`
+    ${flexRowSpaceBetween};
+    width: 100%;
 `;
 
 const MarketStyled = styled(Market)`
     pointer-events: none;
+    flex: 5;
+`;
+
+const MarketTVL = styled.div`
+    ${flexColumn};
+    align-items: flex-end;
+    flex: 1;
+    ${FONT_SIZE.sm}
+
+    span:first-child {
+        color: ${COLORS.textGray};
+    }
+
+    span:last-child {
+        font-weight: 700;
+    }
 `;
 
 const NextButton = styled(Button)`
@@ -134,6 +141,12 @@ const TooltipInner = styled.span`
     `}
 `;
 
+const DatePickerStyled = styled(DatePicker)`
+    input {
+        padding-right: 0;
+    }
+`;
+
 enum Step {
     'market',
     'amount',
@@ -158,6 +171,7 @@ const AddIncentivePage = () => {
 
     const [startDay, setStartDay] = useState<number | null>(null);
     const [endDay, setEndDay] = useState<number | null>(null);
+    const [duration, setDuration] = useState<string>('1');
 
     const { processNewAssets } = useAssetsStore();
 
@@ -166,7 +180,7 @@ const AddIncentivePage = () => {
     const { isLogged } = useAuthStore();
 
     useEffect(() => {
-        getIncentivesConfig().then(setConfig);
+        SorobanService.amm.getIncentivesConfig().then(setConfig);
     }, []);
 
     useEffect(() => {
@@ -206,17 +220,56 @@ const AddIncentivePage = () => {
         });
     }, [debouncedAmount, rewardToken]);
 
+    const onDurationChange = (value: string) => {
+        setDuration(value);
+
+        if (startDay) {
+            const newEndDay = startDay + DAY * Number(value);
+            setEndDay(newEndDay);
+        }
+    };
+
+    const onStartDayChange = (value: number) => {
+        setStartDay(value);
+
+        const newEndDay = value + DAY * Number(duration);
+
+        setEndDay(newEndDay);
+    };
+
+    const onEndDayChange = (value: number) => {
+        setEndDay(value);
+
+        const newDuration = Math.round((value - startDay) / DAY);
+
+        setDuration(newDuration.toString());
+    };
+
     const OPTIONS = useMemo(() => {
         if (!markets) return [];
 
         return markets.map(market => ({
             label: (
-                <MarketStyled
-                    assets={market.tokens}
-                    withoutLink
-                    fee={market.fee}
-                    poolType={market.pool_type}
-                />
+                <OptionsRow>
+                    <MarketStyled
+                        assets={market.tokens}
+                        withoutLink
+                        fee={market.fee}
+                        poolType={market.pool_type}
+                        mobileVerticalDirections
+                    />
+                    <MarketTVL>
+                        <span>TVL:</span>
+                        <span>
+                            $
+                            {formatBalance(
+                                +contractValueToAmount(market.liquidity_usd),
+                                true,
+                                true,
+                            )}
+                        </span>
+                    </MarketTVL>
+                </OptionsRow>
             ),
             value: market,
         }));
@@ -227,13 +280,6 @@ const AddIncentivePage = () => {
 
         return poolConfig.find(({ token }) => token.contract === rewardToken.contract) ?? null;
     }, [poolConfig, rewardToken]);
-
-    const setTestDate = () => {
-        const start = 3 * MINUTE + Date.now();
-        const end = start + config?.duration * 1000;
-        setStartDay(convertLocalDateToUTCIgnoringTimezone(new Date(start)).getTime());
-        setEndDay(convertLocalDateToUTCIgnoringTimezone(new Date(end)).getTime());
-    };
 
     const amountInputPostfix =
         debouncedAmount.current !== null && aquaEquivalent === null ? (
@@ -248,7 +294,7 @@ const AddIncentivePage = () => {
                 }
                 position={+window.innerWidth > 992 ? TOOLTIP_POSITION.top : TOOLTIP_POSITION.left}
                 isShow={true}
-                background={COLORS.pinkRed}
+                background={COLORS.red500}
             >
                 <FailIcon />
             </Tooltip>
@@ -259,7 +305,7 @@ const AddIncentivePage = () => {
                 content={<div>Value must be less or equal {formatBalance(MAX_TOKEN_AMOUNT)}</div>}
                 position={+window.innerWidth > 992 ? TOOLTIP_POSITION.top : TOOLTIP_POSITION.left}
                 isShow={true}
-                background={COLORS.pinkRed}
+                background={COLORS.red500}
             >
                 <FailIcon />
             </Tooltip>
@@ -271,7 +317,7 @@ const AddIncentivePage = () => {
         setPoolConfig(null);
         setFirstStepPending(true);
 
-        getPoolIncentivesMap(selectedMarket.address).then(res => {
+        SorobanService.amm.getPoolIncentivesMap(selectedMarket.address).then(res => {
             setPoolConfig(res);
 
             if (res.length !== MAX_INCENTIVES_TOKENS_PER_POOL) {
@@ -294,6 +340,24 @@ const AddIncentivePage = () => {
     }, [selectedMarket]);
 
     const onSubmit = () => {
+        if (startDay < Date.now()) {
+            ToastService.showErrorToast('Invalid period: start time cannot be in the past.');
+
+            return;
+        }
+
+        if (startDay > endDay) {
+            ToastService.showErrorToast('Invalid period: start time is after the end time.');
+
+            return;
+        }
+
+        if (endDay - startDay < DAY) {
+            ToastService.showErrorToast('Invalid period: must be at least 24 hours.');
+
+            return;
+        }
+
         if (!isLogged) {
             ModalService.openModal(ChooseLoginMethodModal, {});
             return;
@@ -303,56 +367,53 @@ const AddIncentivePage = () => {
             pool: selectedMarket,
             rewardToken,
             amountPerDay: amount,
-            startDate: convertUTCToLocalDateIgnoringTimezone(new Date(startDay)).getTime(),
-            endDate: convertUTCToLocalDateIgnoringTimezone(new Date(endDay)).getTime(),
+            startDate: startDay,
+            endDate: endDay,
             swapChainedXdr: xdr,
         });
     };
 
     if (!markets || !config) {
         return (
-            <MainBlock>
+            <PageContainer>
                 <PageLoader />
-            </MainBlock>
+            </PageContainer>
         );
     }
 
     return (
-        <MainBlock>
-            <Background>
-                <Content>
-                    <Back to={IncentivesRoutes.main}>
-                        <CircleButton label="Incentives">
-                            <ArrowLeft />
-                        </CircleButton>
-                    </Back>
-                    <Title>Create Incentive</Title>
-                    <Description>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad fuga fugiat
-                        itaque, modi molestiae, necessitatibus nostrum officia omnis perspiciatis
-                        possimus quis quo recusandae, rerum similique sunt suscipit ut!
-                        Consequuntur, quidem?
-                    </Description>
-                    <ExternalLinkStyled href="">Learn more</ExternalLinkStyled>
-                </Content>
-            </Background>
+        <PageContainer>
+            <FormPageHeaderWrap>
+                <FormPageContentWrap>
+                    <FormBackButton label="Pool Incentives" to={IncentivesRoutes.main}>
+                        <ArrowLeft />
+                    </FormBackButton>
+
+                    <FormPageHeaderTitle>Create Pool Incentive</FormPageHeaderTitle>
+                    <FormPageHeaderDescription>
+                        Launch a new incentive for any Aquarius pool. Select a token, amount, and
+                        timeframe — rewards flow automatically to liquidity providers.
+                    </FormPageHeaderDescription>
+                </FormPageContentWrap>
+            </FormPageHeaderWrap>
             <FormWrap>
-                <Content>
+                <FormPageContentWrap>
                     <Form
                         onSubmit={event => {
                             event.preventDefault();
                         }}
                     >
                         <FormSection>
-                            <FormSectionTitle>Select market</FormSectionTitle>
+                            <FormSectionTitle>Choose Pool</FormSectionTitle>
                             <FormSectionDescription>
-                                Choose a market for your incentive.
+                                Select the liquidity pool where your rewards will be distributed.
                             </FormSectionDescription>
                             <FormRow>
                                 <Select
                                     options={OPTIONS}
                                     value={selectedMarket}
                                     onChange={setSelectedMarket}
+                                    placeholder="Select a pool"
                                 />
                             </FormRow>
 
@@ -364,32 +425,31 @@ const AddIncentivePage = () => {
                                     disabled={!selectedMarket || !poolConfig}
                                     pending={firstStepPending}
                                 >
-                                    next
+                                    Continue
                                 </NextButton>
                             )}
                         </FormSection>
 
                         {step >= Step.amount && (
                             <FormSection>
-                                <FormSectionTitle>Set reward</FormSectionTitle>
+                                <FormSectionTitle>Set Rewards</FormSectionTitle>
                                 <FormSectionDescription>
-                                    Set the reward asset and amount that will be distributed during
-                                    period. Note, your incentive should be worth at least
-                                    {formatBalance(config?.minAquaAmount)} AQUA, otherwise it won't
-                                    be accepted.
+                                    Choose the token and daily amount to distribute. Incentives must
+                                    equal at least {formatBalance(config?.minAquaAmount)} AQUA in
+                                    value per day to be accepted.
                                 </FormSectionDescription>
                                 <FormRow>
                                     <AssetPickerStyled
                                         asset={rewardToken}
                                         onUpdate={setRewardToken}
                                         assetsList={assetsList}
-                                        label="Reward token"
+                                        label="Select reward token"
                                     />
 
                                     <AmountInput
                                         placeholder="0"
                                         type="number"
-                                        label="Reward per day"
+                                        label="Daily reward amount"
                                         value={amount}
                                         required
                                         onChange={({ target }) => {
@@ -412,7 +472,7 @@ const AddIncentivePage = () => {
                                         }
                                         onClick={() => setStep(Step.duration)}
                                     >
-                                        next
+                                        Continue
                                     </NextButton>
                                 )}
                             </FormSection>
@@ -420,22 +480,27 @@ const AddIncentivePage = () => {
 
                         {step === Step.duration && (
                             <FormSection>
-                                <FormSectionTitle>Set period</FormSectionTitle>
+                                <FormSectionTitle>Set Period</FormSectionTitle>
                                 <FormSectionDescription>
-                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                                    Assumenda cum et explicabo facilis, libero numquam soluta
-                                    tempore temporibus voluptas voluptatibus!
+                                    Choose the start and end dates for your incentive. Rewards will
+                                    begin distributing from the start date until the end date
+                                    automatically.
                                 </FormSectionDescription>
                                 <FormRow>
-                                    <DatePicker
+                                    <DurationInput
+                                        label="Duration (days)"
+                                        value={duration}
+                                        setValue={onDurationChange}
+                                    />
+                                    <DatePickerStyled
                                         customInput={<InputStyled label="Start date" />}
                                         calendarStartDay={1}
-                                        selected={startDay ? new Date(startDay) : null}
+                                        date={startDay ? new Date(startDay).getTime() : null}
                                         onChange={res => {
-                                            setStartDay(startOfDay(res).getTime());
+                                            onStartDayChange(res as number);
                                         }}
-                                        dateFormat="MM.dd.yyyy"
-                                        placeholderText="MM.DD.YYYY"
+                                        dateFormat="MM.dd.yyyy HH:mm"
+                                        placeholderText="MM.DD.YYYY hh:mm"
                                         disabledKeyboardNavigation
                                         popperModifiers={[
                                             {
@@ -446,41 +511,27 @@ const AddIncentivePage = () => {
                                             },
                                         ]}
                                         minDate={nextDay}
+                                        fullWidth
+                                        showTimeSelect
+                                        timeIntervals={60}
                                     />
                                     <DashIcon />
 
-                                    <DatePicker
+                                    <DatePickerStyled
                                         customInput={<InputStyled label="End date" />}
-                                        calendarStartDay={1}
-                                        selected={endDay ? new Date(endDay) : null}
+                                        date={endDay ? new Date(endDay).getTime() : null}
                                         onChange={res => {
-                                            setEndDay(startOfDay(res).getTime());
+                                            onEndDayChange(res as number);
                                         }}
-                                        dateFormat="MM.dd.yyyy"
-                                        placeholderText="MM.DD.YYYY"
+                                        dateFormat="MM.dd.yyyy HH:mm"
+                                        placeholderText="MM.DD.YYYY hh:mm"
+                                        calendarStartDay={1}
                                         disabledKeyboardNavigation
                                         disabled={!startDay}
-                                        popperModifiers={[
-                                            {
-                                                name: 'offset',
-                                                options: {
-                                                    offset: [0, -10],
-                                                },
-                                            },
-                                        ]}
                                         minDate={addDays(startDay, config.duration / 24 / 60 / 60)}
+                                        fullWidth
                                     />
                                 </FormRow>
-
-                                <Button
-                                    isSmall
-                                    style={{ marginTop: '2rem' }}
-                                    withGradient
-                                    isRounded
-                                    onClick={() => setTestDate()}
-                                >
-                                    Test Button: Set date from now + 3 min
-                                </Button>
 
                                 {currentTokenConfig &&
                                     currentTokenConfig.count >= MAX_INCENTIVES_PER_TOKEN && (
@@ -503,14 +554,12 @@ const AddIncentivePage = () => {
                                 >
                                     {isLogged ? 'Create incentive' : 'Connect Wallet'}
                                 </NextButton>
-
-                                <DatePickerStyles />
                             </FormSection>
                         )}
                     </Form>
-                </Content>
+                </FormPageContentWrap>
             </FormWrap>
-        </MainBlock>
+        </PageContainer>
     );
 };
 

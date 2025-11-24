@@ -15,13 +15,14 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
 
-import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import { Breakpoints, COLORS, hexWithOpacity } from 'web/styles';
 
-import Plus from 'assets/icon-plus.svg';
+import Plus from 'assets/icons/nav/icon-plus-16.svg';
 
 import Button from 'basics/buttons/Button';
+
+import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS, hexWithOpacity } from 'styles/style-constants';
 
 import AllPools from '../components/AllPools/AllPools';
 import LiquidityChart from '../components/LiquidityChart/LiquidityChart';
@@ -36,7 +37,7 @@ const Container = styled.main`
     flex-direction: column;
     scroll-behavior: smooth;
     overflow: auto;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
 `;
 
 const Content = styled.div`
@@ -58,7 +59,7 @@ const Section = styled.div`
     margin-bottom: 1.6rem;
     
     ${respondDown(Breakpoints.md)`
-        background-color: ${COLORS.lightGray};
+        background-color: ${COLORS.gray50};
     `}}
 `;
 
@@ -99,15 +100,15 @@ const ListTitles = styled.h3`
 const ListTab = styled.span<{ $isActive: boolean }>`
     cursor: pointer;
     color: ${({ $isActive }) =>
-        $isActive ? COLORS.titleText : `${hexWithOpacity(COLORS.titleText, 30)}`};
+        $isActive ? COLORS.textPrimary : `${hexWithOpacity(COLORS.textPrimary, 30)}`};
     white-space: nowrap;
 
     &:hover {
-        color: ${({ $isActive }) => ($isActive ? COLORS.titleText : COLORS.placeholder)};
+        color: ${({ $isActive }) => ($isActive ? COLORS.textPrimary : COLORS.gray200)};
     }
 
     &:first-child {
-        border-right: 0.1rem solid ${COLORS.gray};
+        border-right: 0.1rem solid ${COLORS.gray100};
         padding-right: 2.4rem;
         margin-right: 2.4rem;
     }
@@ -127,7 +128,7 @@ const Charts = styled.div`
     justify-content: space-evenly;
     gap: 1.6rem;
     width: 100%;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
 
     ${respondDown(Breakpoints.xl)`
         flex-direction: column;

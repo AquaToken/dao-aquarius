@@ -7,17 +7,18 @@ import { formatBalance } from 'helpers/format-number';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService, StellarService } from 'services/globalServices';
-import { StellarEvents } from 'services/stellar.service';
+import { StellarEvents } from 'services/stellar/events/events';
 
-import { flexRowSpaceBetween } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 
-import IconDislike from 'assets/icon-dislike-black.svg';
-import IconLike from 'assets/icon-like-white.svg';
-import IconTick from 'assets/icon-tick-16.svg';
+import IconDislike from 'assets/icons/actions/icon-dislike-alt-16.svg';
+import IconLike from 'assets/icons/actions/icon-like-16.svg';
+import IconTick from 'assets/icons/small-icons/check/icon-check-16.svg';
 
 import Button from 'basics/buttons/Button';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { flexRowSpaceBetween } from 'styles/mixins';
 
 import { PairStats } from 'pages/vote/api/types';
 
@@ -79,13 +80,20 @@ const VoteButton = ({
     const { aquaStellarAsset } = getAquaAssetData();
 
     const getUpVotesValue = () =>
-        +StellarService.getMarketVotesValue(marketKeyUp, account?.accountId(), aquaStellarAsset) +
-        +StellarService.getMarketVotesValue(marketKeyUp, account?.accountId(), UP_ICE) +
-        +StellarService.getMarketVotesValue(marketKeyUp, account?.accountId(), DELEGATE_ICE);
+        +StellarService.cb.getMarketVotesValue(
+            marketKeyUp,
+            account?.accountId(),
+            aquaStellarAsset,
+        ) +
+        +StellarService.cb.getMarketVotesValue(marketKeyUp, account?.accountId(), UP_ICE) +
+        +StellarService.cb.getMarketVotesValue(marketKeyUp, account?.accountId(), DELEGATE_ICE);
 
     const getDownVotesValue = () =>
-        +StellarService.getMarketVotesValue(marketKeyDown, account?.accountId(), aquaStellarAsset) +
-        +StellarService.getMarketVotesValue(marketKeyDown, account?.accountId(), DOWN_ICE);
+        +StellarService.cb.getMarketVotesValue(
+            marketKeyDown,
+            account?.accountId(),
+            aquaStellarAsset,
+        ) + +StellarService.cb.getMarketVotesValue(marketKeyDown, account?.accountId(), DOWN_ICE);
 
     const [balanceUp, setBalanceUp] = useState(isLogged ? getUpVotesValue() : null);
 

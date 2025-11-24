@@ -3,8 +3,8 @@ import styled from 'styled-components';
 
 import { QuestTaskStatus, TaskStatus } from 'types/quest';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints } from 'web/styles';
+import { respondDown } from 'styles/mixins';
+import { Breakpoints } from 'styles/style-constants';
 
 import Details from 'pages/quest/Details/Details';
 import PreRequisites from 'pages/quest/PreRequisites/PreRequisites';

@@ -8,32 +8,32 @@ import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 import { ModalService, StellarService, ToastService } from 'services/globalServices';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
-import { Token, TokenType } from 'types/token';
+import { ClassicToken, Token, TokenType } from 'types/token';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
-import Plus from 'assets/icon-plus.svg';
+import Plus from 'assets/icons/nav/icon-plus-16.svg';
 
 import Asset from 'basics/Asset';
 import { Button } from 'basics/buttons';
 import { ButtonProps } from 'basics/buttons/Button';
 
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
+
 const TrustlineBlock = styled.div<{ $isRounded?: boolean }>`
     display: flex;
     flex-direction: column;
     padding: 3.2rem;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     margin-top: 1.6rem;
     border-radius: ${({ $isRounded }) => ($isRounded ? '4rem' : '0.6rem')};
 
     p {
         font-size: 1.6rem;
         line-height: 2.8rem;
-        color: ${COLORS.grayText};
+        color: ${COLORS.textGray};
     }
 `;
 
@@ -52,10 +52,17 @@ const TrustlineButton = styled(Button)`
     ${respondDown(Breakpoints.md)`
         width: 100%;
         margin-top: 2rem;
+        white-space: wrap;
     `}
     svg {
         margin-left: 0.8rem;
     }
+`;
+
+const AssetCode = styled.span`
+    ${respondDown(Breakpoints.sm)`
+        display: none;
+    `}
 `;
 
 interface NoTrustlineProps extends Omit<ButtonProps, 'children'> {
@@ -82,9 +89,9 @@ const NoTrustline = ({
         }
         setTrustlinePending(true);
         try {
-            const op = StellarService.createAddTrustOperation(asset);
+            const op = StellarService.op.createAddTrustOperation(asset as ClassicToken);
 
-            const tx = await StellarService.buildTx(account, op);
+            const tx = await StellarService.tx.buildTx(account, op);
 
             const result = await account.signAndSubmitTx(tx);
 
@@ -137,7 +144,10 @@ const NoTrustline = ({
                 pending={trustlinePending}
                 isRounded={isRounded}
             >
-                add {asset.code} trustline <Plus />
+                <span>
+                    add <AssetCode>{asset.code}</AssetCode> trustline
+                </span>
+                <Plus />
             </TrustlineButton>
         </TrustlineBlock>
     );

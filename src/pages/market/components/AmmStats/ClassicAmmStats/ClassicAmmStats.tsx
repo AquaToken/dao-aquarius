@@ -2,23 +2,25 @@ import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
+import { getLumenUsdPrice } from 'api/price';
+
 import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 
 import { StellarService } from 'services/globalServices';
 
-import { Asset } from 'types/stellar';
+import { ClassicToken } from 'types/token';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 import PageLoader from 'basics/loaders/PageLoader';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const Description = styled.div`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
     opacity: 0.7;
     margin-bottom: 3.2rem;
 `;
@@ -53,14 +55,14 @@ const StatsDetail = styled.div`
 const StatsDetailTitle = styled.span`
     font-size: 1.4rem;
     line-height: 1.6rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin-bottom: 0.8rem;
 `;
 
 const StatsDetailValue = styled.span`
     font-size: 1.6rem;
     line-height: 2.4rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     width: min-content;
     white-space: nowrap;
 `;
@@ -70,8 +72,8 @@ const ExternalLinkStyled = styled(ExternalLink)`
 `;
 
 interface AmmStatsProps {
-    base: Asset;
-    counter: Asset;
+    base: ClassicToken;
+    counter: ClassicToken;
 }
 
 const ClassicAmmStats = ({ base, counter }: AmmStatsProps): React.ReactNode => {
@@ -87,18 +89,18 @@ const ClassicAmmStats = ({ base, counter }: AmmStatsProps): React.ReactNode => {
     const [counterPriceLoading, setCounterPriceLoading] = useState(true);
 
     useEffect(() => {
-        StellarService.getLumenUsdPrice().then(res => {
+        getLumenUsdPrice().then(res => {
             setPriceLoading(false);
             setLumenUsdPrice(res);
         });
 
-        StellarService.getLiquidityPoolData(base, counter).then(res => {
+        StellarService.horizon.getLiquidityPoolData(base, counter).then(res => {
             setStatsLoading(false);
             setStats(res);
         });
 
         if (!base.isNative()) {
-            StellarService.getAssetLumenPrice(base).then(res => {
+            StellarService.price.getAssetLumenPrice(base).then(res => {
                 setBaseLumenPrice(res);
                 setBasePriceLoading(false);
             });
@@ -108,7 +110,7 @@ const ClassicAmmStats = ({ base, counter }: AmmStatsProps): React.ReactNode => {
         }
 
         if (!counter.isNative()) {
-            StellarService.getAssetLumenPrice(counter).then(res => {
+            StellarService.price.getAssetLumenPrice(counter).then(res => {
                 setCounterLumenPrice(res);
                 setCounterPriceLoading(false);
             });

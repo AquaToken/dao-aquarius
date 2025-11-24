@@ -4,16 +4,16 @@ import { D_ICE_CODE, DOWN_ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'constants/as
 
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
 
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
-import DIce from 'assets/dice-logo.svg';
-import Ice from 'assets/ice-logo.svg';
-import IconDown from 'assets/icon-down-percent.svg';
-import InfoIcon from 'assets/icon-info.svg';
-import IconUp from 'assets/icon-up-percent.svg';
+import IconDown from 'assets/icons/arrows/arrow-negative-16.svg';
+import IconUp from 'assets/icons/arrows/arrow-positive-16.svg';
+import InfoIcon from 'assets/icons/status/icon-info-16.svg';
+import DIce from 'assets/tokens/dice-logo.svg';
+import Ice from 'assets/tokens/ice-logo.svg';
 
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { PairStats, TotalStats } from 'pages/vote/api/types';
 
@@ -63,7 +63,7 @@ const Amount = styled.div`
 `;
 
 const Percent = styled.div<{ $isBoosted: boolean }>`
-    color: ${({ $isBoosted }) => ($isBoosted ? COLORS.green : COLORS.grayText)};
+    color: ${({ $isBoosted }) => ($isBoosted ? COLORS.green500 : COLORS.textGray)};
     font-size: 1.4rem;
     line-height: 2rem;
     display: flex;
@@ -84,7 +84,7 @@ const Percents = styled.div`
 `;
 
 const PercentMobile = styled.span<{ $isBoosted: boolean }>`
-    color: ${({ $isBoosted }) => ($isBoosted ? COLORS.green : COLORS.grayText)};
+    color: ${({ $isBoosted }) => ($isBoosted ? COLORS.green500 : COLORS.textGray)};
 
     font-size: 1.2rem;
     line-height: 1.4rem;
@@ -107,7 +107,7 @@ const TooltipWrap = styled.div`
 `;
 
 const TooltipRow = styled.div`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     font-size: 1.4rem;
     line-height: 2rem;
     ${flexRowSpaceBetween};
@@ -119,7 +119,7 @@ const TooltipRow = styled.div`
 `;
 
 const TooltipRowTitleFirst = styled.div`
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     font-size: 1.4rem;
     ${flexRowSpaceBetween};
     width: 100%;
@@ -142,7 +142,7 @@ const TooltipPercents = styled.div`
 
     span:first-child {
         margin-right: 0;
-        color: ${COLORS.grayText};
+        color: ${COLORS.textGray};
     }
 `;
 

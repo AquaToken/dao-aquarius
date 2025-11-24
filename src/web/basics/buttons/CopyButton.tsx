@@ -2,11 +2,11 @@ import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { COLORS } from 'web/styles';
-
-import CopyIcon from 'assets/icon-copy.svg';
+import CopyIcon from 'assets/icons/actions/icon-copy-16.svg';
 
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { COLORS } from 'styles/style-constants';
 
 const CopyButtonContainer = styled.div<{ isBlackText?: boolean }>`
     display: flex;
@@ -14,7 +14,7 @@ const CopyButtonContainer = styled.div<{ isBlackText?: boolean }>`
     align-items: center;
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${({ isBlackText }) => (isBlackText ? COLORS.paragraphText : COLORS.purple)};
+    color: ${({ isBlackText }) => (isBlackText ? COLORS.textTertiary : COLORS.purple500)};
     cursor: pointer;
 `;
 

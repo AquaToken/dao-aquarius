@@ -8,16 +8,16 @@ import Timer from 'helpers/timer';
 
 import { ToastService } from 'services/globalServices';
 
-import { flexAllCenter } from 'web/mixins';
-import { COLORS } from 'web/styles';
-
 import { ToggleGroup } from 'basics/inputs';
+
+import { cardBoxShadow, flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     ${flexAllCenter};
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     padding: 0 4rem;
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
+    ${cardBoxShadow};
 `;
 
 const OPTIONS = [

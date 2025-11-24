@@ -2,14 +2,14 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
+import { Bribe } from 'types/bribes';
 import { Asset } from 'types/stellar';
-
-import { flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 
-import { Bribe } from 'pages/bribes/api/types';
+import { flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
+
 import { MarketVotesExtra } from 'pages/vote/api/types';
 
 import MarketCurrentBribes from './MarketCurrentBribes/MarketCurrentBribes';
@@ -41,7 +41,7 @@ const Title = styled.span`
     font-weight: 700;
     font-size: 2rem;
     line-height: 2.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 
     ${respondDown(Breakpoints.md)`
         margin-bottom: 1.6rem;

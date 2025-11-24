@@ -2,22 +2,23 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import AccountService from 'services/account.service';
-import { StellarService } from 'services/globalServices';
+import { getFederation } from 'services/stellar/utils/resolvers';
 
 import { ModalProps } from 'types/modal';
 
-import ArrowRight from 'assets/icon-arrow-right.svg';
-import Copy from 'assets/icon-copy.svg';
-import XdrLogo from 'assets/icon-xdr.svg';
-import Stellar from 'assets/xlm-logo.svg';
+import Copy from 'assets/icons/actions/icon-copy-16.svg';
+import ArrowRight from 'assets/icons/arrows/arrow-right-16.svg';
+import XdrLogo from 'assets/icons/objects/icon-xdr-32x17.svg';
+import Stellar from 'assets/tokens/xlm-logo.svg';
 
-import AccountBlock from 'basics/AccountBlock';
 import { Button } from 'basics/buttons';
 import CopyButton from 'basics/buttons/CopyButton';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
-import { flexAllCenter, respondDown } from '../mixins';
-import { Breakpoints, COLORS } from '../styles';
+import AccountBlock from 'components/AccountBlock';
+
+import { flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 const LinkLab = styled.a`
     text-decoration: none;
@@ -34,7 +35,7 @@ const ActionContainer = styled.div`
     align-items: center;
     width: 100%;
     min-height: 9rem;
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
     border-radius: 0.5rem;
     cursor: pointer;
     padding: 1.2rem 2.4rem;
@@ -59,13 +60,13 @@ const ActionMain = styled.div`
 const ActionName = styled.div`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 `;
 
 const ActionDescription = styled.div`
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const StellarLogo = styled(Stellar)`
@@ -78,7 +79,7 @@ const ArrowRightIcon = styled(ArrowRight)`
     min-width: 1.6rem;
 
     path {
-        fill: ${COLORS.descriptionText};
+        fill: ${COLORS.textSecondary};
     }
 `;
 
@@ -87,7 +88,7 @@ const CopyIcon = styled(Copy)`
     min-width: 1.6rem;
 
     path {
-        fill: ${COLORS.descriptionText};
+        fill: ${COLORS.textSecondary};
     }
 `;
 
@@ -120,9 +121,13 @@ const SignWithPublic = ({ params, confirm }: ModalProps<Props>) => {
         if (!account.home_domain) {
             return;
         }
-        StellarService.resolveFederation(account.home_domain, accountId).then(res => {
-            setFederation(res);
-        });
+        getFederation(account.home_domain, accountId)
+            .then(res => {
+                setFederation(res);
+            })
+            .catch(() => {
+                // federation may be missing for the user — that's fine
+            });
     }, []);
 
     return (

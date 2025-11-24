@@ -9,11 +9,11 @@ import { StellarService } from 'services/globalServices';
 
 import { ModalProps } from 'types/modal';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import Market from 'basics/Market';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
+
+import { flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import VotesList from './VotesList/VotesList';
 
@@ -23,7 +23,7 @@ const PairBlock = styled.div`
     ${flexAllCenter};
     padding: 3.4rem 0;
     border-radius: 0.5rem;
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
     margin-bottom: 2.3rem;
 
     ${respondDown(Breakpoints.md)`
@@ -41,7 +41,7 @@ const ManageVotesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
     const counter = createAsset(pair.asset2_code, pair.asset2_issuer);
 
     useEffect(() => {
-        setClaims(StellarService.getPairVotes(pair, account.accountId())?.reverse());
+        setClaims(StellarService.cb.getPairVotes(pair, account.accountId())?.reverse());
     }, []);
 
     if (!claims) {

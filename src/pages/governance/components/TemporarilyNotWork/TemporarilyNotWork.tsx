@@ -1,13 +1,13 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints } from 'web/styles';
-
 import Button from 'basics/buttons/Button';
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 
 import { ModalDescription, ModalProps, ModalTitle } from 'components/ModalBody';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints } from 'styles/style-constants';
 
 const Container = styled.div`
     display: flex;

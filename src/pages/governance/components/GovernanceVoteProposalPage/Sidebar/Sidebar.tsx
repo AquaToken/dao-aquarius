@@ -11,15 +11,16 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import { Breakpoints, COLORS } from 'web/styles';
 
-import Fail from 'assets/icon-fail.svg';
-import Success from 'assets/icon-success.svg';
+import Fail from 'assets/icons/status/fail-red.svg';
+import Success from 'assets/icons/status/success.svg';
 
 import Button from 'basics/buttons/Button';
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
+
+import { cardBoxShadow, flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import NativeVotingButton from './VotingButton/VotingButton';
 
@@ -40,10 +41,10 @@ const SidebarBlock = styled.aside`
     margin: -46rem 0 0;
     width: 36.6rem;
     background: ${COLORS.white};
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     border-radius: 0.5rem;
     position: sticky;
     float: right;
+    ${cardBoxShadow};
 
     ${respondDown(Breakpoints.xl)`
         right: 4rem;
@@ -71,7 +72,7 @@ export const SidebarTitle = styled.h5`
     font-size: 2rem;
     line-height: 2.8rem;
     margin-bottom: 3.4rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 `;
 const SidebarTemplateTitle = styled(SidebarTitle)`
     margin-bottom: 0;
@@ -80,7 +81,7 @@ const SidebarTemplateTitle = styled(SidebarTitle)`
 const SidebarDescription = styled.div`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
     opacity: 0.7;
     margin-bottom: 4rem;
     margin-top: 1rem;
@@ -124,7 +125,7 @@ const SuccessIcon = styled(Success)`
 //     padding: 2.2rem;
 //     width: 100%;
 //     margin-bottom: 1.2rem;
-//     background: ${COLORS.lightGray};
+//     background: ${COLORS.gray50};
 //     border-radius: 0.5rem;
 //
 //     font-size: 1.6rem;
@@ -135,10 +136,10 @@ const SuccessIcon = styled(Success)`
 //     ${({ isChecked }: { isChecked: boolean }) =>
 //         isChecked
 //             ? `color: ${COLORS.white};
-//                background: ${COLORS.purple};
+//                background: ${COLORS.purple500} ;
 //             `
-//             : `color: ${COLORS.paragraphText};
-//                background: ${COLORS.lightGray};
+//             : `color: ${COLORS.textTertiary};
+//                background: ${COLORS.gray50};
 //             `};
 //     &:hover {
 //         ${({ isChecked }: { isChecked: boolean }) =>
@@ -147,7 +148,7 @@ const SuccessIcon = styled(Success)`
 //              background: ${COLORS.white};
 //              box-shadow: 0px 20px 30px rgba(0, 6, 54, 0.06);
 //              & > span {
-//                 border-color: ${COLORS.purple};
+//                 border-color: ${COLORS.purple500} ;
 //              }
 //              `};
 //     }
@@ -172,7 +173,7 @@ const SuccessIcon = styled(Success)`
 //     margin-right: 1.4rem;
 //
 //     background: ${COLORS.white};
-//     border: 0.1rem solid ${COLORS.gray};
+//     border: 0.1rem solid ${COLORS.gray100};
 //     border-radius: 50%;
 //     transition: all ease 200ms;
 // `;
@@ -190,7 +191,7 @@ const Results = styled.div`
 const Title = styled.span`
     font-size: 1.6rem;
     font-weight: 400;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
     margin-top: 2.2rem;
 `;
 
@@ -201,7 +202,7 @@ const Winner = styled.div<{ $isVoteFor?: boolean }>`
     width: min-content;
     white-space: nowrap;
     border-radius: 1.75rem;
-    background-color: ${({ $isVoteFor }) => ($isVoteFor ? COLORS.purple : COLORS.pinkRed)};
+    background-color: ${({ $isVoteFor }) => ($isVoteFor ? COLORS.purple500 : COLORS.red500)};
     color: ${COLORS.white};
     font-weight: 400;
     margin-top: 1rem;
@@ -209,8 +210,8 @@ const Winner = styled.div<{ $isVoteFor?: boolean }>`
 `;
 
 const Canceled = styled(Winner)`
-    background-color: ${COLORS.gray};
-    color: ${COLORS.darkGrayText};
+    background-color: ${COLORS.gray100};
+    color: ${COLORS.textDark};
 `;
 
 const FailIconGray = styled(Fail)`
@@ -222,18 +223,18 @@ const FailIconGray = styled(Fail)`
         fill: ${COLORS.white};
     }
     path {
-        stroke: ${COLORS.grayText};
+        stroke: ${COLORS.textGray};
     }
 `;
 
 const EndDate = styled.span`
     font-size: 2rem;
     font-weight: bold;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 `;
 
 const FinalResult = styled.span`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     font-size: 1.4rem;
     margin-top: 1rem;
 `;
@@ -242,7 +243,7 @@ const DiscussionDescription = styled.div`
     font-weight: 400;
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.darkGrayText};
+    color: ${COLORS.textDark};
     margin-top: 1.6rem;
     margin-bottom: 2.5rem;
 `;

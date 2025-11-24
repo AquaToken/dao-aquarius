@@ -1,11 +1,11 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { flexAllCenter } from 'web/mixins';
-import { COLORS } from 'web/styles';
+import IconPending from 'assets/icons/status/pending.svg';
+import IconSuccess from 'assets/icons/status/success.svg';
 
-import IconPending from 'assets/icon-pending.svg';
-import IconSuccess from 'assets/icon-success.svg';
+import { flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 export enum PROPOSAL_STATUS {
     DISCUSSION = 'discussion',
@@ -39,15 +39,15 @@ const Container = styled.div<{ $status: PROPOSAL_STATUS }>`
     background-color: ${({ $status }) => {
         switch ($status) {
             case PROPOSAL_STATUS.DISCUSSION:
-                return COLORS.orange;
+                return COLORS.orange500;
             case PROPOSAL_STATUS.ACTIVE:
-                return COLORS.purple;
+                return COLORS.purple500;
             case PROPOSAL_STATUS.CLOSED:
-                return COLORS.gray;
+                return COLORS.gray100;
             case PROPOSAL_STATUS.DEPRECATED:
-                return COLORS.placeholder;
+                return COLORS.gray200;
             case PROPOSAL_STATUS.EXPIRED:
-                return COLORS.placeholder;
+                return COLORS.gray200;
         }
     }};
     color: ${({ $status }) => {
@@ -57,7 +57,7 @@ const Container = styled.div<{ $status: PROPOSAL_STATUS }>`
             case PROPOSAL_STATUS.ACTIVE:
                 return COLORS.white;
             case PROPOSAL_STATUS.CLOSED:
-                return COLORS.darkGrayText;
+                return COLORS.textDark;
             case PROPOSAL_STATUS.DEPRECATED:
                 return COLORS.white;
             case PROPOSAL_STATUS.EXPIRED:
@@ -75,7 +75,7 @@ const ActiveIcon = styled(IconSuccess)`
     }
 
     path {
-        stroke: ${COLORS.purple};
+        stroke: ${COLORS.purple500};
     }
 `;
 
@@ -89,7 +89,7 @@ const DiscussionIcon = styled(IconPending)`
 
     path,
     circle {
-        stroke: ${COLORS.orange};
+        stroke: ${COLORS.orange500};
     }
 `;
 
@@ -103,7 +103,7 @@ const DeprecatedIcon = styled(IconPending)`
 
     path,
     circle {
-        stroke: ${COLORS.placeholder};
+        stroke: ${COLORS.gray200};
     }
 `;
 
@@ -112,7 +112,6 @@ const ProposalStatus = ({ status, ...props }: { status: PROPOSAL_STATUS }) => (
         {status === PROPOSAL_STATUS.ACTIVE && <ActiveIcon />}
         {status === PROPOSAL_STATUS.DISCUSSION && <DiscussionIcon />}
         {status === PROPOSAL_STATUS.DEPRECATED && <DeprecatedIcon />}
-        {status === PROPOSAL_STATUS.EXPIRED && <DeprecatedIcon />}
         {StatusLabels[status]}
     </Container>
 );

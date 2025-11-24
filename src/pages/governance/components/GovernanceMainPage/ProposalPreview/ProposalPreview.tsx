@@ -7,11 +7,11 @@ import { GovernanceRoutes } from 'constants/routes';
 import { getDateString } from 'helpers/date';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
+import IconFail from 'assets/icons/status/fail-red.svg';
+import IconSuccess from 'assets/icons/status/success.svg';
 
-import IconFail from 'assets/icon-fail.svg';
-import IconSuccess from 'assets/icon-success.svg';
+import { flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import CurrentResults from './CurrentResults/CurrentResults';
 import YourVotes from './YourVotes/YourVotes';
@@ -23,14 +23,14 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     width: 100%;
-    border: 0.1rem solid ${COLORS.border};
+    border: 0.1rem solid ${COLORS.gray600};
     box-sizing: border-box;
     border-radius: 5px;
     padding: 3.4rem 3.2rem 3.2rem;
     background-color: ${COLORS.white};
 
     &:hover {
-        background-color: ${COLORS.lightGray};
+        background-color: ${COLORS.gray50};
     }
 
     &:not(:last-child) {
@@ -65,7 +65,7 @@ const Title = styled.span`
     font-weight: 700;
     font-size: 2rem;
     line-height: 2.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     margin-right: auto;
     grid-area: title;
     align-items: center;
@@ -74,8 +74,8 @@ const Title = styled.span`
 const Id = styled.div`
     padding: 0.2rem 0.4rem;
     ${flexAllCenter};
-    background: ${COLORS.lightGray};
-    color: ${COLORS.grayText};
+    background: ${COLORS.gray50};
+    color: ${COLORS.textGray};
     font-size: 1.4rem;
     font-weight: 400;
     line-height: 2rem;
@@ -99,7 +99,7 @@ const Text = styled.div`
     font-weight: 400;
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 
     ${respondDown(Breakpoints.md)`
         -webkit-line-clamp: 5;
@@ -132,7 +132,7 @@ export const SummaryTitle = styled.div`
     font-weight: 400;
     font-size: 1.4rem;
     line-height: 1.6rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin-bottom: 0.8rem;
 `;
 
@@ -140,7 +140,7 @@ export const SummaryValue = styled.div`
     font-weight: 400;
     font-size: 1.6rem;
     line-height: 2.4rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     overflow: hidden;
     text-overflow: ellipsis;
     display: flex;
@@ -152,11 +152,11 @@ const IconNotEnoughVotes = styled(IconFail)`
     width: 1.6rem;
     margin-right: 0.5rem;
     rect {
-        fill: ${COLORS.gray};
+        fill: ${COLORS.gray100};
     }
 
     path {
-        stroke: ${COLORS.placeholder};
+        stroke: ${COLORS.gray200};
     }
 `;
 
@@ -178,9 +178,9 @@ const ActiveParticipationRate = styled.div`
     align-items: center;
     justify-content: space-between;
     padding: 1.8rem 2.4rem;
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
     border-radius: 0.5rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 
     div {
         display: flex;
@@ -189,7 +189,7 @@ const ActiveParticipationRate = styled.div`
 `;
 
 const Red = styled.span`
-    color: ${COLORS.pinkRed};
+    color: ${COLORS.red500};
 `;
 
 const getStatus = (proposal: ProposalSimple) => {
@@ -200,6 +200,8 @@ const getStatus = (proposal: ProposalSimple) => {
             return PROPOSAL_STATUS.ACTIVE;
         case 'VOTED':
             return PROPOSAL_STATUS.CLOSED;
+        case 'EXPIRED':
+            return PROPOSAL_STATUS.EXPIRED;
     }
 };
 

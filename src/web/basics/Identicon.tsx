@@ -1,7 +1,7 @@
 import createStellarIdenticon from 'stellar-identicon-js';
 import styled from 'styled-components';
 
-import { COLORS } from 'web/styles';
+import { COLORS } from 'styles/style-constants';
 
 const IdenticonBlock = styled.div`
     display: flex;
@@ -10,7 +10,7 @@ const IdenticonBlock = styled.div`
     width: 100%;
     height: 100%;
     background: ${COLORS.white};
-    border: 0.2rem solid ${COLORS.lightGray};
+    border: 0.2rem solid ${COLORS.gray50};
     box-sizing: border-box;
     border-radius: 50%;
 `;

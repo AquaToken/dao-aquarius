@@ -6,17 +6,18 @@ import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/da
 import { formatBalance } from 'helpers/format-number';
 import { createAsset } from 'helpers/token';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
+import { Bribe } from 'types/bribes';
 
-import Aqua from 'assets/aqua-logo-small.svg';
-import Close from 'assets/icon-close-small-purple.svg';
-import Info from 'assets/icon-info.svg';
+import Aqua from 'assets/aqua/aqua-logo.svg';
+import Close from 'assets/icons/nav/icon-close-alt-16.svg';
+import Info from 'assets/icons/status/icon-info-16.svg';
 
 import Asset from 'basics/Asset';
 import Table, { CellAlign } from 'basics/Table';
 
-import { Bribe } from 'pages/bribes/api/types';
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
+
 import { MarketVotesExtra } from 'pages/vote/api/types';
 import {
     BribeDetail,
@@ -38,7 +39,7 @@ const Container = styled.div`
 const Description = styled.div`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
     opacity: 0.7;
     margin-bottom: 3.2rem;
 `;
@@ -67,7 +68,7 @@ const BribeDetails = styled.div`
     flex-direction: column;
     align-items: center;
     padding: 3.8rem;
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
     border-radius: 0.5rem;
     margin-bottom: 3.8rem;
     position: relative;
@@ -98,7 +99,7 @@ export const HowItWorks = styled.div`
 
     ${respondDown(Breakpoints.md)`
         padding: 1.6rem;
-        background-color: ${COLORS.lightGray};
+        background-color: ${COLORS.gray50};
     `}
 `;
 
@@ -127,7 +128,7 @@ const MarketCurrentBribes = ({ extra, bribes }: MarketCurrentBribes) => {
     const startUTC = convertLocalDateToUTCIgnoringTimezone(new Date(start_at));
     const stopUTC = convertLocalDateToUTCIgnoringTimezone(new Date(stop_at));
 
-    const { upvoteSum, upvoteCount } = extra.upvote_assets.reduce(
+    const { upvoteSum, upvoteCount } = (extra?.upvote_assets ?? []).reduce(
         (acc, { votes_count, votes_sum }) => {
             acc.upvoteSum += Number(votes_sum);
             acc.upvoteCount += votes_count;
@@ -178,10 +179,10 @@ const MarketCurrentBribes = ({ extra, bribes }: MarketCurrentBribes) => {
                             you need to have an open trustline.
                         </HowItWorksText>
                         <HowItWorksFooter>
-                            <ExternalLinkWeb href="https://medium.com/aquarius-aqua/introducing-aquarius-bribes-6b0931dc3dd7">
+                            <ExternalLinkWeb href="https://docs.aqua.network/bribes/what-are-bribes">
                                 Learn more about Aquarius Bribes
                             </ExternalLinkWeb>
-                            <ExternalLinkMobile href="https://medium.com/aquarius-aqua/introducing-aquarius-bribes-6b0931dc3dd7">
+                            <ExternalLinkMobile href="https://docs.aqua.network/bribes/what-are-bribes">
                                 Learn more
                             </ExternalLinkMobile>
                             <CloseButton onClick={() => setShowHowItWorks(false)}>
@@ -203,7 +204,7 @@ const MarketCurrentBribes = ({ extra, bribes }: MarketCurrentBribes) => {
                     ...bribes.map(bribe => ({
                         isNarrow: true,
                         key: bribe.asset_code + bribe.asset_issuer,
-                        mobileBackground: COLORS.lightGray,
+                        mobileBackground: COLORS.gray50,
                         rowItems: [
                             {
                                 children: (
@@ -235,7 +236,7 @@ const MarketCurrentBribes = ({ extra, bribes }: MarketCurrentBribes) => {
                     {
                         isNarrow: true,
                         key: 'total',
-                        mobileBackground: COLORS.lightGray,
+                        mobileBackground: COLORS.gray50,
                         rowItems: [
                             { children: 'Total reward per day:' },
                             { children: '' },

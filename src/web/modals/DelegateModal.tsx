@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { NumericFormat } from 'react-number-format';
 import styled from 'styled-components';
 
+import { processIceTx } from 'api/ice';
+
 import ErrorHandler from 'helpers/error-handler';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
@@ -10,24 +12,26 @@ import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 import { StellarService, ToastService } from 'services/globalServices';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+import { isValidPublicKey } from 'services/stellar/utils/validators';
 
 import { Delegatee } from 'types/delegate';
 import { ModalProps } from 'types/modal';
 import { ClassicToken } from 'types/token';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
-import Ice from 'assets/ice-logo.svg';
-import IconProfile from 'assets/icon-profile.svg';
+import IconProfile from 'assets/icons/nav/icon-profile.svg';
+import Ice from 'assets/tokens/ice-logo.svg';
 
 import AssetLogo from 'basics/AssetLogo';
 import { Button } from 'basics/buttons';
 import { Input, RangeInput, Select, ToggleGroup } from 'basics/inputs';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
-import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
+
+import PublicKeyWithIcon from 'components/PublicKeyWithIcon';
+
+import { flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { GOV_ICE, UP_ICE } from 'pages/vote/components/MainPage/MainPage';
 
@@ -53,7 +57,7 @@ const Balance = styled.div`
     right: 0;
     font-size: 1.6rem;
     line-height: 1.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     display: flex;
     align-items: center;
 
@@ -77,7 +81,7 @@ const Labels = styled.div`
 `;
 
 const BalanceClickable = styled.span`
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
     cursor: pointer;
     margin-left: 0.4rem;
     margin-right: 0.4rem;
@@ -93,23 +97,27 @@ const Avatar = styled.img`
     border-radius: 50%;
 `;
 
+const RangeInputStyled = styled(RangeInput)`
+    margin-bottom: 10rem;
+`;
+
 const IconWrapper = styled.div`
     height: 2.4rem;
     width: 2.4rem;
-    background: ${COLORS.gray};
+    background: ${COLORS.gray100};
     border-radius: 50%;
     ${flexAllCenter};
-    color: ${COLORS.lavenderGray};
+    color: ${COLORS.gray300};
 
     svg {
-        margin: 0;
+        margin: 0 !important;
         height: 1.2rem;
         width: 1.2rem;
     }
 `;
 
 const PublicKeyWithIconStyled = styled(PublicKeyWithIcon)`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin-left: 1rem;
 `;
 
@@ -197,7 +205,7 @@ const DelegateModal = ({
                 return;
             }
 
-            if (isManualInput && !StellarService.isValidPublicKey(destination)) {
+            if (isManualInput && !isValidPublicKey(destination)) {
                 ToastService.showErrorToast('Invalid destination address');
                 return;
             }
@@ -211,13 +219,13 @@ const DelegateModal = ({
                 openCurrentWalletIfExist();
             }
             setPending(true);
-            const tx = await StellarService.createDelegateTx(
+            const tx = await StellarService.tx.createDelegateTx(
                 account,
                 selectedToken,
                 destination,
                 amount,
             );
-            const processedTx = await StellarService.processIceTx(tx, selectedToken);
+            const processedTx = await processIceTx(tx, selectedToken);
             const result = await account.signAndSubmitTx(processedTx);
 
             setPending(false);
@@ -240,7 +248,7 @@ const DelegateModal = ({
     };
 
     return (
-        <ModalWrapper>
+        <ModalWrapper $noScroll>
             <ModalTitle>Delegate my ICE</ModalTitle>
 
             <ModalDescription>
@@ -271,7 +279,7 @@ const DelegateModal = ({
                 <Select options={OPTIONS} value={selectedToken} onChange={setSelectedToken} />
             </FormRow>
 
-            <RangeInput onChange={onPercentChange} value={percent} />
+            <RangeInputStyled onChange={onPercentChange} value={percent} />
 
             <FormRow>
                 <Labels>

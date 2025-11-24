@@ -1,43 +1,39 @@
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
-import styled from 'styled-components';
 
 import { IncentivesRoutes } from 'constants/routes';
 
-import FAQ from 'basics/FAQ';
-
 import {
-    AddBribeButton,
     Background,
-    BribesLogo,
-    Description,
     MainContent,
-    MainContentFooter,
     MainContentWrap,
-    PlusIcon,
-    TableContainer,
     Title,
-} from 'pages/bribes/pages/BribesPage';
+    Description,
+    MainContentFooter,
+    AddBribeButton,
+    PlusIcon,
+    BribesLogo,
+    TableContainer,
+} from 'web/pages/bribes/pages/BribesPage/BribesPage.styled';
+
+import FAQ from 'components/FAQ';
+
+import { PageContainer } from 'styles/commonPageStyles';
+
 import IncentivesList from 'pages/incentives/components/IncentivesList/IncentivesList';
 import { lpIncentivesQuestions } from 'pages/incentives/components/Questions/Questions';
-
-const Main = styled.main`
-    flex: 1 0 auto;
-`;
 
 const IncentivesMainPage = () => {
     const history = useHistory();
     return (
-        <Main>
+        <PageContainer>
             <Background>
                 <MainContentWrap>
                     <MainContent>
-                        <Title>LP Incentives</Title>
+                        <Title>Pool Incentives</Title>
                         <Description>
-                            LP incentives are an additional layer of rewards that complement the
-                            AQUA distributions provided by the Aquarius protocol. Anyone can create
-                            LP incentives for liquidity pools using any token traded on the Aquarius
-                            AMM, encouraging liquidity providers to contribute and deepen market
+                            Pool Incentives let anyone add custom rewards — in any token — to
+                            Aquarius pools. Rewards are streamed directly to LPs to attract
                             liquidity.
                         </Description>
                         <MainContentFooter>
@@ -59,7 +55,7 @@ const IncentivesMainPage = () => {
             </TableContainer>
 
             <FAQ questions={lpIncentivesQuestions} />
-        </Main>
+        </PageContainer>
     );
 };
 

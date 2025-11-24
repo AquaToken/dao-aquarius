@@ -3,11 +3,11 @@ import styled, { css } from 'styled-components';
 
 import { formatBalance } from 'helpers/format-number';
 
-import { flexAllCenter } from 'web/mixins';
-import { COLORS } from 'web/styles';
+import Fail from 'assets/icons/status/fail-red.svg';
+import Success from 'assets/icons/status/success.svg';
 
-import Fail from 'assets/icon-fail.svg';
-import Success from 'assets/icon-success.svg';
+import { flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 import { SimpleProposalResultsLabels } from '../../../../pages/GovernanceVoteProposalPage';
 
@@ -20,7 +20,7 @@ const Label = styled.div`
     width: 100%;
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -53,13 +53,13 @@ const progressLineStyles = css`
 const Outer = styled.div`
     ${progressLineStyles};
     width: 100%;
-    background-color: ${COLORS.gray};
+    background-color: ${COLORS.gray100};
 `;
 
 const Inner = styled.div<{ $width: string; $isAgainst: boolean }>`
     ${progressLineStyles};
     width: ${({ $width }) => $width};
-    background-color: ${({ $isAgainst }) => ($isAgainst ? COLORS.pinkRed : COLORS.purple)};
+    background-color: ${({ $isAgainst }) => ($isAgainst ? COLORS.red500 : COLORS.purple500)};
 `;
 
 const ResultProgressLine = ({

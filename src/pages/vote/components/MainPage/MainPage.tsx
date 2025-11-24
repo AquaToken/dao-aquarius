@@ -23,21 +23,19 @@ import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService, StellarService } from 'services/globalServices';
-import { StellarEvents } from 'services/stellar.service';
+import { StellarEvents } from 'services/stellar/events/events';
 
 import { ClassicToken } from 'types/token';
 
-import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import { Breakpoints, COLORS } from 'web/styles';
 
-import BackgroundImageLeft from 'assets/background-left.svg';
-import BackgroundImageRight from 'assets/background-right.svg';
-import dIce from 'assets/dice-logo.svg';
-import Ice from 'assets/ice-logo.svg';
-import Info from 'assets/icon-info.svg';
+import Info from 'assets/icons/status/icon-info-16.svg';
+import dIce from 'assets/tokens/dice-logo.svg';
+import Ice from 'assets/tokens/ice-logo.svg';
+import BackgroundImageLeft from 'assets/vote-page/background-left.svg';
+import BackgroundImageRight from 'assets/vote-page/background-right.svg';
 
-import AssetDropdown from 'basics/AssetDropdown';
+import AssetDropdown from 'basics/asset-pickers/AssetDropdown';
 import Button from 'basics/buttons/Button';
 import { Option } from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
@@ -48,6 +46,9 @@ import Pagination from 'basics/Pagination';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import DelegateBlockSmall from 'components/DelegateBlockSmall';
+
+import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import CreatePairModal from './CreatePairModal/CreatePairModal';
 import FloatingButton from './FloatingButton/FloatingButton';
@@ -73,7 +74,7 @@ const Background = styled.div`
     padding: 10% 0;
     ${flexAllCenter};
     flex-direction: column;
-    background-color: ${COLORS.darkPurple};
+    background-color: ${COLORS.purple900};
     min-height: 10rem;
     max-height: 50vh;
     overflow: hidden;
@@ -213,7 +214,7 @@ const StatusUpdate = styled.div`
     margin-left: auto;
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     white-space: nowrap;
 
     ${respondDown(Breakpoints.md)`
@@ -256,8 +257,8 @@ const CreatePair = styled.div`
     padding-right: 0.8rem;
 
     &:hover {
-        background: ${COLORS.lightGray};
-        border: 0.1rem solid ${COLORS.gray};
+        background: ${COLORS.gray50};
+        border: 0.1rem solid ${COLORS.gray100};
     }
 
     ${respondDown(Breakpoints.md)`
@@ -295,7 +296,7 @@ const InfoIcon = styled(Info)`
 const TotalTooltip = styled.div`
     display: flex;
     flex-direction: column;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     width: 25rem;
 `;
 
@@ -564,11 +565,11 @@ const MainPage = (): React.ReactNode => {
 
         setPairsLoading(true);
 
-        if (!StellarService.isClaimableBalancesLoaded) {
+        if (!StellarService.cb.isClaimableBalancesLoaded) {
             return;
         }
 
-        const keys = StellarService.getKeysSimilarToMarketKeys(account.accountId());
+        const keys = StellarService.cb.getKeysSimilarToMarketKeys(account.accountId());
 
         getUserPairsList(keys).then(result => {
             setPairs(result);
@@ -588,7 +589,7 @@ const MainPage = (): React.ReactNode => {
             setPairsLoading(true);
         }
 
-        const keys = StellarService.getKeysSimilarToMarketKeys(account.accountId());
+        const keys = StellarService.cb.getKeysSimilarToMarketKeys(account.accountId());
 
         getUserPairsList(keys).then(result => {
             setPairs(result);
@@ -880,7 +881,7 @@ const MainPage = (): React.ReactNode => {
                 )}
                 {sort === SortTypes.yourVotes &&
                     !pairs.length &&
-                    StellarService.isClaimableBalancesLoaded &&
+                    StellarService.cb.isClaimableBalancesLoaded &&
                     !pairsLoading && <SearchEnabled>No markets found</SearchEnabled>}
                 {searchBase && searchCounter && !pairs.length && (
                     <CreatePair onClick={() => goToMarketPage()}>

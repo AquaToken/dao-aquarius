@@ -2,6 +2,8 @@ import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
+import { processIceTx } from 'api/ice';
+
 import { GD_ICE_CODE, GOV_ICE_CODE, ICE_ISSUER } from 'constants/assets';
 
 import { getDateString } from 'helpers/date';
@@ -13,26 +15,26 @@ import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 import { StellarService, ToastService } from 'services/globalServices';
-import { StellarEvents } from 'services/stellar.service';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+import { StellarEvents } from 'services/stellar/events/events';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
-import Aqua from 'assets/aqua-logo-small.svg';
-import Ice from 'assets/ice-logo.svg';
-import IconFail from 'assets/icon-fail.svg';
-import IconSuccess from 'assets/icon-success.svg';
+import IconFail from 'assets/icons/status/fail-red.svg';
+import IconSuccess from 'assets/icons/status/success.svg';
+import GDIce from 'assets/tokens/dice-logo.svg';
+import Ice from 'assets/tokens/ice-logo.svg';
 
 import Button from 'basics/buttons/Button';
 import Checkbox from 'basics/inputs/Checkbox';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import Table, { CellAlign } from 'basics/Table';
 
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
+
 import { LogVote, ProposalSimple } from '../../../../api/types';
 
-const AquaLogo = styled(Aqua)`
+const GDIceLogo = styled(GDIce)`
     height: 1.6rem;
     width: 1.6rem;
     margin-left: 0.5rem;
@@ -106,7 +108,7 @@ const YourVotes = ({ proposal }: YourVotesProps): React.ReactNode => {
             setClaims(null);
             return;
         }
-        setClaims(StellarService.getVotesForProposal(proposal, account.accountId()));
+        setClaims(StellarService.cb.getVotesForProposal(proposal, account.accountId()));
     }, [claimUpdateId, account]);
 
     const unlockedClaims = useMemo(() => {
@@ -141,7 +143,7 @@ const YourVotes = ({ proposal }: YourVotesProps): React.ReactNode => {
             let hasGdIce = log?.asset_code === GD_ICE_CODE;
 
             const ops = log
-                ? StellarService.createClaimOperations(log.claimable_balance_id)
+                ? StellarService.op.createClaimOperations(log.claimable_balance_id)
                 : Array.from(selectedClaims.values()).reduce((acc, cb) => {
                       if (cb.asset_code === GOV_ICE_CODE) {
                           hasIce = true;
@@ -152,18 +154,18 @@ const YourVotes = ({ proposal }: YourVotesProps): React.ReactNode => {
                       }
                       return [
                           ...acc,
-                          ...StellarService.createClaimOperations(cb.claimable_balance_id),
+                          ...StellarService.op.createClaimOperations(cb.claimable_balance_id),
                       ];
                   }, []);
 
-            let tx = await StellarService.buildTx(account, ops);
+            let tx = await StellarService.tx.buildTx(account, ops);
 
             if (hasIce) {
-                tx = await StellarService.processIceTx(tx, createAsset(GOV_ICE_CODE, ICE_ISSUER));
+                tx = await processIceTx(tx, createAsset(GOV_ICE_CODE, ICE_ISSUER));
             }
 
             if (hasGdIce) {
-                tx = await StellarService.processIceTx(tx, createAsset(GD_ICE_CODE, ICE_ISSUER));
+                tx = await processIceTx(tx, createAsset(GD_ICE_CODE, ICE_ISSUER));
             }
 
             const result = await account.signAndSubmitTx(tx);
@@ -178,7 +180,7 @@ const YourVotes = ({ proposal }: YourVotesProps): React.ReactNode => {
                 return;
             }
             ToastService.showSuccessToast('Your votes has been claimed back');
-            StellarService.getClaimableBalances(account.accountId());
+            StellarService.cb.getClaimableBalances(account.accountId());
         } catch (e) {
             const errorText = ErrorHandler(e);
             ToastService.showErrorToast(errorText);
@@ -293,7 +295,7 @@ const YourVotes = ({ proposal }: YourVotesProps): React.ReactNode => {
                 body={proposal.logvote_set.map(log => ({
                     key: log.claimable_balance_id,
                     isNarrow: true,
-                    mobileBackground: COLORS.lightGray,
+                    mobileBackground: COLORS.gray50,
                     mobileFontSize: '1.4rem',
                     rowItems: [
                         {
@@ -330,7 +332,7 @@ const YourVotes = ({ proposal }: YourVotesProps): React.ReactNode => {
                             children: (
                                 <Cell>
                                     {formatBalance(Number(log.amount))}
-                                    {log.asset_code === 'AQUA' ? <AquaLogo /> : <IceLogo />}
+                                    {log.asset_code === GOV_ICE_CODE ? <IceLogo /> : <GDIceLogo />}
                                 </Cell>
                             ),
                             label: 'Voted:',

@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import { MAIL_AQUA_LISTINGS } from 'constants/emails';
 import { MainRoutes } from 'constants/routes';
@@ -7,15 +7,15 @@ import { AQUA_DOCS_AUDIT, AQUA_DOCS_URL } from 'constants/urls';
 
 import { normalizePath } from 'helpers/url';
 
-import { commonSectionPaddings, flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS, MAX_WIDTHS } from 'web/styles';
-
 import AquaLogo from 'assets/aqua/aqua-logo-text.svg';
-import Audit from 'assets/audit.svg';
-import Dune from 'assets/DuneLogoCircle.svg';
-import Docs from 'assets/icon-docs.svg';
+import Audit from 'assets/icons/objects/icon-audit-16.svg';
+import Docs from 'assets/icons/objects/icon-docs-16x17.svg';
+import Dune from 'assets/orgs/duneLogoCircle.svg';
 
 import { BlankRouterLink } from 'basics/links';
+
+import { commonSectionPaddings, flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS, MAX_WIDTHS } from 'styles/style-constants';
 
 const FooterBlock = styled.footer`
     ${commonSectionPaddings};
@@ -69,7 +69,7 @@ const LogoWithDesc = styled.div`
 
 const Description = styled.div`
     font-size: 1.4rem;
-    color: ${COLORS.darkGrayText};
+    color: ${COLORS.textDark};
     margin-top: 3.2rem;
 
     ${respondDown(Breakpoints.sm)`
@@ -83,13 +83,13 @@ const LinksAndCopyright = styled.div`
     align-items: end;
     line-height: 180%;
     flex: 1;
-    color: ${COLORS.darkGrayText};
+    color: ${COLORS.textDark};
 `;
 
 const ExchangesAndCopyright = styled.div`
     font-size: 1.2rem;
     line-height: 180%;
-    color: ${COLORS.darkGrayText};
+    color: ${COLORS.textDark};
     text-decoration: none;
     height: 100%;
     display: flex;
@@ -146,24 +146,24 @@ const AquaLinks = styled.div`
 const AquaLink = styled(Link)`
     font-size: 1.2rem;
     line-height: 180%;
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
     text-decoration: none;
 `;
 
 const MailLink = styled.a`
     font-size: 1.2rem;
     line-height: 180%;
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
     text-decoration: none;
 `;
 
 const DocsLink = styled.a`
     ${flexAllCenter};
     border-radius: 0.5rem;
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
     padding: 1.2rem 1.6rem;
     text-decoration: none;
-    color: ${COLORS.darkGrayText};
+    color: ${COLORS.textDark};
     white-space: nowrap;
 
     span {
@@ -175,7 +175,7 @@ const DocsLink = styled.a`
     }
 
     ${respondDown(Breakpoints.md)`
-        background: ${COLORS.gray};
+        background: ${COLORS.gray100};
     `}
 
     ${respondDown(Breakpoints.sm)`
@@ -204,10 +204,17 @@ const WIDE_PAGES = [
     MainRoutes.privacy,
 ];
 
+const PAGES_WITHOUT_FOOTER = [MainRoutes.swap];
+
+const PAGES_WITHOUT_FOOTER_EXACT = [MainRoutes.locker];
+
 const Footer = (): React.ReactNode => {
     const location = useLocation();
 
-    if (location.pathname.startsWith(MainRoutes.swap)) {
+    if (
+        PAGES_WITHOUT_FOOTER.some(page => normalizePath(location.pathname).startsWith(page)) ||
+        PAGES_WITHOUT_FOOTER_EXACT.includes(normalizePath(location.pathname) as MainRoutes)
+    ) {
         return null;
     }
 
@@ -231,7 +238,7 @@ const Footer = (): React.ReactNode => {
                 </LogoWithDesc>
                 <LinksAndCopyright>
                     <DocLinks>
-                        <DocsLink href="https://dune.com/fergmolina/aquarius" target="_blank">
+                        <DocsLink href="https://dune.com/claw/aquarius-stellar" target="_blank">
                             <DuneLogo />
                             Dune dashboard
                         </DocsLink>

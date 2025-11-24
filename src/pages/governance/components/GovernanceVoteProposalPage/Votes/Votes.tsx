@@ -9,17 +9,18 @@ import { getDateString } from 'helpers/date';
 import { getIsTestnetEnv } from 'helpers/env';
 import { formatBalance } from 'helpers/format-number';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
-import DIce from 'assets/dice-logo.svg';
-import Ice from 'assets/ice-logo.svg';
-import ExternalLinkIcon from 'assets/icon-external-link.svg';
+import ExternalLinkIcon from 'assets/icons/nav/icon-external-link-16.svg';
+import DIce from 'assets/tokens/dice-logo.svg';
+import Ice from 'assets/tokens/ice-logo.svg';
 
 import { IconSort } from 'basics/icons';
 import { CircleLoader } from 'basics/loaders';
 import Pagination from 'basics/Pagination';
-import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
+
+import PublicKeyWithIcon from 'components/PublicKeyWithIcon';
+
+import { flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { getVotes, getVoteTxHash, UPDATE_INTERVAL, VoteFields } from '../../../api/api';
 import { Vote } from '../../../api/types';
@@ -32,7 +33,7 @@ const VotesBlock = styled.div`
 const Title = styled.h5`
     font-size: 2rem;
     line-height: 2.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 `;
 const VotesList = styled.div`
     display: flex;
@@ -77,7 +78,7 @@ const VoteRow = styled.div`
     font-size: 1.6rem;
     line-height: 2.8rem;
 
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 
     ${respondDown(Breakpoints.md)`
         font-size: 1.2rem;
@@ -114,12 +115,12 @@ const SortingHeader = styled.button<{ $position: SortingHeaderPosition }>`
         return 'center';
     }};
 
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     & > svg {
         margin-left: 0.4rem;
     }
     &:hover {
-        color: ${COLORS.purple};
+        color: ${COLORS.purple500};
     }
 `;
 

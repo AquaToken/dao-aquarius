@@ -7,17 +7,20 @@ import { createDelegatee } from 'api/delegate';
 
 import { DelegateRoutes } from 'constants/routes';
 
-import { StellarService, ToastService } from 'services/globalServices';
+import { ToastService } from 'services/globalServices';
+import { isValidPublicKey } from 'services/stellar/utils/validators';
 
 import CircleButton from 'web/basics/buttons/CircleButton';
-import { cardBoxShadow, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS, FONT_SIZE } from 'web/styles';
 
-import ArrowLeft from 'assets/icon-arrow-left.svg';
+import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
 
 import { Button } from 'basics/buttons';
-import { Input, TextArea } from 'basics/inputs';
+import { Checkbox, Input, TextArea } from 'basics/inputs';
 import ImageInput from 'basics/inputs/ImageInput';
+import { BlankExternalLink } from 'basics/links';
+
+import { cardBoxShadow, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS, FONT_SIZE } from 'styles/style-constants';
 
 const Container = styled.main`
     flex: 1 0 auto;
@@ -25,7 +28,7 @@ const Container = styled.main`
 
 const Background = styled.div`
     width: 100%;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     padding: 7.7rem 0 21.2rem;
 
     ${respondDown(Breakpoints.md)`
@@ -52,10 +55,14 @@ const FormWrapper = styled(Content)`
     `};
 `;
 
+const CheckboxStyled = styled(Checkbox)`
+    margin-bottom: 2.4rem;
+`;
+
 const Title = styled.h2`
     font-weight: 700;
     ${FONT_SIZE.xxl}
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 
     ${respondDown(Breakpoints.md)`
         width: 100%;
@@ -65,11 +72,11 @@ const Title = styled.h2`
 
 const Description = styled.p`
     ${FONT_SIZE.md};
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
 `;
 
 const DescriptionLink = styled.span`
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
     text-decoration: underline;
 `;
 
@@ -98,6 +105,12 @@ const TextAreaStyled = styled(TextArea)`
     margin-bottom: 2.4rem;
 `;
 
+const CheckboxLabel = styled.span`
+    a {
+        color: ${COLORS.purple500};
+    }
+`;
+
 const ButtonStyled = styled(Button)`
     margin-top: 3.2rem;
 `;
@@ -116,13 +129,13 @@ const LinkStyled = styled(Link)`
 `;
 
 const InputName = styled.span`
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     ${FONT_SIZE.md};
     margin-bottom: 0.8rem;
 `;
 
 const InputDescription = styled.span`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     ${FONT_SIZE.sm};
     margin-bottom: 0.8rem;
 `;
@@ -136,6 +149,9 @@ const BecomeDelegate = () => {
     const [description, setDescription] = useState<string>('');
     const [strategy, setStrategy] = useState<string>('');
     const [xLink, setXLink] = useState<string>('');
+
+    const [agreeWithConduct, setAgreeWithConduct] = useState(false);
+    const [agreeWithEligibility, setAgreeWithEligibility] = useState(false);
 
     const [pending, setPending] = useState<boolean>(false);
 
@@ -158,10 +174,10 @@ const BecomeDelegate = () => {
 
         if (value === '') {
             inputAccountRef.current.setCustomValidity('Required field');
-        } else if (!StellarService.isValidPublicKey(value)) {
+        } else if (!isValidPublicKey(value)) {
             inputAccountRef.current.setCustomValidity('Invalid Stellar public key');
         } else {
-            inputAccountRef.current.setCustomValidity(''); // Очищаем ошибку
+            inputAccountRef.current.setCustomValidity('');
         }
     };
 
@@ -308,7 +324,40 @@ const BecomeDelegate = () => {
                         rows={2}
                     ></TextAreaStyled>
 
-                    <ButtonStyled isBig type="submit" pending={pending}>
+                    <CheckboxStyled
+                        checked={agreeWithConduct}
+                        onChange={setAgreeWithConduct}
+                        label={
+                            <CheckboxLabel>
+                                I have read and agree to comply with the{' '}
+                                <BlankExternalLink href="https://docs.aqua.network/ice-delegation/delegate-code-of-conduct">
+                                    Delegate Code of Conduct
+                                </BlankExternalLink>
+                                .
+                            </CheckboxLabel>
+                        }
+                    />
+
+                    <CheckboxStyled
+                        checked={agreeWithEligibility}
+                        onChange={setAgreeWithEligibility}
+                        label={
+                            <CheckboxLabel>
+                                My application meets the{' '}
+                                <BlankExternalLink href="https://docs.aqua.network/ice-delegation/applying-and-becoming-a-delegate#eligibility-criteria-for-whitelisted-delegates">
+                                    Eligibility Criteria
+                                </BlankExternalLink>
+                                .
+                            </CheckboxLabel>
+                        }
+                    />
+
+                    <ButtonStyled
+                        isBig
+                        type="submit"
+                        pending={pending}
+                        disabled={!agreeWithConduct || !agreeWithEligibility}
+                    >
                         submit
                     </ButtonStyled>
                 </Form>

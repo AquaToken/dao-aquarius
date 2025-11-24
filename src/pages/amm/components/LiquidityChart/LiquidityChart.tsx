@@ -6,17 +6,17 @@ import styled from 'styled-components';
 
 import { ChartPeriods } from 'constants/charts';
 
-import { convertUTCToLocalDateIgnoringTimezone, getDateString } from 'helpers/date';
+import { getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
 import { PoolStatistics } from 'types/amm';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
-import EmptyChart from 'assets/empty-chart.svg';
+import EmptyChart from 'assets/icons/objects/icon-empty-chart-66x48.svg';
 
 import { Select, ToggleGroup } from 'basics/inputs';
+
+import { flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     ${flexAllCenter};
@@ -26,10 +26,10 @@ const Container = styled.div`
 const Axis = styled.g`
     font-size: 1.4rem;
     line-height: 1.6rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 
     path {
-        color: ${COLORS.border};
+        color: ${COLORS.gray600};
     }
 
     line {
@@ -45,7 +45,7 @@ const AxisY = styled(Axis)`
 
 const GrayText = styled.text`
     font-size: 1.4rem;
-    fill: ${COLORS.grayText};
+    fill: ${COLORS.textGray};
 
     ${respondDown(Breakpoints.sm)`
        font-size: 1.2rem;
@@ -54,7 +54,7 @@ const GrayText = styled.text`
 
 const LiquidityValue = styled.text`
     font-size: 2rem;
-    fill: ${COLORS.titleText};
+    fill: ${COLORS.textPrimary};
     font-weight: 700;
 
     ${respondDown(Breakpoints.sm)`
@@ -104,7 +104,7 @@ const Empty = styled.div`
     ${flexAllCenter};
     flex-direction: column;
     gap: 1.6rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 export const transformDate = (date_str: string) => {
@@ -204,6 +204,8 @@ const LiquidityChart = ({
     }, [selectedPeriod]);
 
     useEffect(() => {
+        if (!data || !data.length) return;
+
         const tickValues =
             width < 300
                 ? [
@@ -219,7 +221,7 @@ const LiquidityChart = ({
             // @ts-expect-error
             d3.axisBottom(x).tickFormat(d3.timeFormat('%b %d')).tickValues(tickValues).ticks(2),
         );
-    }, [gx, x, width]);
+    }, [gx, x, data, isGlobalStat]);
 
     useEffect(
         () =>
@@ -294,11 +296,9 @@ const LiquidityChart = ({
                         {selectedIndex !== null && (
                             <GrayText x="16" y="87">
                                 {getDateString(
-                                    convertUTCToLocalDateIgnoringTimezone(
-                                        transformDate(
-                                            data[selectedIndex]?.datetime_str ||
-                                                data[selectedIndex]?.date_str,
-                                        ),
+                                    transformDate(
+                                        data[selectedIndex]?.datetime_str ||
+                                            data[selectedIndex]?.date_str,
                                     )?.getTime(),
                                     {
                                         withTime: !isGlobalStat,
@@ -311,7 +311,7 @@ const LiquidityChart = ({
                     <Axis ref={gx} transform={`translate(0,${height - marginBottom})`} />
                     <AxisY ref={gy} transform={`translate(${marginLeft}, 0)`} />
 
-                    <path fill="none" stroke={COLORS.tooltip} strokeWidth="2" d={line(data)} />
+                    <path fill="none" stroke={COLORS.purple400} strokeWidth="2" d={line(data)} />
                     <path
                         fill="url(#gradient)"
                         stroke="transparent"
@@ -322,7 +322,7 @@ const LiquidityChart = ({
                         {Boolean(selectedIndex) && Boolean(data[selectedIndex]) && (
                             <>
                                 <line
-                                    stroke={COLORS.tooltip}
+                                    stroke={COLORS.purple400}
                                     strokeOpacity={0.2}
                                     strokeDasharray="4 4"
                                     strokeWidth="1"
@@ -342,7 +342,7 @@ const LiquidityChart = ({
                                     y2={height * 0.4}
                                 />
                                 <line
-                                    stroke={COLORS.tooltip}
+                                    stroke={COLORS.purple400}
                                     strokeOpacity={0.2}
                                     strokeDasharray="4 4"
                                     strokeWidth="1"
@@ -355,7 +355,7 @@ const LiquidityChart = ({
                                     stroke={COLORS.white}
                                     strokeWidth="2"
                                     r="2.5"
-                                    fill={COLORS.tooltip}
+                                    fill={COLORS.purple400}
                                     cx={x(
                                         transformDate(
                                             data[selectedIndex]?.datetime_str ||

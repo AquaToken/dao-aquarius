@@ -8,13 +8,13 @@ import { apyValueToDisplay } from 'helpers/amount';
 
 import { PoolProcessed } from 'types/amm';
 
-import { flexColumn, flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS, FONT_SIZE, hexWithOpacity } from 'web/styles';
-
-import Arrow from 'assets/icon-arrow-right-short.svg';
+import Arrow from 'assets/icons/arrows/arrow-alt-16.svg';
 
 import { IconBoost } from 'basics/icons';
 import Label from 'basics/Label';
+
+import { flexColumn, flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS, FONT_SIZE, hexWithOpacity } from 'styles/style-constants';
 
 const Container = styled.div`
     ${flexColumn};
@@ -23,14 +23,14 @@ const Container = styled.div`
 
     ${respondDown(Breakpoints.xs)`
         min-width: unset;
-        ${FONT_SIZE.xs};
+        ${FONT_SIZE.xxs};
     `}
 `;
 
 const BoostBlock = styled(Link)`
     padding: 2.4rem;
     ${flexRowSpaceBetween};
-    background-color: ${COLORS.darkBlue};
+    background-color: ${COLORS.blue700};
     border-radius: 0.5rem 0.5rem 0 0;
     color: ${COLORS.white};
     gap: 2.4rem;
@@ -87,7 +87,7 @@ const ContentRowWithBackground = styled(ContentRow)<{ $background: string }>`
 `;
 
 const Title = styled.span`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 
     ${respondDown(Breakpoints.xs)`
         font-weight: 700;
@@ -97,7 +97,7 @@ const Title = styled.span`
 const Value = styled.div`
     display: flex;
     align-items: center;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     gap: 0.8rem;
 
     ${respondDown(Breakpoints.xs)`
@@ -123,8 +123,8 @@ const LabelTextTotal = styled(LabelText)`
 const Cross = styled.span`
     text-decoration-line: line-through;
     text-decoration-thickness: 0.1rem;
-    text-decoration-color: ${COLORS.grayText};
-    color: ${COLORS.grayText};
+    text-decoration-color: ${COLORS.textGray};
+    color: ${COLORS.textGray};
 `;
 
 interface Props {
@@ -139,7 +139,7 @@ const TotalApyTooltip = ({ pool, withBoost, userBoost }: Props) => (
             <BoostBlock to={MainRoutes.locker}>
                 <BoostBlockContent>
                     <Label
-                        color={COLORS.darkBlue}
+                        color={COLORS.blue700}
                         background={COLORS.white}
                         labelSize="big"
                         labelText={
@@ -191,14 +191,14 @@ const TotalApyTooltip = ({ pool, withBoost, userBoost }: Props) => (
                 </ContentRow>
             )}
             {!withBoost && (
-                <ContentRowWithBackground $background={hexWithOpacity(COLORS.placeholder, 20)}>
-                    <Title>Total APY:</Title>
+                <ContentRowWithBackground $background={hexWithOpacity(COLORS.gray200, 20)}>
+                    <Title>Total APR:</Title>
                     <Value>{apyValueToDisplay(pool.total_apy)}</Value>
                 </ContentRowWithBackground>
             )}
             {Boolean(userBoost) && (
-                <ContentRowWithBackground $background={hexWithOpacity(COLORS.purple, 10)}>
-                    <Title>Your Boost APY:</Title>
+                <ContentRowWithBackground $background={hexWithOpacity(COLORS.purple500, 10)}>
+                    <Title>Your Boost APR:</Title>
                     <Value>
                         <LabelTextTotal>
                             <IconBoost />
@@ -211,7 +211,7 @@ const TotalApyTooltip = ({ pool, withBoost, userBoost }: Props) => (
                             )}
                         </LabelTextTotal>
                         <Label
-                            background={COLORS.darkBlue}
+                            background={COLORS.blue700}
                             labelSize="medium"
                             labelText={
                                 userBoost === 1
@@ -225,8 +225,8 @@ const TotalApyTooltip = ({ pool, withBoost, userBoost }: Props) => (
                 </ContentRowWithBackground>
             )}
             {withBoost && (
-                <ContentRowWithBackground $background={hexWithOpacity(COLORS.darkBlue, 10)}>
-                    <Title>Max Boost APY:</Title>
+                <ContentRowWithBackground $background={hexWithOpacity(COLORS.blue700, 10)}>
+                    <Title>Max Boost APR:</Title>
                     <Value>
                         <Cross>{apyValueToDisplay(pool.total_apy)}</Cross>
                         <LabelTextTotal>

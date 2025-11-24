@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { COLORS } from 'web/styles';
+import { COLORS } from 'styles/style-constants';
 
 const ButtonBody = styled.button<{ isVoteFor?: boolean }>`
     display: flex;
@@ -15,7 +15,7 @@ const ButtonBody = styled.button<{ isVoteFor?: boolean }>`
 
     color: ${COLORS.white};
 
-    background-color: ${({ isVoteFor }) => (isVoteFor ? COLORS.pinkRed : COLORS.purple)};
+    background-color: ${({ isVoteFor }) => (isVoteFor ? COLORS.red500 : COLORS.purple500)};
 
     border-radius: 0.5rem;
     border: none;
@@ -31,8 +31,8 @@ const ButtonBody = styled.button<{ isVoteFor?: boolean }>`
     }
 
     &:disabled {
-        background-color: ${COLORS.gray};
-        color: ${COLORS.placeholder};
+        background-color: ${COLORS.gray100};
+        color: ${COLORS.gray200};
         pointer-events: none;
     }
 `;

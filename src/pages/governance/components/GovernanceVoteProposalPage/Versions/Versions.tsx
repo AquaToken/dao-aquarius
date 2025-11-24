@@ -6,10 +6,10 @@ import { GovernanceRoutes } from 'constants/routes';
 
 import { getDateString } from 'helpers/date';
 
-import { flexAllCenter } from 'web/mixins';
-import { COLORS } from 'web/styles';
+import ExternalLinkIcon from 'assets/icons/nav/icon-external-link-16.svg';
 
-import ExternalLinkIcon from 'assets/icon-external-link.svg';
+import { flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 import { Proposal } from '../../../api/types';
 
@@ -29,7 +29,7 @@ const Row = styled.div`
     font-weight: 400;
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 `;
 
 const HeadRow = styled(Row)`
@@ -37,7 +37,7 @@ const HeadRow = styled(Row)`
     font-weight: 400;
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const Item = styled.div`
@@ -48,7 +48,7 @@ const Item = styled.div`
 
 const Details = styled(Item)`
     justify-content: flex-end;
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
     cursor: pointer;
     text-decoration: none;
 
@@ -62,11 +62,11 @@ const Latest = styled.div`
     height: 2.3rem;
     padding: 0 0.8rem;
     margin-left: 0.8rem;
-    border: 0.1rem solid ${COLORS.purple};
+    border: 0.1rem solid ${COLORS.purple500};
     border-radius: 3rem;
     font-weight: 400;
     font-size: 1.2rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 `;
 
 const Versions = ({ proposal }: { proposal: Proposal }) => {

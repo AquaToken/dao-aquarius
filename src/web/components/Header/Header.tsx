@@ -9,19 +9,20 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
 
-import { commonMaxWidth, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import { Breakpoints, COLORS, Z_INDEX } from 'web/styles';
 
 import AquaLogo from 'assets/aqua/aqua-logo-text.svg';
-import IconProfile from 'assets/icon-profile.svg';
+import IconProfile from 'assets/icons/nav/icon-profile.svg';
 
 import { ActiveProposals } from 'components/Header/ActiveProposals/ActiveProposals';
 import ExpandedMenu from 'components/Header/ExpandedMenu/ExpandedMenu';
 
+import { commonMaxWidth, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS, HEADER_HEIGHT, Z_INDEX } from 'styles/style-constants';
+
 import { getActiveProposalsCount } from 'pages/governance/api/api';
 
-import AccountBlock from '../AccountBlock';
+import AccountBlock from './AccountBlock';
 
 const Container = styled.header`
     ${commonMaxWidth};
@@ -30,7 +31,7 @@ const Container = styled.header`
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    height: 11.2rem;
+    height: ${HEADER_HEIGHT};
     padding: 0 4rem;
     z-index: ${Z_INDEX.header};
     background: ${COLORS.white};
@@ -44,7 +45,7 @@ const Container = styled.header`
 
 const Aqua = styled(AquaLogo)`
     height: 4.4rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 
     ${respondDown(Breakpoints.md)`
         height: 3.4rem;
@@ -58,12 +59,12 @@ export const linkStyles = css`
     white-space: nowrap;
 
     &:hover {
-        color: ${COLORS.purple}!important;
+        color: ${COLORS.purple500} !important;
     }
 `;
 
 const NavLinkStyled = styled(NavLink)<{ $disabled?: boolean }>`
-    color: ${({ $disabled }) => ($disabled ? COLORS.grayText : COLORS.titleText)}!important;
+    color: ${({ $disabled }) => ($disabled ? COLORS.textGray : COLORS.textPrimary)}!important;
     font-weight: ${({ $disabled }) => ($disabled ? '400!important' : 'unset')};
     ${linkStyles};
 
@@ -94,7 +95,7 @@ const NavLinkWithCount = styled.div`
 const Divider = styled.div`
     height: 2.4rem;
     width: 0;
-    border-left: 0.1rem solid ${COLORS.gray};
+    border-left: 0.1rem solid ${COLORS.gray100};
     margin: 0 2.4rem;
 
     ${respondDown(Breakpoints.lg)`
@@ -104,11 +105,10 @@ const Divider = styled.div`
 
     ${respondDown(Breakpoints.md)`
          border-left: none;
-         margin-right: 0;
          height: 0;
          width: 20rem;
          margin: 2.4rem 0;
-         border-top: 0.1rem solid ${COLORS.gray};
+         border-top: 0.1rem solid ${COLORS.gray100};
     `};
 `;
 
@@ -126,11 +126,11 @@ const NavLinks = styled.div`
     align-items: center;
 
     a {
-        color: ${COLORS.titleText};
+        color: ${COLORS.textPrimary};
         text-decoration: none;
 
         &:hover {
-            color: ${COLORS.purple};
+            color: ${COLORS.purple500};
         }
 
         &::before {
@@ -176,12 +176,12 @@ const MyAquarius = styled(NavLink)`
     align-items: center;
     padding: 0 1.6rem;
     height: 4.8rem;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     border-radius: 0.6rem;
     cursor: pointer;
     font-size: 1.6rem;
     line-height: 2.4rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     text-decoration: none;
 
     div::after {
@@ -202,7 +202,7 @@ const MyAquarius = styled(NavLink)`
     }
 
     &:hover {
-        color: ${COLORS.purple};
+        color: ${COLORS.purple500};
     }
 
     ${respondDown(Breakpoints.xl)`
@@ -260,15 +260,6 @@ const Links = () => {
                         >
                             AQUA Rewards
                         </NavLinkStyled>
-                        {/*<NavLinkStyled*/}
-                        {/*    to={MainRoutes.incentives}*/}
-                        {/*    activeStyle={{*/}
-                        {/*        fontWeight: 700,*/}
-                        {/*    }}*/}
-                        {/*    title="Pools Incentives"*/}
-                        {/*>*/}
-                        {/*    LP Incentives*/}
-                        {/*</NavLinkStyled>*/}
                         <NavLinkStyled
                             to={MainRoutes.bribes}
                             activeStyle={{
@@ -278,12 +269,21 @@ const Links = () => {
                         >
                             Bribes
                         </NavLinkStyled>
+                        <NavLinkStyled
+                            to={MainRoutes.incentives}
+                            activeStyle={{
+                                fontWeight: 700,
+                            }}
+                            title="Pool Incentives"
+                        >
+                            Pool Incentives
+                        </NavLinkStyled>
                     </>
                 }
             />
 
             <ExpandedMenu
-                title="Governance"
+                title="DAO"
                 counts={proposalsCounts}
                 links={
                     <>
@@ -328,19 +328,9 @@ const Links = () => {
             />
 
             <ExpandedMenu
-                title="AQUA Token"
+                title="AQUA & ICE"
                 links={
                     <>
-                        <NavLinkStyled
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
-                            title="About"
-                            to={MainRoutes.token}
-                        >
-                            About
-                        </NavLinkStyled>
-
                         <NavLinkStyled
                             to={MainRoutes.locker}
                             activeStyle={{
@@ -349,6 +339,15 @@ const Links = () => {
                             title="Lock AQUA"
                         >
                             Lock AQUA
+                        </NavLinkStyled>
+                        <NavLinkStyled
+                            activeStyle={{
+                                fontWeight: 700,
+                            }}
+                            title="About"
+                            to={MainRoutes.token}
+                        >
+                            About
                         </NavLinkStyled>
                     </>
                 }

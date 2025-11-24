@@ -3,12 +3,12 @@ import styled from 'styled-components';
 
 import { formatBalance } from 'helpers/format-number';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints } from 'web/styles';
-
-import Aqua from 'assets/aqua-logo-small.svg';
+import Aqua from 'assets/aqua/aqua-logo.svg';
 
 import DotsLoader from 'basics/loaders/DotsLoader';
+
+import { cardBoxShadow, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { TotalRewards } from 'pages/vote/api/types';
 
@@ -37,8 +37,8 @@ const Card = styled.div`
     align-items: flex-start;
     padding: 6rem 5.8rem;
     margin-top: -7rem;
-    background: #ffffff;
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
+    background: ${COLORS.white};
+    ${cardBoxShadow};
     border-radius: 0.5rem;
 
     &:first-child {

@@ -8,8 +8,8 @@ import SentryService from 'services/sentry.service';
 
 import Button from 'basics/buttons/Button';
 
-import { flexAllCenter } from '../mixins';
-import { COLORS } from '../styles';
+import { flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 interface State {
     isError: boolean;
@@ -23,7 +23,7 @@ const Container = styled.div`
 
 const Title = styled.h3`
     font-size: 2rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     margin-bottom: 5rem;
 `;
 

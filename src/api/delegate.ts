@@ -1,8 +1,6 @@
-// https://api-delegation.aqua.network/api/delegation/stats/?format=json
-//api-delegation.aqua.network/api/delegation/GAXL77JO7PKJ6IVO3LVZEYTMRN2ZG5A5N7ZQXLCR2RORTAKE4NAJQBAX/distribution?format=json
-
 import axios from 'axios';
 
+import { API_DELEGATION_URL } from 'constants/api';
 import { ICE_DELEGATION_MAP } from 'constants/assets';
 
 import { getAssetString } from 'helpers/assets';
@@ -14,16 +12,18 @@ import { getMarketsMap } from 'pages/vote/api/api';
 import { MarketKey } from 'pages/vote/api/types';
 import { UP_ICE } from 'pages/vote/components/MainPage/MainPage';
 
-const API_URL = 'https://api-delegation.aqua.network/api/delegation/v2/';
+const API_URL_V1 = `${API_DELEGATION_URL}`;
+const API_URL_V2 = `${API_DELEGATION_URL}v2/`;
 
 export const getDelegatees = (): Promise<Delegatee[]> =>
     axios
-        .get<Delegatee[]>(`${API_URL}stats/`)
+        .get<Delegatee[]>(`${API_URL_V2}stats/`)
         .then(({ data }) =>
             data.sort(
                 (a, b) =>
                     +b.is_recommended - +a.is_recommended ||
-                    +b.managed_ice[getAssetString(UP_ICE)] - +a.managed_ice[getAssetString(UP_ICE)],
+                    (+b.managed_ice?.[getAssetString(UP_ICE)] || 0) -
+                        (+a.managed_ice?.[getAssetString(UP_ICE)] || 0),
             ),
         );
 
@@ -33,7 +33,7 @@ export const getDelegateeVotes = async (
 ): Promise<(DelegateeVote & MarketKey)[]> => {
     const votes = await axios
         .get<DelegateeVote[]>(
-            `${API_URL}${accountId}/distribution?asset=${ICE_DELEGATION_MAP.get(
+            `${API_URL_V2}${accountId}/distribution?asset=${ICE_DELEGATION_MAP.get(
                 getAssetString(token),
             )}`,
         )
@@ -66,7 +66,7 @@ function combine(data: MyDelegatees[]): Partial<Delegatee>[] {
 
 export const getMyDelegatees = (accountId: string): Promise<Partial<Delegatee>[]> =>
     axios
-        .get<MyDelegatees[]>(`${API_URL}${accountId}/delegation/`)
+        .get<MyDelegatees[]>(`${API_URL_V2}${accountId}/delegation/`)
         .then(({ data }) => combine(data));
 
 type CreateDelegateeArgs = {
@@ -103,5 +103,5 @@ export const createDelegatee = ({
 
     const headers = { 'Content-Type': 'application/json' };
 
-    return axios.post(`${API_URL}application/`, body, { headers });
+    return axios.post(`${API_URL_V1}application/`, body, { headers });
 };

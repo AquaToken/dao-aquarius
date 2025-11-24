@@ -1,13 +1,13 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { Asset } from 'types/stellar';
+import { Token } from 'types/token';
 
-import Fail from 'assets/icon-fail.svg';
+import Fail from 'assets/icons/status/fail-red.svg';
 
 import AssetLogo from 'basics/AssetLogo';
 
-import { COLORS } from '../styles';
+import { COLORS } from 'styles/style-constants';
 
 const ChipsBlock = styled.div`
     display: flex;
@@ -17,7 +17,7 @@ const ChipsItem = styled.div`
     display: flex;
     align-items: center;
     padding: 0.8rem 1.6rem;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     border-radius: 0.4rem;
     margin-right: 0.5rem;
 
@@ -26,13 +26,13 @@ const ChipsItem = styled.div`
         margin-right: 1.6rem;
         font-size: 1.6rem;
         line-height: 2.8rem;
-        color: ${COLORS.paragraphText};
+        color: ${COLORS.textTertiary};
     }
 `;
 
 const ResetChips = styled(Fail)`
     rect {
-        fill: ${COLORS.paragraphText};
+        fill: ${COLORS.textTertiary};
     }
     height: 1.6rem;
     width: 1.6rem;
@@ -40,14 +40,14 @@ const ResetChips = styled(Fail)`
 `;
 
 interface ChipsProps {
-    assets: Asset[];
-    resetAsset: (e: React.MouseEvent, asset: Asset) => void;
+    assets: Token[];
+    resetAsset: (e: React.MouseEvent, asset: Token) => void;
 }
 
 const Chips = ({ assets, resetAsset, ...props }: ChipsProps): React.ReactNode => (
     <ChipsBlock {...props}>
         {assets.map(asset => (
-            <ChipsItem key={`${asset.code}-${asset.issuer}`}>
+            <ChipsItem key={asset.contract}>
                 <AssetLogo asset={asset} isCircle />
                 <span>{asset.code}</span>
                 <ResetChips onClick={(e: React.MouseEvent) => resetAsset(e, asset)} />

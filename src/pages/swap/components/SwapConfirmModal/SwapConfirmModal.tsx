@@ -12,53 +12,45 @@ import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 import { ModalService, SorobanService, ToastService } from 'services/globalServices';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { ModalProps } from 'types/modal';
 import { SorobanToken, Token, TokenType } from 'types/token';
-
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
-import Market from 'basics/Market';
 import { ModalDescription, ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms';
+
+import SwapTokenDirection from 'components/SwapTokenDirection';
+
+import { flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
+
+import SwapSuccessModal from 'pages/swap/components/SwapSuccessModal/SwapSuccessModal';
 
 import PathPool from './PathPool/PathPool';
 
-import SuccessModal from '../../../amm/components/SuccessModal/SuccessModal';
 import { SWAP_SLIPPAGE_ALIAS } from '../SwapSettingsModal/SwapSettingsModal';
-
-const AssetsInfo = styled.div`
-    ${flexAllCenter};
-    padding: 3.5rem 0;
-    background-color: ${COLORS.lightGray};
-    border-radius: 0.5rem;
-`;
 
 const DescriptionRow = styled.div`
     ${flexRowSpaceBetween};
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     font-size: 1.6rem;
     padding: 1.5rem 0;
 
     span:last-child {
-        color: ${COLORS.paragraphText};
+        color: ${COLORS.textTertiary};
+        text-align: right;
     }
-`;
-
-const Divider = styled.div`
-    border-bottom: 0.1rem dashed ${COLORS.gray};
-    margin: 3.2rem 0;
 `;
 
 const Pools = styled.div`
     display: flex;
     flex-wrap: wrap;
+    margin-bottom: 3.2rem;
 
     ${respondDown(Breakpoints.md)`
         flex-direction: column;
@@ -201,12 +193,12 @@ const SwapConfirmModal = ({
                       )
                     : counterAmount;
 
-                ModalService.openModal(SuccessModal, {
-                    assets: [base, counter],
-                    amounts: [sentAmount, receivedAmount],
-                    title: 'Swap Successful',
-                    isSwap: true,
-                    hash,
+                ModalService.openModal(SwapSuccessModal, {
+                    source: base,
+                    destination: counter,
+                    sourceAmount: sentAmount,
+                    destinationAmount: receivedAmount,
+                    txHash: hash,
                 });
 
                 if (base.type === TokenType.soroban) {
@@ -239,11 +231,9 @@ const SwapConfirmModal = ({
 
     return (
         <ModalWrapper>
-            <ModalTitle>Confirm swap</ModalTitle>
-            <ModalDescription>Please check all the details to make a swap</ModalDescription>
-            <AssetsInfo>
-                <Market verticalDirections assets={[base, counter]} />
-            </AssetsInfo>
+            <ModalTitle>Confirm Swap</ModalTitle>
+            <ModalDescription>Review amounts, rate, and fees before confirming</ModalDescription>
+            <SwapTokenDirection assets={[base, counter]} />
             <DescriptionRow>
                 <span>You give</span>
                 <span>
@@ -307,10 +297,8 @@ const SwapConfirmModal = ({
                     })}
                 </Pools>
             )}
-
-            <Divider />
             <StickyButtonWrapper>
-                <Button fullWidth isBig pending={swapPending} onClick={() => swap()}>
+                <Button fullWidth isBig pending={swapPending} isRounded onClick={() => swap()}>
                     Confirm Swap
                 </Button>
             </StickyButtonWrapper>

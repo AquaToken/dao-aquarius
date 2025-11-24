@@ -11,19 +11,21 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
 
-import { commonMaxWidth, flexAllCenter, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import { Breakpoints, COLORS } from 'web/styles';
 
-import BackgroundImageLeft from 'assets/background-left.svg';
-import BackgroundImageRight from 'assets/background-right.svg';
-import ArrowDown from 'assets/icon-arrow-down.svg';
+import ArrowDown from 'assets/icons/arrows/arrow-down-16.svg';
+import BackgroundImageLeft from 'assets/vote-page/background-left.svg';
+import BackgroundImageRight from 'assets/vote-page/background-right.svg';
 
-import FAQ from 'basics/FAQ';
 import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 import PageLoader from 'basics/loaders/PageLoader';
 import Pagination from 'basics/Pagination';
+
+import FAQ from 'components/FAQ';
+
+import { commonMaxWidth, flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { governanceQuestions } from 'pages/governance/components/GovernanceMainPage/FAQ/Questions';
 
@@ -43,7 +45,7 @@ const Background = styled.div`
     padding: 10% 4rem;
     ${flexAllCenter};
     flex-direction: column;
-    background-color: ${COLORS.darkPurple};
+    background-color: ${COLORS.purple900};
     min-height: 10rem;
     max-height: 40vh;
     overflow: hidden;
@@ -123,7 +125,7 @@ const ProposalsBlockWrapper = styled.div`
 
     ${respondDown(Breakpoints.md)`
         padding: 5.5rem 1.6rem 0; 
-        background: ${COLORS.lightGray};
+        background: ${COLORS.gray50};
         margin-bottom: 0;
     `}
 `;
@@ -149,7 +151,8 @@ const TitleBlock = styled.div`
     display: flex;
     justify-content: space-between;
     margin-bottom: 4.8rem;
-    align-items: center;
+    flex-direction: column;
+    gap: 1rem;
 
     ${respondDown(Breakpoints.lg)`
         flex-direction: column;
@@ -160,7 +163,7 @@ const ProposalsTitle = styled.h3`
     font-size: 4rem;
     line-height: 6.4rem;
     font-weight: bold;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 
     ${respondDown(Breakpoints.lg)`
          margin-bottom: 5.5rem;
@@ -213,7 +216,7 @@ const EmptyTitle = styled.span`
     font-weight: 700;
     font-size: 2rem;
     line-height: 2.8rem;
-    color: ${COLORS.buttonBackground};
+    color: ${COLORS.purple950};
     margin-bottom: 0.8rem;
 `;
 
@@ -221,12 +224,12 @@ const EmptyDescription = styled.div`
     font-weight: 400;
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     text-align: center;
 `;
 
 const EmptyLink = styled.span`
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
     text-decoration: underline;
     cursor: pointer;
 `;
@@ -269,6 +272,7 @@ const Options = [
     { label: 'Active', value: PROPOSAL_FILTER.ACTIVE },
     { label: 'Discussion', value: PROPOSAL_FILTER.DISCUSSION },
     { label: 'Finished', value: PROPOSAL_FILTER.CLOSED },
+    { label: 'Expired', value: PROPOSAL_FILTER.EXPIRED },
     { label: 'My Proposals', value: PROPOSAL_FILTER.MY },
     { label: 'My Votes', value: PROPOSAL_FILTER.MY_VOTES },
     { label: 'History', value: PROPOSAL_FILTER.HISTORY },
@@ -335,6 +339,7 @@ const GovernanceMainPage = (): JSX.Element => {
 
         filterRef.current = params.get(UrlParams.filter);
         setFilter(params.get(UrlParams.filter));
+        setPage(1);
     }, [location, isLogged]);
 
     useEffect(() => {

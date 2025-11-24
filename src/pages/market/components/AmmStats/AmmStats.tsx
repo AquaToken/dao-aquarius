@@ -4,10 +4,10 @@ import styled from 'styled-components';
 
 import { Asset } from 'types/stellar';
 
-import { flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import { ToggleGroup } from 'basics/inputs';
+
+import { flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import ClassicAmmStats from 'pages/market/components/AmmStats/ClassicAmmStats/ClassicAmmStats';
 import SorobanAmmStats from 'pages/market/components/AmmStats/SorobanAmmStats/SorobanAmmStats';
@@ -37,7 +37,7 @@ const Title = styled.span`
     font-weight: 700;
     font-size: 2rem;
     line-height: 2.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 
     ${respondDown(Breakpoints.md)`
         margin-bottom: 1.6rem;

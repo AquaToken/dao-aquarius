@@ -2,21 +2,21 @@ import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
+import Left from 'assets/icons/arrows/arrow-left-16.svg';
+import Right from 'assets/icons/arrows/arrow-right-16.svg';
 
-import Left from 'assets/icon-arrow-left.svg';
-import Right from 'assets/icon-arrow-right.svg';
+import { flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     width: 100%;
     display: flex;
     flex-direction: row;
     padding: 3.2rem 0;
-    border-top: 0.1rem solid ${COLORS.gray};
+    border-top: 0.1rem solid ${COLORS.gray100};
     margin-top: 1.6rem;
     justify-content: space-between;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 
     &::after {
         content: '';
@@ -55,7 +55,7 @@ const ArrowRight = styled(Right)`
 `;
 
 const BlackText = styled.span`
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 `;
 
 type PaginationProps = {
@@ -69,7 +69,7 @@ type PaginationProps = {
 const PageButton = styled.span<{ $isActive: boolean }>`
     padding: 0 1.2rem;
     cursor: pointer;
-    color: ${({ $isActive }) => ($isActive ? COLORS.paragraphText : COLORS.grayText)};
+    color: ${({ $isActive }) => ($isActive ? COLORS.textTertiary : COLORS.textGray)};
 `;
 
 const PAGES_CONTROLS_COUNT = 3;

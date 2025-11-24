@@ -4,14 +4,14 @@ import styled from 'styled-components';
 
 import { getAssetString } from 'helpers/assets';
 
-import { Asset } from 'types/stellar';
+import { ClassicToken } from 'types/token';
 
-import { flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
-import ExternalLink from 'basics/ExternalLink';
 import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
+import { ExternalLink } from 'basics/links';
+
+import { flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import DailyStats from './DailyStats/DailyStats';
 import LightWeightChart, { PeriodOptions } from './LightWeightChart/LightWeightChart';
@@ -44,7 +44,7 @@ const Title = styled.span`
     font-weight: 700;
     font-size: 2rem;
     line-height: 2.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 
     ${respondDown(Breakpoints.md)`
         margin-bottom: 1.6rem;
@@ -62,7 +62,7 @@ const ToggleGroupMobile = styled(Select)`
 
     ${respondDown(Breakpoints.md)`
         display: flex;
-        margin-bottom  3.2rem
+        margin-bottom : 3.2rem;
     `}
 `;
 
@@ -80,8 +80,8 @@ const OPTIONS = [
 ];
 
 interface TradeStatsProps {
-    base: Asset;
-    counter: Asset;
+    base: ClassicToken;
+    counter: ClassicToken;
 }
 
 const TradeStats = ({ base, counter }: TradeStatsProps): React.ReactNode => {

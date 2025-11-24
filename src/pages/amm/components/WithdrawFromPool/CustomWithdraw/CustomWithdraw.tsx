@@ -14,17 +14,14 @@ import { useDebounce } from 'hooks/useDebounce';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 import { ModalService, SorobanService, ToastService } from 'services/globalServices';
-import { estimateCustomWithdraw } from 'services/soroban/contracts/ammContract';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { PoolExtended, PoolIncentives } from 'types/amm';
 import { Int128Parts } from 'types/stellar';
 import { TokenType } from 'types/token';
 
 import Input from 'web/basics/inputs/Input';
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';
@@ -33,6 +30,9 @@ import { Checkbox } from 'basics/inputs';
 import { StickyButtonWrapper } from 'basics/ModalAtoms';
 
 import NoTrustline from 'components/NoTrustline';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import SuccessModal from 'pages/amm/components/SuccessModal/SuccessModal';
 
@@ -52,7 +52,7 @@ const StyledButton = styled(Button)`
 `;
 
 const Divider = styled.div`
-    border-top: 0.1rem dashed ${COLORS.gray};
+    border-top: 0.1rem dashed ${COLORS.gray100};
     margin-top: 3.2rem;
     padding-top: 3.2rem;
 `;
@@ -146,14 +146,15 @@ const CustomWithdraw = ({ pool, accountShare, rewards, close, incentives }: Prop
             return;
         }
 
-        estimateCustomWithdraw(
-            account.accountId(),
-            pool.address,
-            accountShare,
-            debouncedAmounts,
-            pool.tokens,
-            pool.share_token_address,
-        )
+        SorobanService.amm
+            .estimateCustomWithdraw(
+                account.accountId(),
+                pool.address,
+                accountShare,
+                debouncedAmounts,
+                pool.tokens,
+                pool.share_token_address,
+            )
             .then(res => {
                 setEstimatedValue(res);
             })

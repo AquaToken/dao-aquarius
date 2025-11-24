@@ -6,10 +6,10 @@ import { formatBalance } from 'helpers/format-number';
 
 import { Asset } from 'types/stellar';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import PageLoader from 'basics/loaders/PageLoader';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { getRewards } from 'pages/vote/api/api';
 
@@ -30,13 +30,13 @@ const Title = styled.span`
     font-size: 2rem;
     line-height: 2.8rem;
     margin-bottom: 4rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 `;
 
 const Description = styled.div`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
     opacity: 0.7;
     margin-bottom: 3.2rem;
 `;
@@ -68,7 +68,7 @@ const DetailsColumn = styled.div`
 const DetailTitle = styled.span`
     font-size: 1.4rem;
     line-height: 1.6rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin-bottom: 0.8rem;
 `;
 
@@ -76,7 +76,7 @@ const DetailValue = styled.span`
     font-weight: 700;
     font-size: 2rem;
     line-height: 2.8rem;
-    color: ${COLORS.buttonBackground};
+    color: ${COLORS.purple950};
     width: min-content;
     white-space: nowrap;
 `;

@@ -2,16 +2,16 @@ import styled, { css } from 'styled-components';
 
 import { MAIL_AQUA_HELLO } from 'constants/emails';
 
-import Discord from 'assets/discord.svg';
-import Email from 'assets/email.svg';
-import Github from 'assets/github.svg';
-import Medium from 'assets/medium.svg';
-import Reddit from 'assets/reddit.svg';
-import Telegram from 'assets/telegram.svg';
-import Twitter from 'assets/twitter.svg';
+import Discord from 'assets/community/discord.svg';
+import Email from 'assets/community/email.svg';
+import Github from 'assets/community/github.svg';
+import Medium from 'assets/community/medium.svg';
+import Reddit from 'assets/community/reddit.svg';
+import Telegram from 'assets/community/telegram.svg';
+import Twitter from 'assets/community/twitter.svg';
 
-import { respondDown } from '../mixins';
-import { Breakpoints, COLORS } from '../styles';
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const VerticalStyles = css`
     position: absolute;
@@ -56,7 +56,7 @@ const Container = styled.div<{ $isHorizontal?: boolean }>`
     ${({ $isHorizontal }) => ($isHorizontal ? HorizontalStyles : VerticalStyles)};
 
     a:hover svg path:not(.white) {
-        fill: ${COLORS.purple};
+        fill: ${COLORS.purple500};
     }
 `;
 
@@ -65,7 +65,7 @@ const StayInTouch = styled.div<{ $isHorizontal?: boolean }>`
     align-items: center;
     font-size: 1.6rem;
     line-height: 1.9rem;
-    color: ${COLORS.placeholder};
+    color: ${COLORS.gray200};
     white-space: nowrap;
     transform: rotate(-90deg);
     margin-top: 8.5rem;
@@ -74,7 +74,7 @@ const StayInTouch = styled.div<{ $isHorizontal?: boolean }>`
 const Line = styled.div`
     width: 6.7rem;
     height: 1px;
-    background-color: ${COLORS.placeholder};
+    background-color: ${COLORS.gray200};
     margin-left: 1.6rem;
 `;
 

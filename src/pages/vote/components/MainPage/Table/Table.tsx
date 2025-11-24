@@ -9,17 +9,17 @@ import { createAsset } from 'helpers/token';
 
 import { ModalService } from 'services/globalServices';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
-import ArrowRight from 'assets/icon-arrow-right.svg';
-import ManageIcon from 'assets/icon-manage.svg';
+import ManageIcon from 'assets/icons/actions/icon-manage-16.svg';
+import ArrowRight from 'assets/icons/arrows/arrow-right-16.svg';
 
 import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';
 import Market from 'basics/Market';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import VoteAmount from './VoteAmount/VoteAmount';
 import VoteButton from './VoteButton/VoteButton';
@@ -41,12 +41,12 @@ const BribeInfo = styled.div`
     align-items: center;
     width: min-content;
     height: 4.8rem;
-    background-color: ${COLORS.gray};
+    background-color: ${COLORS.gray100};
     border-radius: 2.2rem;
     padding: 0 1.6rem;
     white-space: nowrap;
     position: relative;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     font-size: 1.4rem;
     line-height: 2rem;
     cursor: pointer;
@@ -65,7 +65,7 @@ const BribeInfo = styled.div`
         position: absolute;
         bottom: 100%;
         left: 3.3rem;
-        border-bottom: 0.6rem solid ${COLORS.gray};
+        border-bottom: 0.6rem solid ${COLORS.gray100};
         border-left: 0.6rem solid ${COLORS.transparent};
         border-right: 0.6rem solid ${COLORS.transparent};
     }
@@ -96,7 +96,7 @@ const BribeAquaSum = styled.div`
     padding: 0 1.2rem;
     margin-left: 0.9rem;
     margin-right: 2rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 
     ${respondDown(Breakpoints.md)`
         background-color: unset;
@@ -115,7 +115,7 @@ const BribeAsset = styled.div`
     width: 3.2rem;
     background-color: ${COLORS.white};
     border-radius: 50%;
-    border: 0.2rem solid ${COLORS.gray};
+    border: 0.2rem solid ${COLORS.gray100};
 
     &:not(:first-child) {
         margin-left: -1.2rem;
@@ -147,7 +147,7 @@ const PairWrapper = styled.div`
 const Voted = styled.div`
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 
     ${respondDown(Breakpoints.md)`
         font-size: unset;
@@ -325,48 +325,51 @@ const VoteTable = ({
                             align: CellAlign.Right,
                         },
                     ],
-                    afterRow: hasBribes ? (
-                        <BribeInfo key={pair.account_id} onClick={e => showBribes(e, pair)}>
-                            <BribeInfoRow>
-                                <span>Bribes APY:</span>
-                                <BribeAquaSum>
-                                    <span>up to {formatBalance(+maxApy.toFixed(2), true)}%</span>
-                                </BribeAquaSum>
-                            </BribeInfoRow>
-                            <BribeInfoRow>
-                                <span>Paid in:</span>
-                                <BribeAssets>
-                                    {pair.aggregated_bribes
-                                        .sort(
-                                            (a, b) =>
-                                                Number(b.daily_aqua_equivalent) -
-                                                Number(a.daily_aqua_equivalent),
-                                        )
-                                        .slice(0, 3)
-                                        .map((bribe, index) => (
-                                            <BribeAsset
-                                                style={{ zIndex: 3 - index }}
-                                                key={bribe.asset_code + bribe.asset_issuer}
-                                            >
-                                                <Asset
-                                                    asset={createAsset(
-                                                        bribe.asset_code,
-                                                        bribe.asset_issuer,
-                                                    )}
-                                                    onlyLogoSmall
-                                                />
-                                            </BribeAsset>
-                                        ))}
-                                </BribeAssets>
-                                {pair.aggregated_bribes.length > 3 ? (
-                                    <BribeAssetsMore>
-                                        +{pair.aggregated_bribes.length - 3} more
-                                    </BribeAssetsMore>
-                                ) : null}
-                            </BribeInfoRow>
-                            <ArrowRightIcon />
-                        </BribeInfo>
-                    ) : null,
+                    afterRow:
+                        hasBribes && !pair.is_banned ? (
+                            <BribeInfo key={pair.account_id} onClick={e => showBribes(e, pair)}>
+                                <BribeInfoRow>
+                                    <span>Bribes APY:</span>
+                                    <BribeAquaSum>
+                                        <span>
+                                            up to {formatBalance(+maxApy.toFixed(2), true)}%
+                                        </span>
+                                    </BribeAquaSum>
+                                </BribeInfoRow>
+                                <BribeInfoRow>
+                                    <span>Paid in:</span>
+                                    <BribeAssets>
+                                        {pair.aggregated_bribes
+                                            .sort(
+                                                (a, b) =>
+                                                    Number(b.daily_aqua_equivalent) -
+                                                    Number(a.daily_aqua_equivalent),
+                                            )
+                                            .slice(0, 3)
+                                            .map((bribe, index) => (
+                                                <BribeAsset
+                                                    style={{ zIndex: 3 - index }}
+                                                    key={bribe.asset_code + bribe.asset_issuer}
+                                                >
+                                                    <Asset
+                                                        asset={createAsset(
+                                                            bribe.asset_code,
+                                                            bribe.asset_issuer,
+                                                        )}
+                                                        onlyLogoSmall
+                                                    />
+                                                </BribeAsset>
+                                            ))}
+                                    </BribeAssets>
+                                    {pair.aggregated_bribes.length > 3 ? (
+                                        <BribeAssetsMore>
+                                            +{pair.aggregated_bribes.length - 3} more
+                                        </BribeAssetsMore>
+                                    ) : null}
+                                </BribeInfoRow>
+                                <ArrowRightIcon />
+                            </BribeInfo>
+                        ) : null,
                 };
             })}
         />

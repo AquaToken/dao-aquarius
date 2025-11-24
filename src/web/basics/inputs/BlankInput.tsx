@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import Input, { InputProps } from 'basics/inputs/Input';
 
-import { COLORS } from '../../styles';
+import { COLORS } from 'styles/style-constants';
 
 const BlankInputWrapper = styled.div`
     position: relative;
@@ -39,7 +39,7 @@ const BlankInputComponent = styled(Input)<{ $fontSize: number }>`
         }
 
         &:disabled {
-            color: ${COLORS.darkGrayText};
+            color: ${COLORS.textDark};
         }
     }
 `;

@@ -2,10 +2,10 @@ import * as React from 'react';
 import { useCallback, useState } from 'react';
 import styled from 'styled-components';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const TooltipWrapper = styled.div`
     max-width: 28.8rem;
@@ -109,7 +109,7 @@ const Label = ({
     labelText,
     tooltipText,
     labelSize = 'default',
-    background = COLORS.purple,
+    background = COLORS.purple500,
     color = COLORS.white,
     tooltipColor,
     tooltipBackground,

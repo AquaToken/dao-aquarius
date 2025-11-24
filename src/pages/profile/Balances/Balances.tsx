@@ -12,49 +12,42 @@ import { createAsset } from 'helpers/token';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { StellarService } from 'services/globalServices';
-import { StellarEvents } from 'services/stellar.service';
+import { StellarEvents } from 'services/stellar/events/events';
 
 import { ClaimableBalance } from 'types/stellar';
 
-import { commonMaxWidth, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
-import Aqua from 'assets/aqua-logo-small.svg';
-import Ice from 'assets/ice-logo.svg';
-import Info from 'assets/icon-info.svg';
-import PlusIcon from 'assets/icon-plus.svg';
-import Withdraw from 'assets/icon-withdraw.svg';
-import Lumen from 'assets/xlm-logo.svg';
+import Aqua from 'assets/aqua/aqua-logo.svg';
+import Withdraw from 'assets/icons/actions/icon-withdraw-16.svg';
+import PlusIcon from 'assets/icons/nav/icon-plus-16.svg';
+import Info from 'assets/icons/status/icon-info-16.svg';
+import Ice from 'assets/tokens/ice-logo.svg';
+import Lumen from 'assets/tokens/xlm-logo.svg';
 
 import { Button } from 'basics/buttons';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import {
-    AdditionalInfo,
-    AdditionalInfoDescription,
-    BalanceLabel,
-} from '../../locker/components/LockerAccountPage/Portfolio/Portfolio';
+import { cardBoxShadow, commonMaxWidth, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     ${commonMaxWidth};
     width: 100%;
     margin-bottom: 5.6rem;
     padding: 0 4rem;
-    margin-top: -9rem;
+    margin-top: -5rem;
     z-index: 2;
 
     ${respondDown(Breakpoints.md)`
         padding: 3.2rem 1.6rem 2rem;
-        margin-top: -9rem;
         margin-bottom: 0;
     `}
 `;
 
 const Wrapper = styled.div`
     background-color: ${COLORS.white};
-    padding: 4.8rem 4.8rem 4.2rem;
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
+    padding: 3.2rem;
+    ${cardBoxShadow};
     border-radius: 1rem;
 
     ${respondDown(Breakpoints.md)`
@@ -64,7 +57,7 @@ const Wrapper = styled.div`
 
 const BalancesContainer = styled.div`
     display: flex;
-    border-bottom: 0.1rem dashed ${COLORS.gray};
+    border-bottom: 0.1rem dashed ${COLORS.gray100};
     padding-bottom: 3.2rem;
     gap: 1.6rem;
 
@@ -81,7 +74,7 @@ const BalancesColumn = styled.div`
     ${respondDown(Breakpoints.lg)`
         &:not(:first-child){
             margin-top: 2.4rem;
-            border-top: 0.1rem dashed ${COLORS.gray};
+            border-top: 0.1rem dashed ${COLORS.gray100};
             padding-top: 2.4rem;
         }
     `}
@@ -117,7 +110,7 @@ const HeaderButtons = styled.div`
 const BalanceTitle = styled.span`
     font-size: 1.6rem;
     line-height: 1.8rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const BalanceValue = styled.div`
@@ -125,7 +118,7 @@ const BalanceValue = styled.div`
     align-items: center;
     font-size: 36px;
     line-height: 42px;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     margin-bottom: 4.4rem;
 
     ${respondDown(Breakpoints.md)`
@@ -172,7 +165,7 @@ const IceLogoSmall = styled(Ice)`
 const BalanceTitleSmall = styled.div`
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin-bottom: 0.5rem;
 
     ${respondDown(Breakpoints.md)`
@@ -187,14 +180,14 @@ const BalanceValueSmall = styled.div`
     font-weight: 700;
     font-size: 2rem;
     line-height: 2.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 `;
 
 const AdditionalInfoBalance = styled.span`
     font-weight: bold;
     font-size: 2rem;
     line-height: 2.8rem;
-    color: ${COLORS.buttonBackground};
+    color: ${COLORS.purple950};
     margin-top: 1rem;
 
     ${respondDown(Breakpoints.md)`
@@ -204,6 +197,36 @@ const AdditionalInfoBalance = styled.span`
          font-weight: 400;
          font-size: 1.6rem;
     `}
+`;
+
+const AdditionalInfo = styled.div`
+    display: flex;
+    width: 100%;
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column;
+    `}
+`;
+
+const AdditionalInfoDescription = styled.span`
+    font-size: 1.4rem;
+    line-height: 2rem;
+    color: ${COLORS.textGray};
+`;
+
+const BalanceLabel = styled.div<{ $color: string; $textColor: string }>`
+    width: min-content;
+    height: 1.9rem;
+    border-radius: 0.3rem;
+    text-align: center;
+    line-height: 1.9rem;
+    font-size: 1rem;
+    font-weight: bold;
+    background: ${({ $color }) => $color};
+    color: ${({ $textColor }) => $textColor};
+    margin-right: 0.7rem;
+    padding: 0 0.8rem;
+    white-space: nowrap;
 `;
 
 const InfoColumn = styled.div`
@@ -235,7 +258,7 @@ const InfoColumnIce = styled(InfoColumn)`
 const LumenBalanceRow = styled.div`
     display: flex;
     align-items: center;
-    margin-top: 3.6rem;
+    margin-top: 2rem;
     justify-content: space-between;
 
     ${respondDown(Breakpoints.sm)`
@@ -247,7 +270,7 @@ const LumenBalanceRow = styled.div`
 const LumenBalanceLabel = styled.span`
     font-size: 1.6rem;
     line-height: 1.8rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const LumenBalance = styled.div`
@@ -262,7 +285,7 @@ const LumenBalance = styled.div`
 const LumenBalanceValue = styled.span`
     font-size: 1.6rem;
     line-height: 1.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     font-weight: 700;
     margin-right: 1rem;
 `;
@@ -292,7 +315,7 @@ const Hint = styled.div`
     margin-right: 2rem;
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 
     ${respondDown(Breakpoints.sm)`
         margin-right: 0;
@@ -321,7 +344,7 @@ const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
     useEffect(() => {
         const unsub = StellarService.event.sub((event: { type: StellarEvents }) => {
             if (event.type === StellarEvents.claimableUpdate) {
-                setLocks(StellarService.getLocks(account.accountId()));
+                setLocks(StellarService.cb.getLocks(account.accountId()));
             }
         });
 
@@ -329,7 +352,7 @@ const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
     }, []);
 
     useEffect(() => {
-        setLocks(StellarService.getLocks(account.accountId()));
+        setLocks(StellarService.cb.getLocks(account.accountId()));
     }, []);
 
     const aquaBalance = account.getAquaBalance();
@@ -364,7 +387,10 @@ const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
                         </BalanceValue>
                         <AdditionalInfo>
                             <InfoColumn>
-                                <BalanceLabel $color={COLORS.yellow} $textColor={COLORS.titleText}>
+                                <BalanceLabel
+                                    $color={COLORS.yellow500}
+                                    $textColor={COLORS.textPrimary}
+                                >
                                     Aquarius AMM
                                 </BalanceLabel>
                                 <AdditionalInfoBalance>
@@ -379,7 +405,7 @@ const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
                                 </AdditionalInfoDescription>
                             </InfoColumn>
                             <InfoColumn>
-                                <BalanceLabel $color={COLORS.purple} $textColor={COLORS.white}>
+                                <BalanceLabel $color={COLORS.purple500} $textColor={COLORS.white}>
                                     LOCK
                                 </BalanceLabel>
                                 <AdditionalInfoBalance>

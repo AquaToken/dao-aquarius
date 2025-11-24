@@ -20,22 +20,23 @@ import { ModalService } from 'services/globalServices';
 
 import { Delegatee, DelegateeVote } from 'types/delegate';
 
-import { cardBoxShadow, customScroll, flexAllCenter, flexColumn, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import DelegateClaimModal from 'web/modals/DelegateClaimModal';
 import DelegateModal from 'web/modals/DelegateModal';
-import { Breakpoints, COLORS } from 'web/styles';
 
-import Discord from 'assets/discord.svg';
-import IconFail from 'assets/icon-fail.svg';
-import IconSuccess from 'assets/icon-success.svg';
-import Twitter from 'assets/twitter.svg';
+import Discord from 'assets/community/discord.svg';
+import Twitter from 'assets/community/twitter.svg';
+import IconFail from 'assets/icons/status/fail-red.svg';
+import IconSuccess from 'assets/icons/status/success.svg';
 
 import AssetLogo from 'basics/AssetLogo';
 import { Button } from 'basics/buttons';
-import CircularProgress from 'basics/CircularProgress';
 import { ToggleGroup } from 'basics/inputs';
 import { PageLoader } from 'basics/loaders';
+import { CircularProgress } from 'basics/progress';
+
+import { cardBoxShadow, customScroll, flexAllCenter, flexColumn, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { getProposalsRequest, PROPOSAL_FILTER } from 'pages/governance/api/api';
 import { MarketKey } from 'pages/vote/api/types';
@@ -69,7 +70,7 @@ const Container = styled.div<{ $fromTop: boolean; $visible: boolean }>`
 `;
 
 const Strategy = styled.div`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     display: flex;
     flex-direction: column;
 
@@ -77,12 +78,12 @@ const Strategy = styled.div`
         font-weight: 400;
         font-size: 2rem;
         line-height: 2.4rem;
-        color: ${COLORS.titleText};
+        color: ${COLORS.textPrimary};
         margin-bottom: 1.6rem;
     }
 
     span {
-        color: ${COLORS.grayText};
+        color: ${COLORS.textGray};
     }
 `;
 
@@ -91,7 +92,7 @@ const Stats = styled.div`
     border-radius: 1.6rem;
     ${flexColumn};
     gap: 0.8rem;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     ${customScroll};
     max-height: 20rem;
     overflow: auto;
@@ -100,7 +101,7 @@ const Stats = styled.div`
         font-weight: 700;
         font-size: 1.6rem;
         line-height: 2.8rem;
-        ${COLORS.titleText};
+        ${COLORS.textPrimary};
         margin-bottom: 1.2rem;
     }
 `;
@@ -112,7 +113,7 @@ const Links = styled.div`
 
 const LinkStyles = css`
     ${flexAllCenter};
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     border-radius: 1.6rem;
     height: 4.4rem;
     padding: 0 1.3rem;
@@ -121,7 +122,7 @@ const LinkStyles = css`
 
     svg {
         path {
-            fill: ${COLORS.purple};
+            fill: ${COLORS.purple500};
         }
     }
 `;
@@ -135,7 +136,7 @@ const DiscordName = styled.div`
     gap: 0.8rem;
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
 `;
 
 const Link = styled.a`
@@ -165,12 +166,12 @@ const Row = styled.div`
 const LinkInner = styled(LinkRouter)`
     ${rowStyles};
     cursor: pointer;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     text-decoration: none;
     flex: 1;
 
     span {
-        border-bottom: 0.1rem dashed ${COLORS.purple};
+        border-bottom: 0.1rem dashed ${COLORS.purple500};
     }
 `;
 
@@ -194,10 +195,10 @@ const Buttons = styled.div`
 `;
 
 const ClaimButton = styled(Button)`
-    background-color: ${COLORS.pinkRed};
+    background-color: ${COLORS.red500};
 
     &:hover {
-        background-color: ${COLORS.pinkRed};
+        background-color: ${COLORS.red500};
         opacity: 0.8;
     }
 `;
@@ -363,45 +364,51 @@ const DelegateeStats = forwardRef(
                         </Stats>
                     ) : (
                         <Stats>
-                            {marketVotes.map(vote => (
-                                <StatsRow key={vote.id}>
-                                    <LinkInner
-                                        to={`${MarketRoutes.main}/${vote.asset1}/${vote.asset2}`}
-                                    >
-                                        <AssetLogoStyled
-                                            isCircle
-                                            asset={getAssetFromString(vote.asset1)}
-                                            isSmall
-                                        />
-                                        <AssetLogoSecond
-                                            isCircle
-                                            asset={getAssetFromString(vote.asset2)}
-                                            isSmall
-                                        />
+                            {marketVotes.length ? (
+                                marketVotes.map(vote => (
+                                    <StatsRow key={vote.id}>
+                                        <LinkInner
+                                            to={`${MarketRoutes.main}/${vote.asset1}/${vote.asset2}`}
+                                        >
+                                            <AssetLogoStyled
+                                                isCircle
+                                                asset={getAssetFromString(vote.asset1)}
+                                                isSmall
+                                            />
+                                            <AssetLogoSecond
+                                                isCircle
+                                                asset={getAssetFromString(vote.asset2)}
+                                                isSmall
+                                            />
+                                            <span>
+                                                {vote.asset1_code} / {vote.asset2_code}
+                                            </span>
+                                        </LinkInner>
                                         <span>
-                                            {vote.asset1_code} / {vote.asset2_code}
-                                        </span>
-                                    </LinkInner>
-                                    <span>
-                                        {getPercent(
-                                            vote.total_votes,
-                                            delegatee.managed_ice[getAssetString(selectedAsset)],
-                                        )}
-                                        %
-                                    </span>
-                                    <CircularProgress
-                                        percentage={
-                                            +getPercent(
+                                            {getPercent(
                                                 vote.total_votes,
-                                                delegatee.managed_ice[
+                                                delegatee?.managed_ice?.[
                                                     getAssetString(selectedAsset)
                                                 ],
-                                            )
-                                        }
-                                    />
-                                </StatsRow>
-                            ))}
-                            {Number(delegatee.managed_ice[getAssetString(selectedAsset)]) -
+                                            )}
+                                            %
+                                        </span>
+                                        <CircularProgress
+                                            percentage={
+                                                +getPercent(
+                                                    vote.total_votes,
+                                                    delegatee.managed_ice?.[
+                                                        getAssetString(selectedAsset)
+                                                    ],
+                                                )
+                                            }
+                                        />
+                                    </StatsRow>
+                                ))
+                            ) : (
+                                <div>Not voted yet</div>
+                            )}
+                            {Number(delegatee.managed_ice?.[getAssetString(selectedAsset)]) -
                                 votesSum >
                                 0 && (
                                 <StatsRow>
@@ -410,12 +417,12 @@ const DelegateeStats = forwardRef(
                                         {getPercent(
                                             (
                                                 Number(
-                                                    delegatee.managed_ice[
+                                                    delegatee.managed_ice?.[
                                                         getAssetString(selectedAsset)
                                                     ],
                                                 ) - votesSum
                                             ).toString(),
-                                            delegatee.managed_ice[getAssetString(selectedAsset)],
+                                            delegatee.managed_ice?.[getAssetString(selectedAsset)],
                                         )}
                                         %
                                     </span>
@@ -424,12 +431,12 @@ const DelegateeStats = forwardRef(
                                             +getPercent(
                                                 (
                                                     Number(
-                                                        delegatee.managed_ice[
+                                                        delegatee.managed_ice?.[
                                                             getAssetString(selectedAsset)
                                                         ],
                                                     ) - votesSum
                                                 ).toString(),
-                                                delegatee.managed_ice[
+                                                delegatee.managed_ice?.[
                                                     getAssetString(selectedAsset)
                                                 ],
                                             )

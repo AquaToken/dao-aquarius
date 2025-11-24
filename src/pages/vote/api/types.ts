@@ -45,6 +45,7 @@ export type MarketKey = {
     auth_clawback_enabled: boolean;
     adjusted_votes_value: string;
     downvote_immunity: boolean;
+    is_banned: boolean;
 };
 
 export type MarketBribes = {

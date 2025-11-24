@@ -8,6 +8,7 @@ import { useDebounce } from 'hooks/useDebounce';
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
 import { SorobanService, StellarService } from 'services/globalServices';
+import { isValidContract, isValidPublicKey } from 'services/stellar/utils/validators';
 
 const domainPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
 const domainRegexp = new RegExp(domainPattern);
@@ -42,9 +43,10 @@ export default function useAssetsSearch(searchState) {
     };
 
     useEffect(() => {
-        if (StellarService.isValidPublicKey(debouncedSearchText.current)) {
+        if (isValidPublicKey(debouncedSearchText.current)) {
             setSearchPending(true);
-            StellarService.loadAccount(debouncedSearchText.current)
+            StellarService.account
+                .loadAccount(debouncedSearchText.current)
                 .then(account => {
                     if (!account?.home_domain) {
                         setSearchPending(false);
@@ -60,7 +62,7 @@ export default function useAssetsSearch(searchState) {
             return;
         }
 
-        if (StellarService.isValidContract(debouncedSearchText.current)) {
+        if (isValidContract(debouncedSearchText.current)) {
             setSearchPending(true);
             SorobanService.token
                 .parseTokenContractId(debouncedSearchText.current)
@@ -77,7 +79,7 @@ export default function useAssetsSearch(searchState) {
 
         if (codeIssuerRegexp.test(debouncedSearchText.current)) {
             const [code, issuer] = debouncedSearchText.current.split(':');
-            if (!StellarService.isValidPublicKey(issuer)) {
+            if (!isValidPublicKey(issuer)) {
                 return;
             }
 

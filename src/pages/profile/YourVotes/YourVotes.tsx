@@ -10,13 +10,13 @@ import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService, StellarService } from 'services/globalServices';
-import { StellarEvents } from 'services/stellar.service';
-
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
+import { StellarEvents } from 'services/stellar/events/events';
 
 import Button from 'basics/buttons/Button';
 import PageLoader from 'basics/loaders/PageLoader';
+
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { getTotalVotingStats, getUserPairsList } from '../../vote/api/api';
 import { PairStats } from '../../vote/api/types';
@@ -33,7 +33,7 @@ const Container = styled.div`
 const Title = styled.h2`
     font-size: 3.6rem;
     line-height: 4.2rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     font-weight: 400;
     margin-bottom: 4.8rem;
 `;
@@ -52,7 +52,7 @@ const TableSection = styled(Section)`
     margin-top: 3.2rem;
 
     ${respondDown(Breakpoints.md)`
-       background: ${COLORS.lightGray};
+       background: ${COLORS.gray50};
        padding: 3.2rem 0 0;
        overflow: hidden;
     `}
@@ -65,17 +65,17 @@ export const Empty = styled.div`
     h3 {
         font-size: 2rem;
         line-height: 2.8rem;
-        color: ${COLORS.titleText};
+        color: ${COLORS.textPrimary};
         margin-bottom: 0.9rem;
     }
 
     span {
         line-height: 180%;
-        color: ${COLORS.grayText};
+        color: ${COLORS.textGray};
     }
 
     a {
-        color: ${COLORS.purple};
+        color: ${COLORS.purple500};
     }
 `;
 
@@ -95,11 +95,11 @@ const UnlockedVotesData = styled.div`
 const UnlockedVotesTitle = styled.span`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 `;
 
 const UnlockedVotesStats = styled.span`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const ManageButton = styled(Button)`
@@ -144,17 +144,16 @@ const YourVotes = () => {
             setUnclaimedVotesInfo(null);
             return;
         }
-        const keys = StellarService.getKeysSimilarToMarketKeys(account.accountId());
+        const keys = StellarService.cb.getKeysSimilarToMarketKeys(account.accountId());
 
         getUserPairsList(keys).then(res => {
             setVotes(res);
             processAssetsFromPairs(res);
             const processedClaims = res.reduce(
                 (acc, pair) => {
-                    const pairUnclaimedVotes = StellarService.getPairVotes(
-                        pair as PairStats,
-                        account.accountId(),
-                    ).filter(claim => new Date(claim.claimBackDate) < new Date());
+                    const pairUnclaimedVotes = StellarService.cb
+                        .getPairVotes(pair as PairStats, account.accountId())
+                        .filter(claim => new Date(claim.claimBackDate) < new Date());
 
                     const sum = pairUnclaimedVotes.reduce((votesSum, claim) => {
                         votesSum += Number(claim.amount);

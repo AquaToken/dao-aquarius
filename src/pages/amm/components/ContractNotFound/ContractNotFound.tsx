@@ -12,12 +12,12 @@ import { SorobanService, ToastService } from 'services/globalServices';
 
 import { Asset } from 'types/stellar';
 
-import { COLORS } from 'web/styles';
-
 import Button from 'basics/buttons/Button';
 
+import { COLORS } from 'styles/style-constants';
+
 const Container = styled.div`
-    color: ${COLORS.pinkRed};
+    color: ${COLORS.red500};
     margin-top: 0.8rem;
     display: flex;
     align-items: center;

@@ -15,17 +15,14 @@ import { useDebounce } from 'hooks/useDebounce';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 import { ModalService, SorobanService, ToastService } from 'services/globalServices';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { PoolExtended, PoolIncentives } from 'types/amm';
 import { Int128Parts } from 'types/stellar';
 import { SorobanToken, TokenType } from 'types/token';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
-import Info from 'assets/icon-info.svg';
+import Info from 'assets/icons/status/icon-info-16.svg';
 
 import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';
@@ -37,6 +34,9 @@ import { StickyButtonWrapper } from 'basics/ModalAtoms';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import NoTrustline from 'components/NoTrustline';
+
+import { flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import SuccessModal from 'pages/amm/components/SuccessModal/SuccessModal';
 
@@ -72,7 +72,7 @@ const RangeInputStyled = styled(RangeInput)`
 
 const TokenPicker = styled.div`
     display: flex;
-    border: 0.1rem solid ${COLORS.gray};
+    border: 0.1rem solid ${COLORS.gray100};
     border-radius: 0.5rem;
 `;
 
@@ -81,10 +81,10 @@ const Token = styled.div<{ $isSelected: boolean }>`
     ${flexAllCenter};
     height: 6.6rem;
     cursor: pointer;
-    background-color: ${({ $isSelected }) => ($isSelected ? COLORS.gray : COLORS.transparent)};
+    background-color: ${({ $isSelected }) => ($isSelected ? COLORS.gray100 : COLORS.transparent)};
 
     &:not(:last-child) {
-        border-right: 0.1rem solid ${COLORS.gray};
+        border-right: 0.1rem solid ${COLORS.gray100};
     }
 `;
 
@@ -99,7 +99,7 @@ const StyledButton = styled(Button)`
 `;
 
 const Divider = styled.div`
-    border-top: 0.1rem dashed ${COLORS.gray};
+    border-top: 0.1rem dashed ${COLORS.gray100};
     margin-top: 3.2rem;
     padding-top: 3.2rem;
 `;

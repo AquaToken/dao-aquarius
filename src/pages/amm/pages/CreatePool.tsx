@@ -17,46 +17,45 @@ import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 import { SorobanService, ToastService } from 'services/globalServices';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { PoolProcessed } from 'types/amm';
 import { Transaction } from 'types/stellar';
 
-import { flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
-import ArrowLeft from 'assets/icon-arrow-left.svg';
-import Tick from 'assets/icon-tick-white.svg';
+import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
+import Tick from 'assets/icons/small-icons/check/check-11x9.svg';
 
 import Alert from 'basics/Alert';
-import AssetDropdown from 'basics/AssetDropdown';
+import AssetDropdown from 'basics/asset-pickers/AssetDropdown';
 import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
-import CircleButton from 'basics/buttons/CircleButton';
 import Checkbox from 'basics/inputs/Checkbox';
 import Input from 'basics/inputs/Input';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 import PageLoader from 'basics/loaders/PageLoader';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
+import { PageContainer } from 'styles/commonPageStyles';
+import { flexRowSpaceBetween, respondDown } from 'styles/mixins';
 import {
-    Back,
-    Background,
-    Content,
     Form,
+    FormBackButton,
+    FormPageContentWrap,
+    FormPageHeaderTitle,
+    FormPageHeaderWrap,
     FormSection,
     FormSectionDescription,
     FormSectionTitle,
     FormWrap,
-    MainBlock,
-    Title,
-} from '../../bribes/pages/AddBribePage';
+} from 'styles/sharedFormPage.styled';
+import { Breakpoints, COLORS } from 'styles/style-constants';
+
 import ContractNotFound from '../components/ContractNotFound/ContractNotFound';
 import PoolsList from '../components/PoolsList/PoolsList';
 
 const ErrorLabel = styled.span<{ $isError?: boolean }>`
-    color: ${({ $isError }) => ($isError ? COLORS.pinkRed : COLORS.paragraphText)};
+    color: ${({ $isError }) => ($isError ? COLORS.red500 : COLORS.textTertiary)};
 `;
 
 const StyledForm = styled(Form)`
@@ -84,7 +83,7 @@ const StyledFormSection = styled(FormSection)`
 const FormDescription = styled.span`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const PoolType = styled.div<{ $isActive?: boolean }>`
@@ -93,8 +92,8 @@ const PoolType = styled.div<{ $isActive?: boolean }>`
     width: 100%;
     padding: 3.7rem 3.2rem;
     border-radius: 1rem;
-    background-color: ${({ $isActive }) => ($isActive ? COLORS.purple : COLORS.lightGray)};
-    color: ${({ $isActive }) => ($isActive ? COLORS.white : COLORS.paragraphText)};
+    background-color: ${({ $isActive }) => ($isActive ? COLORS.purple500 : COLORS.gray50)};
+    color: ${({ $isActive }) => ($isActive ? COLORS.white : COLORS.textTertiary)};
 
     svg {
         display: ${({ $isActive }) => ($isActive ? 'block' : 'none')};
@@ -121,7 +120,7 @@ const RemoveButton = styled.div`
     position: absolute;
     right: 0;
     bottom: 7.8rem;
-    color: ${COLORS.pinkRed};
+    color: ${COLORS.red500};
     cursor: pointer;
 `;
 
@@ -172,7 +171,7 @@ const CreationFee = styled.div`
     margin-top: -1.3rem;
     margin-bottom: 3.2rem;
     padding: 2.4rem;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     ${flexRowSpaceBetween};
 
     ${respondDown(Breakpoints.md)`
@@ -445,19 +444,18 @@ const CreatePool = () => {
     }
 
     return (
-        <MainBlock>
-            <Background>
-                <Content>
-                    <Back to={AmmRoutes.analytics}>
-                        <CircleButton label="Pools">
-                            <ArrowLeft />
-                        </CircleButton>
-                    </Back>
-                    <Title>Create Pool</Title>
-                </Content>
-            </Background>
+        <PageContainer>
+            <FormPageHeaderWrap>
+                <FormPageContentWrap>
+                    <FormBackButton label="Pools" to={AmmRoutes.analytics}>
+                        <ArrowLeft />
+                    </FormBackButton>
+
+                    <FormPageHeaderTitle>Create Pool</FormPageHeaderTitle>
+                </FormPageContentWrap>
+            </FormPageHeaderWrap>
             <FormWrap>
-                <Content>
+                <FormPageContentWrap>
                     <StyledForm
                         onSubmit={(event: React.SyntheticEvent<HTMLFormElement>) => {
                             event.preventDefault();
@@ -603,7 +601,7 @@ const CreatePool = () => {
                                         </TooltipInner>
                                     }
                                     position={TOOLTIP_POSITION.right}
-                                    background={COLORS.pinkRed}
+                                    background={COLORS.red500}
                                 >
                                     <AddRowButton
                                         secondary
@@ -715,9 +713,9 @@ const CreatePool = () => {
                             </StyledFormSection>
                         </StyledForm>
                     )}
-                </Content>
+                </FormPageContentWrap>
             </FormWrap>
-        </MainBlock>
+        </PageContainer>
     );
 };
 

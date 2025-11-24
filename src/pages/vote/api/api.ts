@@ -212,17 +212,21 @@ export const getPairsWithBribes = async (pageSize: number, page: number) => {
         axios.get<ListResponse<MarketKey>>(marketKeysUrl, { params: keysParams }),
     ]);
 
-    const pairs = bribes.data.results.map(bribe => {
-        const marketKey = marketsKeys.data.results.find(key => key.account_id === bribe.market_key);
+    const pairs = bribes.data.results
+        .map(bribe => {
+            const marketKey = marketsKeys.data.results.find(
+                key => key.account_id === bribe.market_key,
+            );
 
-        const marketVote = marketsVotes.data.results.find(
-            vote => vote.market_key === bribe.market_key,
-        );
+            const marketVote = marketsVotes.data.results.find(
+                vote => vote.market_key === bribe.market_key,
+            );
 
-        return { ...bribe, ...marketKey, ...marketVote };
-    });
+            return { ...bribe, ...marketKey, ...marketVote };
+        })
+        .filter(({ is_banned }) => !is_banned);
 
-    return { pairs, count: bribes.data.count };
+    return { pairs, count: pairs.length };
 };
 
 const getAssetParam = (asset: AssetSimple) => getAssetString(createAsset(asset.code, asset.issuer));

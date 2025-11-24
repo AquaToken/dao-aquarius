@@ -11,20 +11,21 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
 
-import { contentWithSidebar, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import { Breakpoints, COLORS } from 'web/styles';
 
-import ArrowLeft from 'assets/icon-arrow-left.svg';
+import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
 
 import CircleButton from 'basics/buttons/CircleButton';
 import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
-import PageTitle from 'basics/PageTitle';
 
 import MigrateToSorobanBanner from 'components/MigrateToSorobanBanner';
 import NotFoundPage from 'components/NotFoundPage';
 import PageNavigation from 'components/PageNavigation';
+import PageTitle from 'components/PageTitle';
+
+import { contentWithSidebar, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import AmmStats from 'pages/market/components/AmmStats/AmmStats';
 import AssetsDetails from 'pages/market/components/AssetsDetails/AssetsDetails';
@@ -41,7 +42,7 @@ import YourVotes from '../components/YourVotes/YourVotes';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     z-index: 1;
 `;
 
@@ -77,7 +78,7 @@ const Header = styled.div`
 `;
 
 const Divider = styled.div`
-    border-top: 0.1rem solid ${COLORS.gray};
+    border-top: 0.1rem solid ${COLORS.gray100};
     margin: 4rem 0;
     height: 0.1rem;
     width: 100%;

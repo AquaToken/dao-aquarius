@@ -6,13 +6,14 @@ import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/da
 import { formatBalance } from 'helpers/format-number';
 import { createAsset } from 'helpers/token';
 
-import { COLORS } from 'web/styles';
+import { UpcomingBribe } from 'types/bribes';
 
 import Asset from 'basics/Asset';
 import PageLoader from 'basics/loaders/PageLoader';
 import Table, { CellAlign } from 'basics/Table';
 
-import { UpcomingBribe } from 'pages/bribes/api/types';
+import { COLORS } from 'styles/style-constants';
+
 import { getUpcomingBribesForMarket } from 'pages/vote/api/api';
 
 const Container = styled.div`
@@ -28,7 +29,7 @@ const Loader = styled.div`
 const Description = styled.div`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
     opacity: 0.7;
     margin-bottom: 3.2rem;
 `;
@@ -84,7 +85,7 @@ const MarketUpcomingBribes = ({ marketKey }: MarketUpcomingBribes): React.ReactN
                     return {
                         key: bribe.asset_code + bribe.asset_issuer + startUTC,
                         isNarrow: true,
-                        mobileBackground: COLORS.lightGray,
+                        mobileBackground: COLORS.gray50,
                         rowItems: [
                             {
                                 children: (

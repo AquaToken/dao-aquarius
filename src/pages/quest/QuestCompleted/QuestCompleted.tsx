@@ -1,14 +1,14 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { cardBoxShadow, flexColumnCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
-import Discord from 'assets/discord.svg';
-import Telegram from 'assets/telegram-new.svg';
-import X from 'assets/twitter.svg';
+import Discord from 'assets/community/discord.svg';
+import Telegram from 'assets/community/telegram-new.svg';
+import X from 'assets/community/twitter.svg';
 
 import { Button } from 'basics/buttons';
+
+import { cardBoxShadow, flexColumnCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     border-radius: 4.4rem;
@@ -26,7 +26,7 @@ const Title = styled.h2`
     font-weight: 700;
     font-size: 2rem;
     line-height: 2.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     text-align: center;
 `;
 
@@ -34,7 +34,7 @@ const Description = styled.p`
     font-weight: 400;
     font-size: 1.6rem;
     line-height: 2.4rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     text-align: center;
 `;
 

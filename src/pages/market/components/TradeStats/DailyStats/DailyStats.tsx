@@ -6,12 +6,12 @@ import { formatBalance } from 'helpers/format-number';
 
 import { StellarService } from 'services/globalServices';
 
-import { Asset } from 'types/stellar';
-
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
+import { ClassicToken } from 'types/token';
 
 import DotsLoader from 'basics/loaders/DotsLoader';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const Details = styled.div`
     display: flex;
@@ -35,20 +35,20 @@ const DetailsColumn = styled.div`
 const DetailTitle = styled.span`
     font-size: 1.4rem;
     line-height: 1.6rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin-bottom: 0.8rem;
 `;
 
 const DetailValue = styled.span`
     font-size: 1.6rem;
     line-height: 2.4rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     width: min-content;
     white-space: nowrap;
 `;
 
 const Change = styled.div<{ $isPositive: boolean }>`
-    color: ${({ $isPositive }) => ($isPositive ? COLORS.purple : COLORS.pinkRed)};
+    color: ${({ $isPositive }) => ($isPositive ? COLORS.purple500 : COLORS.red500)};
 `;
 
 const PERIOD_24H = 24 * 60 * 60 * 1000;
@@ -56,8 +56,8 @@ const RESOLUTION_MINUTE = 60 * 1000;
 const RESOLUTION_15_MIN = 15 * 60 * 1000;
 
 interface DailyStatsProps {
-    base: Asset;
-    counter: Asset;
+    base: ClassicToken;
+    counter: ClassicToken;
 }
 
 const DailyStats = ({ base, counter }: DailyStatsProps): React.ReactNode => {
@@ -68,27 +68,31 @@ const DailyStats = ({ base, counter }: DailyStatsProps): React.ReactNode => {
         const endDate = Date.now();
         const startDate = endDate - PERIOD_24H;
 
-        StellarService.getTradeAggregations(
-            base,
-            counter,
-            startDate,
-            endDate + RESOLUTION_15_MIN,
-            RESOLUTION_15_MIN,
-            100,
-        ).then(res => {
-            setLast15MinutesTrades(res.records);
-        });
+        StellarService.horizon
+            .getTradeAggregations(
+                base,
+                counter,
+                startDate,
+                endDate + RESOLUTION_15_MIN,
+                RESOLUTION_15_MIN,
+                100,
+            )
+            .then(res => {
+                setLast15MinutesTrades(res.records);
+            });
 
-        StellarService.getTradeAggregations(
-            base,
-            counter,
-            startDate,
-            endDate + RESOLUTION_MINUTE,
-            RESOLUTION_MINUTE,
-            1,
-        ).then(res => {
-            setLastMinuteTrade(res.records);
-        });
+        StellarService.horizon
+            .getTradeAggregations(
+                base,
+                counter,
+                startDate,
+                endDate + RESOLUTION_MINUTE,
+                RESOLUTION_MINUTE,
+                1,
+            )
+            .then(res => {
+                setLastMinuteTrade(res.records);
+            });
     }, []);
 
     const { lastPrice, volume24, change24 } = useMemo(() => {

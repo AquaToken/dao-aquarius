@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { NumericFormat } from 'react-number-format';
 import styled from 'styled-components';
 
+import { POOL_TYPE } from 'constants/amm';
 import { DAY } from 'constants/intervals';
 
 import { contractValueToAmount } from 'helpers/amount';
@@ -13,24 +14,21 @@ import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 import {
     ModalService,
     SorobanService,
     StellarService,
     ToastService,
 } from 'services/globalServices';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { PoolExtended, PoolIncentives, PoolRewardsInfo } from 'types/amm';
 import { ModalProps } from 'types/modal';
 import { SorobanToken, Token, TokenType } from 'types/token';
 
-import { customScroll, flexRowSpaceBetween, noSelect, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
-import Arrow from 'assets/icon-arrow-right-long.svg';
-import Info from 'assets/icon-info.svg';
-import Revert from 'assets/icon-revert.svg';
+import Revert from 'assets/icons/actions/icon-revert-16x17.svg';
+import Arrow from 'assets/icons/arrows/arrow-alt2-16.svg';
+import Info from 'assets/icons/status/icon-info-16.svg';
 
 import Alert from 'basics/Alert';
 import Asset from 'basics/Asset';
@@ -41,6 +39,9 @@ import Label from 'basics/Label';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import { ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { customScroll, flexRowSpaceBetween, noSelect, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import SuccessModal from '../SuccessModal/SuccessModal';
 
@@ -84,7 +85,7 @@ const FormRow = styled.div`
 const DescriptionRow = styled.div`
     ${flexRowSpaceBetween};
     margin-bottom: 1.6rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 
     span {
         display: flex;
@@ -93,7 +94,7 @@ const DescriptionRow = styled.div`
     }
 
     span:last-child {
-        color: ${COLORS.paragraphText};
+        color: ${COLORS.textTertiary};
     }
 `;
 
@@ -108,7 +109,7 @@ const Balance = styled.div`
     right: 0;
     font-size: 1.6rem;
     line-height: 1.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     display: flex;
     align-items: center;
 
@@ -122,7 +123,7 @@ const Balance = styled.div`
 `;
 
 const BalanceClickable = styled.span`
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
     cursor: pointer;
     margin-left: 0.4rem;
 `;
@@ -130,7 +131,7 @@ const BalanceClickable = styled.span`
 const PoolInfo = styled.div<{ $isModal: boolean }>`
     display: flex;
     flex-direction: column;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     border-radius: 0.6rem;
     padding: ${({ $isModal }) => ($isModal ? '2.4rem;' : '0')};
     margin-top: ${({ $isModal }) => ($isModal ? '2.4rem;' : '0')};
@@ -616,7 +617,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                                     </BalanceClickable>
                                     <Tooltip
                                         showOnHover
-                                        background={COLORS.titleText}
+                                        background={COLORS.textPrimary}
                                         position={TOOLTIP_POSITION.left}
                                         content={
                                             <TooltipInnerBalance>
@@ -680,14 +681,15 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                             <span>
                                 {pool.liquidity
                                     ? `$${formatBalance(
-                                          (Number(pool.liquidity) * StellarService.priceLumenUsd) /
+                                          (Number(pool.liquidity) *
+                                              StellarService.price.priceLumenUsd) /
                                               1e7,
                                           true,
                                       )}`
                                     : '0'}
                             </span>
                         </DescriptionRow>
-                        {Boolean(rates) && (
+                        {pool.pool_type === POOL_TYPE.constant && Boolean(rates) && (
                             <DescriptionRow>
                                 <span>Pool rates</span>
                                 <PoolRates
@@ -720,7 +722,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                                 <Label
                                     labelText={`x${(+calculateBoostValue(poolRewards)).toFixed(2)}`}
                                     labelSize="medium"
-                                    background={COLORS.darkBlue}
+                                    background={COLORS.blue700}
                                     withoutUppercase
                                 />
                                 {sharesAfter && (
@@ -731,7 +733,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                                                 poolRewards,
                                             ).toFixed(2)}`}
                                             labelSize="medium"
-                                            background={COLORS.darkBlue}
+                                            background={COLORS.blue700}
                                             withoutUppercase
                                         />
                                     </>

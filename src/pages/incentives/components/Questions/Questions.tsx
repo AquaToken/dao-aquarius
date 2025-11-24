@@ -1,79 +1,87 @@
-import { QuestionType } from 'basics/FAQ';
+import { Link } from 'react-router-dom';
+
+import { MainRoutes } from 'constants/routes';
+
+import { QuestionType } from 'components/FAQ';
 
 export const lpIncentivesQuestions: QuestionType[] = [
     {
-        question: "What's an LP incentive?",
+        question: 'What’s a Pool Incentive?',
         answer: (
             <span>
-                LP incentives are additional rewards for liquidity providers, offered on top of the
-                Aquarius protocol-powered AQUA rewards. These incentives can be nominated in any
-                currency supported by the Aquarius AMM and are assigned to specific liquidity pools.
+                Pool Incentives are additional rewards for liquidity providers, offered on top of
+                the AQUA rewards distributed by the Aquarius protocol. They can be created by
+                anyone, nominated in any token traded on Aquarius, and assigned to specific
+                liquidity pools.
             </span>
         ),
     },
     {
-        question: "What's the difference between LP rewards and LP incentives?",
+        question: 'What’s the difference between AQUA rewards and Pool Incentives?',
         answer: (
             <span>
                 <ul>
                     <li>
-                        LP rewards are distributed directly by the Aquarius protocol, always
-                        nominated in AQUA, and can be boosted based on a user's ICE balance.
+                        AQUA rewards are distributed directly by the Aquarius protocol, always
+                        nominated in AQUA, and can be boosted based on a user’s ICE balance.
                     </li>
                     <li>
-                        LP incentives, on the other hand, can be created by any Stellar user,
-                        nominated in any currency traded on Aquarius, and are not affected by a
-                        user's ICE balance.
+                        Pool Incentives can be created by anyone, paid in any token traded on
+                        Aquarius, and are not affected by ICE boosts.
                     </li>
                 </ul>
             </span>
         ),
     },
     {
-        question: 'How do I receive LP incentives?',
+        question: 'How do I receive Pool Incentives?',
         answer: (
             <span>
-                To earn LP incentives, you need to provide liquidity to a pool that has incentives
-                enabled. You can confirm this by checking the "Daily reward" column in the pool
-                list.
+                To earn Pool Incentives, you need to provide liquidity to a pool that has active
+                incentives. Rewards accrue automatically but must be claimed in the{' '}
+                <Link to={`${MainRoutes.account}?tab=amm_liquidity&filter=all`}>
+                    Dashboard → Liquidity Positions
+                </Link>{' '}
+                section.
             </span>
         ),
     },
     {
-        question: 'Where can I see my LP incentives?',
+        question: 'Where can I see my Pool Incentives?',
         answer: (
             <span>
-                You can view your earned LP incentives in <b>My Aquarius &gt; My Liquidity</b>.
+                You can view and claim your earned Pool Incentives under{' '}
+                <Link to={`${MainRoutes.account}?tab=amm_liquidity&filter=all`}>
+                    Dashboard → Liquidity Positions
+                </Link>
+                .
             </span>
         ),
     },
     {
-        question: 'How are LP incentives calculated?',
+        question: 'How are Pool Incentives calculated?',
         answer: (
             <span>
                 Incentives are distributed proportionally among liquidity providers in a pool, based
-                on each provider's share of the total deposited liquidity. The more assets you
+                on each provider’s share of total deposited liquidity. The more liquidity you
                 contribute, the larger your share of the incentives.
             </span>
         ),
     },
     {
-        question: 'How do I submit an LP incentive?',
+        question: 'How do I submit a Pool Incentive?',
         answer: (
             <span>
-                Click the "Add incentive" button at the top of this page.
-                <br />
-                Select the pool you'd like to incentivize.
-                <br />
-                Choose the currency you wish to distribute.
-                <br />
-                Enter the amount and the incentive period.
-                <br />
-                <br />
-                <b>
-                    Note: The minimum incentive size must be equivalent to at least 1,000 AQUA at
-                    the time of creation.
-                </b>
+                <ol>
+                    <li>Click the Add Incentive button at the top of the page.</li>
+                    <li>Select the pool you’d like to incentivize.</li>
+                    <li>Choose the reward token.</li>
+                    <li>Enter the daily reward amount and incentive period.</li>
+                </ol>
+                <i>
+                    Note: The minimum incentive size must be equivalent to at least 100,000 AQUA per
+                    day at the time of creation.
+                </i>
             </span>
         ),
     },
@@ -81,8 +89,8 @@ export const lpIncentivesQuestions: QuestionType[] = [
         question: 'How does it work technically?',
         answer: (
             <span>
-                LP incentives are powered by Soroban and distributed automatically by the Aquarius
-                AMM smart contract.
+                Pool Incentives are powered by Soroban smart contracts and distributed automatically
+                by the Aquarius AMM.
             </span>
         ),
     },

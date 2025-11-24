@@ -1,14 +1,30 @@
 import styled from 'styled-components';
 
-import { customScroll, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
+import { customScroll, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
-export const ModalWrapper = styled.div<{ $isWide?: boolean; $width?: string; $minHeight?: string }>`
+export const ModalWrapper = styled.div<{
+    $isWide?: boolean;
+    $width?: string;
+    $minHeight?: string;
+    $noScroll?: boolean;
+}>`
     width: ${({ $isWide, $width }) => $width ?? ($isWide ? '75.2rem' : '52.3rem')};
     padding: 0 1rem;
     overflow-y: scroll;
     overflow-x: hidden;
     ${customScroll};
+
+    ${({ $noScroll }) =>
+        $noScroll
+            ? `
+        overflow: visible;
+      `
+            : `
+        overflow-y: auto;
+        overflow-x: hidden;
+        ${customScroll};
+      `}
 
     min-height: ${({ $minHeight }) => $minHeight ?? 'auto'};
     max-height: calc(95vh - 11.2rem); // 11.2rem = 6.4rem top padding + 4.8rem bottom margin
@@ -22,7 +38,7 @@ export const ModalWrapper = styled.div<{ $isWide?: boolean; $width?: string; $mi
 export const ModalTitle = styled.h3`
     font-size: 3.6rem;
     line-height: 4.2rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     margin-bottom: 0.8rem;
     font-weight: normal;
 
@@ -35,7 +51,7 @@ export const ModalTitle = styled.h3`
 export const ModalDescription = styled.div<{ $smallMarginBottom?: boolean }>`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
     margin-bottom: ${({ $smallMarginBottom }) => ($smallMarginBottom ? '2.4rem' : '4rem')};
 
     ${respondDown(Breakpoints.md)`

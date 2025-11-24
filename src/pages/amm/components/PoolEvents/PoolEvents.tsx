@@ -14,16 +14,17 @@ import { useUpdateIndex } from 'hooks/useUpdateIndex';
 import { PoolEvent, PoolEventType, PoolExtended } from 'types/amm';
 import { SorobanToken } from 'types/token';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
+import LinkIcon from 'assets/icons/nav/icon-external-link-16.svg';
 
-import LinkIcon from 'assets/icon-external-link.svg';
-
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 import PageLoader from 'basics/loaders/PageLoader';
 import Pagination from 'basics/Pagination';
-import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
 import Table from 'basics/Table';
+
+import PublicKeyWithIcon from 'components/PublicKeyWithIcon';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
 
@@ -189,7 +190,7 @@ const PoolEvents = ({ pool }: { pool: PoolExtended }) => {
                 ]}
                 body={events.map((event: PoolEvent, index: number) => ({
                     key: `${event.ledger}-${index}`,
-                    mobileBackground: COLORS.lightGray,
+                    mobileBackground: COLORS.gray50,
                     rowItems: [
                         {
                             children: getEventTitle(event, pool),

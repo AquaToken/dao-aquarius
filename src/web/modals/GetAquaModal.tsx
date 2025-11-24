@@ -1,18 +1,19 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import ArrowRight from 'assets/icon-arrow-right.svg';
-import LobstrLogo from 'assets/lobstr-name-logo.svg';
-import StellarTermLogo from 'assets/stellarterm-logo.svg';
-import StellarXLogo from 'assets/stellarx-logo.svg';
+import ArrowRight from 'assets/icons/arrows/arrow-right-16.svg';
+import LobstrLogo from 'assets/wallets/lobstr/lobstr-name-logo.svg';
+import StellarTermLogo from 'assets/wallets/stellarterm-logo.svg';
+import StellarXLogo from 'assets/wallets/stellarx-logo.svg';
 
 import CopyButton from 'basics/buttons/CopyButton';
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
-import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
 
-import { flexRowSpaceBetween, respondDown } from '../mixins';
-import { Breakpoints, COLORS } from '../styles';
+import PublicKeyWithIcon from 'components/PublicKeyWithIcon';
+
+import { flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     width: 100%;
@@ -42,7 +43,7 @@ const AssetInfo = styled.div`
 const GrayText = styled.div`
     font-size: 1.6rem;
     line-height: 1.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 `;
 
 const BoldText = styled.div`
@@ -50,7 +51,7 @@ const BoldText = styled.div`
     font-size: 1.6rem;
     line-height: 1.9rem;
     margin: 0.5rem 0 0 0;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 
     ${respondDown(Breakpoints.md)`
           margin: 0;
@@ -63,7 +64,7 @@ const InfoRow = styled.div`
 `;
 
 const Text = styled.div`
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
     font-size: 1.6rem;
     line-height: 2.9rem;
     margin: 0.8rem 0;
@@ -76,7 +77,7 @@ const PlatfomLink = styled.a`
     &:not(:last-child) {
         margin-bottom: 2rem;
     }
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
     border-radius: 0.5rem;
     padding: 3rem 2rem 3rem 4rem;
 

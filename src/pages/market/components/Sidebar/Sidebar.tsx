@@ -10,21 +10,22 @@ import { formatBalance } from 'helpers/format-number';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService, StellarService } from 'services/globalServices';
-import { StellarEvents } from 'services/stellar.service';
+import { StellarEvents } from 'services/stellar/events/events';
 
 import { Asset } from 'types/stellar';
 
-import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import { Breakpoints, COLORS } from 'web/styles';
 
-import DIce from 'assets/dice-logo.svg';
-import Ice from 'assets/ice-logo.svg';
-import IconDown from 'assets/icon-down-percent.svg';
-import IconUp from 'assets/icon-up-percent.svg';
+import IconDown from 'assets/icons/arrows/arrow-negative-16.svg';
+import IconUp from 'assets/icons/arrows/arrow-positive-16.svg';
+import DIce from 'assets/tokens/dice-logo.svg';
+import Ice from 'assets/tokens/ice-logo.svg';
 
 import Button from 'basics/buttons/Button';
 import DotsLoader from 'basics/loaders/DotsLoader';
+
+import { cardBoxShadow, flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { PairStats, TotalStats } from 'pages/vote/api/types';
 import { DOWN_ICE, UP_ICE } from 'pages/vote/components/MainPage/MainPage';
@@ -41,19 +42,18 @@ const Container = styled.aside`
     right: 10%;
     top: 2rem;
     padding: 4.5rem 5rem;
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     border-radius: 0.5rem;
     background: ${COLORS.white};
     display: flex;
     flex-direction: column;
     margin-top: -18rem;
     z-index: 102;
+    ${cardBoxShadow};
 
     ${respondDown(Breakpoints.lg)`
          float: unset;
          position: relative;
          width: calc(100% - 3.2rem);
-         margin-top: 0;
          right: unset;
          margin: 1.6rem;
          box-shadow: unset;
@@ -68,14 +68,14 @@ const Title = styled.span`
     font-weight: 700;
     font-size: 2rem;
     line-height: 2.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     margin-bottom: 3.4rem;
 `;
 
 const CreatePair = styled.div`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
     opacity: 0.7;
     max-width: 26rem;
     margin-bottom: 2.5rem;
@@ -94,7 +94,7 @@ const Row = styled.div`
 const Label = styled.span`
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     display: flex;
     align-items: center;
 `;
@@ -102,17 +102,17 @@ const Label = styled.span`
 const Value = styled.span`
     font-size: 1.6rem;
     line-height: 2.4rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     display: flex;
     align-items: center;
 `;
 
 const PercentWithoutBoost = styled.span`
-    color: ${COLORS.placeholder};
+    color: ${COLORS.gray200};
 `;
 
 const Divider = styled.div`
-    border-bottom: 0.1rem solid ${COLORS.gray};
+    border-bottom: 0.1rem solid ${COLORS.gray100};
     margin: 2.4rem 0;
     width: 100%;
 `;
@@ -203,19 +203,20 @@ const Sidebar = ({
             ?.votes_sum ?? 0;
 
     const getUpVotesValue = () =>
-        +StellarService.getMarketVotesValue(
+        +StellarService.cb.getMarketVotesValue(
             votesData.account_id,
             account?.accountId(),
             aquaStellarAsset,
-        ) + +StellarService.getMarketVotesValue(votesData.account_id, account?.accountId(), UP_ICE);
+        ) +
+        +StellarService.cb.getMarketVotesValue(votesData.account_id, account?.accountId(), UP_ICE);
 
     const getDownVotesValue = () =>
-        +StellarService.getMarketVotesValue(
+        +StellarService.cb.getMarketVotesValue(
             votesData.downvote_account_id,
             account?.accountId(),
             aquaStellarAsset,
         ) +
-        +StellarService.getMarketVotesValue(
+        +StellarService.cb.getMarketVotesValue(
             votesData.downvote_account_id,
             account?.accountId(),
             DOWN_ICE,

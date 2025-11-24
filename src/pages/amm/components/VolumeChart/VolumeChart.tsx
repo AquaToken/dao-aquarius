@@ -6,17 +6,17 @@ import styled from 'styled-components';
 
 import { ChartPeriods } from 'constants/charts';
 
-import { convertUTCToLocalDateIgnoringTimezone, getDateString } from 'helpers/date';
+import { getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
 import { PoolStatistics, PoolVolume24h } from 'types/amm';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
-import EmptyChart from 'assets/empty-chart.svg';
+import EmptyChart from 'assets/icons/objects/icon-empty-chart-66x48.svg';
 
 import { Select, ToggleGroup } from 'basics/inputs';
+
+import { flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { transformDate } from '../LiquidityChart/LiquidityChart';
 
@@ -29,10 +29,10 @@ const Container = styled.div`
 const Axis = styled.g`
     font-size: 1.4rem;
     line-height: 1.6rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 
     path {
-        color: ${COLORS.border};
+        color: ${COLORS.gray600};
     }
 
     line {
@@ -51,7 +51,7 @@ const AxisY = styled(Axis)`
 
 const GrayText = styled.text`
     font-size: 1.4rem;
-    fill: ${COLORS.grayText};
+    fill: ${COLORS.textGray};
 
     ${respondDown(Breakpoints.sm)`
        font-size: 1.2rem;
@@ -60,7 +60,7 @@ const GrayText = styled.text`
 
 const LiquidityValue = styled.text`
     font-size: 2rem;
-    fill: ${COLORS.titleText};
+    fill: ${COLORS.textPrimary};
     font-weight: 700;
 
     ${respondDown(Breakpoints.sm)`
@@ -110,7 +110,7 @@ const Empty = styled.div`
     ${flexAllCenter};
     flex-direction: column;
     gap: 1.6rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 interface VolumeChartProps {
@@ -371,12 +371,9 @@ const VolumeChart = ({
                                           : selectedPeriod === ChartPeriods.months_3
                                           ? 'Weekly'
                                           : 'Daily'
-                                  } volume: ${getDateString(
-                                      convertUTCToLocalDateIgnoringTimezone(
-                                          selectedItem?.date,
-                                      )?.getTime(),
-                                      { withoutDay: selectedPeriod >= ChartPeriods.months_6 },
-                                  )}`
+                                  } volume: ${getDateString(selectedItem?.date?.getTime(), {
+                                      withoutDay: selectedPeriod >= ChartPeriods.months_6,
+                                  })}`
                                 : `Last 24H volume:`}
                         </GrayText>
                         <LiquidityValue x="16" y="63">
@@ -387,7 +384,7 @@ const VolumeChart = ({
                     {items.map((item, i) => (
                         <rect
                             rx="1"
-                            fill={selectedIndex === i ? COLORS.tooltip : COLORS.gray}
+                            fill={selectedIndex === i ? COLORS.purple400 : COLORS.gray100}
                             stroke={COLORS.white}
                             key={i}
                             x={x(item.date)}

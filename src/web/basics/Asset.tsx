@@ -14,15 +14,16 @@ import { ModalService } from 'services/globalServices';
 
 import { ClassicToken, Token, TokenType } from 'types/token';
 
-import { flexAllCenter, respondDown, textEllipsis } from 'web/mixins';
 import AssetInfoModal from 'web/modals/AssetInfoModal';
-import { Breakpoints, COLORS } from 'web/styles';
 
-import Info from 'assets/icon-info.svg';
+import Info from 'assets/icons/status/icon-info-16.svg';
 
 import AssetLogo from 'basics/AssetLogo';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { flexAllCenter, respondDown, textEllipsis } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     display: flex;
@@ -41,12 +42,12 @@ const AssetDetails = styled.div<{ $inRow?: boolean }>`
 const AssetCode = styled.span<{ $inRow?: boolean; $isBig?: boolean }>`
     font-size: ${({ $isBig }) => ($isBig ? '3.6rem' : '1.6rem')};
     line-height: ${({ $isBig }) => ($isBig ? '4.2rem' : '2.8rem')};
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     margin-right: ${({ $inRow }) => ($inRow ? '0.3rem' : '0')};
 `;
 
 const AssetDomain = styled.span<{ $withMobileView?: boolean; $inRow?: boolean }>`
-    color: ${({ $inRow }) => ($inRow ? COLORS.paragraphText : COLORS.grayText)};
+    color: ${({ $inRow }) => ($inRow ? COLORS.textTertiary : COLORS.textGray)};
     font-size: ${({ $inRow }) => ($inRow ? '1.6rem' : '1.4rem')};
     line-height: ${({ $inRow }) => ($inRow ? '2.8rem' : '2rem')};
     word-break: break-word;
@@ -68,7 +69,7 @@ const InfoIcon = styled.div<{ $withMobileView?: boolean }>`
 `;
 
 const DomainLink = styled.a`
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
     text-decoration: none;
     cursor: pointer;
 `;
@@ -83,7 +84,7 @@ const DomainDetails = styled.span`
 
 const DomainDetailsLink = styled.a`
     text-decoration: none;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 
     &:hover {
         text-decoration: underline;

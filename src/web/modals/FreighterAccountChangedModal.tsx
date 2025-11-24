@@ -10,19 +10,20 @@ import { LS_FREIGHTER_ACCOUNT_CHANGE_IMMEDIATELY } from 'constants/local-storage
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { WalletKitService } from 'services/globalServices';
+import { AuthService } from 'services/globalServices';
 
 import { ModalProps } from 'types/modal';
 
-import Arrow from 'assets/icon-arrow-right-long.svg';
+import Arrow from 'assets/icons/arrows/arrow-alt2-16.svg';
 
-import AccountBlock from 'basics/AccountBlock';
 import { Button } from 'basics/buttons';
 import { Checkbox } from 'basics/inputs';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
-import { respondDown } from '../mixins';
-import { Breakpoints } from '../styles';
+import AccountBlock from 'components/AccountBlock';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints } from 'styles/style-constants';
 
 interface Props {
     publicKey: string;
@@ -79,7 +80,7 @@ const FreighterAccountChangedModal = ({ params, close }: ModalProps<Props>) => {
 
         enableRedirect(path);
         login({ pubKey: publicKey, loginType: LoginTypes.walletKit, walletKitId: FREIGHTER_ID });
-        WalletKitService.startFreighterWatching(publicKey);
+        AuthService.walletKit.startFreighterWatching(publicKey);
     };
 
     return (

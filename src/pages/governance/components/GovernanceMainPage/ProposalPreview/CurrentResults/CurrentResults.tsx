@@ -3,8 +3,8 @@ import styled from 'styled-components';
 
 import { roundToPrecision } from 'helpers/format-number';
 
-import { flexAllCenter } from 'web/mixins';
-import { COLORS } from 'web/styles';
+import { flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 import { ProposalSimple } from '../../../../api/types';
 import { SummaryTitle, SummaryValue } from '../ProposalPreview';
@@ -17,7 +17,7 @@ const Label = styled.div`
     width: 100%;
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -32,7 +32,7 @@ const Outer = styled.div`
     height: 0.8rem;
     border-radius: 8px;
     width: 100%;
-    background-color: ${COLORS.pinkRed};
+    background-color: ${COLORS.red500};
 `;
 
 const Inner = styled.div<{ $width: string }>`
@@ -40,7 +40,7 @@ const Inner = styled.div<{ $width: string }>`
     border-radius: ${({ $width }) => ($width === '100%' ? '0.8rem' : '0.8rem 0 0 0.8rem')};
     border-right: ${({ $width }) => ($width === '100%' ? 'none' : `0.1rem solid ${COLORS.white}`)};
     width: ${({ $width }) => $width};
-    background-color: ${COLORS.purple};
+    background-color: ${COLORS.purple500};
 `;
 
 const CurrentResults = ({ proposal }: { proposal: ProposalSimple }) => {

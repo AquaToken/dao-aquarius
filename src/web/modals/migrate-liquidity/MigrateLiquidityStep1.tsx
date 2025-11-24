@@ -9,12 +9,13 @@ import { formatBalance } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 import { ModalService, StellarService, ToastService } from 'services/globalServices';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { Pool } from 'types/amm';
 import { ModalProps } from 'types/modal';
-import { Asset, PoolClassic } from 'types/stellar';
+import { PoolClassic } from 'types/stellar';
+import { ClassicToken } from 'types/token';
 
 import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
@@ -23,18 +24,18 @@ import RangeInput from 'basics/inputs/RangeInput';
 import Market from 'basics/Market';
 import { ModalWrapper, ModalTitle, StickyButtonWrapper } from 'basics/ModalAtoms';
 
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
+
 import { PairContainer } from 'pages/amm/components/WithdrawFromPool/WithdrawFromPool';
 
 import MigrateLiquidityStep2 from './MigrateLiquidityStep2';
-
-import { respondDown } from '../../mixins';
-import { Breakpoints, COLORS } from '../../styles';
 
 export const Stepper = styled.div`
     font-size: 1.4rem;
     line-height: 1.6rem;
     letter-spacing: 0.2em;
-    color: ${COLORS.descriptionText}B3;
+    color: ${COLORS.textSecondary}B3;
     margin-bottom: 0.8rem;
 `;
 
@@ -51,7 +52,7 @@ const AmountRow = styled.div<{ $isFirst?: boolean }>`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin-top: ${({ $isFirst }) => ($isFirst ? '3rem' : '1.2rem')};
 
     ${respondDown(Breakpoints.md)`
@@ -76,7 +77,7 @@ const Amounts = styled.span`
 `;
 
 const AmountWithdraw = styled.span`
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 
     ${respondDown(Breakpoints.md)`
         font-size: 1.4rem;
@@ -85,8 +86,8 @@ const AmountWithdraw = styled.span`
 
 interface MigrateLiquidityStep1Params {
     poolsToMigrate: Pool[];
-    base: Asset;
-    counter: Asset;
+    base: ClassicToken;
+    counter: ClassicToken;
     pool: PoolClassic;
     onUpdate: () => void;
 }
@@ -153,7 +154,7 @@ const MigrateLiquidityStep1 = ({ params, confirm }: ModalProps<MigrateLiquidityS
     const submit = async () => {
         setPending(true);
 
-        const ops = StellarService.createWithdrawOperation(
+        const ops = StellarService.op.createWithdrawOperation(
             pool.id,
             amountsToWithdraw.shareToWithdraw,
             base,
@@ -163,7 +164,7 @@ const MigrateLiquidityStep1 = ({ params, confirm }: ModalProps<MigrateLiquidityS
             Number(percent) === 100,
         );
 
-        const tx = await StellarService.buildTx(account, ops);
+        const tx = await StellarService.tx.buildTx(account, ops);
 
         account
             .signAndSubmitTx(tx, false, () =>

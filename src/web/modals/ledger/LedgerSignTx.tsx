@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { useIsMounted } from 'hooks/useIsMounted';
 
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 
 import { ModalProps } from 'types/modal';
 
@@ -13,8 +13,8 @@ import { IconFail, IconPending, IconSuccess } from 'basics/icons';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
-import { flexAllCenter, respondDown } from '../../mixins';
-import { Breakpoints, COLORS } from '../../styles';
+import { flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 enum TX_STATUSES {
     pending = 'pending',
@@ -32,7 +32,7 @@ const IconContainer = styled.div`
     padding-top: 8rem;
     padding-bottom: 2.4rem;
     width: 50rem;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     ${flexAllCenter};
 
     ${respondDown(Breakpoints.md)`
@@ -44,7 +44,7 @@ const Status = styled.div`
     padding-top: 2.4rem;
     padding-bottom: 4.5rem;
     margin-bottom: 3.2rem;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     ${flexAllCenter};
 `;
 

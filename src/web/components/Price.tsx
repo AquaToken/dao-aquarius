@@ -5,15 +5,15 @@ import { formatBalance } from 'helpers/format-number';
 
 import { Token, TokenType } from 'types/token';
 
-import { noSelect } from 'web/mixins';
-import { COLORS } from 'web/styles';
-
-import Revert from 'assets/icon-revert.svg';
+import Revert from 'assets/icons/actions/icon-revert-16x17.svg';
 
 import { DotsLoader } from 'basics/loaders';
 
+import { noSelect } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
+
 const Container = styled.div`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin: 1.6rem 0;
     display: flex;
     align-items: center;

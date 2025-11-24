@@ -1,14 +1,15 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import Tick from 'assets/small-icons/check/icon-checkbox-tick.svg';
+import Tick from 'assets/icons/small-icons/check/icon-checkbox-tick.svg';
 
-import { flexAllCenter } from '../../mixins';
-import { COLORS } from '../../styles';
+import { flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 const CheckboxContainer = styled.div<{ $disabled?: boolean }>`
     display: flex;
     flex-direction: row;
+    align-items: center;
     cursor: pointer;
     pointer-events: ${({ $disabled }) => ($disabled ? 'none' : 'unset')};
 `;
@@ -16,7 +17,7 @@ const CheckboxContainer = styled.div<{ $disabled?: boolean }>`
 const Label = styled.div`
     font-size: 1.6rem;
     line-height: 1.8rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const CheckboxInput = styled.div<{ $checked: boolean; $hasLabel: boolean; $disabled?: boolean }>`
@@ -26,16 +27,16 @@ const CheckboxInput = styled.div<{ $checked: boolean; $hasLabel: boolean; $disab
     min-width: 1.6rem;
     border-radius: 0.4rem;
     margin-right: ${({ $hasLabel }) => ($hasLabel ? '1.6rem' : '0')};
-    background: ${({ $checked }) => ($checked ? COLORS.purple : COLORS.white)};
+    background: ${({ $checked }) => ($checked ? COLORS.purple500 : COLORS.white)};
     border: ${({ $checked, $disabled }) =>
         $checked
-            ? `0.1rem solid ${COLORS.purple}`
+            ? `0.1rem solid ${COLORS.purple500} `
             : $disabled
-            ? `0.1rem solid ${COLORS.gray}`
-            : `0.1rem solid ${COLORS.grayText}`};
+            ? `0.1rem solid ${COLORS.gray100}`
+            : `0.1rem solid ${COLORS.textGray}`};
 
     &:hover {
-        border: 0.1rem solid ${COLORS.purple};
+        border: 0.1rem solid ${COLORS.purple500};
     }
 `;
 
@@ -46,7 +47,7 @@ const Checkbox = ({
     disabled,
     ...props
 }: {
-    label?: string;
+    label?: string | React.ReactNode;
     checked: boolean;
     onChange: (value: boolean, event: React.MouseEvent) => void;
     disabled?: boolean;

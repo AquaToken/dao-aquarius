@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import { MAX_X_ICE_BOOST } from 'constants/ice';
+import { MAX_X_UPVOTE_ICE_BOOST } from 'constants/ice';
 
 import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
@@ -10,17 +10,17 @@ import { createAsset } from 'helpers/token';
 
 import { ModalProps } from 'types/modal';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
-import Aqua from 'assets/aqua-logo-small.svg';
-import Close from 'assets/icon-close-small-purple.svg';
-import Info from 'assets/icon-info.svg';
+import Aqua from 'assets/aqua/aqua-logo.svg';
+import Close from 'assets/icons/nav/icon-close-alt-16.svg';
+import Info from 'assets/icons/status/icon-info-16.svg';
 
 import Asset from 'basics/Asset';
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 import Table, { CellAlign } from 'basics/Table';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { PairStats } from '../../../api/types';
 
@@ -30,7 +30,7 @@ const BribeDetails = styled.div`
     align-items: center;
 
     padding: 3.8rem;
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
     border-radius: 0.5rem;
     margin-bottom: 3.8rem;
     position: relative;
@@ -65,14 +65,14 @@ export const BribeDetailTitle = styled.div`
     font-weight: 400;
     font-size: 1.4rem;
     line-height: 2rem;
-    ${COLORS.grayText}
+    ${COLORS.textGray}
 `;
 
 export const BribeDetailValue = styled.div`
     font-weight: 700;
     font-size: 2rem;
     line-height: 2.8rem;
-    ${COLORS.titleText}
+    ${COLORS.textPrimary}
 `;
 
 const AquaLogo = styled(Aqua)`
@@ -110,7 +110,7 @@ const HowItWorks = styled.div`
 export const HowItWorksText = styled.span`
     font-size: 1.6rem;
     line-height: 2.4rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 export const HowItWorksFooter = styled.div`
@@ -123,11 +123,17 @@ export const CloseButton = styled.div`
     display: flex;
     align-items: center;
     cursor: pointer;
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
     font-size: 1.6rem;
     line-height: 2.8rem;
     svg {
         margin-left: 0.8rem;
+    }
+`;
+
+const ClosePurple = styled(Close)`
+    path {
+        fill: ${COLORS.purple500};
     }
 `;
 
@@ -205,12 +211,12 @@ const BribesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
                             Bribes are divided among all participants in the voting for the market
                             pair. Make sure you have an open trustline to the bribe reward asset to
                             receive your share. Maximum bribe APY is displayed for fully locked ICE
-                            ({MAX_X_ICE_BOOST} ICE per AQUA).
+                            ({MAX_X_UPVOTE_ICE_BOOST} upvoteICE per AQUA).
                         </HowItWorksText>
                         <HowItWorksFooter>
                             <CloseButton onClick={() => setShowHowItWorks(false)}>
                                 <span>Close</span>
-                                <Close />
+                                <ClosePurple />
                             </CloseButton>
                         </HowItWorksFooter>
                     </HowItWorks>
@@ -225,7 +231,7 @@ const BribesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
                 body={pair.aggregated_bribes.map(bribe => ({
                     key: bribe.asset_code + bribe.asset_issuer,
                     isNarrow: true,
-                    mobileBackground: COLORS.lightGray,
+                    mobileBackground: COLORS.gray50,
                     rowItems: [
                         {
                             children: (

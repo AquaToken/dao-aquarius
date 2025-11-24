@@ -3,7 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import styled, { css } from 'styled-components';
 
-import { COLORS, Z_INDEX } from 'web/styles';
+import { cardBoxShadow } from 'styles/mixins';
+import { COLORS, Z_INDEX } from 'styles/style-constants';
 
 export enum TOOLTIP_POSITION {
     top = 'top',
@@ -109,7 +110,7 @@ const TooltipBody = styled.div<{
     padding: ${({ $withoutPadding }) => ($withoutPadding ? '0' : '0.9rem 1.2rem')};
     color: ${({ $color }) => $color};
     background-color: ${({ $background }) => $background};
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
+    ${cardBoxShadow};
     border-radius: 0.5rem;
     white-space: nowrap;
     z-index: ${Z_INDEX.tooltip};
@@ -153,7 +154,7 @@ const Tooltip = ({
     position,
     isShow,
     showOnHover,
-    background = COLORS.tooltip,
+    background = COLORS.purple400,
     color = COLORS.white,
     withoutPadding = false,
     ...props

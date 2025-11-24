@@ -12,13 +12,14 @@ import { convertDateStrToTimestamp, getDateString } from 'helpers/date';
 
 import { IncentiveProcessed } from 'types/incentives';
 
-import { EmptyList } from 'web/mixins';
-
 import Asset from 'basics/Asset';
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 import { PageLoader } from 'basics/loaders';
 import Market from 'basics/Market';
 import Table from 'basics/Table';
+
+import { EmptyList, respondDown } from 'styles/mixins';
+import { Breakpoints, FONT_SIZE } from 'styles/style-constants';
 
 const Wrapper = styled.div`
     padding: 2.4rem 0;
@@ -26,6 +27,15 @@ const Wrapper = styled.div`
 
 const Empty = styled.div`
     ${EmptyList};
+`;
+
+const Period = styled.span`
+    ${respondDown(Breakpoints.sm)`
+        display: flex;
+        flex-direction: column;
+        text-align: right;
+        ${FONT_SIZE.sm};
+    `}
 `;
 
 interface Props {
@@ -56,7 +66,7 @@ const IncentivesTable = ({ isActive }: Props) => {
                         { children: 'Pool', flexSize: 2.5 },
                         { children: 'Token' },
                         { children: 'Daily amount' },
-                        { children: 'Period' },
+                        { children: 'Period', flexSize: 1.5 },
                     ]}
                     body={incentives.map(incentive => {
                         const amount = tpsToDailyAmount(
@@ -74,6 +84,7 @@ const IncentivesTable = ({ isActive }: Props) => {
                                             fee={incentive.pool.fee}
                                             poolType={incentive.pool.pool_type}
                                             withoutLink
+                                            mobileVerticalDirections
                                         />
                                     ),
                                     flexSize: 2.5,
@@ -88,15 +99,34 @@ const IncentivesTable = ({ isActive }: Props) => {
                                     label: 'Daily amount',
                                 },
                                 {
-                                    children: `${getDateString(
-                                        convertDateStrToTimestamp(incentive.start_at_str),
-                                        {
-                                            withoutYear: true,
-                                        },
-                                    )} - ${getDateString(
-                                        convertDateStrToTimestamp(incentive.expired_at_str) - 1,
-                                    )}`,
+                                    children: (
+                                        <Period>
+                                            <span>
+                                                {getDateString(
+                                                    convertDateStrToTimestamp(
+                                                        incentive.start_at_str,
+                                                    ),
+                                                    {
+                                                        withoutYear: true,
+                                                        withTime: true,
+                                                    },
+                                                )}{' '}
+                                                -{' '}
+                                            </span>
+                                            <span>
+                                                {getDateString(
+                                                    convertDateStrToTimestamp(
+                                                        incentive.expired_at_str,
+                                                    ),
+                                                    {
+                                                        withTime: true,
+                                                    },
+                                                )}
+                                            </span>
+                                        </Period>
+                                    ),
                                     label: 'Period:',
+                                    flexSize: 1.5,
                                 },
                             ],
                         };

@@ -18,18 +18,19 @@ import { ModalService } from 'services/globalServices';
 
 import { PoolProcessed } from 'types/amm';
 
-import { respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import { Breakpoints, COLORS } from 'web/styles';
 
-import Info from 'assets/icon-info.svg';
-import Warning from 'assets/icon-warning.svg';
+import Info from 'assets/icons/status/icon-info-16.svg';
+import Warning from 'assets/icons/status/warning-16.svg';
 
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const Container = styled.section`
     position: relative;
@@ -59,7 +60,7 @@ const Header = styled.div`
 const Title = styled.h3`
     font-size: 3.5rem;
     line-height: 4.1rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     font-weight: normal;
 
     ${respondDown(Breakpoints.md)`
@@ -73,7 +74,7 @@ const LastUpdated = styled.div`
     align-items: center;
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 
     span {
         margin-right: 1rem;
@@ -102,7 +103,7 @@ const Amount = styled.div`
     align-items: center;
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 
     a {
         display: flex;
@@ -339,7 +340,7 @@ const RewardsList = () => {
                                                 }
                                                 position={TOOLTIP_POSITION.top}
                                                 background={COLORS.white}
-                                                color={COLORS.titleText}
+                                                color={COLORS.textPrimary}
                                                 showOnHover
                                             >
                                                 <WarningIcon />
@@ -378,7 +379,7 @@ const RewardsList = () => {
                                 children: `${formatBalance(daily_total_reward)} AQUA`,
                                 label: 'Total daily reward',
                                 align: CellAlign.Right,
-                                labelColor: COLORS.titleText,
+                                labelColor: COLORS.textPrimary,
                             },
                         ],
                     }),

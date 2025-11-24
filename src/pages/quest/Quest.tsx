@@ -8,8 +8,8 @@ import { useUpdateIndex } from 'hooks/useUpdateIndex';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { commonMaxWidth, respondDown } from 'web/mixins';
-import { Breakpoints } from 'web/styles';
+import { commonMaxWidth, respondDown } from 'styles/mixins';
+import { Breakpoints } from 'styles/style-constants';
 
 import MainBlock from 'pages/quest/MainBlock/MainBlock';
 import ParticipateRules from 'pages/quest/ParticipateRules/ParticipateRules';

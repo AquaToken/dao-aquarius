@@ -8,12 +8,12 @@ import useAnimationEnd from 'hooks/useAnimationEnd';
 
 import { TOAST_TYPE } from 'services/toast.service';
 
-import IconClose from 'assets/icon-close-small.svg';
+import IconClose from 'assets/icons/nav/icon-close-alt-16.svg';
 
 import { IconFail, IconSuccess } from 'basics/icons';
 
-import { respondDown } from '../mixins';
-import { Breakpoints, COLORS } from '../styles';
+import { cardBoxShadow, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const ToastBody = styled.div<{ $isShow: boolean }>`
     width: 36.2rem;
@@ -22,7 +22,7 @@ const ToastBody = styled.div<{ $isShow: boolean }>`
     align-items: center;
     padding: 2rem 4rem;
     background: ${COLORS.white};
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
+    ${cardBoxShadow};
     border-radius: 1rem;
     animation: ${({ $isShow }) =>
         $isShow ? 'openingToast ease-in-out 0.8s' : 'closingToast linear 0.4s'};
@@ -126,7 +126,7 @@ const Loader = styled.div<{ $pause: boolean; $delay: number }>`
     left: 0;
     width: 0;
     height: 0.4rem;
-    background: ${COLORS.purple};
+    background: ${COLORS.purple500};
     animation: ${({ $delay }) => `load linear ${$delay / 1000}s`};
     animation-play-state: ${({ $pause }) => ($pause ? 'paused' : 'running')};
 
@@ -145,7 +145,7 @@ const ToastText = styled.span`
     margin-left: 0.8rem;
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
 `;
 
 type ToastProps = {

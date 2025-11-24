@@ -18,11 +18,12 @@ import { StellarService, ToastService } from 'services/globalServices';
 
 import { ModalProps } from 'types/modal';
 
-import { flexRowSpaceBetween, respondDown } from 'web/mixins';
-
 import Alert from 'basics/Alert';
 import Button from 'basics/buttons/Button';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
+
+import { flexRowSpaceBetween } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 import { checkProposalStatus, createProposal, editProposal } from '../../../api/api';
 import { Proposal } from '../../../api/types';
@@ -42,13 +43,13 @@ const Description = styled(ModalDescription)`
 
 const Label = styled.div`
     line-height: 2.8rem;
-    color: #6b6c83;
+    color: ${COLORS.textGray};
 `;
 
 const Amount = styled.div`
     line-height: 2.8rem;
     text-align: right;
-    color: #000636;
+    color: ${COLORS.textTertiary};
 `;
 
 const CreateDiscussionModal = ({
@@ -101,11 +102,11 @@ const CreateDiscussionModal = ({
         }
 
         try {
-            const op = StellarService.createBurnAquaOperation(CREATE_DISCUSSION_COST.toString());
+            const op = StellarService.op.createBurnAquaOperation(CREATE_DISCUSSION_COST.toString());
             const hash = sha256(text);
-            const memoHash = StellarService.createMemo(MemoHash, hash);
+            const memoHash = StellarService.tx.createMemo(MemoHash, hash);
 
-            const tx = await StellarService.buildTx(account, op, memoHash);
+            const tx = await StellarService.tx.buildTx(account, op, memoHash);
 
             const result = isEdit
                 ? await editProposal(

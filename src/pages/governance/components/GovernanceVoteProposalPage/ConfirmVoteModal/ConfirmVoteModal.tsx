@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
+import { processIceTx } from 'api/ice';
+
 import { GD_ICE_CODE, GOV_ICE_CODE, ICE_ISSUER } from 'constants/assets';
 import { LockerRoutes } from 'constants/routes';
 
@@ -16,25 +18,25 @@ import { useIsMounted } from 'hooks/useIsMounted';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 import { StellarService, ToastService } from 'services/globalServices';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { ModalProps } from 'types/modal';
 
-import { flexAllCenter, flexRowSpaceBetween } from 'web/mixins';
-import { COLORS } from 'web/styles';
-
-import DIce from 'assets/dice-logo.svg';
-import Ice from 'assets/ice-logo.svg';
-import Fail from 'assets/icon-fail.svg';
-import Success from 'assets/icon-success.svg';
+import Fail from 'assets/icons/status/fail-red.svg';
+import Success from 'assets/icons/status/success.svg';
+import DIce from 'assets/tokens/dice-logo.svg';
+import Ice from 'assets/tokens/ice-logo.svg';
 
 import Button from 'basics/buttons/Button';
-import ExternalLink from 'basics/ExternalLink';
 import Input from 'basics/inputs/Input';
 import RangeInput from 'basics/inputs/RangeInput';
 import Select from 'basics/inputs/Select';
+import { ExternalLink } from 'basics/links';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
+
+import { flexAllCenter, flexRowSpaceBetween } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 import { SimpleProposalOptions } from '../../../pages/GovernanceVoteProposalPage';
 
@@ -52,7 +54,7 @@ const ContentRow = styled.div`
 const Label = styled.span`
     font-size: 1.6rem;
     line-height: 1.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     ${flexAllCenter};
 `;
 
@@ -73,11 +75,11 @@ const SuccessIcon = styled(Success)`
 const BalanceBlock = styled.span`
     font-size: 1.4rem;
     line-height: 1.6rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const Balance = styled.span`
-    color: ${COLORS.tooltip};
+    color: ${COLORS.purple400};
     cursor: pointer;
 `;
 
@@ -107,12 +109,12 @@ const StyledSelect = styled(Select)`
 const ClaimBack = styled.div`
     margin-top: 4.1rem;
     padding-bottom: 1.7rem;
-    color: ${COLORS.grayText};
-    border-bottom: 0.1rem dashed ${COLORS.gray};
+    color: ${COLORS.textGray};
+    border-bottom: 0.1rem dashed ${COLORS.gray100};
 `;
 
 const ClaimBackDate = styled.span`
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 `;
 
 const StyledButton = styled(Button)`
@@ -123,13 +125,13 @@ const GetAquaBlock = styled.div`
     ${flexRowSpaceBetween};
     height: 6.8rem;
     border-radius: 1rem;
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
     padding: 0 3.2rem;
     margin-top: 4.1rem;
 `;
 
 const GetAquaLabel = styled.span`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const GOV_ICE = createAsset(GOV_ICE_CODE, ICE_ISSUER);
@@ -209,15 +211,15 @@ const ConfirmVoteModal = ({
         }
         try {
             setPending(true);
-            const voteOp = StellarService.createVoteOperation(
+            const voteOp = StellarService.op.createVoteOperation(
                 account.accountId(),
                 key,
                 amount,
                 unlockDate,
                 targetAsset,
             );
-            const tx = await StellarService.buildTx(account, voteOp);
-            const processedTx = await StellarService.processIceTx(tx, targetAsset);
+            const tx = await StellarService.tx.buildTx(account, voteOp);
+            const processedTx = await processIceTx(tx, targetAsset);
             const result = await account.signAndSubmitTx(processedTx);
             if (isMounted.current) {
                 setPending(false);

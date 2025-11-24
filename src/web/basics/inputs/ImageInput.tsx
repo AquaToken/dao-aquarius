@@ -5,23 +5,24 @@ import styled from 'styled-components';
 
 import { ModalService } from 'services/globalServices';
 
-import { flexColumnCenter } from 'web/mixins';
 import CropperModal from 'web/modals/CropperModal';
-import { COLORS, FONT_SIZE } from 'web/styles';
 
-import Icon from 'assets/icon-withdraw.svg';
+import Icon from 'assets/icons/actions/icon-withdraw-16.svg';
 
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
+
+import { flexColumnCenter } from 'styles/mixins';
+import { COLORS, FONT_SIZE } from 'styles/style-constants';
 
 const Container = styled.div`
     position: relative;
     border-radius: 0.5rem;
-    border: 0.1rem dashed ${COLORS.gray};
+    border: 0.1rem dashed ${COLORS.gray100};
     padding: 6rem 0;
     gap: 1.6rem;
     ${FONT_SIZE.md};
     ${flexColumnCenter};
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const Label = styled.div`
@@ -30,7 +31,7 @@ const Label = styled.div`
     left: 0;
     ${FONT_SIZE.md};
     line-height: 1.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 `;
 
 const Preview = styled.img`

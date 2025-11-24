@@ -11,21 +11,21 @@ import { useIsMounted } from 'hooks/useIsMounted';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 import { StellarService, ToastService } from 'services/globalServices';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { ModalProps } from 'types/modal';
 import { ClassicToken } from 'types/token';
 
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
-import Info from 'assets/icon-info.svg';
+import Info from 'assets/icons/status/icon-info-16.svg';
 
 import Button from 'basics/buttons/Button';
 import Market from 'basics/Market';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const ContentRow = styled.div`
     display: flex;
@@ -35,9 +35,9 @@ const ContentRow = styled.div`
     margin-top: 3rem;
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     padding-bottom: 2.6rem;
-    border-bottom: 0.1rem dashed ${COLORS.gray};
+    border-bottom: 0.1rem dashed ${COLORS.gray100};
 
     ${respondDown(Breakpoints.md)`
          width: 100%;
@@ -57,7 +57,7 @@ const Cost = styled.div`
     line-height: 1.8rem;
     font-size: 1.6rem;
     margin-right: 1.2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const InfoIconWrap = styled.div`
@@ -71,7 +71,7 @@ const InfoIconWrap = styled.div`
 const AssetsInfo = styled.div`
     ${flexAllCenter};
     padding: 3.5rem 0;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     border-radius: 0.5rem;
 `;
 
@@ -140,7 +140,7 @@ const CreatePairModal = ({ params, close }: ModalProps<CreatePairModalParams>): 
         setPending(true);
 
         try {
-            const tx = await StellarService.createMarketKeyTx(
+            const tx = await StellarService.tx.createMarketKeyTx(
                 account.accountId(),
                 baseInstance,
                 counterInstance,

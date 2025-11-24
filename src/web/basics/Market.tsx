@@ -7,6 +7,7 @@ import { AmmRoutes, MarketRoutes } from 'constants/routes';
 
 import { getAssetString } from 'helpers/assets';
 import { getIsTestnetEnv } from 'helpers/env';
+import getExplorerLink, { ExplorerSection } from 'helpers/explorer-links';
 import { formatBalance } from 'helpers/format-number';
 
 import { LumenInfo } from 'store/assetsStore/reducer';
@@ -16,15 +17,14 @@ import { ModalService } from 'services/globalServices';
 
 import { ClassicToken, Token, TokenType } from 'types/token';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
 import AssetInfoModal from 'web/modals/AssetInfoModal';
-import { Breakpoints, COLORS } from 'web/styles';
 
-import External from 'assets/icon-external-link.svg';
-import Arrow from 'assets/icon-link-arrow.svg';
+import Arrow from 'assets/icons/arrows/arrow-alt2-16.svg';
+import External from 'assets/icons/nav/icon-external-link-16.svg';
 
-import ApyTier from 'basics/ApyTier';
 import AssetLogo, { bigLogoStyles, logoStyles } from 'basics/AssetLogo';
+
+import ApyTier from 'components/ApyTier';
 import {
     AmmBribesLabel,
     AuthRequiredLabel,
@@ -37,7 +37,10 @@ import {
     PrivateBribesLabel,
     RewardLabel,
     StablePoolLabel,
-} from 'basics/Labels';
+} from 'components/Labels';
+
+import { flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const Wrapper = styled.div<{
     $verticalDirections?: boolean;
@@ -64,10 +67,11 @@ const Icons = styled.div<{
     $verticalDirections?: boolean;
     $mobileVerticalDirections?: boolean;
     $leftAlign?: boolean;
+    $compact?: boolean;
 }>`
     display: flex;
     align-items: center;
-    min-width: 12rem;
+    ${({ $compact }) => ($compact ? '' : 'min-width: 12rem;')};
     justify-content: ${({ $leftAlign }) => ($leftAlign ? 'flex-start' : 'center')};
 
     ${({ $mobileVerticalDirections }) =>
@@ -132,7 +136,7 @@ const AssetsDetails = styled.div<{
 const AssetsCodes = styled.span<{ $mobileVerticalDirections?: boolean; $bigCodes?: boolean }>`
     font-size: ${({ $bigCodes }) => ($bigCodes ? '3.6rem' : '1.6rem')};
     line-height: ${({ $bigCodes }) => ($bigCodes ? '4.2rem' : '2.8rem')};
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -147,7 +151,7 @@ const AssetsCodes = styled.span<{ $mobileVerticalDirections?: boolean; $bigCodes
         respondDown(Breakpoints.md)`
             font-size: ${({ $bigCodes }) => ($bigCodes ? '3rem' : '1.6rem')};
             line-height: ${({ $bigCodes }) => ($bigCodes ? '4rem' : '2.8rem')};
-            color: ${COLORS.buttonBackground};
+            color: ${COLORS.purple950};
             margin-top: 0.7rem;
             margin-bottom: 0.4rem;
             display: flex;
@@ -156,7 +160,7 @@ const AssetsCodes = styled.span<{ $mobileVerticalDirections?: boolean; $bigCodes
 `;
 
 const AssetsDomains = styled.span<{ $mobileVerticalDirections?: boolean }>`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     font-size: 1.4rem;
     line-height: 2rem;
     text-align: left;
@@ -189,6 +193,10 @@ const Labels = styled.div`
 
 const ArrowRight = styled(Arrow)`
     margin: 0 0.5rem;
+
+    path {
+        fill: ${COLORS.purple500};
+    }
 `;
 
 const Domain = styled.span`
@@ -234,6 +242,7 @@ type PairProps = {
     apyTier?: number;
     isAmmBribes?: boolean;
     isPrivateBribes?: boolean;
+    compact?: boolean;
 };
 
 const Market = ({
@@ -262,6 +271,7 @@ const Market = ({
     poolType,
     fee,
     apyTier,
+    compact,
     ...props
 }: PairProps): React.ReactNode => {
     const { assetsInfo } = useAssetsStore();
@@ -305,12 +315,7 @@ const Market = ({
         e.stopPropagation();
 
         if (asset.type === TokenType.soroban) {
-            window.open(
-                `https://stellar.expert/explorer/${
-                    getIsTestnetEnv() ? 'testnet' : 'public'
-                }/contract/${asset.contract}`,
-                '_blank',
-            );
+            window.open(getExplorerLink(ExplorerSection.contract, asset.contract), '_blank');
             return;
         }
 
@@ -336,6 +341,7 @@ const Market = ({
                 $assetsCount={assets.length}
                 $mobileVerticalDirections={mobileVerticalDirections}
                 $leftAlign={leftAlign}
+                $compact={compact}
             >
                 {assets.map((asset, index) => (
                     <Icon

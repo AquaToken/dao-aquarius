@@ -15,11 +15,9 @@ import { useDebounce } from 'hooks/useDebounce';
 import { PoolProcessed } from 'types/amm';
 
 import Input from 'web/basics/inputs/Input';
-import { flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
 
-import Info from 'assets/icon-info.svg';
-import Search from 'assets/icon-search.svg';
+import Search from 'assets/icons/actions/icon-search-16.svg';
+import Info from 'assets/icons/status/icon-info-16.svg';
 
 import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
@@ -28,6 +26,9 @@ import Market from 'basics/Market';
 import Pagination from 'basics/Pagination';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import RewardsTokens from 'pages/amm/components/RewardsTokens/RewardsTokens';
 import TotalApy from 'pages/amm/components/TotalApy/TotalApy';
@@ -266,13 +267,13 @@ const AllPools = (): React.ReactNode => {
                             {
                                 children: (
                                     <TitleWithTooltip>
-                                        Total APY
+                                        Total APR
                                         <Tooltip
                                             showOnHover
                                             content={
                                                 <TooltipInnerHead>
-                                                    Total APY is the sum of LP APY, Rewards APY, and
-                                                    Incentives APY.
+                                                    Total APR is the sum of LP APR, Rewards APR, and
+                                                    Incentives APR.
                                                 </TooltipInnerHead>
                                             }
                                             position={TOOLTIP_POSITION.top}
@@ -353,13 +354,13 @@ const AllPools = (): React.ReactNode => {
                                     children: <TotalApy pool={pool} />,
                                     label: (
                                         <TitleWithTooltip>
-                                            Total APY
+                                            Total APR
                                             <Tooltip
                                                 showOnHover
                                                 content={
                                                     <TooltipInnerHead>
-                                                        Total APY is the sum of LP APY, Rewards APY,
-                                                        and Incentives APY.
+                                                        Total APR is the sum of LP APR, Rewards APR,
+                                                        and Incentives APR.
                                                     </TooltipInnerHead>
                                                 }
                                                 position={TOOLTIP_POSITION.top}

@@ -11,19 +11,22 @@ import { useUpdateIndex } from 'hooks/useUpdateIndex';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService, StellarService } from 'services/globalServices';
-import { StellarEvents } from 'services/stellar.service';
+import { StellarEvents } from 'services/stellar/events/events';
 
-import { commonMaxWidth, respondDown, respondUp } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import { Breakpoints, COLORS } from 'web/styles';
 
-import BackgroundImageLeft from 'assets/delegate-bg-left.svg';
-import BackgroundImageRight from 'assets/delegate-bg-right.svg';
+import BackgroundImageLeft from 'assets/delegate/delegate-bg-left.svg';
+import BackgroundImageRight from 'assets/delegate/delegate-bg-right.svg';
+import ArrowAlt16 from 'assets/icons/arrows/arrow-alt-16.svg';
 
-import ExternalLink from 'basics/ExternalLink';
+import { Button } from 'basics/buttons';
 import { ToggleGroup } from 'basics/inputs';
 import Select from 'basics/inputs/Select';
+import { BlankExternalLink, BlankRouterLink } from 'basics/links';
 import { PageLoader } from 'basics/loaders';
+
+import { commonMaxWidth, respondDown, respondUp } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import DelegatesList from 'pages/delegate/components/DelegatesList/DelegatesList';
 import MyDelegates from 'pages/delegate/components/MyDelegates/MyDelegates';
@@ -31,13 +34,13 @@ import MyDelegators from 'pages/delegate/components/MyDelegators/MyDelegators';
 
 const Main = styled.main`
     flex: 1 0 auto;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
 `;
 
 const Background = styled.div`
     width: 100%;
     padding: 8.2rem 24%;
-    background-color: ${COLORS.darkPurple};
+    background-color: ${COLORS.purple900};
     color: ${COLORS.white};
     position: relative;
 
@@ -58,6 +61,19 @@ const BackgroundLeft = styled(BackgroundImageLeft)`
         top: 50%;
         transform: translateY(-50%);
     `}
+`;
+
+const ButtonStyled = styled(Button)`
+    border-radius: 4.6rem;
+`;
+
+const ButtonReadMoreStyled = styled(ButtonStyled)`
+    background-color: ${COLORS.purple800};
+`;
+
+const ArrowAlt16Styled = styled(ArrowAlt16)`
+    margin-left: 0.8rem;
+    color: ${COLORS.white};
 `;
 
 const BackgroundRight = styled(BackgroundImageRight)`
@@ -102,39 +118,16 @@ const MainDescription = styled.p`
     margin: 1.6rem 0 2.4rem;
     position: relative;
     z-index: 1;
-`;
-
-const InviteLink = styled.div`
     display: flex;
-    padding: 1.6rem 2.4rem;
-    border-radius: 2.4rem;
-    background-color: ${COLORS.royalPurple};
-    gap: 1.6rem;
-    width: fit-content;
-    margin: 0 auto;
-    position: relative;
-    z-index: 1;
-
-    span {
-        font-weight: 700;
-        font-size: 1.6rem;
-        line-height: 2.8rem;
-    }
-
-    ${respondDown(Breakpoints.sm)`
-         flex-direction: column;
-         align-items: center;
-    `}
+    flex-direction: column;
+    align-items: center;
 `;
 
-const ExternalLinkStyled = styled(ExternalLink)`
-    color: ${COLORS.white};
-
-    svg {
-        path {
-            fill: ${COLORS.white};
-        }
-    }
+const MainLinksContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    gap: 0.8rem;
+    margin-top: 2.4rem;
 `;
 
 const Wrapper = styled.div`
@@ -213,11 +206,11 @@ const DelegateMain = () => {
         if (!account) {
             return;
         }
-        setDelegators(StellarService.getDelegatorLocks(account.accountId()));
+        setDelegators(StellarService.cb.getDelegatorLocks(account.accountId()));
 
         const unsub = StellarService.event.sub(({ type }) => {
             if (type === StellarEvents.claimableUpdate) {
-                setDelegators(StellarService.getDelegatorLocks(account.accountId()));
+                setDelegators(StellarService.cb.getDelegatorLocks(account.accountId()));
             }
         });
 
@@ -253,14 +246,20 @@ const DelegateMain = () => {
                     <br />
                     Earn rewards without managing votes yourself or become a delegate and help shape
                     protocol incentives
-                </MainDescription>
-                <InviteLink>
-                    <span>Want to lead and earn incentives?</span>
+                    <MainLinksContainer>
+                        <BlankRouterLink to={DelegateRoutes.become}>
+                            <ButtonStyled withGradient isRounded>
+                                Become a Delegate <ArrowAlt16Styled />
+                            </ButtonStyled>
+                        </BlankRouterLink>
 
-                    <ExternalLinkStyled to={DelegateRoutes.become}>
-                        Become a Delegate
-                    </ExternalLinkStyled>
-                </InviteLink>
+                        <BlankExternalLink href="https://docs.aqua.network/ice-delegation/overview">
+                            <ButtonReadMoreStyled isRounded>
+                                Read more <ArrowAlt16Styled />
+                            </ButtonReadMoreStyled>
+                        </BlankExternalLink>
+                    </MainLinksContainer>
+                </MainDescription>
                 <BackgroundLeft />
                 <BackgroundRight />
             </Background>

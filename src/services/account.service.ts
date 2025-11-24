@@ -3,6 +3,7 @@ import { Horizon } from '@stellar/stellar-sdk';
 import BigNumber from 'bignumber.js';
 
 import { getNativePrices } from 'api/amm';
+import { sentToVault } from 'api/vault';
 
 import { POOL_TYPE } from 'constants/amm';
 import { ASSETS_ENV_DATA, DEFAULT_ICE_ASSETS } from 'constants/assets';
@@ -20,24 +21,14 @@ import LedgerSignTx from 'web/modals/ledger/LedgerSignTx';
 import SentToVault from 'web/modals/SentToVault';
 import SignWithPublic from 'web/modals/SignWithPublic';
 
-import {
-    LedgerService,
-    LobstrExtensionService,
-    ModalService,
-    SorobanService,
-    StellarService,
-    WalletConnectService,
-    WalletKitService,
-} from './globalServices';
-import { BuildSignAndSubmitStatuses } from './wallet-connect.service';
+import { BuildSignAndSubmitStatuses } from './auth/wallet-connect/wallet-connect.service';
+import { AuthService, ModalService, SorobanService, StellarService } from './globalServices';
 
 const VAULT_MARKER = 'GA2T6GR7VXXXBETTERSAFETHANSORRYXXXPROTECTEDBYLOBSTRVAULT';
 const { aquaCode, aquaIssuer } = ASSETS_ENV_DATA[getEnv()].aqua;
 
 export default class AccountService extends Horizon.AccountResponse {
     authType?: LoginTypes;
-    num_sponsoring: number;
-    num_sponsored: number;
 
     constructor(account: typeof AccountRecord, authType: LoginTypes) {
         super(account);
@@ -70,7 +61,7 @@ export default class AccountService extends Horizon.AccountResponse {
         }
 
         if (this.authType === LoginTypes.walletConnect) {
-            return WalletConnectService.signTx(tx as StellarSdk.Transaction);
+            return AuthService.walletConnect.signTx(tx as StellarSdk.Transaction);
         }
 
         if (this.authType === LoginTypes.secret) {
@@ -80,17 +71,19 @@ export default class AccountService extends Horizon.AccountResponse {
         }
 
         if (this.authType === LoginTypes.lobstr) {
-            return LobstrExtensionService.signTx(tx).then(res => res.toEnvelope().toXDR('base64'));
+            return AuthService.lobstrExtension
+                .signTx(tx)
+                .then(res => res.toEnvelope().toXDR('base64'));
         }
 
         if (this.authType === LoginTypes.ledger) {
-            return LedgerService.signTx(tx as StellarSdk.Transaction).then(res =>
-                res.toEnvelope().toXDR('base64'),
-            );
+            return AuthService.ledger
+                .signTx(tx as StellarSdk.Transaction)
+                .then(res => res.toEnvelope().toXDR('base64'));
         }
 
         if (this.authType === LoginTypes.walletKit) {
-            return WalletKitService.signTx(tx).then(res => res.toEnvelope().toXDR('base64'));
+            return AuthService.walletKit.signTx(tx).then(res => res.toEnvelope().toXDR('base64'));
         }
     }
 
@@ -114,10 +107,12 @@ export default class AccountService extends Horizon.AccountResponse {
         }
 
         if (this.authType === LoginTypes.walletConnect && !withResult) {
-            return WalletConnectService.signAndSubmitTx(tx as StellarSdk.Transaction).then(res => {
-                callCallbackIfExist();
-                return res;
-            });
+            return AuthService.walletConnect
+                .signAndSubmitTx(tx as StellarSdk.Transaction)
+                .then(res => {
+                    callCallbackIfExist();
+                    return res;
+                });
         }
 
         let signedTx;
@@ -127,20 +122,21 @@ export default class AccountService extends Horizon.AccountResponse {
         }
 
         if (this.authType === LoginTypes.lobstr) {
-            signedTx = await LobstrExtensionService.signTx(tx);
+            signedTx = await AuthService.lobstrExtension.signTx(tx);
         }
 
         if (this.authType === LoginTypes.walletConnect && withResult) {
-            const signedXDR: string = await WalletConnectService.signTx(tx);
+            const signedXDR: string = await AuthService.walletConnect.signTx(tx);
             signedTx = new StellarSdk.Transaction(signedXDR, getNetworkPassphrase());
         }
 
         if (this.authType === LoginTypes.ledger && !this.isMultisigEnabled) {
-            const result = LedgerService.signTx(tx as StellarSdk.Transaction)
+            const result = AuthService.ledger
+                .signTx(tx as StellarSdk.Transaction)
                 .then(signed =>
                     withResult
                         ? SorobanService.connection.submitTx(signed)
-                        : StellarService.submitTx(signed),
+                        : StellarService.tx.submitTx(signed),
                 )
                 .then(res => {
                     callCallbackIfExist();
@@ -151,18 +147,18 @@ export default class AccountService extends Horizon.AccountResponse {
         }
 
         if (this.authType === LoginTypes.walletKit) {
-            signedTx = await WalletKitService.signTx(tx);
+            signedTx = await AuthService.walletKit.signTx(tx);
         }
 
         if (this.authType === LoginTypes.ledger) {
-            const signPromise = LedgerService.signTx(tx as StellarSdk.Transaction);
+            const signPromise = AuthService.ledger.signTx(tx as StellarSdk.Transaction);
             ModalService.openModal(LedgerSignTx, { result: signPromise });
             signedTx = await signPromise;
         }
 
         if (
             !this.isMultisigEnabled ||
-            !StellarService.isMoreSignaturesNeeded(signedTx, {
+            !StellarService.account.isMoreSignaturesNeeded(signedTx, {
                 signers: this.signers,
                 thresholds: this.thresholds,
                 account_id: this.account_id,
@@ -174,7 +170,7 @@ export default class AccountService extends Horizon.AccountResponse {
             return (
                 withResult
                     ? SorobanService.connection.submitTx(signedTx)
-                    : StellarService.submitTx(signedTx)
+                    : StellarService.tx.submitTx(signedTx)
             ).then(res => {
                 callCallbackIfExist();
                 return res;
@@ -193,7 +189,7 @@ export default class AccountService extends Horizon.AccountResponse {
             return Promise.resolve({ status: BuildSignAndSubmitStatuses.pending });
         }
 
-        return StellarService.sendToVault(xdr)
+        return sentToVault(xdr)
             .then(() => {
                 ModalService.openModal(SentToVault, {}).then(() => {
                     callCallbackIfExist();
@@ -254,7 +250,7 @@ export default class AccountService extends Horizon.AccountResponse {
     }
 
     async getClassicPools(): Promise<PoolClassicProcessed[]> {
-        const liquidityPoolsForAccount = await StellarService.getLiquidityPoolForAccount(
+        const liquidityPoolsForAccount = await StellarService.account.getLiquidityPoolForAccount(
             this.accountId(),
             200,
         );
@@ -287,7 +283,7 @@ export default class AccountService extends Horizon.AccountResponse {
                 lp as unknown as PoolClassicProcessed
             ).tokens
                 .reduce((acc, asset, index) => {
-                    const price = prices.get(asset.contractId(getNetworkPassphrase())).price ?? 0;
+                    const price = prices.get(asset.contractId(getNetworkPassphrase()))?.price ?? 0;
 
                     const amount = Number(lp.reserves[index]) * Number(price);
 

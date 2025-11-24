@@ -19,23 +19,21 @@ import { useUpdateIndex } from 'hooks/useUpdateIndex';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 import {
     ModalService,
     SorobanService,
     StellarService,
     ToastService,
 } from 'services/globalServices';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { PoolIncentives, PoolRewardsInfo, PoolUserProcessed, RewardType } from 'types/amm';
 import { SorobanToken, Token } from 'types/token';
 
-import { flexAllCenter, flexRowSpaceBetween, respondDown, textEllipsis } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import { Breakpoints, COLORS } from 'web/styles';
 
-import IconClaim from 'assets/icon-claim.svg';
-import Info from 'assets/icon-info.svg';
+import IconClaim from 'assets/icons/actions/icon-claim-17x16.svg';
+import Info from 'assets/icons/status/icon-info-16.svg';
 
 import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
@@ -46,6 +44,15 @@ import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import {
+    cardBoxShadow,
+    flexAllCenter,
+    flexRowSpaceBetween,
+    respondDown,
+    textEllipsis,
+} from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { TitleWithTooltip, TooltipInnerHead } from 'pages/amm/components/AllPools/AllPools';
 import ExpandedMenu from 'pages/amm/components/MyLiquidity/ExpandedMenu/ExpandedMenu';
@@ -69,13 +76,13 @@ const PoolsListBlock = styled.div<{ $onlyList: boolean }>`
         `
         padding: 4.8rem;
         border-radius: 0.5rem;
-        box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
         margin-top: 0;
+        ${cardBoxShadow};
     `}
 
     ${respondDown(Breakpoints.md)`
         padding: 3.2rem 0;
-        background-color: ${COLORS.lightGray};
+        background-color: ${COLORS.gray50};
     `}
 `;
 
@@ -169,13 +176,13 @@ const TooltipRow = styled.div`
     gap: 2rem;
 
     span:first-child {
-        color: ${COLORS.grayText};
+        color: ${COLORS.textGray};
         width: 60%;
         ${textEllipsis};
     }
 
     span:last-child {
-        color: ${COLORS.paragraphText};
+        color: ${COLORS.textTertiary};
         display: flex;
         gap: 0.5rem;
         align-items: center;
@@ -213,8 +220,8 @@ interface MyLiquidityProps {
 const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) => {
     const { account } = useAuthStore();
 
-    const [pools, setPools] = useState<PoolUserProcessed[]>([]);
-    const [classicPools, setClassicPools] = useState([]);
+    const [pools, setPools] = useState<PoolUserProcessed[]>(null);
+    const [classicPools, setClassicPools] = useState(null);
     const [userRewards, setUserRewards] = useState<Map<string, PoolRewardsInfo>>(new Map());
     const [userIncentives, setUserIncentives] = useState<Map<string, PoolIncentives[]>>(new Map());
     const [isUserRewardsLoaded, setIsUserRewardsLoaded] = useState(false);
@@ -256,6 +263,8 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
     const updateIndex = useUpdateIndex(5000);
 
     const filteredPools = useMemo(() => {
+        if (!classicPools || !pools) return null;
+
         if (filter === FilterValues.classic) {
             return classicPools;
         }
@@ -349,6 +358,11 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
 
     const { totalLiquidity, poolsLiquidity } = useMemo(() => {
         const map = new Map<string, number>();
+
+        if (!pools || !classicPools) {
+            return { totalLiquidity: 0, poolsLiquidity: map };
+        }
+
         const totalSorobanUsd = pools.reduce((acc, pool) => {
             const balance = Number(pool.balance) / 1e7;
             const liquidity = Number(pool.liquidity_usd) / 1e7;
@@ -364,13 +378,16 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
             const liquidity = Number(pool.liquidity) / 1e7;
             const totalShare = Number(pool.total_share) / 1e7;
 
-            map.set(pool.id, (balance / totalShare) * liquidity * StellarService.priceLumenUsd);
+            map.set(
+                pool.id,
+                (balance / totalShare) * liquidity * StellarService.price.priceLumenUsd,
+            );
 
             acc += (balance / totalShare) * liquidity;
             return acc;
         }, 0);
 
-        const totalClassicUsd = totalClassicXlm * StellarService.priceLumenUsd;
+        const totalClassicUsd = totalClassicXlm * StellarService.price.priceLumenUsd;
         const total = totalClassicUsd + totalSorobanUsd;
 
         if (setTotal) {
@@ -434,6 +451,15 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
         if (tpsWithoutBoost === 0) return 1;
 
         return expectedTps / tpsWithoutBoost;
+    };
+
+    const calculateDailyRewards = (rewardsInfo: PoolRewardsInfo) => {
+        if (!rewardsInfo) return 0;
+        const tps = +rewardsInfo.tps;
+        const wSupply = +rewardsInfo.working_supply;
+        const wBalance = +rewardsInfo.working_balance;
+
+        return (((+tps * DAY) / 1000) * +wBalance) / +wSupply;
     };
 
     if (!account) {
@@ -526,7 +552,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                             },
                         },
                         {
-                            children: 'Total APY',
+                            children: 'Total APR',
                             align: CellAlign.Left,
                             flexSize: 2,
                             style: { paddingLeft: '5rem' },
@@ -534,10 +560,10 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                         { children: '' },
                     ]}
                     body={filteredPools.map(pool => {
-                        const boostValue = calculateBoostValue(
-                            userRewards.get(pool.address),
-                            pool.balance,
-                        );
+                        const userRewardsForPool = userRewards.get(pool.address);
+                        const boostValue = calculateBoostValue(userRewardsForPool, pool.balance);
+
+                        const dailyRewards = calculateDailyRewards(userRewardsForPool);
 
                         const incentivesForPool = userIncentives
                             .get(pool.address)
@@ -646,15 +672,8 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                     align: CellAlign.Right,
                                 },
                                 {
-                                    children: Number(pool.reward_tps)
-                                        ? `${formatBalance(
-                                              (((((+pool.reward_tps / 1e7) * DAY) / 1000) *
-                                                  +pool.balance) /
-                                                  +pool.total_share) *
-                                                  boostValue,
-                                              true,
-                                              true,
-                                          )} AQUA`
+                                    children: Number(dailyRewards)
+                                        ? `${formatBalance(dailyRewards, true, true)} AQUA`
                                         : '-',
                                     label: (
                                         <TitleWithTooltip>
@@ -696,7 +715,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                 },
                                 {
                                     children: <TotalApy pool={pool} userBoost={boostValue} />,
-                                    label: 'Total APY',
+                                    label: 'Total APR',
                                     align: CellAlign.Left,
                                     flexSize: 2,
                                     style: {

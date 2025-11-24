@@ -10,12 +10,9 @@ import { ModalService } from 'services/globalServices';
 
 import { Delegatee as DelegateeType } from 'types/delegate';
 
-import Profile from 'assets/icon-profile.svg';
+import Profile from 'assets/icons/nav/icon-profile.svg';
 
 import { Button } from 'basics/buttons';
-
-import Delegatee from 'pages/delegate/components/Delegatee/Delegatee';
-import DelegateeStats from 'pages/delegate/components/DelegateeStats/DelegateeStats';
 
 import {
     cardBoxShadow,
@@ -23,10 +20,14 @@ import {
     flexColumn,
     flexColumnCenter,
     respondDown,
-} from '../../../../web/mixins';
+} from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
+
+import Delegatee from 'pages/delegate/components/Delegatee/Delegatee';
+import DelegateeStats from 'pages/delegate/components/DelegateeStats/DelegateeStats';
+
 import ChooseLoginMethodModal from '../../../../web/modals/auth/ChooseLoginMethodModal';
 import DelegateModal from '../../../../web/modals/DelegateModal';
-import { Breakpoints, COLORS } from '../../../../web/styles';
 
 export const List = styled.div`
     ${flexColumn};
@@ -53,7 +54,7 @@ const Empty = styled.div`
     span {
         font-size: 1.6rem;
         line-height: 2.8rem;
-        color: ${COLORS.descriptionText};
+        color: ${COLORS.textSecondary};
     }
 
     ${respondDown(Breakpoints.lg)`
@@ -75,7 +76,7 @@ const IconWrap = styled.div`
     height: 6.4rem;
     width: 6.4rem;
     border-radius: 50%;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
 
     svg {
         height: 1.6rem;

@@ -4,29 +4,34 @@ import styled from 'styled-components';
 
 import useOnClickOutside from 'hooks/useOutsideClick';
 
-import { COLORS } from 'web/styles';
+import ArrowDown from 'assets/icons/arrows/arrow-down-16.svg';
 
-import ArrowDown from 'assets/icon-arrow-down.svg';
-
-import { noSelect } from '../../mixins';
+import { cardBoxShadow, customScroll, noSelect, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const DropDown = styled.div<{ $isOpen: boolean; $disabled: boolean }>`
     width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
-    height: 6.6rem;
+    min-height: 6.6rem;
     position: relative;
     cursor: pointer;
-    border: ${({ $isOpen }) =>
-        $isOpen ? `0.2rem solid ${COLORS.purple}` : `0.1rem solid ${COLORS.gray}`};
-    border-radius: ${({ $isOpen }) => ($isOpen ? '0.5rem 0.5rem 0 0' : '0.5rem')};
-    padding: ${({ $isOpen }) => ($isOpen ? '0.1rem' : '0.2rem')};
     box-sizing: border-box;
+
+    border-radius: ${({ $isOpen }) => ($isOpen ? '0.5rem 0.5rem 0 0' : '0.5rem')};
+    background-color: ${({ $disabled }) => ($disabled ? COLORS.gray50 : COLORS.white)};
     pointer-events: ${({ $disabled }) => ($disabled ? 'none' : 'auto')};
     font-size: 1.4rem;
-    background-color: ${({ $disabled }) => ($disabled ? COLORS.lightGray : COLORS.white)};
     ${noSelect};
+
+    box-shadow: inset 0 0 0 ${({ $isOpen }) => ($isOpen ? '0.2rem' : '0.1rem')}
+        ${({ $isOpen }) => ($isOpen ? COLORS.purple500 : COLORS.gray100)};
+
+    &:hover {
+        box-shadow: inset 0 0 0 ${({ $isOpen }) => ($isOpen ? '0.2rem' : '0.1rem')}
+            ${COLORS.purple500};
+    }
 `;
 
 const DropdownItem = styled.div`
@@ -44,8 +49,17 @@ const DropdownItem = styled.div`
     }
 `;
 
+const DropdownItemHead = styled(DropdownItem)`
+    padding: 0 6rem 0 1.2rem;
+    min-height: 6.6rem;
+
+    ${respondDown(Breakpoints.md)`
+        padding: 1.2rem 6rem 1.2rem 1.2rem;;
+    `}
+`;
+
 const Placeholder = styled(DropdownItem)`
-    color: ${COLORS.placeholder};
+    color: ${COLORS.gray200};
 `;
 
 const DropdownArrow = styled(ArrowDown)<{ $isOpen: boolean }>`
@@ -65,7 +79,6 @@ const DropdownList = styled.div`
     left: -0.2rem;
     top: calc(100% + 0.2rem);
     background-color: ${COLORS.white};
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     width: calc(100% + 0.4rem);
     box-sizing: border-box;
     border-radius: 0 0 0.5rem 0.5rem;
@@ -74,21 +87,8 @@ const DropdownList = styled.div`
     max-height: 24rem;
     overflow-y: scroll;
     z-index: 10;
-
-    &::-webkit-scrollbar {
-        width: 0.5rem;
-    }
-
-    /* Track */
-    &::-webkit-scrollbar-track {
-        background: ${COLORS.white};
-    }
-
-    /* Handle */
-    &::-webkit-scrollbar-thumb {
-        background: ${COLORS.purple};
-        border-radius: 0.25rem;
-    }
+    ${customScroll};
+    ${cardBoxShadow};
 
     @keyframes openDropdown {
         0% {
@@ -156,10 +156,10 @@ const Select = <T,>({
         >
             <DropdownArrow $isOpen={isOpen} />
             {selectedOption && !isOpen ? (
-                <DropdownItem>
+                <DropdownItemHead>
                     {Boolean(selectedOption.icon) && selectedOption.icon}
                     {selectedOption?.label}
-                </DropdownItem>
+                </DropdownItemHead>
             ) : (
                 <Placeholder>{placeholder || 'Select'}</Placeholder>
             )}

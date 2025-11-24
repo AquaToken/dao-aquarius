@@ -6,15 +6,15 @@ import { MainRoutes } from 'constants/routes';
 
 import { QuestTaskStatus, TaskName, TaskStatus as TaskStatusType } from 'types/quest';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
+import Task1 from 'assets/quest-page/quest-task-1.png';
+import Task2 from 'assets/quest-page/quest-task-2.png';
+import Task3 from 'assets/quest-page/quest-task-3.png';
+import Task4 from 'assets/quest-page/quest-task-4.png';
 
-import Task1 from 'assets/quest-task-1.png';
-import Task2 from 'assets/quest-task-2.png';
-import Task3 from 'assets/quest-task-3.png';
-import Task4 from 'assets/quest-task-4.png';
+import Question from 'components/Question';
 
-import Question from 'basics/Question';
+import { flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import TaskStatus from 'pages/quest/TaskStatus/TaskStatus';
 
@@ -52,7 +52,7 @@ const TaskDescription = styled.div`
 `;
 
 const ImageWrapper = styled.div`
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     border-radius: 2.4rem;
     ${flexAllCenter};
 
@@ -65,7 +65,7 @@ const ImageWrapper = styled.div`
 const Optional = styled.div`
     height: 1.6rem;
     border-radius: 4.3rem;
-    background-color: ${COLORS.placeholder};
+    background-color: ${COLORS.gray200};
     text-transform: uppercase;
     padding: 0 0.6rem;
     color: ${COLORS.white};

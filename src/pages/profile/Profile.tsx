@@ -10,11 +10,11 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { StellarService } from 'services/globalServices';
 
-import { commonMaxWidth, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
+
+import { commonMaxWidth, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import AccountInfo from './AccountInfo/AccountInfo';
 import Balances from './Balances/Balances';
@@ -67,14 +67,14 @@ const SelectStyled = styled(Select)`
 
 const ContentWrap = styled.div`
     width: 100%;
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
 `;
 
 const Content = styled.div`
     ${commonMaxWidth};
     width: 100%;
     padding: 5.6rem 4rem 4rem;
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
 
     ${respondDown(Breakpoints.md)`
         padding: 3.2rem 1.6rem 2rem;
@@ -142,7 +142,7 @@ const Profile = () => {
     }, [updateIndex]);
 
     useEffect(() => {
-        StellarService.getAquaUsdPrice().then(setAquaUsdPrice);
+        StellarService.price.getAquaUsdPrice().then(setAquaUsdPrice);
     }, []);
 
     return (

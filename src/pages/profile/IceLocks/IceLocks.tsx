@@ -15,21 +15,21 @@ import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 import { StellarService, ToastService } from 'services/globalServices';
-import { StellarEvents } from 'services/stellar.service';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+import { StellarEvents } from 'services/stellar/events/events';
 
-import { flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
-import Info from 'assets/icon-info.svg';
+import Info from 'assets/icons/status/icon-info-16.svg';
 
 import Button from 'basics/buttons/Button';
 import Checkbox from 'basics/inputs/Checkbox';
 import PageLoader from 'basics/loaders/PageLoader';
-import ProgressLine from 'basics/ProgressLine';
+import { ProgressLine } from 'basics/progress';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { ExternalLinkStyled, Header, Section, Title } from '../SdexRewards/SdexRewards';
 import { Empty } from '../YourVotes/YourVotes';
@@ -73,13 +73,13 @@ const TooltipRow = styled.div`
     ${flexRowSpaceBetween};
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin-bottom: 0.4rem;
 `;
 
 const TooltipTotal = styled(TooltipRow)`
     font-weight: 700;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     font-size: 1.6rem;
     line-height: 2.8rem;
 `;
@@ -116,13 +116,13 @@ const IceLocks = ({ ammAquaBalance }: IceLocksProps): React.ReactNode => {
     const { account } = useAuthStore();
 
     useEffect(() => {
-        setLocks(StellarService.getLocks(account.accountId()));
+        setLocks(StellarService.cb.getLocks(account.accountId()));
     }, []);
 
     useEffect(() => {
         const unsub = StellarService.event.sub(({ type }) => {
             if (type === StellarEvents.claimableUpdate) {
-                setLocks(StellarService.getLocks(account.accountId()));
+                setLocks(StellarService.cb.getLocks(account.accountId()));
             }
         });
 
@@ -187,11 +187,11 @@ const IceLocks = ({ ammAquaBalance }: IceLocksProps): React.ReactNode => {
         try {
             setPendingId(id || ALL_ID);
             const ops = id
-                ? StellarService.createClaimOperations(id, account.getAquaBalance() === null)
+                ? StellarService.op.createClaimOperations(id, account.getAquaBalance() === null)
                 : selectedLocks.reduce((acc, cbId, index) => {
                       acc = [
                           ...acc,
-                          ...StellarService.createClaimOperations(
+                          ...StellarService.op.createClaimOperations(
                               cbId,
                               index === 1 && account.getAquaBalance() === null,
                           ),
@@ -199,7 +199,7 @@ const IceLocks = ({ ammAquaBalance }: IceLocksProps): React.ReactNode => {
                       return acc;
                   }, []);
 
-            const tx = await StellarService.buildTx(account, ops);
+            const tx = await StellarService.tx.buildTx(account, ops);
 
             const result = await account.signAndSubmitTx(tx);
 
@@ -213,7 +213,7 @@ const IceLocks = ({ ammAquaBalance }: IceLocksProps): React.ReactNode => {
                 return;
             }
             ToastService.showSuccessToast('You’ve successfully claimed AQUA tokens.');
-            StellarService.getClaimableBalances(account.accountId());
+            StellarService.cb.getClaimableBalances(account.accountId());
         } catch (e) {
             const errorText = ErrorHandler(e);
             ToastService.showErrorToast(errorText);

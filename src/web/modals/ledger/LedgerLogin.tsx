@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import { LedgerService } from 'services/globalServices';
+import { AuthService } from 'services/globalServices';
 
 import { ModalProps } from 'types/modal';
 
@@ -9,8 +9,8 @@ import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
-import { respondDown } from '../../mixins';
-import { Breakpoints } from '../../styles';
+import { respondDown } from 'styles/mixins';
+import { Breakpoints } from 'styles/style-constants';
 
 const Prefix = styled.div`
     margin-top: 0.1rem;
@@ -32,7 +32,8 @@ const LedgerLogin = ({ close }: ModalProps<never>) => {
     const [pending, setPending] = useState(false);
     const onSubmit = () => {
         setPending(true);
-        LedgerService.login(Number(path))
+        AuthService.ledger
+            .login(Number(path))
             .then(() => {
                 setPending(false);
                 close();

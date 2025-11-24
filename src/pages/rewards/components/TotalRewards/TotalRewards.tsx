@@ -3,12 +3,12 @@ import styled from 'styled-components';
 
 import { formatBalance } from 'helpers/format-number';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
-import Aqua from 'assets/aqua-logo-small.svg';
+import Aqua from 'assets/aqua/aqua-logo.svg';
 
 import DotsLoader from 'basics/loaders/DotsLoader';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { TotalRewards as TotalRewardsType } from 'pages/vote/api/types';
 
@@ -20,7 +20,7 @@ const Container = styled.section`
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
 
     ${respondDown(Breakpoints.md)`
         height: initial;
@@ -84,7 +84,7 @@ const Description = styled.div`
     text-align: center;
     max-width: 80rem;
     margin-top: 3.2rem;
-    color: ${COLORS.darkGrayText};
+    color: ${COLORS.textDark};
 
     ${respondDown(Breakpoints.lg)`
         max-width: 58rem;

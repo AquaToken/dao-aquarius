@@ -3,13 +3,13 @@ import styled from 'styled-components';
 
 import { LockerRoutes } from 'constants/routes';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
-import FreezeAqua from 'assets/freeze-aqua-banner.svg';
+import FreezeAqua from 'assets/locker/freeze-aqua-banner.svg';
 
 import { Button } from 'basics/buttons';
 import Label from 'basics/Label';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     display: flex;
@@ -46,7 +46,7 @@ const Title = styled.h5`
     line-height: 2.8rem;
     display: flex;
     align-items: center;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 
     div {
         margin: 0 1rem;
@@ -56,7 +56,7 @@ const Title = styled.h5`
 const Description = styled.span`
     font-size: 1.6rem;
     line-height: 2.4rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 
     ${respondDown(Breakpoints.md)`
         text-align: center;
@@ -80,7 +80,7 @@ const BoostBanner = () => (
         <FreezeAquaImg />
         <Content>
             <Title>
-                Get the <Label labelText="boost" background={COLORS.blue} /> to your reward
+                Get the <Label labelText="boost" background={COLORS.blue500} /> to your reward
             </Title>
             <Description>
                 Freeze your AQUA into ICE and boost your rewards by up to 250%!

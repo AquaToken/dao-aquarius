@@ -2,6 +2,8 @@ import * as React from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
+import { processIceTx } from 'api/ice';
+
 import { D_ICE_CODE, DOWN_ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'constants/assets';
 
 import { getDateString } from 'helpers/date';
@@ -16,23 +18,23 @@ import { useIsMounted } from 'hooks/useIsMounted';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 import { StellarService, ToastService } from 'services/globalServices';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { Transaction } from 'types/stellar';
 import { Vote } from 'types/voting-tool';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
-import Dislike from 'assets/icon-dislike-gray.svg';
-import LinkIcon from 'assets/icon-external-link.svg';
+import Dislike from 'assets/icons/actions/icon-dislike-alt-16.svg';
+import LinkIcon from 'assets/icons/nav/icon-external-link-16.svg';
 
 import Button from 'basics/buttons/Button';
 import Checkbox from 'basics/inputs/Checkbox';
 import Market from 'basics/Market';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { MarketPair } from 'pages/profile/api/types';
 import { PairStats } from 'pages/vote/api/types';
@@ -55,6 +57,12 @@ const SelectAllMobile = styled(Checkbox)`
     ${respondDown(Breakpoints.md)`
         display: flex;
    `}
+`;
+
+const DislikeGray = styled(Dislike)`
+    path {
+        fill: ${COLORS.gray200};
+    }
 `;
 
 const TooltipInner = styled.span`
@@ -187,7 +195,7 @@ const VotesList = ({ votes, pair, withoutClaimDate }: VotesListProps): React.Rea
             let hasDelegated = Boolean(claim?.assetCode === D_ICE_CODE);
 
             const ops = claim
-                ? StellarService.createClaimOperations(claim.id)
+                ? StellarService.op.createClaimOperations(claim.id)
                 : Array.from(selectedClaims.values()).reduce((acc, cb) => {
                       if (cb.assetCode === UP_ICE_CODE) {
                           hasUpvote = true;
@@ -198,21 +206,21 @@ const VotesList = ({ votes, pair, withoutClaimDate }: VotesListProps): React.Rea
                       if (cb.assetCode === D_ICE_CODE) {
                           hasDelegated = true;
                       }
-                      return [...acc, ...StellarService.createClaimOperations(cb.id)];
+                      return [...acc, ...StellarService.op.createClaimOperations(cb.id)];
                   }, []);
 
-            let tx = await StellarService.buildTx(account, ops);
+            let tx = await StellarService.tx.buildTx(account, ops);
 
             if (hasUpvote) {
-                tx = await StellarService.processIceTx(tx, createAsset(UP_ICE_CODE, ICE_ISSUER));
+                tx = await processIceTx(tx, createAsset(UP_ICE_CODE, ICE_ISSUER));
             }
 
             if (hasDelegated) {
-                tx = await StellarService.processIceTx(tx, createAsset(D_ICE_CODE, ICE_ISSUER));
+                tx = await processIceTx(tx, createAsset(D_ICE_CODE, ICE_ISSUER));
             }
 
             if (hasDownvote) {
-                tx = await StellarService.processIceTx(tx, createAsset(DOWN_ICE_CODE, ICE_ISSUER));
+                tx = await processIceTx(tx, createAsset(DOWN_ICE_CODE, ICE_ISSUER));
             }
 
             const result = await account.signAndSubmitTx(tx);
@@ -240,7 +248,7 @@ const VotesList = ({ votes, pair, withoutClaimDate }: VotesListProps): React.Rea
                 return;
             }
             ToastService.showSuccessToast('Your votes has been claimed back');
-            StellarService.getClaimableBalances(account.accountId());
+            StellarService.cb.getClaimableBalances(account.accountId());
         } catch (e) {
             const errorText = ErrorHandler(e);
             ToastService.showErrorToast(errorText);
@@ -318,7 +326,7 @@ const VotesList = ({ votes, pair, withoutClaimDate }: VotesListProps): React.Rea
                 body={claims.map(claim => ({
                     key: claim.id,
                     isNarrow: true,
-                    mobileBackground: COLORS.lightGray,
+                    mobileBackground: COLORS.gray50,
                     mobileFontSize: '1.4rem',
                     rowItems: [
                         {
@@ -386,7 +394,7 @@ const VotesList = ({ votes, pair, withoutClaimDate }: VotesListProps): React.Rea
                                             }
                                             showOnHover
                                         >
-                                            <Dislike />
+                                            <DislikeGray />
                                         </TooltipStyled>
                                     )}
                                 </>

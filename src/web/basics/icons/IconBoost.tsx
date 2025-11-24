@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 
-import { flexAllCenter } from 'web/mixins';
-import { COLORS } from 'web/styles';
+import IceSymbol from 'assets/icons/small-icons/icon-ice-symbol-10.svg';
 
-import IceSymbol from 'assets/icon-ice-symbol.svg';
+import { flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 const IceSymbolWhite = styled(IceSymbol)`
     path {
@@ -15,7 +15,7 @@ const BoostLogo = styled.div`
     ${flexAllCenter};
     width: 1.5rem;
     height: 1.5rem;
-    background-color: ${COLORS.darkBlue};
+    background-color: ${COLORS.blue700};
     border-radius: 0.4rem;
 `;
 

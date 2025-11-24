@@ -8,33 +8,27 @@ import { isChrome, isMobile } from 'helpers/browser';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import {
-    LedgerService,
-    LobstrExtensionService,
-    ModalService,
-    ToastService,
-    WalletConnectService,
-    WalletKitService,
-} from 'services/globalServices';
+import { AuthService, ModalService, ToastService } from 'services/globalServices';
 
 import { ModalProps } from 'types/modal';
 
-import BG from 'assets/get-extension-bg.svg';
-import ArrowRightIcon from 'assets/icon-arrow-right.svg';
-import KeyIcon from 'assets/icon-key.svg';
-import Ledger from 'assets/ledger-logo.svg';
-import LobstrLogo from 'assets/lobstr-logo-black.svg';
-import WalletConnectLogo from 'assets/wallet-connect-logo.svg';
-import Stellar from 'assets/xlm-logo.svg';
+import ArrowRightIcon from 'assets/icons/arrows/arrow-right-16.svg';
+import KeyIcon from 'assets/icons/objects/icon-key-40.svg';
+import Stellar from 'assets/tokens/xlm-logo.svg';
+import Ledger from 'assets/wallets/ledger-logo.svg';
+import BG from 'assets/wallets/lobstr/get-extension-bg.svg';
+import LobstrLogo from 'assets/wallets/lobstr/lobstr-logo-black.svg';
+import WalletConnectLogo from 'assets/wallets/wallet-connect-logo.svg';
 
 import Label from 'basics/Label';
 import { ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
+
 import LoginWithPublic from './LoginWithPublic';
 import LoginWithSecret from './LoginWithSecret';
 
-import { respondDown } from '../../mixins';
-import { Breakpoints, COLORS } from '../../styles';
 import GetLobstrExtensionModal from '../GetLobstrExtensionModal';
 import LedgerLogin from '../ledger/LedgerLogin';
 
@@ -50,7 +44,7 @@ export const LoginMethod = styled.div`
     flex-direction: row;
     align-items: center;
     height: 9rem;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     border-radius: 0.5rem;
     padding: 0 2.4rem 0 2.4rem;
     box-sizing: border-box;
@@ -78,7 +72,7 @@ export const LoginMethodWithDescription = styled.div`
 export const LoginMethodName = styled.span`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     margin-left: 2.4rem;
     display: flex;
     gap: 0.8rem;
@@ -92,7 +86,7 @@ export const LoginMethodName = styled.span`
 export const LoginMethodDescription = styled.div`
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin-left: 2.4rem;
 `;
 
@@ -139,14 +133,14 @@ const ChooseLoginMethodModal = ({
                 // then wallet knows how to process the custom postMessage
                 if (isUaWebview(window?.navigator?.userAgent)) {
                     close();
-                    WalletConnectService.autoLogin();
+                    AuthService.walletConnect.autoLogin();
                 } else {
-                    WalletConnectService.login();
+                    AuthService.walletConnect.login();
                 }
                 break;
 
             case LoginTypes.ledger:
-                LedgerService.isSupported.then(res => {
+                AuthService.ledger.isSupported.then(res => {
                     if (res) {
                         close();
                         ModalService.openModal(LedgerLogin, {});
@@ -159,7 +153,7 @@ const ChooseLoginMethodModal = ({
                 break;
 
             case LoginTypes.walletKit:
-                WalletKitService.showWalletKitModal();
+                AuthService.walletKit.showWalletKitModal();
                 break;
             case LoginTypes.public:
                 close();
@@ -175,10 +169,10 @@ const ChooseLoginMethodModal = ({
                     return;
                 }
                 setPending(true);
-                LobstrExtensionService.isConnected.then(res => {
+                AuthService.lobstrExtension.isConnected.then(res => {
                     if (res) {
                         setPending(false);
-                        LobstrExtensionService.login().then(() => {
+                        AuthService.lobstrExtension.login().then(() => {
                             close();
                         });
                     } else {

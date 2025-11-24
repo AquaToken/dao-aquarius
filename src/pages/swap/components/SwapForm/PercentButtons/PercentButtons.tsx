@@ -3,8 +3,8 @@ import styled from 'styled-components';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     display: flex;
@@ -22,7 +22,7 @@ const PercentButton = styled.div`
     padding: 0 0.4rem;
     font-size: 1.4rem;
     line-height: 1.6rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     cursor: pointer;
     flex: 1;
 
@@ -31,7 +31,7 @@ const PercentButton = styled.div`
     }
 
     &:hover {
-        color: ${COLORS.titleText};
+        color: ${COLORS.textPrimary};
     }
 
     ${respondDown(Breakpoints.sm)`

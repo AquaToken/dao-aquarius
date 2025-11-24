@@ -10,17 +10,17 @@ import { StellarService } from 'services/globalServices';
 
 import { Token } from 'types/token';
 
-import { respondDown, textEllipsis } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
-import Warning from 'assets/icon-warning.svg';
+import Warning from 'assets/icons/status/warning-16.svg';
 
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { respondDown, textEllipsis } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     display: flex;
     align-items: center;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     max-width: 17rem;
     height: 1.7rem;
 
@@ -40,14 +40,14 @@ const Percent = styled.div<{ $percent: number }>`
     }
     color: ${({ $percent }) => {
         if ($percent > 0) {
-            return COLORS.green;
+            return COLORS.green500;
         }
 
         if ($percent <= -10) {
-            return COLORS.pinkRed;
+            return COLORS.red500;
         }
 
-        return COLORS.grayText;
+        return COLORS.textGray;
     }};
 `;
 
@@ -116,7 +116,9 @@ const AmountUsdEquivalent = ({ amount, asset, sourceAmount, sourceAsset }: Props
             <span>
                 $
                 {formatBalance(
-                    +(Number(amount) * Number(price) * StellarService.priceLumenUsd).toFixed(2),
+                    +(Number(amount) * Number(price) * StellarService.price.priceLumenUsd).toFixed(
+                        2,
+                    ),
                     true,
                 )}
             </span>

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { cardBoxShadow, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
+import Icon from 'assets/icons/status/success.svg';
 
-import Icon from 'assets/icon-succes-gray.svg';
+import { cardBoxShadow, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const Container = styled.section`
     display: flex;
@@ -22,7 +22,15 @@ const Title = styled.h2`
     font-weight: 700;
     font-size: 2rem;
     line-height: 2.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
+`;
+
+const Success = styled(Icon)`
+    height: 3.2rem;
+    width: 3.2rem;
+    rect {
+        fill: ${COLORS.gray200};
+    }
 `;
 
 const Rules = styled.div`
@@ -38,7 +46,7 @@ const Rules = styled.div`
 const Rule = styled.div`
     display: flex;
     gap: 1.6rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     align-items: center;
     width: 25%;
 
@@ -56,15 +64,15 @@ const ParticipateRules = () => (
         <Title>Who can participate?</Title>
         <Rules>
             <Rule>
-                <Icon />
+                <Success />
                 <span>Any new Stellar wallet that has never interacted with Aquarius.</span>
             </Rule>
             <Rule>
-                <Icon />
+                <Success />
                 <span>Individuals from all countries except the United States.</span>
             </Rule>
             <Rule>
-                <Icon />
+                <Success />
                 <span>One IP address can participate only once</span>
             </Rule>
         </Rules>

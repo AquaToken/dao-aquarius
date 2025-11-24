@@ -3,11 +3,11 @@ import { forwardRef, RefObject, useMemo } from 'react';
 import * as Virtualized from 'react-virtualized';
 import styled from 'styled-components';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import { IconSort } from 'basics/icons';
 import PageLoader from 'basics/loaders/PageLoader';
+
+import { customScroll, flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 interface Sort {
     onClick: () => void;
@@ -108,7 +108,7 @@ const TableHeadRow = styled.div<{
     min-height: 5.2rem;
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     white-space: nowrap;
     padding-right: ${({ $withPadding }) => ($withPadding ? '1.5rem' : 'unset')};
     padding: ${({ $bodyIsClickable }) => ($bodyIsClickable ? '0.8rem' : 'unset')};
@@ -133,7 +133,7 @@ const Cell = styled.div<{
 }>`
     display: ${({ $hideOnWeb }) => ($hideOnWeb ? 'none' : 'flex')};
     align-items: center;
-    color: ${({ $color }) => $color ?? COLORS.paragraphText};
+    color: ${({ $color }) => $color ?? COLORS.textTertiary};
     justify-content: ${({ $align }) => {
         switch ($align) {
             case CellAlign.Left:
@@ -151,7 +151,7 @@ const Cell = styled.div<{
 
     label {
         display: none;
-        color: ${({ $labelColor }) => $labelColor ?? COLORS.grayText};
+        color: ${({ $labelColor }) => $labelColor ?? COLORS.textGray};
     }
 
     ${({ $mobileBreakpoint }) => respondDown($mobileBreakpoint)`
@@ -160,7 +160,6 @@ const Cell = styled.div<{
         margin-bottom: 1.6rem;
           
         label {
-            display: block;
             margin-right: auto;
             display: flex;
             align-items: center;
@@ -169,7 +168,7 @@ const Cell = styled.div<{
 `;
 
 const HeadCell = styled(Cell)<{ $withSort?: boolean; $sortActive?: boolean }>`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     cursor: ${({ $withSort }) => ($withSort ? 'pointer' : 'unset')};
     font-weight: ${({ $sortActive }) => ($sortActive ? 700 : 400)};
 
@@ -178,7 +177,7 @@ const HeadCell = styled(Cell)<{ $withSort?: boolean; $sortActive?: boolean }>`
     }
 
     &:hover {
-        color: ${({ $withSort }) => ($withSort ? COLORS.purple : COLORS.grayText)};
+        color: ${({ $withSort }) => ($withSort ? COLORS.purple500 : COLORS.textGray)};
     }
 
     & > div {
@@ -200,21 +199,7 @@ const TableBody = styled.div<{ $withScroll: boolean; $mobileBreakpoint: Breakpoi
 
 const ListStyled = styled(Virtualized.List)`
     padding-right: 1rem;
-
-    &::-webkit-scrollbar {
-        width: 0.5rem;
-    }
-
-    /* Track */
-    &::-webkit-scrollbar-track {
-        background: ${COLORS.white};
-    }
-
-    /* Handle */
-    &::-webkit-scrollbar-thumb {
-        background: ${COLORS.purple};
-        border-radius: 0.25rem;
-    }
+    ${customScroll};
 `;
 
 const TableRowWrap = styled.div<{
@@ -228,9 +213,9 @@ const TableRowWrap = styled.div<{
     padding: ${({ $isClickable }) => ($isClickable ? '0.8rem' : 'unset')};
 
     &:hover {
-        background: ${({ $isClickable }) => ($isClickable ? COLORS.lightGray : 'unset')};
+        background: ${({ $isClickable }) => ($isClickable ? COLORS.gray50 : 'unset')};
         border: 0.1rem solid
-            ${({ $isClickable }) => ($isClickable ? COLORS.gray : COLORS.transparent)};
+            ${({ $isClickable }) => ($isClickable ? COLORS.gray100 : COLORS.transparent)};
     }
 
     ${({ $mobileBreakpoint }) => respondDown($mobileBreakpoint)`
@@ -241,7 +226,7 @@ const TableRowWrap = styled.div<{
         
         &:hover {
             background: ${({ $isClickable, $mobileBackground }) =>
-                $isClickable ? COLORS.lightGray : $mobileBackground ?? COLORS.white};
+                $isClickable ? COLORS.gray50 : $mobileBackground ?? COLORS.white};
         }
     `}
 `;

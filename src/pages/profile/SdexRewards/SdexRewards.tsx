@@ -13,17 +13,17 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { StellarService } from 'services/globalServices';
 
-import { flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
+import Aqua from 'assets/aqua/aqua-logo.svg';
 
-import Aqua from 'assets/aqua-logo-small.svg';
-
-import ExternalLink from 'basics/ExternalLink';
 import Label from 'basics/Label';
+import { ExternalLink } from 'basics/links';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
 import Table, { CellAlign } from 'basics/Table';
+
+import { flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { getSdexRewards } from '../api/api';
 import BoostBanner from '../BoostBanner/BoostBanner';
@@ -48,7 +48,7 @@ export const Header = styled.div`
 export const Title = styled.h2`
     font-size: 3.6rem;
     line-height: 4.2rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     font-weight: 400;
 
     ${respondDown(Breakpoints.md)`
@@ -63,7 +63,7 @@ export const Section = styled.section`
 
     ${respondDown(Breakpoints.md)`
         padding: 0;
-        background: ${COLORS.lightGray};
+        background: ${COLORS.gray50};
     `}
 `;
 
@@ -75,7 +75,7 @@ export const ExternalLinkStyled = styled(ExternalLink)`
 export const Summary = styled.div`
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     display: flex;
     align-items: center;
 `;
@@ -90,7 +90,7 @@ export const AquaLogo = styled(Aqua)`
 export const AquaBalance = styled.div`
     font-size: 2rem;
     line-height: 2.4rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     margin-right: 1rem;
 `;
 
@@ -159,7 +159,7 @@ const SdexRewards = ({ aquaUsdPrice }: SdexRewardsProps): React.ReactNode => {
     const { processNewAssets } = useAssetsStore();
 
     useEffect(() => {
-        StellarService.getAccountOffers(account.accountId()).then(res => {
+        StellarService.account.getAccountOffers(account.accountId()).then(res => {
             setOffers(res);
         });
     }, []);
@@ -379,7 +379,7 @@ const SdexRewards = ({ aquaUsdPrice }: SdexRewardsProps): React.ReactNode => {
                                                         <StyledLabel
                                                             labelText={`Boosted ${boostValue}x`}
                                                             tooltipText={TOOLTIP_TEXT}
-                                                            background={COLORS.blue}
+                                                            background={COLORS.blue500}
                                                         />
                                                     )}
                                                 </>

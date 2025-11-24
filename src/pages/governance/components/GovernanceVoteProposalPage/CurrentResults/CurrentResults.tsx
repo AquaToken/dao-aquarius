@@ -3,13 +3,13 @@ import styled from 'styled-components';
 
 import { roundToPrecision } from 'helpers/format-number';
 
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
-import Fail from 'assets/icon-fail.svg';
-import Info from 'assets/icon-info.svg';
+import Fail from 'assets/icons/status/fail-red.svg';
+import Info from 'assets/icons/status/icon-info-16.svg';
 
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import ResultProgressLine from './ResultProgressLine/ResultProgressLine';
 
@@ -22,13 +22,13 @@ const ResultBlock = styled.div`
 
 const Header = styled.div`
     ${flexRowSpaceBetween};
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const Title = styled.h5`
     font-size: 2rem;
     line-height: 2.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 `;
 
 const Quorum = styled.div`
@@ -40,7 +40,7 @@ const Quorum = styled.div`
 `;
 
 const Label = styled.div`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const FailIcon = styled(Fail)`
@@ -52,7 +52,7 @@ const FailIcon = styled(Fail)`
         fill: ${COLORS.white};
     }
     path {
-        stroke: ${COLORS.pinkRed};
+        stroke: ${COLORS.red500};
     }
 `;
 
@@ -74,7 +74,7 @@ const StatusTag = styled.div`
     width: min-content;
     white-space: nowrap;
     border-radius: 1.5rem;
-    background-color: ${COLORS.pinkRed};
+    background-color: ${COLORS.red500};
     color: ${COLORS.white};
     font-weight: 400;
     line-height: 2.5rem;
@@ -87,7 +87,7 @@ const StatusTag = styled.div`
 
 const QuorumResult = styled.div<{ $isApproved: boolean }>`
     margin: 0 0.8rem 0 auto;
-    color: ${({ $isApproved }) => ($isApproved ? COLORS.titleText : COLORS.pinkRed)};
+    color: ${({ $isApproved }) => ($isApproved ? COLORS.textPrimary : COLORS.red500)};
 `;
 
 const getResultsData = (proposal: Proposal) => {

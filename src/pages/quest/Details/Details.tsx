@@ -1,15 +1,15 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     display: flex;
     gap: 3.2rem;
     border-radius: 2.4rem;
     padding: 2.4rem;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
 
     ${respondDown(Breakpoints.md)`
         flex-direction: column;
@@ -20,7 +20,7 @@ const Star = styled.span`
     font-weight: 700;
     font-size: 2.4rem;
     line-height: 2.4rem;
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
 `;
 
 const Detail = styled.div`
@@ -30,7 +30,7 @@ const Detail = styled.div`
     font-weight: 400;
     font-size: 1.4rem;
     line-height: 2.4rem;
-    color: ${COLORS.darkGrayText};
+    color: ${COLORS.textDark};
 `;
 
 const Details = () => (

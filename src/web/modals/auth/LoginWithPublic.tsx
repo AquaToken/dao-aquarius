@@ -6,7 +6,8 @@ import styled from 'styled-components';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { StellarService, ToastService } from 'services/globalServices';
+import { ToastService } from 'services/globalServices';
+import { isValidPublicKey } from 'services/stellar/utils/validators';
 
 import { ModalProps } from 'types/modal';
 
@@ -14,8 +15,8 @@ import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
-import { respondDown } from '../../mixins';
-import { Breakpoints } from '../../styles';
+import { respondDown } from 'styles/mixins';
+import { Breakpoints } from 'styles/style-constants';
 
 const LoginWithSecretBody = styled.div`
     display: flex;
@@ -46,12 +47,12 @@ const InputWrapped = styled(Input)`
 const LoginWithPublic = ({ close }: ModalProps<never>): React.ReactNode => {
     const location = useLocation();
     const path = location.pathname.substring(1);
-    const [publicKey, setPublicKey] = useState(StellarService.isValidPublicKey(path) ? path : '');
+    const [publicKey, setPublicKey] = useState(isValidPublicKey(path) ? path : '');
 
     const { login, isLogged, isLoginPending } = useAuthStore();
 
     const onSubmit = () => {
-        if (!StellarService.isValidPublicKey(publicKey)) {
+        if (!isValidPublicKey(publicKey)) {
             ToastService.showErrorToast('Invalid public key');
             return;
         }

@@ -16,7 +16,8 @@ import { createLumen } from 'helpers/token';
 import { LumenInfo } from 'store/assetsStore/reducer';
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
-import { ModalService, StellarService } from 'services/globalServices';
+import { ModalService } from 'services/globalServices';
+import { resolveToml } from 'services/stellar/utils/resolvers';
 
 import { ExpertAssetData } from 'types/api-stellar-expert';
 import { AssetInfo } from 'types/asset-info';
@@ -24,28 +25,29 @@ import { ModalProps } from 'types/modal';
 import { StellarToml as StellarTomlType } from 'types/stellar';
 import { ClassicToken } from 'types/token';
 
-import Mail from 'assets/email16.svg';
-import Git from 'assets/github16.svg';
-import External from 'assets/icon-external-link-black.svg';
-import X from 'assets/twitter16.svg';
+import Mail from 'assets/community/email16.svg';
+import Git from 'assets/community/github16.svg';
+import X from 'assets/community/twitter16.svg';
+import External from 'assets/icons/nav/icon-external-link-16.svg';
 
 import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';
-import Changes24 from 'basics/Changes24';
 import PageLoader from 'basics/loaders/PageLoader';
 import { ModalWrapper } from 'basics/ModalAtoms';
-import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
 
+import Changes24 from 'components/Changes24';
 import NoTrustline from 'components/NoTrustline';
+import PublicKeyWithIcon from 'components/PublicKeyWithIcon';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import CopyButton from '../basics/buttons/CopyButton';
-import { respondDown } from '../mixins';
-import { Breakpoints, COLORS } from '../styles';
 
 const Description = styled.p`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
     opacity: 0.7;
     margin: 2.4rem 0 1.6rem;
 `;
@@ -62,7 +64,7 @@ const Links = styled.div`
 const ContactLink = styled.a`
     display: flex;
     align-items: center;
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
     text-decoration: none;
     margin-right: 2.4rem;
     font-size: 1.6rem;
@@ -73,11 +75,22 @@ const ContactLink = styled.a`
     }
 `;
 
+const ExternalBlack = styled(External)`
+    path {
+        fill: ${COLORS.black};
+    }
+`;
+
 const Details = styled.div`
     display: flex;
     flex-wrap: wrap;
     margin-top: 4rem;
     gap: 3.2rem;
+
+    ${respondDown(Breakpoints.sm)`
+        flex-direction: column;
+        gap: 1.6rem;
+    `}
 `;
 
 const Detail = styled.div`
@@ -86,10 +99,10 @@ const Detail = styled.div`
     display: flex;
     flex-direction: column;
     gap: 0.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 
     span:first-child {
-        color: ${COLORS.grayText};
+        color: ${COLORS.textGray};
     }
 
     span:last-child {
@@ -143,7 +156,7 @@ const AssetInfoModal = ({ params }: ModalProps<AssetInfoModalParams>): React.Rea
         : assetsInfo.get(getAssetString(asset));
 
     useEffect(() => {
-        StellarService.resolveToml(home_domain)
+        resolveToml(home_domain)
             .then(res => {
                 setTomlInfo(res);
             })
@@ -214,7 +227,7 @@ const AssetInfoModal = ({ params }: ModalProps<AssetInfoModalParams>): React.Rea
                         getIsTestnetEnv() ? 'testnet' : 'public'
                     }/asset/${asset.code}-${asset.issuer}`}
                 >
-                    <External />
+                    <ExternalBlack />
                     StellarExpert
                 </ContactLink>
             </Links>

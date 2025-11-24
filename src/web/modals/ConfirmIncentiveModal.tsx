@@ -14,16 +14,12 @@ import { useIsMounted } from 'hooks/useIsMounted';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { ToastService } from 'services/globalServices';
-import { getScheduleIncentiveTx } from 'services/soroban/contracts/ammContract';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
+import { SorobanService, ToastService } from 'services/globalServices';
 
 import { PoolExtended } from 'types/amm';
 import { ModalProps } from 'types/modal';
 import { Token, TokenType } from 'types/token';
-
-import { flexAllCenter } from 'web/mixins';
-import { COLORS } from 'web/styles';
 
 import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';
@@ -35,13 +31,16 @@ import {
     InfoRow,
     Label,
     Value,
-} from 'pages/bribes/components/AddBribePage/ConfirmBribeModal/ConfirmBribeModal';
+} from 'modals/ConfirmBribeModal/ConfirmBribeModal.styled';
+
+import { flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 const PairBlock = styled.div`
     ${flexAllCenter};
     padding: 3.4rem 0;
     border-radius: 0.5rem;
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
     margin-bottom: 2.3rem;
 `;
 
@@ -91,7 +90,7 @@ const ConfirmIncentiveModal = ({ params, close }: ModalProps<Props>) => {
 
             const tps = (amountPerDay * days) / seconds;
 
-            const tx = await getScheduleIncentiveTx(
+            const tx = await SorobanService.amm.getScheduleIncentiveTx(
                 account.accountId(),
                 pool,
                 rewardToken,
@@ -126,7 +125,9 @@ const ConfirmIncentiveModal = ({ params, close }: ModalProps<Props>) => {
     return (
         <ModalWrapper>
             <ModalTitle>Confirm Incentive</ModalTitle>
-            <ModalDescription>Please check all the details to create an incentive</ModalDescription>
+            <ModalDescription>
+                Review details and confirm to lock tokens from your wallet for this incentive.
+            </ModalDescription>
             <PairBlock>
                 <Market
                     verticalDirections
@@ -138,25 +139,25 @@ const ConfirmIncentiveModal = ({ params, close }: ModalProps<Props>) => {
             </PairBlock>
             <BribeInfo>
                 <InfoRow>
-                    <Label>Reward asset</Label>
+                    <Label>Reward asset:</Label>
                     <Value>
                         <Asset asset={rewardToken} inRow withMobileView />
                     </Value>
                 </InfoRow>
                 <InfoRow>
-                    <Label>Daily reward amount</Label>
+                    <Label>Daily reward amount:</Label>
                     <Value>
                         {formatBalance(+amountPerDay)} {rewardToken.code}
                     </Value>
                 </InfoRow>
                 <InfoRow>
-                    <Label>Total reward amount</Label>
+                    <Label>Total reward amount:</Label>
                     <Value>
                         {formatBalance(+amountPerDay * days)} {rewardToken.code}
                     </Value>
                 </InfoRow>
                 <InfoRow>
-                    <Label>Incentive period</Label>
+                    <Label>Incentive period:</Label>
                     <Value>
                         {getDateString(startDate, { withoutYear: true, withTime: true })} -{' '}
                         {getDateString(endDate, { withoutYear: true, withTime: true })} ({days}{' '}

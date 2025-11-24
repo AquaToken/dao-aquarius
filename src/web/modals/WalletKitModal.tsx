@@ -2,14 +2,14 @@ import { HOTWALLET_ID } from '@creit.tech/stellar-wallets-kit';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { WalletKitService } from 'services/globalServices';
+import { AuthService } from 'services/globalServices';
 
 import { ModalProps } from 'types/modal';
 
-import ArrowRightIcon from 'assets/icon-arrow-right.svg';
+import ArrowRightIcon from 'assets/icons/arrows/arrow-right-16.svg';
 
-import ExternalLink from 'basics/ExternalLink';
 import Label from 'basics/Label';
+import { ExternalLink } from 'basics/links';
 import { ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import {
@@ -61,7 +61,7 @@ const WalletKitModal = ({ params, close }: ModalProps<{ modules: Modules[] }>) =
                             return;
                         }
                         close();
-                        WalletKitService.login(productId);
+                        AuthService.walletKit.login(productId);
                     }}
                 >
                     <img src={productIcon} alt={productName} width={40} height={40} />

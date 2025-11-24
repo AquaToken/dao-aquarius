@@ -11,14 +11,16 @@ import { ModalService } from 'services/globalServices';
 
 import { ClassicToken } from 'types/token';
 
-import { respondDown } from 'web/mixins';
 import AssetInfoModal from 'web/modals/AssetInfoModal';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import Asset from 'basics/Asset';
-import Changes24 from 'basics/Changes24';
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 import { PageLoader } from 'basics/loaders';
+
+import Changes24 from 'components/Changes24';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const Table = styled.div`
     display: flex;
@@ -43,7 +45,7 @@ const TitleColumn = styled(Column)`
 `;
 
 const Cell = styled.div`
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     margin-bottom: 0.8rem;
     display: flex;
     align-items: center;
@@ -59,11 +61,11 @@ const Cell = styled.div`
 `;
 
 const TitleCell = styled(Cell)`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const MobileLabel = styled.span`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     display: none;
 
     ${respondDown(Breakpoints.sm)`

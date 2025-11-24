@@ -3,8 +3,8 @@ import styled from 'styled-components';
 
 import { formatBalance } from 'helpers/format-number';
 
-import { flexRowSpaceBetween } from 'web/mixins';
-import { COLORS } from 'web/styles';
+import { flexRowSpaceBetween } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     display: flex;
@@ -21,13 +21,13 @@ const Header = styled.div`
 const Label = styled.span`
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const Sum = styled.span`
     font-size: 1.6rem;
     line-height: 2.4rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 `;
 
 const Pillar = styled.div`
@@ -35,7 +35,7 @@ const Pillar = styled.div`
     width: 100%;
     height: 0.8rem;
     border-radius: 0.8rem;
-    background: ${COLORS.gray};
+    background: ${COLORS.gray100};
 `;
 
 const IceLine = styled.div<{ $width: number; $hasDiceVotes: boolean }>`
@@ -45,7 +45,7 @@ const IceLine = styled.div<{ $width: number; $hasDiceVotes: boolean }>`
     border-radius: ${({ $hasDiceVotes }) => (!$hasDiceVotes ? '0.8rem' : '0.8rem 0 0 0.8rem')};
     border-right: ${({ $hasDiceVotes }) =>
         !$hasDiceVotes ? 'none' : `0.1rem solid ${COLORS.white}`};
-    background: ${COLORS.blue};
+    background: ${COLORS.blue500};
 `;
 
 const DiceLine = styled.div<{ $width: number; $hasIceVotes: boolean }>`
@@ -53,7 +53,7 @@ const DiceLine = styled.div<{ $width: number; $hasIceVotes: boolean }>`
     width: ${({ $width }) => `${$width}%`};
     height: 0.8rem;
     border-radius: ${({ $hasIceVotes }) => ($hasIceVotes ? '0 0.8rem 0.8rem 0' : '0.8rem')};
-    background: ${COLORS.darkPurple};
+    background: ${COLORS.purple900};
 `;
 
 interface VotesProgressLineProps {

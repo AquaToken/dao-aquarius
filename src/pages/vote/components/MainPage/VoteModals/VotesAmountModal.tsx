@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { processIceTx } from 'api/ice';
+
 import { LockerRoutes } from 'constants/routes';
 
 import ErrorHandler from 'helpers/error-handler';
@@ -15,27 +17,27 @@ import { useIsMounted } from 'hooks/useIsMounted';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 import { StellarService, ToastService } from 'services/globalServices';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { ModalProps } from 'types/modal';
 import { ClassicToken } from 'types/token';
 
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
-import DIce from 'assets/dice-logo.svg';
-import Ice from 'assets/ice-logo.svg';
-import CloseIcon from 'assets/icon-close-small.svg';
+import CloseIcon from 'assets/icons/nav/icon-close-alt-16.svg';
+import DIce from 'assets/tokens/dice-logo.svg';
+import Ice from 'assets/tokens/ice-logo.svg';
 
 import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
-import ExternalLink from 'basics/ExternalLink';
 import Input from 'basics/inputs/Input';
 import RangeInput from 'basics/inputs/RangeInput';
 import Select, { Option } from 'basics/inputs/Select';
+import { ExternalLink } from 'basics/links';
 import Market from 'basics/Market';
 import { ModalDescription, ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms';
+
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import DelegateBlock from 'pages/vote/components/MainPage/VoteModals/DelegateBlock/DelegateBlock';
 
@@ -59,18 +61,18 @@ const AmountRow = styled.div`
 export const Label = styled.span`
     font-size: 1.6rem;
     line-height: 1.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     ${flexAllCenter};
 `;
 
 const BalanceBlock = styled.span`
     font-size: 1.4rem;
     line-height: 1.6rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const Balance = styled.span`
-    color: ${COLORS.tooltip};
+    color: ${COLORS.purple400};
     cursor: pointer;
 `;
 
@@ -87,7 +89,7 @@ const DIceLogo = styled(DIce)`
 const AssetsInfoBlock = styled.div`
     ${flexAllCenter};
     padding: 3.5rem 0;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     border-radius: 0.5rem;
 `;
 
@@ -117,13 +119,13 @@ const GetAquaBlock = styled.div`
     ${flexRowSpaceBetween};
     height: 6.8rem;
     border-radius: 1rem;
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
     padding: 0 3.2rem;
     margin-top: 4.1rem;
 `;
 
 const GetAquaLabel = styled.span`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 const PairsList = styled.div`
     padding-top: 1.6rem;
@@ -134,7 +136,7 @@ const PairBlock = styled.div`
     margin-bottom: 0.8rem;
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     display: grid;
     grid-template-areas: 'Pair Input Close';
     grid-template-columns: 1fr 1fr 0.1fr;
@@ -161,7 +163,7 @@ const CloseButton = styled.button`
     cursor: pointer;
     height: 4rem;
     width: 4rem;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     border-radius: 1rem;
     grid-area: Close;
     justify-self: end;
@@ -184,12 +186,12 @@ const TotalAmountRow = styled.div`
     margin-top: 0.8rem;
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     display: flex;
     align-items: center;
     justify-content: space-between;
     ${Label} {
-        color: ${COLORS.grayText};
+        color: ${COLORS.textGray};
     }
 `;
 
@@ -208,7 +210,7 @@ const TotalAmount = styled.div`
 `;
 
 const ResetValues = styled.div`
-    color: ${COLORS.tooltip};
+    color: ${COLORS.purple400};
     cursor: pointer;
 `;
 
@@ -220,7 +222,7 @@ const VotesAmountModal = ({
 }: ModalProps<{
     pairs: PairStats[];
     updatePairs?: () => void;
-    pairsAmounts?: { [key: string]: string };
+    pairsAmounts?: Record<string, string>;
     isDownVoteModal?: boolean;
     isSingleVoteForModal?: boolean;
     asset: ClassicToken;
@@ -419,18 +421,18 @@ const VotesAmountModal = ({
             setPending(true);
 
             const voteOps = Object.entries(pairsAmount).map(([marketKey, voteAmount]) =>
-                StellarService.createVoteOperation(
+                StellarService.op.createVoteOperation(
                     account.accountId(),
                     marketKey,
-                    voteAmount,
+                    voteAmount as string,
                     new Date(Date.now() + 1.2 * 60 * 60 * 1000).getTime(),
                     targetAsset,
                 ),
             );
 
-            const tx = await StellarService.buildTx(account, voteOps);
+            const tx = await StellarService.tx.buildTx(account, voteOps);
 
-            const processedTx = await StellarService.processIceTx(tx, targetAsset);
+            const processedTx = await processIceTx(tx, targetAsset);
 
             const result = await account.signAndSubmitTx(processedTx);
 
@@ -452,7 +454,7 @@ const VotesAmountModal = ({
             ToastService.showSuccessToast(
                 'Your vote has been cast! You will be able to see your vote in the list within 10 minutes',
             );
-            StellarService.getClaimableBalances(account.accountId());
+            StellarService.cb.getClaimableBalances(account.accountId());
         } catch (e) {
             const errorText = ErrorHandler(e);
             ToastService.showErrorToast(errorText);
