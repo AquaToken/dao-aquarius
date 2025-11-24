@@ -24,7 +24,7 @@ import Table from 'basics/Table';
 
 import PublicKeyWithIcon from 'components/PublicKeyWithIcon';
 
-import { respondDown } from 'styles/mixins';
+import { flexColumn, respondDown } from 'styles/mixins';
 import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
@@ -35,9 +35,12 @@ const Title = styled.h3`
 
 const Amounts = styled.span`
     font-size: 1.4rem;
+    ${flexColumn};
+    justify-content: center;
 
     ${respondDown(Breakpoints.md)`
         text-align: right;
+        align-items: flex-end;
     `}
 `;
 
@@ -80,7 +83,6 @@ const getEventAmounts = (event: PoolEvent, pool: PoolExtended) => {
                         )}{' '}
                         {pool.tokens[fromIndex]?.code}
                     </span>
-                    <br />
                     <span>
                         {formatBalance(
                             Math.abs(
@@ -102,16 +104,13 @@ const getEventAmounts = (event: PoolEvent, pool: PoolExtended) => {
                 <Amounts>
                     {event.amounts.map((amount, index) => (
                         <span key={pool.tokens_str[index]}>
-                            <span>
-                                {formatBalance(
-                                    +contractValueToAmount(
-                                        amount,
-                                        (pool.tokens[index] as SorobanToken).decimal,
-                                    ),
-                                )}{' '}
-                                {pool.tokens[index]?.code}
-                            </span>
-                            <br />
+                            {formatBalance(
+                                +contractValueToAmount(
+                                    amount,
+                                    (pool.tokens[index] as SorobanToken).decimal,
+                                ),
+                            )}{' '}
+                            {pool.tokens[index]?.code}
                         </span>
                     ))}
                 </Amounts>
@@ -201,9 +200,9 @@ const PoolEvents = ({ pool }: { pool: PoolExtended }) => {
             <Title>Transactions</Title>
             <Table
                 head={[
-                    { children: 'Type' },
+                    { children: 'Type', flexSize: 1.2 },
                     { children: 'Amounts' },
-                    { children: 'Account', flexSize: 1.5 },
+                    { children: 'Account' },
                     { children: 'Time' },
                     { children: '', flexSize: 0.2 },
                 ]}
@@ -214,6 +213,7 @@ const PoolEvents = ({ pool }: { pool: PoolExtended }) => {
                         {
                             children: getEventTitle(event, pool),
                             label: 'Type:',
+                            flexSize: 1.2,
                         },
                         {
                             children: getEventAmounts(event, pool),
@@ -221,9 +221,12 @@ const PoolEvents = ({ pool }: { pool: PoolExtended }) => {
                         },
                         {
                             children: (
-                                <PublicKeyWithIcon pubKey={event.account_address} narrowForMobile />
+                                <PublicKeyWithIcon
+                                    pubKey={event.account_address}
+                                    lettersCount={4}
+                                    narrowForMobile
+                                />
                             ),
-                            flexSize: 1.5,
                             label: 'Account:',
                         },
                         {
