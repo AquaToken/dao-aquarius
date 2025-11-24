@@ -1,4 +1,4 @@
-import { addDays, startOfDay } from 'date-fns';
+import { addDays } from 'date-fns';
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
@@ -15,7 +15,6 @@ import { IncentivesRoutes } from 'constants/routes';
 
 import { contractValueToAmount } from 'helpers/amount';
 import { getAquaAssetData } from 'helpers/assets';
-import { convertUTCToLocalDateIgnoringTimezone } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 import { getTokensFromCache } from 'helpers/token';
 
@@ -193,8 +192,6 @@ const AddIncentivePage = () => {
             setAssetsList(res);
         });
     }, []);
-
-    const nextDay = convertUTCToLocalDateIgnoringTimezone(startOfDay(addDays(Date.now(), 1)));
 
     useEffect(() => {
         if (!debouncedAmount) {
@@ -510,10 +507,10 @@ const AddIncentivePage = () => {
                                                 },
                                             },
                                         ]}
-                                        minDate={nextDay}
+                                        minDate={Date.now()}
                                         fullWidth
                                         showTimeSelect
-                                        timeIntervals={60}
+                                        timeIntervals={5}
                                     />
                                     <DashIcon />
 
