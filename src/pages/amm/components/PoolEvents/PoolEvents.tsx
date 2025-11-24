@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { getPoolEvents } from 'api/amm';
 
 import { contractValueToAmount } from 'helpers/amount';
+import { getAssetFromString } from 'helpers/assets';
 import { getDateString } from 'helpers/date';
 import { getIsTestnetEnv } from 'helpers/env';
 import { formatBalance } from 'helpers/format-number';
@@ -54,6 +55,8 @@ const getEventTitle = (event: PoolEvent, pool: PoolExtended) => {
             return 'Add liquidity';
         case PoolEventType.withdraw:
             return 'Remove liquidity';
+        case PoolEventType.claimIncentives:
+            return 'Claim incentives';
 
         default:
             return 'Unknown event';
@@ -119,6 +122,22 @@ const getEventAmounts = (event: PoolEvent, pool: PoolExtended) => {
             return (
                 <Amounts>
                     <span>{formatBalance(+event.amounts[0] / 1e7)} AQUA</span>
+                </Amounts>
+            );
+        }
+
+        case PoolEventType.claimIncentives: {
+            return (
+                <Amounts>
+                    {event.amounts.map((amount, index) => {
+                        const token = getAssetFromString(event.tokens[index]);
+                        return (
+                            <span key={token.contract}>
+                                {formatBalance(+contractValueToAmount(amount, token.decimal), true)}{' '}
+                                {token.code}
+                            </span>
+                        );
+                    })}
                 </Amounts>
             );
         }

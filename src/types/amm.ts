@@ -84,6 +84,7 @@ export enum PoolEventType {
     withdraw = 'withdraw',
     swap = 'swap',
     claim = 'claim',
+    claimIncentives = 'claim_incentives',
 }
 
 export type PoolEvent = {
@@ -93,6 +94,7 @@ export type PoolEvent = {
     transaction_hash: string;
     ledger_close_at_str: string;
     account_address: string;
+    tokens?: string[];
 };
 
 export interface PoolExtended extends PoolProcessed {
