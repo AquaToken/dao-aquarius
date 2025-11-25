@@ -10,6 +10,8 @@ export type ListResponse<T> = {
     pages: number;
     size: number;
     total: number;
+    next?: string;
+    previous?: string;
 };
 
 export type Pool = {
@@ -95,6 +97,15 @@ export type PoolEvent = {
     ledger_close_at_str: string;
     account_address: string;
     tokens?: string[];
+    pool_tokens: string[];
+};
+
+export type CombinedSwapEvent = Omit<PoolEvent, 'tokens' | 'amounts' | 'event_type'> & {
+    event_type: 'swap_combined';
+    tokens: [string, string];
+    amounts: [string, string];
+    original_swaps: PoolEvent[];
+    path: string[];
 };
 
 export interface PoolExtended extends PoolProcessed {

@@ -16,6 +16,8 @@ import ToggleGroup from 'basics/inputs/ToggleGroup';
 import { commonMaxWidth, respondDown } from 'styles/mixins';
 import { Breakpoints, COLORS } from 'styles/style-constants';
 
+import AmmHistory from 'pages/profile/AmmHistory/AmmHistory';
+
 import AccountInfo from './AccountInfo/AccountInfo';
 import Balances from './Balances/Balances';
 import IceLocks from './IceLocks/IceLocks';
@@ -92,6 +94,7 @@ export enum ProfileTabs {
     governance = 'governance',
     iceLocks = 'ice_locks',
     history = 'payments_history',
+    ammHistory = 'amm_history',
 }
 
 const OPTIONS = [
@@ -102,6 +105,7 @@ const OPTIONS = [
     { label: 'Governance Votes', value: ProfileTabs.governance },
     { label: 'ICE Locks', value: ProfileTabs.iceLocks },
     { label: 'Payments History', value: ProfileTabs.history },
+    { label: 'AMM History', value: ProfileTabs.ammHistory },
 ];
 
 const Profile = () => {
@@ -167,6 +171,7 @@ const Profile = () => {
                         <IceLocks ammAquaBalance={ammAquaBalance} />
                     )}
                     {selectedTab === ProfileTabs.history && <PaymentsHistory />}
+                    {selectedTab === ProfileTabs.ammHistory && <AmmHistory />}
                 </Content>
             </ContentWrap>
         </Container>

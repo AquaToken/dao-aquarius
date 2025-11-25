@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { MainRoutes } from 'constants/routes';
 
 import { getDateString } from 'helpers/date';
-import { getIsTestnetEnv } from 'helpers/env';
+import getExplorerLink, { ExplorerSection } from 'helpers/explorer-links';
 import { formatBalance } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
@@ -59,7 +59,7 @@ const PaymentsHistory = () => {
     return (
         <Container>
             <Header>
-                <Title>Payments History</Title>
+                <Title>AMM History</Title>
             </Header>
             <Section>
                 {history ? (
@@ -110,9 +110,11 @@ const PaymentsHistory = () => {
                                     {
                                         children: (
                                             <ExternalLink
-                                                href={`https://stellar.expert/explorer/${
-                                                    getIsTestnetEnv() ? 'testnet' : 'public'
-                                                }/tx/${item.transaction_hash}#${opId}`}
+                                                href={getExplorerLink(
+                                                    ExplorerSection.tx,
+                                                    item.transaction_hash,
+                                                    opId,
+                                                )}
                                             >
                                                 View on Explorer
                                             </ExternalLink>

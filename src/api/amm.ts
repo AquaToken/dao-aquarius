@@ -194,6 +194,22 @@ export const getUserPools = async (accountId: string): Promise<PoolUserProcessed
     return res;
 };
 
+export const getUserHistory = async (accountId: string): Promise<ListResponse<PoolEvent>> => {
+    const baseUrl = getAmmAquaUrl();
+
+    const { data } = await axios.get<ListResponse<PoolEvent>>(
+        `${baseUrl}/events/user/${accountId}/?size=500`,
+    );
+
+    return data;
+};
+
+export const getNextUserHistory = async (link: string): Promise<ListResponse<PoolEvent>> => {
+    const { data } = await axios.get<ListResponse<PoolEvent>>(link);
+
+    return data;
+};
+
 export const getAmmAquaBalance = async (accountId: string): Promise<number> => {
     const baseUrl = getAmmAquaUrl();
     const { aquaContract, aquaAssetString } = getAquaAssetData();
