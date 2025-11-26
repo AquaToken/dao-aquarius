@@ -47,7 +47,7 @@ const AmmHistory = () => {
     }, [account]);
 
     const loadMore = async () => {
-        if (loadedAll || !nextPage) return;
+        if (loadedAll || !nextPage || pending) return;
 
         setPending(true);
         try {
