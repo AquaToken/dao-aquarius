@@ -122,10 +122,18 @@ export default class Payments {
             | (StellarSdk.Horizon.ServerApi.InvokeHostFunctionOperationRecord & { memo: string }),
             void
         >(payments, payment =>
-            payment.transaction().then(({ memo }) => {
-                payment.memo = memo;
-                this.event.trigger({ type: StellarEvents.paymentsHistoryUpdate });
-            }),
+            payment
+                .transaction()
+                .then(({ memo, source_account }) => {
+                    if (!memo && source_account === BRIBE_REWARDS_KEY) {
+                        payment.memo = 'Payment Refund';
+                        return;
+                    }
+                    payment.memo = memo;
+                })
+                .finally(() => {
+                    this.event.trigger({ type: StellarEvents.paymentsHistoryUpdate });
+                }),
         );
     }
 

@@ -100,7 +100,9 @@ const PaymentsHistory = () => {
                                         },
                                     },
                                     {
-                                        children: `${formatBalance(item.amount)} AQUA`,
+                                        children: `${formatBalance(item.amount)} ${
+                                            item.asset_code
+                                        }`,
                                         align: CellAlign.Right,
                                         label: 'Amount',
                                     },
