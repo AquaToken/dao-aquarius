@@ -217,6 +217,8 @@ const normalizeAmounts = (item: PoolEvent | CombinedSwapEvent) => {
         return { val, code: token.code };
     });
 
+    const isSwap = item.event_type === PoolEventType.swap || item.event_type === 'swap_combined';
+
     const list = prepared.filter(({ val }) => val !== 0);
 
     return list
@@ -224,7 +226,7 @@ const normalizeAmounts = (item: PoolEvent | CombinedSwapEvent) => {
             const formatted = formatBalance(Math.abs(val), true);
             return `${formatted} ${code}`;
         })
-        .join(' → ');
+        .join(isSwap ? ' → ' : ', ');
 };
 
 /**
