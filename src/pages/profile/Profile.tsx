@@ -16,12 +16,11 @@ import ToggleGroup from 'basics/inputs/ToggleGroup';
 import { commonMaxWidth, respondDown } from 'styles/mixins';
 import { Breakpoints, COLORS } from 'styles/style-constants';
 
-import AmmHistory from 'pages/profile/AmmHistory/AmmHistory';
+import Activity from 'pages/profile/Activity/Activity';
 
 import AccountInfo from './AccountInfo/AccountInfo';
 import Balances from './Balances/Balances';
 import IceLocks from './IceLocks/IceLocks';
-import PaymentsHistory from './PaymentsHistory/PaymentsHistory';
 import SdexRewards from './SdexRewards/SdexRewards';
 import YourGovernanceVotes from './YourGovernanceVotes/YourGovernanceVotes';
 import YourVotes from './YourVotes/YourVotes';
@@ -93,8 +92,7 @@ export enum ProfileTabs {
     your = 'liquidity_votes',
     governance = 'governance',
     iceLocks = 'ice_locks',
-    history = 'payments_history',
-    ammHistory = 'amm_history',
+    activity = 'activity',
 }
 
 const OPTIONS = [
@@ -104,8 +102,7 @@ const OPTIONS = [
     { label: 'Liquidity Votes', value: ProfileTabs.your },
     { label: 'Governance Votes', value: ProfileTabs.governance },
     { label: 'ICE Locks', value: ProfileTabs.iceLocks },
-    { label: 'Payments History', value: ProfileTabs.history },
-    { label: 'AMM History', value: ProfileTabs.ammHistory },
+    { label: 'Activity', value: ProfileTabs.activity },
 ];
 
 const Profile = () => {
@@ -170,8 +167,7 @@ const Profile = () => {
                     {selectedTab === ProfileTabs.iceLocks && (
                         <IceLocks ammAquaBalance={ammAquaBalance} />
                     )}
-                    {selectedTab === ProfileTabs.history && <PaymentsHistory />}
-                    {selectedTab === ProfileTabs.ammHistory && <AmmHistory />}
+                    {selectedTab === ProfileTabs.activity && <Activity />}
                 </Content>
             </ContentWrap>
         </Container>

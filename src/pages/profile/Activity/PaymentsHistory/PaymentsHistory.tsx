@@ -20,8 +20,8 @@ import Table, { CellAlign } from 'basics/Table';
 
 import { COLORS } from 'styles/style-constants';
 
-import { ExternalLinkStyled, Header, Section, Title } from '../SdexRewards/SdexRewards';
-import { Empty } from '../YourVotes/YourVotes';
+import { ExternalLinkStyled, Section } from '../../SdexRewards/SdexRewards';
+import { Empty } from '../../YourVotes/YourVotes';
 
 const Container = styled.div`
     display: flex;
@@ -58,9 +58,6 @@ const PaymentsHistory = () => {
 
     return (
         <Container>
-            <Header>
-                <Title>AMM History</Title>
-            </Header>
             <Section>
                 {history ? (
                     <Table

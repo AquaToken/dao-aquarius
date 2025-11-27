@@ -194,11 +194,20 @@ export const getUserPools = async (accountId: string): Promise<PoolUserProcessed
     return res;
 };
 
-export const getUserHistory = async (accountId: string): Promise<ListResponse<PoolEvent>> => {
+export const getUserHistory = async (
+    accountId: string,
+    filter?: string,
+): Promise<ListResponse<PoolEvent>> => {
     const baseUrl = getAmmAquaUrl();
 
     const { data } = await axios.get<ListResponse<PoolEvent>>(
-        `${baseUrl}/events/user/${accountId}/?size=500`,
+        `${baseUrl}/events/user/${accountId}/`,
+        {
+            params: {
+                size: 500,
+                ...(event && { event_type__in: filter }),
+            },
+        },
     );
 
     return data;

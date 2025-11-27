@@ -10,33 +10,72 @@ import { normalizeHistoryItem, processHistory } from 'helpers/amm-history';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { PoolEventType } from 'types/amm';
+import { Option } from 'types/option';
+
+import { Select, ToggleGroup } from 'basics/inputs';
 import { ExternalLink } from 'basics/links';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
 import Table, { CellAlign } from 'basics/Table';
 
-import { flexColumn } from 'styles/mixins';
-import { COLORS } from 'styles/style-constants';
+import { flexColumn, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
-import { ExternalLinkStyled, Header, Section, Title } from 'pages/profile/SdexRewards/SdexRewards';
+import { ExternalLinkStyled, Section } from 'pages/profile/SdexRewards/SdexRewards';
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
 
 const Container = styled.div`
     ${flexColumn};
 `;
 
+const ToggleStyled = styled(ToggleGroup)`
+    margin-bottom: 2.4rem;
+
+    ${respondDown(Breakpoints.sm)`
+        display: none;
+    `}
+`;
+
+const SelectStyled = styled(Select)`
+    margin-bottom: 2.4rem;
+    display: none;
+
+    ${respondDown(Breakpoints.sm)`
+        display: flex;
+    `}
+`;
+
+enum FilterOptions {
+    all = '',
+    claims = `${PoolEventType.claim}, ${PoolEventType.claimIncentives}`,
+    swap = `${PoolEventType.swap}`,
+    deposit = `${PoolEventType.deposit}`,
+    withdraw = `${PoolEventType.withdraw}`,
+}
+
+const Options: Option<FilterOptions>[] = [
+    { value: FilterOptions.all, label: 'All' },
+    { value: FilterOptions.swap, label: 'Swap' },
+    { value: FilterOptions.deposit, label: 'Deposit' },
+    { value: FilterOptions.withdraw, label: 'Withdraw' },
+    { value: FilterOptions.claims, label: 'Claims' },
+];
+
 const AmmHistory = () => {
-    const [history, setHistory] = useState([]);
+    const [history, setHistory] = useState(null);
     const [nextPage, setNextPage] = useState(null);
     const [loadedAll, setLoadedAll] = useState(false);
     const [pending, setPending] = useState(false);
+    const [filter, setFilter] = useState<FilterOptions>(FilterOptions.all);
 
     const { account } = useAuthStore();
 
     const loadInitial = async () => {
         if (!account) return;
 
-        const res = await getUserHistory(account.accountId());
+        setHistory(null);
+        const res = await getUserHistory(account.accountId(), filter);
         setHistory(processHistory(res.items).map(normalizeHistoryItem));
         setNextPage(res.next ?? null);
         if (!res.next) setLoadedAll(true);
@@ -44,7 +83,7 @@ const AmmHistory = () => {
 
     useEffect(() => {
         loadInitial();
-    }, [account]);
+    }, [filter]);
 
     const loadMore = async () => {
         if (loadedAll || !nextPage || pending) return;
@@ -62,16 +101,15 @@ const AmmHistory = () => {
         }
     };
 
-    const emptyState = loadedAll && history.length === 0;
+    const emptyState = loadedAll && history && history?.length === 0;
 
     return (
         <Container>
-            <Header>
-                <Title>AMM History</Title>
-            </Header>
+            <ToggleStyled value={filter} options={Options} onChange={setFilter} />
+            <SelectStyled value={filter} options={Options} onChange={setFilter} />
 
             <Section>
-                {history.length > 0 ? (
+                {history && history.length > 0 ? (
                     <Table
                         virtualScrollProps={{ loadMore, loadMoreOffset: 10 }}
                         pending={pending}
@@ -112,9 +150,9 @@ const AmmHistory = () => {
                 ) : emptyState ? (
                     <Empty>
                         <h3>There's nothing here.</h3>
-                        <span>It looks like you haven't received AQUA rewards.</span>
+                        <span>It looks like you haven't pools activity</span>
                         <ExternalLinkStyled asDiv>
-                            <Link to={MainRoutes.rewards}>Learn about rewards</Link>
+                            <Link to={MainRoutes.amm}>Learn about pools</Link>
                         </ExternalLinkStyled>
                     </Empty>
                 ) : (
