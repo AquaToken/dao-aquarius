@@ -12,7 +12,6 @@ import { CombinedSwapEvent, PoolEvent, PoolEventType } from 'types/amm';
  * source/destination tokens and amounts, and returns a unified event.
  */
 function buildCombinedSwap(swaps: PoolEvent[]): CombinedSwapEvent | null {
-    // Single swap → nothing to combine
     if (!swaps || !swaps.length) return null;
 
     type Token = string;
