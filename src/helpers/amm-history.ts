@@ -13,7 +13,7 @@ import { CombinedSwapEvent, PoolEvent, PoolEventType } from 'types/amm';
  */
 function buildCombinedSwap(swaps: PoolEvent[]): CombinedSwapEvent | null {
     // Single swap → nothing to combine
-    if (!swaps || swaps.length <= 1) return null;
+    if (!swaps || !swaps.length) return null;
 
     type Token = string;
 
@@ -128,12 +128,6 @@ function processFresh(items: PoolEvent[]): (PoolEvent | CombinedSwapEvent)[] {
 
     // Second pass: process each swap group
     for (const swaps of swapGroups.values()) {
-        // Only one swap → nothing to combine
-        if (swaps.length === 1) {
-            result.push(swaps[0]);
-            continue;
-        }
-
         // Multi-hop swap → build a single combined event
         const combined = buildCombinedSwap(swaps);
         result.push(combined);
