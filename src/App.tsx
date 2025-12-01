@@ -1,4 +1,3 @@
-import { MoonPayProvider } from '@moonpay/moonpay-react';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
@@ -8,8 +7,7 @@ import { getAssetsList } from 'api/amm';
 import { D_ICE_CODE, GD_ICE_CODE, GOV_ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'constants/assets';
 import { MainRoutes } from 'constants/routes';
 
-import { getEnv, getIsTestnetEnv, setProductionEnv } from 'helpers/env';
-import { getMoonpayKeyByEnv } from 'helpers/moonpay';
+import { getEnv, setProductionEnv } from 'helpers/env';
 import { cacheTokens, createAsset } from 'helpers/token';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
@@ -358,12 +356,10 @@ const BodyStyle = createGlobalStyle`
 `;
 
 const ProvidedApp = () => (
-    <MoonPayProvider apiKey={getMoonpayKeyByEnv()} debug={getIsTestnetEnv()}>
-        <Provider>
-            <AppGlobalStyle />
-            <BodyStyle />
-            <App />
-        </Provider>
-    </MoonPayProvider>
+    <Provider>
+        <AppGlobalStyle />
+        <BodyStyle />
+        <App />
+    </Provider>
 );
 export default ProvidedApp;
