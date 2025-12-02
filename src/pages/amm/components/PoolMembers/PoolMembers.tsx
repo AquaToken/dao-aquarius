@@ -61,7 +61,7 @@ const LinkToExpert = styled.a`
     ${respondDown(Breakpoints.md)`
         font-size: 1rem;
         width: 17rem;
-        
+
         svg {
             margin-bottom: 0.2rem;
         }
@@ -111,7 +111,9 @@ const PoolMembers = ({ poolId, totalShare }: { poolId: string; totalShare: strin
                         <LinkToExpert
                             href={`https://stellar.expert/explorer/${
                                 getIsTestnetEnv() ? 'testnet' : 'public'
-                            }/account/${member.account_address}`}
+                            }/${member.account_address.startsWith('G') ? 'account' : 'contract'}/${
+                                member.account_address
+                            }`}
                             target="_blank"
                         >
                             <PublicKeyWithIcon pubKey={member.account_address} />
