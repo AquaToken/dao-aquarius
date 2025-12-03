@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { GovernanceRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { getDateString } from 'helpers/date';
 
@@ -95,7 +95,12 @@ const Versions = ({ proposal }: { proposal: Proposal }) => {
                     <Item>
                         {getDateString(new Date(version.created_at).getTime(), { withTime: true })}
                     </Item>
-                    <Link to={`${GovernanceRoutes.proposal}/${proposal.id}/${version.version}/`}>
+                    <Link
+                        to={AppRoutes.section.governance.to.proposal({
+                            id: String(proposal.id),
+                            version: String(version.version),
+                        })}
+                    >
                         <Details>
                             Details
                             <ExternalLinkIcon />

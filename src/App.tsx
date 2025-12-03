@@ -1,11 +1,11 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
-import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Navigate, Route, Routes } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
 
 import { getAssetsList } from 'api/amm';
 
 import { D_ICE_CODE, GD_ICE_CODE, GOV_ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'constants/assets';
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { getEnv, setProductionEnv } from 'helpers/env';
 import { cacheTokens, createAsset } from 'helpers/token';
@@ -214,129 +214,203 @@ const App = () => {
     return (
         <Router>
             <ErrorBoundary>
-                {isLogged && Boolean(redirectURL) && <Redirect to={redirectURL} />}
+                {isLogged && Boolean(redirectURL) && <Navigate to={redirectURL} replace />}
                 <TestnetBanner />
                 <Header />
                 <Suspense fallback={<PageLoader />}>
-                    <Switch>
-                        <Route exact path={MainRoutes.main}>
-                            <PageTitle title="Aquarius">
-                                <MainPage />
-                            </PageTitle>
-                        </Route>
-                        <Route path={MainRoutes.locker}>
-                            <PageTitle title="Locker - Aquarius">
-                                <LockerPage />
-                            </PageTitle>
-                        </Route>
-                        <Route path={MainRoutes.governance}>
-                            <PageTitle title="Governance - Aquarius">
-                                <Governance />
-                            </PageTitle>
-                        </Route>
-                        <Route path={MainRoutes.vote}>
-                            <PageTitle title="Voting - Aquarius">
-                                <VotePage />
-                            </PageTitle>
-                        </Route>
-                        <Route path={MainRoutes.bribes}>
-                            <PageTitle title="Bribes - Aquarius">
-                                <BribesPage />
-                            </PageTitle>
-                        </Route>
-                        <Route path={MainRoutes.market}>
-                            <MarketPage />
-                        </Route>
-                        <Route path={MainRoutes.rewards}>
-                            <PageTitle title="Rewards - Aquarius">
-                                <RewardsPage />
-                            </PageTitle>
-                        </Route>
-                        <Route path={MainRoutes.airdrop}>
-                            <PageTitle title="Airdrop - Aquarius">
-                                <AirdropPage />
-                            </PageTitle>
-                        </Route>
-                        <Route path={MainRoutes.airdrop2}>
-                            <PageTitle title="Airdrop #2 - Aquarius">
-                                <Airdrop2Page />
-                            </PageTitle>
-                        </Route>
+                    <Routes>
+                        <Route
+                            path={AppRoutes.page.main}
+                            element={
+                                <PageTitle title="Aquarius">
+                                    <MainPage />
+                                </PageTitle>
+                            }
+                        />
 
-                        <Route path={MainRoutes.account}>
-                            <PageTitle title="Dashboard - Aquarius">
-                                {isLogged ? <ProfilePage /> : <Redirect to={MainRoutes.main} />}
-                            </PageTitle>
-                        </Route>
+                        <Route
+                            path={AppRoutes.section.locker.parentRoute}
+                            element={
+                                <PageTitle title="Locker - Aquarius">
+                                    <LockerPage />
+                                </PageTitle>
+                            }
+                        />
 
-                        <Route path={MainRoutes.walletConnect}>
-                            <PageTitle title="WalletConnect - Aquarius">
-                                <WalletConnectPage />
-                            </PageTitle>
-                        </Route>
+                        <Route
+                            path={AppRoutes.section.governance.parentRoute}
+                            element={
+                                <PageTitle title="Governance - Aquarius">
+                                    <Governance />
+                                </PageTitle>
+                            }
+                        />
 
-                        <Route path={MainRoutes.amm}>
-                            <PageTitle title="Pools - Aquarius">
-                                <AmmPage />
-                            </PageTitle>
-                        </Route>
+                        <Route
+                            path={AppRoutes.page.vote}
+                            element={
+                                <PageTitle title="Voting - Aquarius">
+                                    <VotePage />
+                                </PageTitle>
+                            }
+                        />
 
-                        <Route path={MainRoutes.swap}>
-                            <PageTitle title="Swap - Aquarius">
-                                <SwapPage />
-                            </PageTitle>
-                        </Route>
+                        <Route
+                            path={AppRoutes.section.bribes.parentRoute}
+                            element={
+                                <PageTitle title="Bribes - Aquarius">
+                                    <BribesPage />
+                                </PageTitle>
+                            }
+                        />
 
-                        <Route path={MainRoutes.buyAqua}>
-                            <PageTitle title="Buy Aqua - Aquarius">
-                                <BuyAquaPage />
-                            </PageTitle>
-                        </Route>
+                        <Route
+                            path={AppRoutes.section.market.parentRoute}
+                            element={<MarketPage />}
+                        />
 
-                        <Route path={MainRoutes.testnet}>
-                            <PageTitle title="Testnet - Aquarius">
-                                <TestnetSwitcherPage />
-                            </PageTitle>
-                        </Route>
+                        <Route
+                            path={AppRoutes.page.rewards}
+                            element={
+                                <PageTitle title="Rewards - Aquarius">
+                                    <RewardsPage />
+                                </PageTitle>
+                            }
+                        />
 
-                        <Route path={MainRoutes.terms}>
-                            <PageTitle title="Terms Of Use - Aquarius">
-                                <TermsPage />
-                            </PageTitle>
-                        </Route>
+                        <Route
+                            path={AppRoutes.page.airdrop}
+                            element={
+                                <PageTitle title="Airdrop - Aquarius">
+                                    <AirdropPage />
+                                </PageTitle>
+                            }
+                        />
 
-                        <Route path={MainRoutes.privacy}>
-                            <PageTitle title="Privacy Policy - Aquarius">
-                                <PrivacyPage />
-                            </PageTitle>
-                        </Route>
+                        <Route
+                            path={AppRoutes.page.airdrop2}
+                            element={
+                                <PageTitle title="Airdrop #2 - Aquarius">
+                                    <Airdrop2Page />
+                                </PageTitle>
+                            }
+                        />
 
-                        <Route path={MainRoutes.token}>
-                            <PageTitle title="AQUA Token - Aquarius">
-                                <TokenPage />
-                            </PageTitle>
-                        </Route>
+                        <Route
+                            path={AppRoutes.page.account}
+                            element={
+                                <PageTitle title="Dashboard - Aquarius">
+                                    {isLogged ? (
+                                        <ProfilePage />
+                                    ) : (
+                                        <Navigate to={AppRoutes.page.main} replace />
+                                    )}
+                                </PageTitle>
+                            }
+                        />
 
-                        <Route path={MainRoutes.quest}>
-                            <PageTitle title="Onboard To Aquarius">
-                                <QuestPage />
-                            </PageTitle>
-                        </Route>
+                        <Route
+                            path={AppRoutes.page.walletConnect}
+                            element={
+                                <PageTitle title="WalletConnect - Aquarius">
+                                    <WalletConnectPage />
+                                </PageTitle>
+                            }
+                        />
 
-                        <Route path={MainRoutes.delegate}>
-                            <PageTitle title="Delegates - Aquarius">
-                                <DelegatePage />
-                            </PageTitle>
-                        </Route>
+                        <Route
+                            path={AppRoutes.section.amm.parentRoute}
+                            element={
+                                <PageTitle title="Pools - Aquarius">
+                                    <AmmPage />
+                                </PageTitle>
+                            }
+                        />
 
-                        <Route path={MainRoutes.incentives}>
-                            <PageTitle title="Incentives - Aquarius">
-                                <IncentivesPage />
-                            </PageTitle>
-                        </Route>
+                        <Route
+                            path={AppRoutes.section.swap.parentRoute}
+                            element={
+                                <PageTitle title="Swap - Aquarius">
+                                    <SwapPage />
+                                </PageTitle>
+                            }
+                        />
 
-                        <Route component={NotFoundPage} />
-                    </Switch>
+                        <Route
+                            path={AppRoutes.page.buyAqua}
+                            element={
+                                <PageTitle title="Buy Aqua - Aquarius">
+                                    <BuyAquaPage />
+                                </PageTitle>
+                            }
+                        />
+
+                        <Route
+                            path={AppRoutes.page.testnet}
+                            element={
+                                <PageTitle title="Testnet - Aquarius">
+                                    <TestnetSwitcherPage />
+                                </PageTitle>
+                            }
+                        />
+
+                        <Route
+                            path={AppRoutes.page.terms}
+                            element={
+                                <PageTitle title="Terms Of Use - Aquarius">
+                                    <TermsPage />
+                                </PageTitle>
+                            }
+                        />
+
+                        <Route
+                            path={AppRoutes.page.privacy}
+                            element={
+                                <PageTitle title="Privacy Policy - Aquarius">
+                                    <PrivacyPage />
+                                </PageTitle>
+                            }
+                        />
+
+                        <Route
+                            path={AppRoutes.page.token}
+                            element={
+                                <PageTitle title="AQUA Token - Aquarius">
+                                    <TokenPage />
+                                </PageTitle>
+                            }
+                        />
+
+                        <Route
+                            path={AppRoutes.page.quest}
+                            element={
+                                <PageTitle title="Onboard To Aquarius">
+                                    <QuestPage />
+                                </PageTitle>
+                            }
+                        />
+
+                        <Route
+                            path={AppRoutes.section.delegate.parentRoute}
+                            element={
+                                <PageTitle title="Delegates - Aquarius">
+                                    <DelegatePage />
+                                </PageTitle>
+                            }
+                        />
+
+                        <Route
+                            path={AppRoutes.section.incentive.parentRoute}
+                            element={
+                                <PageTitle title="Incentives - Aquarius">
+                                    <IncentivesPage />
+                                </PageTitle>
+                            }
+                        />
+
+                        {/* Not Found */}
+                        <Route path="*" element={<NotFoundPage />} />
+                    </Routes>
                 </Suspense>
                 <Footer />
 

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-import { IncentivesRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import {
     AddBribeButton,
@@ -26,7 +26,7 @@ const OPTIONS = [
 
 const IncentivesList = () => {
     const [tab, setTab] = useState<Tab>(Tab.current);
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const headerRef = useRef(null);
 
@@ -41,7 +41,9 @@ const IncentivesList = () => {
             <TitleBlock ref={headerRef}>
                 <Title>Incentives</Title>
 
-                <AddBribeButton onClick={() => history.push(IncentivesRoutes.addIncentive)}>
+                <AddBribeButton
+                    onClick={() => navigate(AppRoutes.section.incentive.link.addIncentive)}
+                >
                     <span>add incentive</span>
                     <PlusIcon />
                 </AddBribeButton>

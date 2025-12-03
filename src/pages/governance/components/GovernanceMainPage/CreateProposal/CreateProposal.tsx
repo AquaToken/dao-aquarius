@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { forwardRef, RefObject } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { GovernanceRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';
 
@@ -76,18 +76,18 @@ const ChangedProcessText = styled.div`
 `;
 
 const CreateProposal = forwardRef((_, ref: RefObject<HTMLDivElement>) => {
-    const history = useHistory();
+    const navigate = useNavigate();
     const { isLogged } = useAuthStore();
 
     const handleClick = () => {
         if (!isLogged) {
             ModalService.openModal(ChooseLoginMethodModal, {
-                redirectURL: GovernanceRoutes.create,
+                redirectURL: AppRoutes.section.governance.link.create,
             });
             return;
         }
 
-        history.push(GovernanceRoutes.create);
+        navigate(AppRoutes.section.governance.link.create);
     };
     return (
         <Container ref={ref}>

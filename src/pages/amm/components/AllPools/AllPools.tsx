@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { FilterOptions, getPools, PoolsSortFields } from 'api/amm';
 
 import { POOL_TYPE } from 'constants/amm';
-import { AmmRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';
 
@@ -116,7 +116,7 @@ const AllPools = (): React.ReactNode => {
     const [pending, setPending] = useState(false);
     const [search, setSearch] = useState('');
 
-    const history = useHistory();
+    const navigate = useNavigate();
     const location = useLocation();
 
     const debouncedSearch = useDebounce(search, 700, true, () => setPage(1));
@@ -133,7 +133,7 @@ const AllPools = (): React.ReactNode => {
         } else {
             params.append(UrlParams.filter, FilterOptions.all);
             setFilter(FilterOptions.all);
-            history.replace({ search: params.toString() });
+            navigate(`${location.pathname}?${params.toString()}`, { replace: true });
         }
         const sortParam = params.get(UrlParams.sort);
 
@@ -143,7 +143,7 @@ const AllPools = (): React.ReactNode => {
         } else {
             params.append(UrlParams.sort, PoolsSortFields.liquidityUp);
             setSort(PoolsSortFields.liquidityUp);
-            history.replace({ search: params.toString() });
+            navigate(`${location.pathname}?${params.toString()}`, { replace: true });
         }
 
         const searchParam = params.get(UrlParams.search);
@@ -159,24 +159,24 @@ const AllPools = (): React.ReactNode => {
     const setFilterParam = (filterOption: FilterOptions) => {
         const params = new URLSearchParams(location.search);
         params.set(UrlParams.filter, filterOption);
-        history.push({ search: params.toString() });
+        navigate({ search: params.toString() });
     };
 
     const setSortParam = (sort: PoolsSortFields) => {
         const params = new URLSearchParams(location.search);
         params.set(UrlParams.sort, sort);
-        history.push({ search: params.toString() });
+        navigate({ search: params.toString() });
     };
 
     const setSearchParam = (str: string) => {
         const params = new URLSearchParams(location.search);
         if (!str) {
             params.delete(UrlParams.search);
-            history.push({ search: params.toString() });
+            navigate({ search: params.toString() });
             return;
         }
         params.set(UrlParams.search, str);
-        history.push({ search: params.toString() });
+        navigate({ search: params.toString() });
     };
 
     useEffect(() => {
@@ -196,7 +196,7 @@ const AllPools = (): React.ReactNode => {
     }, [filter, page, debouncedSearch, sort]);
 
     const goToPoolPage = (id: string) => {
-        history.push(`${AmmRoutes.analytics}${id}/`);
+        navigate(AppRoutes.section.amm.to.pool({ poolAddress: id }));
     };
 
     return !pools ? (

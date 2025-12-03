@@ -11,7 +11,7 @@ import {
     MAX_TOKEN_AMOUNT,
 } from 'constants/incentives';
 import { DAY } from 'constants/intervals';
-import { IncentivesRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { contractValueToAmount } from 'helpers/amount';
 import { getAquaAssetData } from 'helpers/assets';
@@ -385,7 +385,10 @@ const AddIncentivePage = () => {
         <PageContainer>
             <FormPageHeaderWrap>
                 <FormPageContentWrap>
-                    <FormBackButton label="Pool Incentives" to={IncentivesRoutes.main}>
+                    <FormBackButton
+                        label="Pool Incentives"
+                        to={AppRoutes.section.incentive.link.index}
+                    >
                         <ArrowLeft />
                     </FormBackButton>
 

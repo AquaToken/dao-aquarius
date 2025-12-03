@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { MAIL_AQUA_LISTINGS } from 'constants/emails';
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 import { AQUA_DOCS_AUDIT, AQUA_DOCS_URL } from 'constants/urls';
 
 import { normalizePath } from 'helpers/url';
@@ -193,38 +193,39 @@ const DuneLogo = styled(Dune)`
 `;
 
 const WIDE_PAGES = [
-    MainRoutes.bribes,
-    MainRoutes.vote,
-    MainRoutes.locker,
-    MainRoutes.governance,
-    MainRoutes.market,
-    MainRoutes.account,
-    MainRoutes.amm,
-    MainRoutes.terms,
-    MainRoutes.privacy,
+    AppRoutes.page.vote,
+    AppRoutes.page.account,
+    AppRoutes.page.terms,
+    AppRoutes.page.privacy,
+
+    AppRoutes.section.bribes.base,
+    AppRoutes.section.locker.base,
+    AppRoutes.section.governance.base,
+    AppRoutes.section.market.base,
+    AppRoutes.section.amm.base,
 ];
 
-const PAGES_WITHOUT_FOOTER = [MainRoutes.swap];
+const PAGES_WITHOUT_FOOTER = [AppRoutes.section.swap.base];
 
-const PAGES_WITHOUT_FOOTER_EXACT = [MainRoutes.locker];
+const PAGES_WITHOUT_FOOTER_EXACT = [AppRoutes.section.locker.link.index];
 
 const Footer = (): React.ReactNode => {
     const location = useLocation();
 
     if (
         PAGES_WITHOUT_FOOTER.some(page => normalizePath(location.pathname).startsWith(page)) ||
-        PAGES_WITHOUT_FOOTER_EXACT.includes(normalizePath(location.pathname) as MainRoutes)
+        PAGES_WITHOUT_FOOTER_EXACT.includes(normalizePath(location.pathname) as string)
     ) {
         return null;
     }
 
-    const isWidePage = WIDE_PAGES.includes(normalizePath(location.pathname) as MainRoutes);
+    const isWidePage = WIDE_PAGES.includes(normalizePath(location.pathname) as string);
 
     return (
         <FooterBlock>
             <Wrapper $isWide={isWidePage}>
                 <LogoWithDesc>
-                    <BlankRouterLink to={MainRoutes.main}>
+                    <BlankRouterLink to={AppRoutes.page.main}>
                         <Aqua />
                     </BlankRouterLink>
                     <Description>
@@ -232,8 +233,8 @@ const Footer = (): React.ReactNode => {
                         The project is unaffiliated with the Stellar Development Foundation.
                     </Description>
                     <AquaLinks>
-                        <AquaLink to={MainRoutes.terms}>Terms of use</AquaLink>
-                        <AquaLink to={MainRoutes.privacy}>Privacy policy</AquaLink>
+                        <AquaLink to={AppRoutes.page.terms}>Terms of use</AquaLink>
+                        <AquaLink to={AppRoutes.page.privacy}>Privacy policy</AquaLink>
                     </AquaLinks>
                 </LogoWithDesc>
                 <LinksAndCopyright>

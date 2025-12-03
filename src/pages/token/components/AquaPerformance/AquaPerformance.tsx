@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components';
 
 import { getAquaInPoolsSum, getAquaPoolsMembers, getAquaXlmRate } from 'api/amm';
 
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { getAquaAssetData, getUsdcAssetData } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
@@ -198,7 +198,7 @@ const AquaPerformance = () => {
                 <Block>
                     <BlockHeader>
                         <h3>On Aquarius AMM</h3>
-                        <ExternalLink to={`${MainRoutes.amm}?search=AQUA`}>
+                        <ExternalLink to={`${AppRoutes.section.amm.link.index}?search=AQUA`}>
                             Browse AQUA pools
                         </ExternalLink>
                     </BlockHeader>

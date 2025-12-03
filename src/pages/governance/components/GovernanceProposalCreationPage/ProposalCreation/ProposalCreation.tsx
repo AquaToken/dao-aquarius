@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { GovernanceRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';
 
@@ -153,8 +153,8 @@ const ProposalCreation = ({
                         <CircleButton
                             to={
                                 isEdit
-                                    ? `${GovernanceRoutes.proposal}/${id}`
-                                    : GovernanceRoutes.main
+                                    ? AppRoutes.section.governance.to.proposal({ id })
+                                    : AppRoutes.section.governance.link.index
                             }
                             label={isEdit ? 'Back to discussion' : 'Back to proposals'}
                         >

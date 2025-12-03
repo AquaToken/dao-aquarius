@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { GovernanceRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { useIsOnViewport } from 'hooks/useIsOnViewport';
 
@@ -290,41 +290,41 @@ const GovernanceMainPage = (): JSX.Element => {
     const { isLogged, account } = useAuthStore();
 
     const location = useLocation();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const onLinkClick = () => {
         if (!isLogged) {
             ModalService.openModal(ChooseLoginMethodModal, {
-                redirectURL: GovernanceRoutes.create,
+                redirectURL: AppRoutes.section.governance.link.create,
             });
             return;
         }
 
-        history.push(GovernanceRoutes.create);
+        navigate(AppRoutes.section.governance.link.create);
     };
 
     const setFilterValue = (value: PROPOSAL_FILTER) => {
         if (value === PROPOSAL_FILTER.MY && !isLogged) {
             ModalService.openModal(ChooseLoginMethodModal, {
-                redirectURL: `${GovernanceRoutes.main}?${UrlParams.filter}=${PROPOSAL_FILTER.MY}`,
+                redirectURL: `${AppRoutes.section.governance.link.index}?${UrlParams.filter}=${PROPOSAL_FILTER.MY}`,
             });
             return;
         }
         if (value === PROPOSAL_FILTER.MY_VOTES && !isLogged) {
             ModalService.openModal(ChooseLoginMethodModal, {
-                redirectURL: `${GovernanceRoutes.main}?${UrlParams.filter}=${PROPOSAL_FILTER.MY_VOTES}`,
+                redirectURL: `${AppRoutes.section.governance.link.index}?${UrlParams.filter}=${PROPOSAL_FILTER.MY_VOTES}`,
             });
             return;
         }
         if (value === PROPOSAL_FILTER.HISTORY && !isLogged) {
             ModalService.openModal(ChooseLoginMethodModal, {
-                redirectURL: `${GovernanceRoutes.main}?${UrlParams.filter}=${PROPOSAL_FILTER.HISTORY}`,
+                redirectURL: `${AppRoutes.section.governance.link.index}?${UrlParams.filter}=${PROPOSAL_FILTER.HISTORY}`,
             });
             return;
         }
         const params = new URLSearchParams(location.search);
         params.set(UrlParams.filter, value);
-        history.push({ pathname: location.pathname, search: params.toString() });
+        navigate({ pathname: location.pathname, search: params.toString() });
     };
 
     const filterRef = useRef(null);
@@ -333,7 +333,7 @@ const GovernanceMainPage = (): JSX.Element => {
         const params = new URLSearchParams(location.search);
         if (!params.has(UrlParams.filter)) {
             params.append(UrlParams.filter, PROPOSAL_FILTER.ALL);
-            history.replace({ search: params.toString() });
+            navigate(`${location.pathname}?${params.toString()}`, { replace: true });
             return;
         }
 

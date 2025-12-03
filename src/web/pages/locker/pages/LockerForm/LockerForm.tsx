@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { LockerRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import IceLogo from 'assets/tokens/ice-logo.svg';
 
@@ -14,7 +14,7 @@ const LockerForm = () => (
     <PageContainer $color={COLORS.gray50} $mobileColor={COLORS.white}>
         <Wrapper>
             <LockAquaForm />
-            <LearnMoreLink to={LockerRoutes.about}>
+            <LearnMoreLink to={AppRoutes.section.locker.link.about}>
                 <IceLogo style={{ height: '2.4rem', width: '2.4rem' }} />
                 Learn more about ICE
                 <PurpleArrow />
