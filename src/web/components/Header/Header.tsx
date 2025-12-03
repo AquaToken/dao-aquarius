@@ -231,9 +231,7 @@ const Links = () => {
         <>
             <NavLinkStyled
                 to={AppRoutes.section.amm.link.index}
-                activeStyle={{
-                    fontWeight: 700,
-                }}
+                style={({ isActive }) => (isActive ? { fontWeight: 700 } : undefined)}
                 title="Pools"
             >
                 Pools
@@ -243,9 +241,7 @@ const Links = () => {
                     source: getAssetString(createLumen()),
                     destination: getAquaAssetData().aquaAssetString,
                 })}
-                activeStyle={{
-                    fontWeight: 700,
-                }}
+                style={({ isActive }) => (isActive ? { fontWeight: 700 } : undefined)}
                 title="Swap"
             >
                 Swap
@@ -259,27 +255,21 @@ const Links = () => {
                     <>
                         <NavLinkStyled
                             to={AppRoutes.page.rewards}
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
+                            style={({ isActive }) => (isActive ? { fontWeight: 700 } : undefined)}
                             title="AQUA Rewards"
                         >
                             AQUA Rewards
                         </NavLinkStyled>
                         <NavLinkStyled
                             to={AppRoutes.section.bribes.link.index}
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
+                            style={({ isActive }) => (isActive ? { fontWeight: 700 } : undefined)}
                             title="Bribes"
                         >
                             Bribes
                         </NavLinkStyled>
                         <NavLinkStyled
                             to={AppRoutes.section.incentive.link.index}
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
+                            style={({ isActive }) => (isActive ? { fontWeight: 700 } : undefined)}
                             title="Pool Incentives"
                         >
                             Pool Incentives
@@ -295,10 +285,8 @@ const Links = () => {
                     <>
                         <NavLinkStyled
                             to={AppRoutes.page.vote}
-                            exact
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
+                            exact="true"
+                            style={({ isActive }) => (isActive ? { fontWeight: 700 } : undefined)}
                             title="Liquidity Voting"
                         >
                             Liquidity Voting
@@ -307,9 +295,9 @@ const Links = () => {
                         <NavLinkWithCount>
                             <NavLinkStyled
                                 to={AppRoutes.section.governance.link.index}
-                                activeStyle={{
-                                    fontWeight: 700,
-                                }}
+                                style={({ isActive }) =>
+                                    isActive ? { fontWeight: 700 } : undefined
+                                }
                                 title="DAO Proposals"
                             >
                                 DAO Proposals
@@ -322,9 +310,7 @@ const Links = () => {
 
                         <NavLinkStyled
                             to={AppRoutes.section.delegate.link.index}
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
+                            style={({ isActive }) => (isActive ? { fontWeight: 700 } : undefined)}
                             title="ICE delegation"
                         >
                             ICE Delegation
@@ -339,17 +325,13 @@ const Links = () => {
                     <>
                         <NavLinkStyled
                             to={AppRoutes.section.locker.link.index}
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
+                            style={({ isActive }) => (isActive ? { fontWeight: 700 } : undefined)}
                             title="Lock AQUA"
                         >
                             Lock AQUA
                         </NavLinkStyled>
                         <NavLinkStyled
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
+                            style={({ isActive }) => (isActive ? { fontWeight: 700 } : undefined)}
                             title="About"
                             to={AppRoutes.page.token}
                         >
