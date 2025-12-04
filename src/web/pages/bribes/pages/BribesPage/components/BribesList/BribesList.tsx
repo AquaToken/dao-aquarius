@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useEffect, useRef } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { BribeTab, SELECT_OPTIONS } from 'constants/bribes';
-import { BribesRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import {
     Container,
@@ -19,7 +19,7 @@ import UpcomingBribes from '../UpcomingBribes/UpcomingBribes';
 
 const BribesList: React.FC = () => {
     const [tab, setTab] = React.useState<BribeTab>(BribeTab.current);
-    const history = useHistory();
+    const navigate = useNavigate();
     const headerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -34,7 +34,7 @@ const BribesList: React.FC = () => {
             <TitleBlock ref={headerRef}>
                 <Title>Bribes</Title>
 
-                <AddBribeButton onClick={() => history.push(BribesRoutes.addBribe)}>
+                <AddBribeButton onClick={() => navigate(AppRoutes.section.bribes.link.addBribe)}>
                     <span>create bribe</span>
                     <PlusIcon />
                 </AddBribeButton>

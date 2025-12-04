@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { PropsWithChildren, ErrorInfo } from 'react';
-import * as Router from 'react-router';
-import { withRouter } from 'react-router-dom';
+import { useLocation, type Location as RouterLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import SentryService from 'services/sentry.service';
@@ -27,17 +26,29 @@ const Title = styled.h3`
     margin-bottom: 5rem;
 `;
 
-class ErrorBoundary extends React.Component<PropsWithChildren<Router.RouteComponentProps>, State> {
+type WithLocationProps = {
+    location: RouterLocation;
+};
+
+export function withLocation<P extends object>(
+    Component: React.ComponentType<P & WithLocationProps>,
+) {
+    return function Wrapper(props: P) {
+        const location = useLocation();
+        return <Component {...props} location={location} />;
+    };
+}
+
+class ErrorBoundary extends React.Component<
+    PropsWithChildren<{ location: RouterLocation }>,
+    State
+> {
     public state = { isError: false };
 
-    private unsubscribe: VoidFunction | null = null;
-
-    public componentDidMount(): void {
-        this.unsubscribe = this.props.history.listen(() => this.setState({ isError: false }));
-    }
-
-    public componentWillUnmount(): void {
-        this.unsubscribe?.();
+    public componentDidUpdate(prevProps: Readonly<{ location: RouterLocation }>) {
+        if (this.props.location !== prevProps.location) {
+            this.setState({ isError: false });
+        }
     }
 
     public componentDidCatch(error: Error, extra: ErrorInfo) {
@@ -60,4 +71,4 @@ class ErrorBoundary extends React.Component<PropsWithChildren<Router.RouteCompon
     }
 }
 
-export default withRouter(ErrorBoundary);
+export default withLocation(ErrorBoundary);

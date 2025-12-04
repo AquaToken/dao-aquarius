@@ -1,4 +1,10 @@
-import { createChart, CrosshairMode, LineStyle } from 'lightweight-charts';
+import {
+    createChart,
+    CrosshairMode,
+    LineStyle,
+    CandlestickSeries,
+    HistogramSeries,
+} from 'lightweight-charts';
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
@@ -267,20 +273,24 @@ const LightWeightChart = ({ base, counter, period }: LightWeightChartProps): Rea
                 axisPressedMouseMove: false,
             },
         });
-        const histogramInstance = chartInstance.addHistogramSeries({
-            priceFormat: {
-                type: 'volume',
-            },
-            priceScaleId: '2',
-            scaleMargins: {
-                top: 0.8,
-                bottom: 0,
-            },
+
+        const VOLUME_SCALE_ID = 'VOLUME_SCALE';
+
+        const histogramInstance = chartInstance.addSeries(HistogramSeries, {
+            priceFormat: { type: 'volume' },
+            priceScaleId: VOLUME_SCALE_ID,
             priceLineVisible: false,
             lastValueVisible: false,
         });
 
-        const candlestickInstance = chartInstance.addCandlestickSeries({
+        chartInstance.priceScale(VOLUME_SCALE_ID).applyOptions({
+            scaleMargins: {
+                top: 0.8,
+                bottom: 0,
+            },
+        });
+
+        const candlestickInstance = chartInstance.addSeries(CandlestickSeries, {
             upColor: '#4caf50',
             downColor: '#ef5350',
             wickVisible: true,

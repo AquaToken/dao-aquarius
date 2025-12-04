@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { QuestionType } from 'components/FAQ';
 
@@ -9,9 +9,10 @@ export const rewardsQuestions: QuestionType[] = [
         question: 'How do I earn AMM rewards?',
         answer: (
             <span>
-                Provide liquidity to an <Link to={MainRoutes.amm}>Aquarius AMM pool</Link> that’s in
-                the reward zone. Rewards are distributed in real time based on your share of the
-                pool. You can deposit funds directly from the Pool details page.
+                Provide liquidity to an{' '}
+                <Link to={AppRoutes.section.amm.link.index}>Aquarius AMM pool</Link> that’s in the
+                reward zone. Rewards are distributed in real time based on your share of the pool.
+                You can deposit funds directly from the Pool details page.
             </span>
         ),
     },
@@ -84,7 +85,7 @@ export const rewardsQuestions: QuestionType[] = [
                 ICE holders vote on which markets should receive AQUA emissions. The more votes a
                 market gets, the larger its share of daily rewards. Voting is continuous, with
                 results updating daily based on the latest votes. You can vote anytime at{' '}
-                <Link to={MainRoutes.vote}>aqua.network/vote</Link>.
+                <Link to={AppRoutes.page.vote}>aqua.network/vote</Link>.
             </span>
         ),
     },

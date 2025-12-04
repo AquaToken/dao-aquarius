@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { apyValueToDisplay } from 'helpers/amount';
 
@@ -136,7 +136,7 @@ interface Props {
 const TotalApyTooltip = ({ pool, withBoost, userBoost }: Props) => (
     <Container>
         {withBoost && (
-            <BoostBlock to={MainRoutes.locker}>
+            <BoostBlock to={AppRoutes.section.locker.link.index}>
                 <BoostBlockContent>
                     <Label
                         color={COLORS.blue700}

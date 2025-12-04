@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import Logo from 'assets/delegate/delegate-promo-small.svg';
 
@@ -65,7 +65,7 @@ const DelegateBlockSmall = () => (
                 of the rewards they earn are passed back to you.
             </Description>
         </Content>
-        <ExternalLink to={MainRoutes.delegate}>Learn more</ExternalLink>
+        <ExternalLink to={AppRoutes.section.delegate.link.index}>Learn more</ExternalLink>
     </Container>
 );
 

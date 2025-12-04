@@ -3,7 +3,10 @@ import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
-import { AmmRoutes, MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
+
+import { getAquaAssetData, getAssetString } from 'helpers/assets';
+import { createLumen } from 'helpers/token';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
@@ -227,19 +230,18 @@ const Links = () => {
     return (
         <>
             <NavLinkStyled
-                to={AmmRoutes.analytics}
-                activeStyle={{
-                    fontWeight: 700,
-                }}
+                to={AppRoutes.section.amm.link.index}
+                style={({ isActive }) => (isActive ? { fontWeight: 700 } : undefined)}
                 title="Pools"
             >
                 Pools
             </NavLinkStyled>
             <NavLinkStyled
-                to={MainRoutes.swap}
-                activeStyle={{
-                    fontWeight: 700,
-                }}
+                to={AppRoutes.section.swap.to.index({
+                    source: getAssetString(createLumen()),
+                    destination: getAquaAssetData().aquaAssetString,
+                })}
+                style={({ isActive }) => (isActive ? { fontWeight: 700 } : undefined)}
                 title="Swap"
             >
                 Swap
@@ -252,28 +254,22 @@ const Links = () => {
                 links={
                     <>
                         <NavLinkStyled
-                            to={MainRoutes.rewards}
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
+                            to={AppRoutes.page.rewards}
+                            style={({ isActive }) => (isActive ? { fontWeight: 700 } : undefined)}
                             title="AQUA Rewards"
                         >
                             AQUA Rewards
                         </NavLinkStyled>
                         <NavLinkStyled
-                            to={MainRoutes.bribes}
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
+                            to={AppRoutes.section.bribes.link.index}
+                            style={({ isActive }) => (isActive ? { fontWeight: 700 } : undefined)}
                             title="Bribes"
                         >
                             Bribes
                         </NavLinkStyled>
                         <NavLinkStyled
-                            to={MainRoutes.incentives}
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
+                            to={AppRoutes.section.incentive.link.index}
+                            style={({ isActive }) => (isActive ? { fontWeight: 700 } : undefined)}
                             title="Pool Incentives"
                         >
                             Pool Incentives
@@ -288,11 +284,9 @@ const Links = () => {
                 links={
                     <>
                         <NavLinkStyled
-                            to={MainRoutes.vote}
-                            exact
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
+                            to={AppRoutes.page.vote}
+                            exact="true"
+                            style={({ isActive }) => (isActive ? { fontWeight: 700 } : undefined)}
                             title="Liquidity Voting"
                         >
                             Liquidity Voting
@@ -300,10 +294,10 @@ const Links = () => {
 
                         <NavLinkWithCount>
                             <NavLinkStyled
-                                to={MainRoutes.governance}
-                                activeStyle={{
-                                    fontWeight: 700,
-                                }}
+                                to={AppRoutes.section.governance.link.index}
+                                style={({ isActive }) =>
+                                    isActive ? { fontWeight: 700 } : undefined
+                                }
                                 title="DAO Proposals"
                             >
                                 DAO Proposals
@@ -315,10 +309,8 @@ const Links = () => {
                         </NavLinkWithCount>
 
                         <NavLinkStyled
-                            to={MainRoutes.delegate}
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
+                            to={AppRoutes.section.delegate.link.index}
+                            style={({ isActive }) => (isActive ? { fontWeight: 700 } : undefined)}
                             title="ICE delegation"
                         >
                             ICE Delegation
@@ -332,20 +324,16 @@ const Links = () => {
                 links={
                     <>
                         <NavLinkStyled
-                            to={MainRoutes.locker}
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
+                            to={AppRoutes.section.locker.link.index}
+                            style={({ isActive }) => (isActive ? { fontWeight: 700 } : undefined)}
                             title="Lock AQUA"
                         >
                             Lock AQUA
                         </NavLinkStyled>
                         <NavLinkStyled
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
+                            style={({ isActive }) => (isActive ? { fontWeight: 700 } : undefined)}
                             title="About"
-                            to={MainRoutes.token}
+                            to={AppRoutes.page.token}
                         >
                             About
                         </NavLinkStyled>
@@ -366,13 +354,13 @@ const Header = (): React.ReactNode => {
             e.nativeEvent.stopImmediatePropagation();
 
             return ModalService.openModal(ChooseLoginMethodModal, {
-                redirectURL: MainRoutes.account,
+                redirectURL: AppRoutes.page.account,
             });
         }
     };
     return (
         <Container>
-            <MainLink to={MainRoutes.main}>
+            <MainLink to={AppRoutes.page.main}>
                 <Aqua />
             </MainLink>
 
@@ -381,7 +369,7 @@ const Header = (): React.ReactNode => {
             </NavLinks>
 
             <RightBlock>
-                <MyAquarius onClick={onMyAquariusClick} to={MainRoutes.account}>
+                <MyAquarius onClick={onMyAquariusClick} to={AppRoutes.page.account}>
                     <IconProfile />
                     <div>Dashboard</div>
                 </MyAquarius>

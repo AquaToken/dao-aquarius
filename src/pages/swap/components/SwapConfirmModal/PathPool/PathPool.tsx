@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { AmmRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import RightIcon from 'assets/icons/arrows/arrow-alt2-16.svg';
 
@@ -81,7 +81,7 @@ const PathPool = ({
     isLastPool,
 }: PathPoolProps): React.ReactNode => (
     <Container>
-        <Pool onClick={() => window.open(`${AmmRoutes.analytics}${address}`)}>
+        <Pool onClick={() => window.open(AppRoutes.section.amm.to.pool({ poolAddress: address }))}>
             <PoolAssets>
                 {baseIcon}
                 {counterIcon}

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { Container } from './Terms.styled';
 
@@ -144,7 +144,7 @@ const Terms: React.FC = () => (
             As a decentralized platform, Aquarius does not collect or store personal data. However,
             by interacting with the platform, you may provide certain information through your
             wallet or third-party services. Please review the{' '}
-            <Link to={MainRoutes.privacy}>privacy policy</Link>.
+            <Link to={AppRoutes.page.privacy}>privacy policy</Link>.
         </p>
 
         <h2>11. Disclaimer of Warranty</h2>

@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components';
 import { processIceTx } from 'api/ice';
 
 import { GD_ICE_CODE, GOV_ICE_CODE, ICE_ISSUER } from 'constants/assets';
-import { LockerRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { getDateString } from 'helpers/date';
 import ErrorHandler from 'helpers/error-handler';
@@ -307,7 +307,7 @@ const ConfirmVoteModal = ({
                     <GetAquaLabel>You don&apos;t have enough {targetAsset.code}</GetAquaLabel>
 
                     <ExternalLink asDiv>
-                        <Link to={LockerRoutes.main}>Get ICE</Link>
+                        <Link to={AppRoutes.section.locker.link.index}>Get ICE</Link>
                     </ExternalLink>
                 </GetAquaBlock>
             )}

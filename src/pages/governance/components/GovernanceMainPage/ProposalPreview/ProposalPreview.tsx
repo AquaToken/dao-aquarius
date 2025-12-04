@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { GovernanceRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { getDateString } from 'helpers/date';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
@@ -326,7 +326,11 @@ const ProposalPreview = ({
 
     return (
         <Container>
-            <Link to={`${GovernanceRoutes.proposal}/${proposal.id}/`}>
+            <Link
+                to={AppRoutes.section.governance.to.proposal({
+                    id: String(proposal.id),
+                })}
+            >
                 <Header>
                     <Id>#{proposal.id}</Id>
                     <Title>{proposal.title}</Title>

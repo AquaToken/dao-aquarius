@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { LS_DELEGATE_PROMO_VIEWED_LOCKER } from 'constants/local-storage';
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { ModalProps } from 'types/modal';
 
@@ -93,7 +93,7 @@ const DelegatePromoModal = ({ confirm }: ModalProps<never>) => {
                 </ListItem>
 
                 <ButtonBlock>
-                    <Link to={MainRoutes.delegate} onClick={() => confirm()}>
+                    <Link to={AppRoutes.section.delegate.link.index} onClick={() => confirm()}>
                         <Button isBig fullWidth>
                             delegate ice
                         </Button>

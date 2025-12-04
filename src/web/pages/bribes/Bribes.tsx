@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { lazy } from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
-import { BribesRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import NotFoundPage from 'components/NotFoundPage';
 
@@ -10,15 +10,13 @@ const BribesPage = lazy(() => import('./pages/BribesPage/BribesPage'));
 const AddBribePage = lazy(() => import('./pages/AddBribePage/AddBribePage'));
 
 const Bribes = () => (
-    <Switch>
-        <Route exact path={BribesRoutes.bribes}>
-            <BribesPage />
-        </Route>
-        <Route path={BribesRoutes.addBribe}>
-            <AddBribePage />
-        </Route>
-        <Route component={NotFoundPage} />
-    </Switch>
+    <Routes>
+        <Route path={AppRoutes.section.bribes.child.index} element={<BribesPage />} />
+
+        <Route path={AppRoutes.section.bribes.child.addBribe} element={<AddBribePage />} />
+
+        <Route path="*" element={<NotFoundPage />} />
+    </Routes>
 );
 
 export default Bribes;

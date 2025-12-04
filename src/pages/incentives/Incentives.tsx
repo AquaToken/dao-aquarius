@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { lazy } from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
-import { IncentivesRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import NotFoundPage from 'components/NotFoundPage';
 
@@ -10,15 +10,16 @@ const IncentivesPage = lazy(() => import('./pages/IncentivesMainPage'));
 const AddIncentivePage = lazy(() => import('./pages/AddIncentivePage'));
 
 const Incentives = () => (
-    <Switch>
-        <Route exact path={IncentivesRoutes.main}>
-            <IncentivesPage />
-        </Route>
-        <Route path={IncentivesRoutes.addIncentive}>
-            <AddIncentivePage />
-        </Route>
-        <Route component={NotFoundPage} />
-    </Switch>
+    <Routes>
+        <Route path={AppRoutes.section.incentive.child.index} element={<IncentivesPage />} />
+
+        <Route
+            path={AppRoutes.section.incentive.child.addIncentive}
+            element={<AddIncentivePage />}
+        />
+
+        <Route path="*" element={<NotFoundPage />} />
+    </Routes>
 );
 
 export default Incentives;

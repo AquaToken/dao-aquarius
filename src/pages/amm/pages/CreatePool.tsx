@@ -1,13 +1,13 @@
 import { xdr } from '@stellar/stellar-sdk';
 import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { FilterOptions, getPools, PoolsSortFields } from 'api/amm';
 
 import { POOL_TYPE } from 'constants/amm';
-import { AmmRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 import { CONTRACT_STATUS } from 'constants/soroban';
 
 import ErrorHandler from 'helpers/error-handler';
@@ -228,7 +228,7 @@ const CreatePool = () => {
 
     const { account } = useAuthStore();
 
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const isStableFeeInputError =
         stableFee &&
@@ -349,7 +349,7 @@ const CreatePool = () => {
                         res.value()[1] as xdr.ScVal,
                     );
                     ToastService.showSuccessToast('Pool successfully created');
-                    history.push(`${AmmRoutes.analytics}${poolAddress}`);
+                    navigate(AppRoutes.section.amm.to.pool({ poolAddress }));
                 },
             )
             .catch(e => {
@@ -447,7 +447,7 @@ const CreatePool = () => {
         <PageContainer>
             <FormPageHeaderWrap>
                 <FormPageContentWrap>
-                    <FormBackButton label="Pools" to={AmmRoutes.analytics}>
+                    <FormBackButton label="Pools" to={AppRoutes.section.amm.link.index}>
                         <ArrowLeft />
                     </FormBackButton>
 

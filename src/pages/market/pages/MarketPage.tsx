@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { VoteRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { createAsset, createLumen } from 'helpers/token';
 
@@ -111,7 +111,7 @@ const MarketPage = () => {
 
     const { isLogged } = useAuthStore();
 
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const isValidAssets = isValidPathAsset(base) && isValidPathAsset(counter) && base !== counter;
 
@@ -189,9 +189,9 @@ const MarketPage = () => {
                         label="Back to markets"
                         onClick={() => {
                             try {
-                                history.goBack();
+                                navigate(-1);
                             } catch (e) {
-                                history.push(VoteRoutes.main);
+                                navigate(AppRoutes.page.vote);
                             }
                         }}
                     >

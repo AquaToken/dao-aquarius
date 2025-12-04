@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { useEffect } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { getIncentives } from 'api/incentives';
 
-import { AmmRoutes, IncentivesRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { tpsToDailyAmount } from 'helpers/amount';
 import { convertDateStrToTimestamp, getDateString } from 'helpers/date';
@@ -49,10 +49,10 @@ const IncentivesTable = ({ isActive }: Props) => {
         getIncentives(isActive).then(setIncentives);
     }, []);
 
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const goToPoolPage = (id: string) => {
-        history.push(`${AmmRoutes.analytics}${id}/`);
+        navigate(AppRoutes.section.amm.to.pool({ poolAddress: id }));
     };
 
     if (!incentives) {
@@ -138,7 +138,9 @@ const IncentivesTable = ({ isActive }: Props) => {
                     <span>It looks like there are no upcoming incentives at the moment.</span>
 
                     <ExternalLink asDiv>
-                        <Link to={IncentivesRoutes.addIncentive}>Add incentive</Link>
+                        <Link to={AppRoutes.section.incentive.link.addIncentive}>
+                            Add incentive
+                        </Link>
                     </ExternalLink>
                 </Empty>
             )}

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import {
@@ -11,7 +11,7 @@ import {
     ICE_ISSUER,
     UP_ICE_CODE,
 } from 'constants/assets';
-import { MainRoutes, MarketRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { getAssetString } from 'helpers/assets';
 import { getTimeAgoValue } from 'helpers/date';
@@ -401,7 +401,7 @@ const MainPage = (): React.ReactNode => {
     const [count, setCount] = useState(0);
 
     const location = useLocation();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const params = new URLSearchParams(location.search);
@@ -411,7 +411,7 @@ const MainPage = (): React.ReactNode => {
             !params.has(UrlParams.counter)
         ) {
             params.append(UrlParams.sort, SortTypes.topVoted);
-            history.replace({ search: params.toString() });
+            navigate(`${location.pathname}?${params.toString()}`, { replace: true });
             return;
         }
         if (
@@ -420,14 +420,14 @@ const MainPage = (): React.ReactNode => {
         ) {
             params.delete(UrlParams.base);
             params.delete(UrlParams.counter);
-            history.replace({ search: params.toString() });
+            navigate(`${location.pathname}?${params.toString()}`, { replace: true });
             return;
         }
 
         if (params.has(UrlParams.counter) && !params.has(UrlParams.base)) {
             params.append(UrlParams.base, params.get(UrlParams.counter));
             params.delete(UrlParams.counter);
-            history.replace({ search: params.toString() });
+            navigate(`${location.pathname}?${params.toString()}`, { replace: true });
         }
 
         if (
@@ -435,7 +435,7 @@ const MainPage = (): React.ReactNode => {
             params.get(UrlParams.base) === params.get(UrlParams.counter)
         ) {
             params.delete(UrlParams.counter);
-            history.replace({ search: params.toString() });
+            navigate(`${location.pathname}?${params.toString()}`, { replace: true });
             return;
         }
 
@@ -444,7 +444,7 @@ const MainPage = (): React.ReactNode => {
             !Object.values(SortTypes).includes(params.get(UrlParams.sort) as SortTypes)
         ) {
             params.delete(UrlParams.sort);
-            history.replace({ search: params.toString() });
+            navigate(`${location.pathname}?${params.toString()}`, { replace: true });
             return;
         }
 
@@ -459,7 +459,7 @@ const MainPage = (): React.ReactNode => {
                 setSearchBase(asset);
             } catch {
                 params.delete(UrlParams.base);
-                history.replace({ search: params.toString() });
+                navigate(`${location.pathname}?${params.toString()}`, { replace: true });
             }
         } else {
             setSearchBase(null);
@@ -470,7 +470,7 @@ const MainPage = (): React.ReactNode => {
                 setSearchCounter(asset);
             } catch {
                 params.delete(UrlParams.counter);
-                history.replace({ search: params.toString() });
+                navigate(`${location.pathname}?${params.toString()}`, { replace: true });
             }
         } else {
             setSearchCounter(null);
@@ -540,7 +540,7 @@ const MainPage = (): React.ReactNode => {
     const changeSort = (sortValue: SortTypes) => {
         if (!isLogged && sortValue === SortTypes.yourVotes) {
             ModalService.openModal(ChooseLoginMethodModal, {
-                redirectURL: `${MainRoutes.vote}?${UrlParams.sort}=${SortTypes.yourVotes}`,
+                redirectURL: `${AppRoutes.page.vote}?${UrlParams.sort}=${SortTypes.yourVotes}`,
             });
             return;
         }
@@ -548,7 +548,7 @@ const MainPage = (): React.ReactNode => {
         params.set(UrlParams.sort, sortValue);
         params.delete(UrlParams.base);
         params.delete(UrlParams.counter);
-        history.push({ pathname: location.pathname, search: params.toString() });
+        navigate({ pathname: location.pathname, search: params.toString() });
         setPage(1);
     };
 
@@ -691,10 +691,7 @@ const MainPage = (): React.ReactNode => {
             params.delete(UrlParams.counter);
         }
 
-        history.push({
-            pathname: location.pathname,
-            search: decodeURIComponent(params.toString()),
-        });
+        navigate(`${location.pathname}?${decodeURIComponent(params.toString())}`);
 
         setPairsLoading(true);
         setPage(1);
@@ -774,14 +771,13 @@ const MainPage = (): React.ReactNode => {
     const hasChosenPairs = chosenPairs.length > 0;
 
     const goToMarketPage = () => {
-        history.push(
-            `${MarketRoutes.main}/${
-                searchBase.isNative() ? 'native' : `${searchBase.code}:${searchBase.issuer}`
-            }/${
-                searchCounter.isNative()
+        navigate(
+            AppRoutes.section.market.to.market({
+                base: searchBase.isNative() ? 'native' : `${searchBase.code}:${searchBase.issuer}`,
+                counter: searchCounter.isNative()
                     ? 'native'
-                    : `${searchCounter.code}:${searchCounter.issuer}`
-            }`,
+                    : `${searchCounter.code}:${searchCounter.issuer}`,
+            }),
         );
     };
 

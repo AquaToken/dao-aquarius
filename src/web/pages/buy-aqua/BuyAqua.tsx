@@ -1,6 +1,6 @@
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { getAquaAssetData } from 'helpers/assets';
 import { getOnRampWidgetUrl } from 'helpers/url';
@@ -36,7 +36,7 @@ const BuyAqua = (): JSX.Element => {
     };
 
     if (!isLogged) {
-        return <Redirect to={MainRoutes.main} />;
+        return <Navigate to={AppRoutes.page.main} replace />;
     }
 
     return (

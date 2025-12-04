@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { LockerRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { useScrollAnimation } from 'hooks/useScrollAnimation';
 
@@ -25,7 +25,7 @@ const Purpose: React.FC = () => {
         <Container ref={ref as React.RefObject<HTMLDivElement>}>
             <Content $visible={visible}>
                 <TextContainer $visible={visible}>
-                    <BlankRouterLink to={LockerRoutes.main}>
+                    <BlankRouterLink to={AppRoutes.section.locker.link.index}>
                         <BackButton label="Back to locker">
                             <ArrowLeft />
                         </BackButton>

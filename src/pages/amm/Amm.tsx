@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { lazy } from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
-import { AmmRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
@@ -13,18 +13,25 @@ const CreatePoolPage = lazy(() => import('./pages/CreatePool'));
 const Amm = () => {
     const { isLogged } = useAuthStore();
     return (
-        <Switch>
-            <Route exact path={AmmRoutes.analytics}>
-                <AnalyticsPage />
-            </Route>
-            <Route path={AmmRoutes.create}>
-                {isLogged ? <CreatePoolPage /> : <Redirect to={AmmRoutes.analytics} />}
-            </Route>
-            <Route exact path={`${AmmRoutes.analytics}:poolAddress`}>
-                <PoolPageLazy />
-            </Route>
-            <Redirect to={AmmRoutes.analytics} />
-        </Switch>
+        <Routes>
+            <Route path={AppRoutes.section.amm.child.index} element={<AnalyticsPage />} />
+
+            <Route
+                path={AppRoutes.section.amm.child.create}
+                element={
+                    isLogged ? (
+                        <CreatePoolPage />
+                    ) : (
+                        <Navigate to={AppRoutes.section.amm.child.index} replace />
+                    )
+                }
+            />
+
+            <Route path={AppRoutes.section.amm.child.pool} element={<PoolPageLazy />} />
+
+            {/* Fallback redirect */}
+            <Route path="*" element={<Navigate to={AppRoutes.section.amm.child.index} replace />} />
+        </Routes>
     );
 };
 

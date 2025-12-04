@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { BribeSortFields, getUpcomingBribes } from 'api/bribes';
 
 import { BRIBES_PAGE_SIZE } from 'constants/bribes';
-import { MarketRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { convertDateStrToTimestamp, getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
@@ -43,7 +43,7 @@ const UpcomingBribes = () => {
     const [filterByAmount, setFilterByAmount] = useState(false);
     const [page, setPage] = useState(1);
 
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const { processNewAssets } = useAssetsStore();
 
@@ -86,7 +86,12 @@ const UpcomingBribes = () => {
     };
 
     const goToMarketPage = ({ asset1, asset2 }) => {
-        history.push(`${MarketRoutes.main}/${asset1}/${asset2}`);
+        navigate(
+            AppRoutes.section.market.to.market({
+                base: asset1,
+                counter: asset2,
+            }),
+        );
     };
 
     if (!bribes) {

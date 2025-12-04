@@ -1,14 +1,14 @@
 import { xdr } from '@stellar/stellar-sdk';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import * as React from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { getPool } from 'api/amm';
 
 import { ChartPeriods } from 'constants/charts';
 import { DAY } from 'constants/intervals';
-import { MainRoutes, MarketRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { contractValueToAmount } from 'helpers/amount';
 import { getAquaAssetData, getAssetString } from 'helpers/assets';
@@ -26,8 +26,7 @@ import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-
 import { SorobanService, ToastService } from 'services/globalServices';
 
 import { PoolExtended, PoolIncentives } from 'types/amm';
-import { Asset } from 'types/stellar';
-import { SorobanToken, TokenType } from 'types/token';
+import { ClassicToken, SorobanToken, TokenType } from 'types/token';
 
 import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
 
@@ -206,7 +205,7 @@ const PoolPage = () => {
 
     const { account } = useAuthStore();
 
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const updateIndex = useUpdateIndex(5000);
 
@@ -337,7 +336,7 @@ const PoolPage = () => {
                     <BackButton
                         label="Pools"
                         onClick={() => {
-                            history.push(MainRoutes.amm);
+                            navigate(AppRoutes.section.amm.link.index);
                         }}
                     >
                         <ArrowLeft />
@@ -355,9 +354,10 @@ const PoolPage = () => {
                         {pool.tokens.length === 2 &&
                             pool.tokens.every(({ type }) => type !== TokenType.soroban) && (
                                 <ExternalLinkStyled
-                                    to={`${MarketRoutes.main}/${getAssetString(
-                                        pool.tokens[0],
-                                    )}/${getAssetString(pool.tokens[1])}/`}
+                                    to={AppRoutes.section.market.to.market({
+                                        base: getAssetString(pool.tokens[0]),
+                                        counter: getAssetString(pool.tokens[1]),
+                                    })}
                                 >
                                     View Market
                                 </ExternalLinkStyled>
@@ -375,8 +375,8 @@ const PoolPage = () => {
                     pool.tokens.every(({ type }) => type === TokenType.classic) && (
                         <Section>
                             <MigrateToSorobanBanner
-                                base={pool.tokens[0] as Asset}
-                                counter={pool.tokens[1] as Asset}
+                                base={pool.tokens[0] as ClassicToken}
+                                counter={pool.tokens[1] as ClassicToken}
                             />
                         </Section>
                     )}

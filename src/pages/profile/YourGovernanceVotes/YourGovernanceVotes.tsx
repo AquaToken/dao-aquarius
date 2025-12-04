@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { GovernanceRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
@@ -46,7 +46,8 @@ const YourGovernanceVotes = () => {
                         <h3>There's nothing here.</h3>
                         <span>It looks like you don’t have any active votes.</span>
                         <span>
-                            You can vote <Link to={GovernanceRoutes.main}>from here.</Link>
+                            You can vote{' '}
+                            <Link to={AppRoutes.section.governance.link.index}>from here.</Link>
                         </span>
                     </Empty>
                 </Section>

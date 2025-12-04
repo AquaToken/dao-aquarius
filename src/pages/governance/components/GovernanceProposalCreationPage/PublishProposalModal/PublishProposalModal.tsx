@@ -2,7 +2,7 @@ import { MemoHash } from '@stellar/stellar-sdk';
 import { sha256 } from 'js-sha256';
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { getDateString } from 'helpers/date';
@@ -100,7 +100,7 @@ const PublishProposalModal = ({
 
     const { account } = useAuthStore();
 
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const { proposal } = params;
 
@@ -190,7 +190,7 @@ const PublishProposalModal = ({
 
             ToastService.showSuccessToast('The proposal has been published');
 
-            history.push('/');
+            navigate('/');
         } catch (e) {
             const errorText = ErrorHandler(e);
             ToastService.showErrorToast(errorText);

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-import { BribesRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import DelegateBlockSmall from 'components/DelegateBlockSmall';
 import FAQ from 'components/FAQ';
@@ -25,7 +25,7 @@ import BribesList from './components/BribesList/BribesList';
 import { BribeQuestions } from './components/FAQ/Questions';
 
 const BribesPage = () => {
-    const history = useHistory();
+    const navigate = useNavigate();
 
     return (
         <PageContainer>
@@ -40,7 +40,9 @@ const BribesPage = () => {
                             or projects to attract votes.
                         </Description>
                         <MainContentFooter>
-                            <AddBribeButton onClick={() => history.push(BribesRoutes.addBribe)}>
+                            <AddBribeButton
+                                onClick={() => navigate(AppRoutes.section.bribes.link.addBribe)}
+                            >
                                 <span>create bribe</span>
                                 <PlusIcon />
                             </AddBribeButton>

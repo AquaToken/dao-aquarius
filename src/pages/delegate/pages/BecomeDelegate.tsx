@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { createDelegatee } from 'api/delegate';
 
-import { DelegateRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { ToastService } from 'services/globalServices';
 import { isValidPublicKey } from 'services/stellar/utils/validators';
@@ -209,7 +209,7 @@ const BecomeDelegate = () => {
         <Container>
             <Background>
                 <Content>
-                    <LinkStyled to={DelegateRoutes.main}>
+                    <LinkStyled to={AppRoutes.section.delegate.link.index}>
                         <BackButton label="Back to delegates">
                             <ArrowLeft />
                         </BackButton>

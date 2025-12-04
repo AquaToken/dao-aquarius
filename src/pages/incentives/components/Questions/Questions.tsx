@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { QuestionType } from 'components/FAQ';
 
@@ -39,7 +39,7 @@ export const lpIncentivesQuestions: QuestionType[] = [
             <span>
                 To earn Pool Incentives, you need to provide liquidity to a pool that has active
                 incentives. Rewards accrue automatically but must be claimed in the{' '}
-                <Link to={`${MainRoutes.account}?tab=amm_liquidity&filter=all`}>
+                <Link to={`${AppRoutes.page.account}?tab=amm_liquidity&filter=all`}>
                     Dashboard → Liquidity Positions
                 </Link>{' '}
                 section.
@@ -51,7 +51,7 @@ export const lpIncentivesQuestions: QuestionType[] = [
         answer: (
             <span>
                 You can view and claim your earned Pool Incentives under{' '}
-                <Link to={`${MainRoutes.account}?tab=amm_liquidity&filter=all`}>
+                <Link to={`${AppRoutes.page.account}?tab=amm_liquidity&filter=all`}>
                     Dashboard → Liquidity Positions
                 </Link>
                 .

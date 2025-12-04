@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
-import { LockerRoutes, MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { useScrollAnimation } from 'hooks/useScrollAnimation';
 
@@ -248,14 +248,16 @@ const AboutIce = () => {
                         <Item>Delegate ICE and earn passive rewards</Item>
                     </List>
 
-                    <ExternalLink to={LockerRoutes.about}>Learn more about ICE</ExternalLink>
+                    <ExternalLink to={AppRoutes.section.locker.link.about}>
+                        Learn more about ICE
+                    </ExternalLink>
                 </TextBlock>
 
                 <BlueBlock $visible={visible}>
                     <LockerBlock>
                         <IceLogo />
                         <h3>Turn AQUA into ICE with just a few clicks</h3>
-                        <Link to={MainRoutes.locker}>
+                        <Link to={AppRoutes.section.locker.link.index}>
                             <ButtonStyled isBig fullWidth isRounded>
                                 Freeze AQUA
                             </ButtonStyled>

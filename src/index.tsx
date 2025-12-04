@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 
-import '@babel/polyfill';
 import App from './App';
 import SentryService from './services/sentry.service';
 

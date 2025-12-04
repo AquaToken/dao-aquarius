@@ -19,35 +19,52 @@ const Container = styled.div<{ $fullWidth: boolean }>`
 
 type ReactDatePickerProps = React.ComponentProps<typeof ReactDatePicker>;
 
-interface Props extends Omit<ReactDatePickerProps, 'selected' | 'onChange'> {
-    customInput?: React.ReactNode;
-    date: number | Date | null;
-    onChange?: (date: number | Date | null) => void;
-    fullWidth?: boolean;
-}
+type SingleModeOnly = {
+    selectsRange?: never;
+    selectsMultiple?: never;
+    startDate?: never;
+    endDate?: never;
+    selectedDates?: never;
+};
+
+type Props = SingleModeOnly &
+    Omit<
+        ReactDatePickerProps,
+        // We control these ourselves
+        | 'selected'
+        | 'onChange'
+        | 'selectsRange'
+        | 'selectsMultiple'
+        | 'startDate'
+        | 'endDate'
+        | 'selectedDates'
+    > & {
+        // react-datepicker expects an element here, not ReactNode
+        customInput?: React.ReactElement;
+        // allow passing timestamp, Date, or null
+        date: number | Date | null;
+        // normalized callback: always timestamp or null
+        onChange?: (date: number | null) => void;
+        fullWidth?: boolean;
+    };
 
 const DatePicker = ({ customInput, date, onChange, fullWidth, ...props }: Props) => {
     const datepickerRef = useRef(null);
+
+    const handleChange = (value: Date | null) => {
+        onChange?.(value ? value.getTime() : null);
+    };
 
     return (
         <Container ref={datepickerRef} $fullWidth={fullWidth}>
             <ReactDatePicker
                 customInput={customInput ?? <Input />}
                 selected={date ? new Date(date) : null}
-                onChange={res => {
-                    onChange(res?.getTime() ?? null);
-                }}
+                onChange={handleChange}
                 dateFormat="MM.dd.yyyy"
                 placeholderText="MM.DD.YYYY"
                 fixedHeight
-                popperModifiers={[
-                    {
-                        name: 'offset',
-                        options: {
-                            offset: [-50, -100],
-                        },
-                    },
-                ]}
+                popperPlacement="bottom-start"
                 onCalendarOpen={() => {
                     datepickerRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'start' });
                 }}

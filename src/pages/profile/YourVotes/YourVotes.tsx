@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { VoteRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';
 
@@ -241,7 +241,7 @@ const YourVotes = () => {
                                 <h3>There's nothing here.</h3>
                                 <span>It looks like you don’t have any active votes.</span>
                                 <span>
-                                    You can vote <Link to={VoteRoutes.main}>from here.</Link>
+                                    You can vote <Link to={AppRoutes.page.vote}>from here.</Link>
                                 </span>
                             </Empty>
                         </Section>

@@ -1,8 +1,8 @@
 import reactQuillCSS from 'quill/dist/quill.snow.css';
 import { lazy } from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
-import { GovernanceRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
@@ -18,49 +18,46 @@ const Governance = () => {
     const { isLogged } = useAuthStore();
 
     return (
-        <Switch>
-            <Route exact path={GovernanceRoutes.main}>
-                <MainPage />
-            </Route>
-            <Route path={`${GovernanceRoutes.proposal}/:id/:version`}>
-                <VoteProposalPage />
-            </Route>
-            <Route path={`${GovernanceRoutes.proposal}/:id`}>
-                <VoteProposalPage />
-            </Route>
+        <Routes>
+            <Route path={AppRoutes.section.governance.child.index} element={<MainPage />} />
 
             <Route
-                path={GovernanceRoutes.create}
-                render={({ location }) =>
+                path={AppRoutes.section.governance.child.proposal}
+                element={<VoteProposalPage />}
+            />
+
+            <Route
+                path={AppRoutes.section.governance.child.create}
+                element={
                     isLogged ? (
                         <ProposalCreationPage />
                     ) : (
-                        <Redirect
-                            to={{
-                                pathname: GovernanceRoutes.main,
-                                state: { from: location },
-                            }}
+                        <Navigate
+                            to={AppRoutes.section.governance.child.index}
+                            replace
+                            state={{ from: location }}
                         />
                     )
                 }
             />
+
             <Route
-                path={`${GovernanceRoutes.edit}/:id`}
-                render={({ location }) =>
+                path={AppRoutes.section.governance.child.edit}
+                element={
                     isLogged ? (
                         <ProposalCreationPage isEdit />
                     ) : (
-                        <Redirect
-                            to={{
-                                pathname: GovernanceRoutes.main,
-                                state: { from: location },
-                            }}
+                        <Navigate
+                            to={AppRoutes.section.governance.child.index}
+                            replace
+                            state={{ from: location }}
                         />
                     )
                 }
             />
-            <Route component={NotFoundPage} />
-        </Switch>
+
+            <Route path="*" element={<NotFoundPage />} />
+        </Routes>
     );
 };
 
