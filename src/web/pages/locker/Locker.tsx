@@ -11,9 +11,9 @@ const LockerFormPage = lazy(() => import('./pages/LockerForm/LockerForm'));
 
 const Locker = () => (
     <Routes>
-        <Route path={AppRoutes.section.locker.child.index} element={<LockerAboutPage />} />
+        <Route path={AppRoutes.section.locker.child.about} element={<LockerAboutPage />} />
 
-        <Route path={AppRoutes.section.locker.child.about} element={<LockerFormPage />} />
+        <Route path={AppRoutes.section.locker.child.index} element={<LockerFormPage />} />
 
         <Route path="*" element={<NotFoundPage />} />
     </Routes>
