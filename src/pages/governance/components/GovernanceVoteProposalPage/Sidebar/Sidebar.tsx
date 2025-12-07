@@ -2,6 +2,7 @@ import { forwardRef, RefObject, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
+import { CREATE_DISCUSSION_COST, CREATE_PROPOSAL_COST } from 'constants/dao';
 import { GovernanceRoutes } from 'constants/routes';
 
 import { getDateString } from 'helpers/date';
@@ -25,7 +26,6 @@ import { Breakpoints, COLORS } from 'styles/style-constants';
 import NativeVotingButton from './VotingButton/VotingButton';
 
 import { Proposal } from '../../../api/types';
-import { CREATE_DISCUSSION_COST, CREATE_PROPOSAL_COST } from '../../../pages/GovernanceMainPage';
 import { SimpleProposalOptions } from '../../../pages/GovernanceVoteProposalPage';
 import NotEnoughAquaModal from '../../GovernanceMainPage/NotEnoughAquaModal/NotEnoughAquaModal';
 import ProposalStatus, {

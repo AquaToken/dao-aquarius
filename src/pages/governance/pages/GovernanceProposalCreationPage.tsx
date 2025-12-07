@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { CREATE_DISCUSSION_COST } from 'constants/dao';
 import { GovernanceRoutes } from 'constants/routes';
 
 import useAuthStore from 'store/authStore/useAuthStore';
@@ -11,8 +12,6 @@ import { ModalService, ToastService } from 'services/globalServices';
 
 import { respondDown } from 'styles/mixins';
 import { Breakpoints, COLORS } from 'styles/style-constants';
-
-import { CREATE_DISCUSSION_COST } from './GovernanceMainPage';
 
 import { getProposalRequest } from '../api/api';
 import NotEnoughAquaModal from '../components/GovernanceMainPage/NotEnoughAquaModal/NotEnoughAquaModal';

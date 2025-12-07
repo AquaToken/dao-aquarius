@@ -5,6 +5,8 @@ import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { CREATE_DISCUSSION_COST } from 'constants/dao';
+
 import ErrorHandler from 'helpers/error-handler';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
@@ -27,7 +29,6 @@ import { COLORS } from 'styles/style-constants';
 
 import { checkProposalStatus, createProposal, editProposal } from '../../../api/api';
 import { Proposal } from '../../../api/types';
-import { CREATE_DISCUSSION_COST } from '../../../pages/GovernanceMainPage';
 
 const ProposalCost = styled.div`
     ${flexRowSpaceBetween};

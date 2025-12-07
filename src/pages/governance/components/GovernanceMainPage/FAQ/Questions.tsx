@@ -1,12 +1,12 @@
-import { formatBalance } from 'helpers/format-number';
-
-import { QuestionType } from 'components/FAQ';
-
 import {
     APPROVED_PROPOSAL_REWARD,
     CREATE_DISCUSSION_COST,
     CREATE_PROPOSAL_COST,
-} from 'pages/governance/pages/GovernanceMainPage';
+} from 'constants/dao';
+
+import { formatBalance } from 'helpers/format-number';
+
+import { QuestionType } from 'components/FAQ';
 
 export const governanceQuestions: QuestionType[] = [
     {
