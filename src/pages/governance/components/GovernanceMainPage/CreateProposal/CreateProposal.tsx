@@ -3,6 +3,7 @@ import { forwardRef, RefObject } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { APPROVED_PROPOSAL_REWARD } from 'constants/dao';
 import { GovernanceRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';
@@ -20,8 +21,6 @@ import { ExternalLink } from 'basics/links';
 
 import { cardBoxShadow } from 'styles/mixins';
 import { COLORS } from 'styles/style-constants';
-
-import { APPROVED_PROPOSAL_REWARD } from '../../../pages/GovernanceMainPage';
 
 const Container = styled.div`
     flex: 1;
