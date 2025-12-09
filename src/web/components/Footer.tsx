@@ -214,7 +214,9 @@ const Footer = (): React.ReactNode => {
 
     if (
         PAGES_WITHOUT_FOOTER.some(page => normalizePath(location.pathname).startsWith(page)) ||
-        PAGES_WITHOUT_FOOTER_EXACT.includes(normalizePath(location.pathname) as string)
+        PAGES_WITHOUT_FOOTER_EXACT.some(
+            page => normalizePath(location.pathname) === normalizePath(page),
+        )
     ) {
         return null;
     }
