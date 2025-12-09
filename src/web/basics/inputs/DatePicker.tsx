@@ -64,7 +64,7 @@ const DatePicker = ({ customInput, date, onChange, fullWidth, ...props }: Props)
                 dateFormat="MM.dd.yyyy"
                 placeholderText="MM.DD.YYYY"
                 fixedHeight
-                popperPlacement="bottom-start"
+                popperPlacement="auto-start"
                 onCalendarOpen={() => {
                     datepickerRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'start' });
                 }}
