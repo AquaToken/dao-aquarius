@@ -1,7 +1,9 @@
 import * as React from 'react';
 
-export interface MaskedInputProps
-    extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange'> {
+export interface MaskedInputProps extends Omit<
+    React.InputHTMLAttributes<HTMLInputElement>,
+    'value' | 'onChange'
+> {
     value?: string;
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
@@ -131,12 +133,17 @@ export function withDateMask<P>(Component: React.JSXElementConstructor<P & Maske
 
                 // Emit masked value to external onChange
                 if (onChange) {
-                    const syntheticEvent: React.ChangeEvent<HTMLInputElement> = {
-                        ...e,
-                        target: { ...e.target, value: masked },
-                        currentTarget: { ...e.currentTarget, value: masked },
-                    };
-                    onChange(syntheticEvent);
+                    const el = e.currentTarget;
+
+                    if (el.value !== masked) {
+                        const setter = Object.getOwnPropertyDescriptor(
+                            HTMLInputElement.prototype,
+                            'value',
+                        )?.set;
+                        setter?.call(el, masked);
+                    }
+
+                    onChange(e);
                 }
             };
 
