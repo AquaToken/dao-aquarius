@@ -42,7 +42,7 @@ const AppRouter = () => {
         {
             path: AppRoutes.page.main,
             element: (
-                <PageTitle title="Aquarius">
+                <PageTitle title="Staging: Aquarius">
                     <MainPage />
                 </PageTitle>
             ),
@@ -50,7 +50,7 @@ const AppRouter = () => {
         {
             path: AppRoutes.section.locker.parentRoute,
             element: (
-                <PageTitle title="Locker - Aquarius">
+                <PageTitle title="Staging: Locker - Aquarius">
                     <LockerPage />
                 </PageTitle>
             ),
@@ -58,7 +58,7 @@ const AppRouter = () => {
         {
             path: AppRoutes.section.governance.parentRoute,
             element: (
-                <PageTitle title="Governance - Aquarius">
+                <PageTitle title="Staging: Governance - Aquarius">
                     <GovernancePage />
                 </PageTitle>
             ),
@@ -66,7 +66,7 @@ const AppRouter = () => {
         {
             path: AppRoutes.page.vote,
             element: (
-                <PageTitle title="Voting - Aquarius">
+                <PageTitle title="Staging: Voting - Aquarius">
                     <VotePage />
                 </PageTitle>
             ),
@@ -74,7 +74,7 @@ const AppRouter = () => {
         {
             path: AppRoutes.section.bribes.parentRoute,
             element: (
-                <PageTitle title="Bribes - Aquarius">
+                <PageTitle title="Staging: Bribes - Aquarius">
                     <BribesPage />
                 </PageTitle>
             ),
@@ -86,7 +86,7 @@ const AppRouter = () => {
         {
             path: AppRoutes.page.rewards,
             element: (
-                <PageTitle title="Rewards - Aquarius">
+                <PageTitle title="Staging: Rewards - Aquarius">
                     <RewardsPage />
                 </PageTitle>
             ),
@@ -94,7 +94,7 @@ const AppRouter = () => {
         {
             path: AppRoutes.page.airdrop,
             element: (
-                <PageTitle title="Airdrop - Aquarius">
+                <PageTitle title="Staging: Airdrop - Aquarius">
                     <AirdropPage />
                 </PageTitle>
             ),
@@ -102,7 +102,7 @@ const AppRouter = () => {
         {
             path: AppRoutes.page.airdrop2,
             element: (
-                <PageTitle title="Airdrop #2 - Aquarius">
+                <PageTitle title="Staging: Airdrop #2 - Aquarius">
                     <Airdrop2Page />
                 </PageTitle>
             ),
@@ -110,7 +110,7 @@ const AppRouter = () => {
         {
             path: AppRoutes.page.account,
             element: (
-                <PageTitle title="Dashboard - Aquarius">
+                <PageTitle title="Staging: Dashboard - Aquarius">
                     {isLogged ? <ProfilePage /> : <Navigate to={AppRoutes.page.main} replace />}
                 </PageTitle>
             ),
@@ -118,7 +118,7 @@ const AppRouter = () => {
         {
             path: AppRoutes.page.walletConnect,
             element: (
-                <PageTitle title="WalletConnect - Aquarius">
+                <PageTitle title="Staging: WalletConnect - Aquarius">
                     <WalletConnectPage />
                 </PageTitle>
             ),
@@ -126,7 +126,7 @@ const AppRouter = () => {
         {
             path: AppRoutes.section.amm.parentRoute,
             element: (
-                <PageTitle title="Pools - Aquarius">
+                <PageTitle title="Staging: Pools - Aquarius">
                     <AmmPage />
                 </PageTitle>
             ),
@@ -134,7 +134,7 @@ const AppRouter = () => {
         {
             path: AppRoutes.section.swap.parentRoute,
             element: (
-                <PageTitle title="Swap - Aquarius">
+                <PageTitle title="Staging: Swap - Aquarius">
                     <SwapPage />
                 </PageTitle>
             ),
@@ -142,7 +142,7 @@ const AppRouter = () => {
         {
             path: AppRoutes.page.buyAqua,
             element: (
-                <PageTitle title="Buy Aqua - Aquarius">
+                <PageTitle title="Staging: Buy Aqua - Aquarius">
                     <BuyAquaPage />
                 </PageTitle>
             ),
@@ -150,7 +150,7 @@ const AppRouter = () => {
         {
             path: AppRoutes.page.testnet,
             element: (
-                <PageTitle title="Testnet - Aquarius">
+                <PageTitle title="Staging: Testnet - Aquarius">
                     <TestnetSwitcherPage />
                 </PageTitle>
             ),
@@ -158,7 +158,7 @@ const AppRouter = () => {
         {
             path: AppRoutes.page.terms,
             element: (
-                <PageTitle title="Terms Of Use - Aquarius">
+                <PageTitle title="Staging: Terms Of Use - Aquarius">
                     <TermsPage />
                 </PageTitle>
             ),
@@ -166,7 +166,7 @@ const AppRouter = () => {
         {
             path: AppRoutes.page.privacy,
             element: (
-                <PageTitle title="Privacy Policy - Aquarius">
+                <PageTitle title="Staging: Privacy Policy - Aquarius">
                     <PrivacyPage />
                 </PageTitle>
             ),
@@ -174,7 +174,7 @@ const AppRouter = () => {
         {
             path: AppRoutes.page.token,
             element: (
-                <PageTitle title="AQUA Token - Aquarius">
+                <PageTitle title="Staging: AQUA Token - Aquarius">
                     <TokenPage />
                 </PageTitle>
             ),
@@ -182,7 +182,7 @@ const AppRouter = () => {
         {
             path: AppRoutes.page.quest,
             element: (
-                <PageTitle title="Onboard To Aquarius">
+                <PageTitle title="Staging: Onboard To Aquarius">
                     <QuestPage />
                 </PageTitle>
             ),
@@ -190,7 +190,7 @@ const AppRouter = () => {
         {
             path: AppRoutes.section.delegate.parentRoute,
             element: (
-                <PageTitle title="Delegates - Aquarius">
+                <PageTitle title="Staging: Delegates - Aquarius">
                     <DelegatePage />
                 </PageTitle>
             ),
@@ -198,7 +198,7 @@ const AppRouter = () => {
         {
             path: AppRoutes.section.incentive.parentRoute,
             element: (
-                <PageTitle title="Incentives - Aquarius">
+                <PageTitle title="Staging: Incentives - Aquarius">
                     <IncentivesPage />
                 </PageTitle>
             ),
