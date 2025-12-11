@@ -455,6 +455,8 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
 
     const calculateDailyRewards = (rewardsInfo: PoolRewardsInfo) => {
         if (!rewardsInfo) return 0;
+
+        if (rewardsInfo.exp_at * 1000 < Date.now()) return 0;
         const tps = +rewardsInfo.tps;
         const wSupply = +rewardsInfo.working_supply;
         const wBalance = +rewardsInfo.working_balance;
