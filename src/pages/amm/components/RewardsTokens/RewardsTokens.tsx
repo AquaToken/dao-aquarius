@@ -137,7 +137,7 @@ const RewardsTokens = ({ pool, myRewards, myIncentives }: Props) => {
 
                     {!myRewards && !myIncentives?.length && hasRewards && <TooltipDivider />}
 
-                    {Boolean(Number(pool.rewards_apy)) && (
+                    {(Boolean(Number(pool.rewards_apy)) || Boolean(myRewards)) && (
                         <>
                             <TooltipSectionTitle>
                                 <BlockWithIcon>
