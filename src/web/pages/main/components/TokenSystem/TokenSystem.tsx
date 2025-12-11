@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { useScrollAnimation } from 'hooks/useScrollAnimation';
 
@@ -42,7 +42,7 @@ const TokenSystem: React.FC = () => {
                         voting rewards, boost liquidity rewards, and participate in governance.
                     </Description>
 
-                    <LinkButton to={MainRoutes.token}>
+                    <LinkButton to={AppRoutes.page.token}>
                         <LinkContent>
                             <LogoWrapper>
                                 <AquaLogo />
@@ -58,7 +58,7 @@ const TokenSystem: React.FC = () => {
                         </LinkContent>
                     </LinkButton>
 
-                    <LinkButton to={MainRoutes.locker}>
+                    <LinkButton to={AppRoutes.section.locker.link.index}>
                         <LinkContent>
                             <LogoWrapper>
                                 <IceLogo />

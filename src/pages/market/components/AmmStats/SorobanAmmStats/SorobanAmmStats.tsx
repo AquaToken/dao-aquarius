@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { getPoolsWithAssets } from 'api/amm';
 
-import { AmmRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
@@ -28,7 +28,7 @@ const SorobanAmmStats = ({ assets }: Props) => {
     const [pools, setPools] = useState(null);
 
     const { isLogged } = useAuthStore();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     useEffect(() => {
         getPoolsWithAssets(assets).then(res => {
@@ -51,11 +51,11 @@ const SorobanAmmStats = ({ assets }: Props) => {
                             onClick={() => {
                                 if (!isLogged) {
                                     ModalService.openModal(ChooseLoginMethodModal, {
-                                        redirectURL: AmmRoutes.create,
+                                        redirectURL: AppRoutes.section.amm.link.create,
                                     });
                                     return;
                                 }
-                                history.push(AmmRoutes.create);
+                                navigate(AppRoutes.section.amm.link.create);
                             }}
                         >
                             Create pool

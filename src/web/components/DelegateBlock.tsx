@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { useScrollAnimation } from 'hooks/useScrollAnimation';
 
@@ -180,7 +180,9 @@ const DelegateBlock = () => {
                             Stay hands-off, or engage as deeply as you want
                         </ListItem>
                     </List>
-                    <ExternalLink to={MainRoutes.delegate}>Read more about Delegation</ExternalLink>
+                    <ExternalLink to={AppRoutes.section.delegate.link.index}>
+                        Read more about Delegation
+                    </ExternalLink>
                 </ContentWrapper>
             </Wrapper>
         </Container>

@@ -8,7 +8,7 @@ import { flexAllCenter, respondDown } from 'styles/mixins';
 import { Breakpoints, COLORS } from 'styles/style-constants';
 
 export const Wrapper = styled.div`
-    padding-top: 6.3rem;
+    padding-top: 5%;
 
     ${respondDown(Breakpoints.sm)`
         padding-top: 1.6rem;
@@ -21,7 +21,7 @@ export const LearnMoreLink = styled(BlankRouterLink)`
     padding: 1rem 1.6rem;
     border-radius: 3rem;
     gap: 0.9rem;
-    margin: 0 auto;
+    margin: 0 auto 1.6rem;
 `;
 
 export const PurpleArrow = styled(Arrow)`

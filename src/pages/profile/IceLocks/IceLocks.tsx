@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { getDistributionForAccount } from 'api/ice-locker';
 
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { getDateString } from 'helpers/date';
 import ErrorHandler from 'helpers/error-handler';
@@ -449,7 +449,9 @@ const IceLocks = ({ ammAquaBalance }: IceLocksProps): React.ReactNode => {
                         <span>It looks like you don’t have any active locks.</span>
 
                         <ExternalLinkStyled asDiv>
-                            <Link to={MainRoutes.locker}>Learn about ICE locks</Link>
+                            <Link to={AppRoutes.section.locker.link.index}>
+                                Learn about ICE locks
+                            </Link>
                         </ExternalLinkStyled>
                     </Empty>
                 )}

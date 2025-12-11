@@ -1,7 +1,8 @@
-import { useHistory } from 'react-router-dom';
+import * as React from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { MarketRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';
 import { getIceMaxApy } from 'helpers/ice';
@@ -179,8 +180,8 @@ const VoteTable = ({
     loading: boolean;
     totalStats: TotalStats;
     isYourVotes: boolean;
-}): JSX.Element => {
-    const history = useHistory();
+}): React.ReactNode => {
+    const navigate = useNavigate();
 
     if (!pairs.length) {
         return null;
@@ -202,7 +203,12 @@ const VoteTable = ({
     };
 
     const goToMarketPage = pair => {
-        history.push(`${MarketRoutes.main}/${pair.asset1}/${pair.asset2}`);
+        navigate(
+            AppRoutes.section.market.to.market({
+                base: pair.asset1,
+                counter: pair.asset2,
+            }),
+        );
     };
 
     return (

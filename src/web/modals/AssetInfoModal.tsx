@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { getAssetDetails } from 'api/stellar-expert';
 
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { getAquaAssetData, getAssetString } from 'helpers/assets';
 import { getDateString } from 'helpers/date';
@@ -301,18 +301,21 @@ const AssetInfoModal = ({ params }: ModalProps<AssetInfoModalParams>): React.Rea
             )}
             <Buttons>
                 <LinkStyled
-                    to={`${MainRoutes.swap}/${getAssetString(asset)}/${getAssetString(
-                        asset.code === aquaCode && asset.issuer === aquaIssuer
-                            ? createLumen()
-                            : aquaStellarAsset,
-                    )}`}
+                    to={AppRoutes.section.swap.to.index({
+                        source: getAssetString(asset),
+                        destination: getAssetString(
+                            asset.code === aquaCode && asset.issuer === aquaIssuer
+                                ? createLumen()
+                                : aquaStellarAsset,
+                        ),
+                    })}
                     onClick={() => ModalService.closeAllModals()}
                 >
                     <Button isBig>swap</Button>
                 </LinkStyled>
 
                 <LinkStyled
-                    to={`${MainRoutes.vote}/?base=${getAssetString(asset)}`}
+                    to={`${AppRoutes.page.vote}?base=${getAssetString(asset)}`}
                     onClick={() => ModalService.closeAllModals()}
                 >
                     <Button isBig>vote</Button>

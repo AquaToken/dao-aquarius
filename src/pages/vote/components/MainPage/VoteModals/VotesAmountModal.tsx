@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { processIceTx } from 'api/ice';
 
-import { LockerRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import ErrorHandler from 'helpers/error-handler';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
@@ -636,7 +636,7 @@ const VotesAmountModal = ({
                     <GetAquaLabel>You don&apos;t have enough {targetAsset.code}</GetAquaLabel>
 
                     <ExternalLink asDiv>
-                        <Link to={LockerRoutes.main} onClick={() => close()}>
+                        <Link to={AppRoutes.section.locker.link.index} onClick={() => close()}>
                             Get ICE
                         </Link>
                     </ExternalLink>

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { D_ICE_CODE, GD_ICE_CODE, ICE_ISSUER } from 'constants/assets';
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { createAsset } from 'helpers/token';
 
@@ -70,9 +70,12 @@ const DIceTrustlineModal = ({ params }: ModalProps<Params>) => {
             return (
                 <>
                     After that, you’ll be able to vote on the&nbsp;
-                    <LinkStyled to={MainRoutes.vote}>Voting page</LinkStyled>
+                    <LinkStyled to={AppRoutes.page.vote}>Voting page</LinkStyled>
                     &nbsp;and participate in governance on the&nbsp;
-                    <LinkStyled to={MainRoutes.governance}>Governance page</LinkStyled>.
+                    <LinkStyled to={AppRoutes.section.governance.link.index}>
+                        Governance page
+                    </LinkStyled>
+                    .
                 </>
             );
         }
@@ -80,7 +83,7 @@ const DIceTrustlineModal = ({ params }: ModalProps<Params>) => {
             return (
                 <>
                     After that, you’ll be able to vote on the&nbsp;
-                    <LinkStyled to={MainRoutes.vote}>Voting page</LinkStyled>.
+                    <LinkStyled to={AppRoutes.page.vote}>Voting page</LinkStyled>.
                 </>
             );
         }
@@ -88,7 +91,10 @@ const DIceTrustlineModal = ({ params }: ModalProps<Params>) => {
             return (
                 <>
                     After that, you’ll be able to participate in governance on the&nbsp;
-                    <LinkStyled to={MainRoutes.governance}>Governance page</LinkStyled>.
+                    <LinkStyled to={AppRoutes.section.governance.link.index}>
+                        Governance page
+                    </LinkStyled>
+                    .
                 </>
             );
         }

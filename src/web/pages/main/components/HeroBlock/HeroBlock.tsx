@@ -1,8 +1,10 @@
 import * as React from 'react';
 
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
+import { getAquaAssetData, getAssetString } from 'helpers/assets';
 import { getIsDarkTheme } from 'helpers/theme';
+import { createLumen } from 'helpers/token';
 
 import { BlankRouterLink } from 'basics/links';
 import LiveIndicator from 'basics/LiveIndicator';
@@ -68,7 +70,12 @@ const HeroBlock: React.FC<Props> = ({ isLoading, monthlyDistributed, volumeInUsd
                     Swap faster. Add liquidity. Earn AQUA.
                 </Description>
 
-                <BlankRouterLink to={MainRoutes.swap}>
+                <BlankRouterLink
+                    to={AppRoutes.section.swap.to.index({
+                        source: getAssetString(createLumen()),
+                        destination: getAquaAssetData().aquaAssetString,
+                    })}
+                >
                     <ProvideLiqButton withGradient isBig isRounded>
                         Swap now <ArrowAlt16Styled />
                     </ProvideLiqButton>
