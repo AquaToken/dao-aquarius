@@ -7,7 +7,7 @@ import {
     CREATE_DISCUSSION_COST,
     CREATE_PROPOSAL_COST,
 } from 'constants/dao';
-import { GovernanceRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';
 
@@ -152,8 +152,8 @@ const ProposalCreation = ({
                         <CircleButton
                             to={
                                 isEdit
-                                    ? `${GovernanceRoutes.proposal}/${id}`
-                                    : GovernanceRoutes.main
+                                    ? AppRoutes.section.governance.to.proposal({ id })
+                                    : AppRoutes.section.governance.link.index
                             }
                             label={isEdit ? 'Back to discussion' : 'Back to proposals'}
                         >

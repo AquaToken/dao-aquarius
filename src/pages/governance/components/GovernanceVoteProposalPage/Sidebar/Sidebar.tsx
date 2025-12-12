@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
 import { CREATE_DISCUSSION_COST, CREATE_PROPOSAL_COST } from 'constants/dao';
-import { GovernanceRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { getDateString } from 'helpers/date';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
@@ -445,7 +445,11 @@ const Sidebar = forwardRef(
                                     })}
                                 </b>
                             </DiscussionDescription>
-                            <Link to={`${GovernanceRoutes.proposal}/${proposal.id}/`}>
+                            <Link
+                                to={AppRoutes.section.governance.to.proposal({
+                                    id: String(proposal.id),
+                                })}
+                            >
                                 <ExternalLink asDiv>Current version</ExternalLink>
                             </Link>
                         </Container>

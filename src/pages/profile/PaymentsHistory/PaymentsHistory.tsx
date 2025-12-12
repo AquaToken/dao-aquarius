@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { getDateString } from 'helpers/date';
 import { getIsTestnetEnv } from 'helpers/env';
@@ -133,7 +133,7 @@ const PaymentsHistory = () => {
                             <span>It looks like you haven't received AQUA rewards.</span>
 
                             <ExternalLinkStyled asDiv>
-                                <Link to={MainRoutes.rewards}>Learn about rewards</Link>
+                                <Link to={AppRoutes.page.rewards}>Learn about rewards</Link>
                             </ExternalLinkStyled>
                         </Empty>
                     </Section>

@@ -2,7 +2,7 @@ import { MemoHash } from '@stellar/stellar-sdk';
 import { sha256 } from 'js-sha256';
 import * as React from 'react';
 import { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { CREATE_DISCUSSION_COST } from 'constants/dao';
@@ -61,7 +61,7 @@ const CreateDiscussionModal = ({
     const { account } = useAuthStore();
     const cost = formatBalance(CREATE_DISCUSSION_COST);
 
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const isMounted = useIsMounted();
 
@@ -146,7 +146,7 @@ const CreateDiscussionModal = ({
 
             ToastService.showSuccessToast('The proposal has been created');
 
-            history.push('/');
+            navigate('/');
         } catch (e) {
             const errorText = ErrorHandler(e);
             ToastService.showErrorToast(errorText);

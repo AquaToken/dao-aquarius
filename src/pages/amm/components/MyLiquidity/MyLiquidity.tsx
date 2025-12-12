@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useHistory, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { getUserPools } from 'api/amm';
 
 import { POOL_TYPE } from 'constants/amm';
 import { DAY } from 'constants/intervals';
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { contractValueToAmount } from 'helpers/amount';
 import { getAssetString } from 'helpers/assets';
@@ -232,7 +232,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
     const [filter, setFilter] = useState(null);
 
     const location = useLocation();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const params = new URLSearchParams(location.search);
@@ -250,14 +250,14 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
         } else {
             params.append(UrlParams.filter, FilterValues.all);
             setFilter(FilterValues.all);
-            history.replace({ search: params.toString() });
+            navigate(`${location.pathname}?${params.toString()}`, { replace: true });
         }
     }, [location]);
 
     const setFilterValue = (value: FilterValues) => {
         const params = new URLSearchParams(location.search);
         params.set(UrlParams.filter, value);
-        history.push({ search: params.toString() });
+        navigate({ search: params.toString() });
     };
 
     const updateIndex = useUpdateIndex(5000);
@@ -455,6 +455,8 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
 
     const calculateDailyRewards = (rewardsInfo: PoolRewardsInfo) => {
         if (!rewardsInfo) return 0;
+
+        if (rewardsInfo.exp_at * 1000 < Date.now()) return 0;
         const tps = +rewardsInfo.tps;
         const wSupply = +rewardsInfo.working_supply;
         const wBalance = +rewardsInfo.working_balance;
@@ -775,7 +777,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
 
                         <ExternalLinkStyled asDiv>
                             <Link
-                                to={MainRoutes.amm}
+                                to={AppRoutes.section.amm.link.index}
                                 onClick={() => {
                                     if (backToAllPools) {
                                         backToAllPools();

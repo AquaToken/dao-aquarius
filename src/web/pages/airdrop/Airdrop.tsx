@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import Success from 'assets/icons/status/success-alt.svg';
 
@@ -45,7 +45,7 @@ const Airdrop = () => (
                         wallets.
                     </Text>
                     <ExternalLink asDiv>
-                        <Link to={MainRoutes.airdrop2}>Read more</Link>
+                        <Link to={AppRoutes.page.airdrop2}>Read more</Link>
                     </ExternalLink>
                 </Card>
                 <Card>

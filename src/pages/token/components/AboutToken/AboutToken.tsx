@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { useScrollAnimation } from 'hooks/useScrollAnimation';
 
@@ -140,14 +140,18 @@ const AboutToken = () => {
             </Description>
             <Links $visible={visible}>
                 <LinksRow>
-                    <LinkStyled to={MainRoutes.rewards} $visible={visible} $delay={0.1}>
+                    <LinkStyled to={AppRoutes.page.rewards} $visible={visible} $delay={0.1}>
                         <LP />
                         <LinkContent>
                             <h3>LP rewards</h3>
                             <p>Earn AQUA for providing liquidity in AMM pools or SDEX markets.</p>
                         </LinkContent>
                     </LinkStyled>
-                    <LinkStyled to={MainRoutes.bribes} $visible={visible} $delay={0.25}>
+                    <LinkStyled
+                        to={AppRoutes.section.bribes.link.index}
+                        $visible={visible}
+                        $delay={0.25}
+                    >
                         <Bribes />
                         <LinkContent>
                             <h3>Bribes</h3>

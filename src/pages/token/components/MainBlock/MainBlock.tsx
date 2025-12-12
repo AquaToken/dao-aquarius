@@ -2,7 +2,10 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
+
+import { getAquaAssetData, getAssetString } from 'helpers/assets';
+import { createLumen } from 'helpers/token';
 
 import { useScrollAnimation } from 'hooks/useScrollAnimation';
 
@@ -212,12 +215,17 @@ const MainBlock = () => {
                     Earn AQUA rewards by providing liquidity and voting in the Aquarius ecosystem.
                 </SecondaryDescription>
                 <ButtonAndPriceBlock>
-                    <Link to={MainRoutes.swap}>
+                    <Link
+                        to={AppRoutes.section.swap.to.index({
+                            source: getAssetString(createLumen()),
+                            destination: getAquaAssetData().aquaAssetString,
+                        })}
+                    >
                         <ButtonStyled isRounded withGradient isBig>
                             swap aqua
                         </ButtonStyled>
                     </Link>
-                    <Link to={MainRoutes.buyAqua} onClick={buyAqua}>
+                    <Link to={AppRoutes.page.buyAqua} onClick={buyAqua}>
                         <ButtonStyled isRounded withGradient isBig secondary>
                             Buy with a card
                         </ButtonStyled>

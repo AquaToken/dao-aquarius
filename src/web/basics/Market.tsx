@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { POOL_TYPE } from 'constants/amm';
-import { AmmRoutes, MarketRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { getAssetString } from 'helpers/assets';
-import { getIsTestnetEnv } from 'helpers/env';
 import getExplorerLink, { ExplorerSection } from 'helpers/explorer-links';
 import { formatBalance } from 'helpers/format-number';
 
@@ -275,7 +274,7 @@ const Market = ({
     ...props
 }: PairProps): React.ReactNode => {
     const { assetsInfo } = useAssetsStore();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const getAssetDetails = (asset: Token) => {
         if (asset.type === TokenType.soroban) {
@@ -330,7 +329,7 @@ const Market = ({
             $isClickable={Boolean(poolAddress)}
             onClick={() => {
                 if (poolAddress) {
-                    history.push(`${AmmRoutes.analytics}${poolAddress}/`);
+                    navigate(AppRoutes.section.amm.to.pool({ poolAddress }));
                 }
             }}
             {...props}
@@ -388,9 +387,10 @@ const Market = ({
                             onClick={e => {
                                 e.stopPropagation();
                             }}
-                            to={`${MarketRoutes.main}/${getAssetString(assets[0])}/${getAssetString(
-                                assets[1],
-                            )}`}
+                            to={AppRoutes.section.market.to.market({
+                                base: getAssetString(assets[0]),
+                                counter: getAssetString(assets[1]),
+                            })}
                         >
                             <External />
                         </Link>

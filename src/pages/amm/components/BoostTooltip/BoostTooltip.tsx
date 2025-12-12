@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';
 
@@ -117,7 +117,7 @@ const BoostTooltip = ({ pool, userBoost }: Props) => (
                 <span>{formatBalance(+(Number(pool.rewards_apy) * 100).toFixed(2))}%</span>
             </BoostTooltipValues>
         </BoostTooltipValuesBlock>
-        <LinkButton to={MainRoutes.locker}>
+        <LinkButton to={AppRoutes.section.locker.link.index}>
             <Button fullWidth>get ice</Button>
         </LinkButton>
     </Container>

@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { getDelegatees } from 'api/delegate';
 
-import { DelegateRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { useUpdateIndex } from 'hooks/useUpdateIndex';
 
@@ -262,7 +262,7 @@ const DelegateMain = () => {
                     Earn rewards without managing votes yourself or become a delegate and help shape
                     protocol incentives
                     <MainLinksContainer>
-                        <BlankRouterLink to={DelegateRoutes.become}>
+                        <BlankRouterLink to={AppRoutes.section.delegate.link.become}>
                             <ButtonStyled withGradient isRounded>
                                 Become a Delegate <ArrowAlt16Styled />
                             </ButtonStyled>

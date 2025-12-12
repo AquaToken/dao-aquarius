@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { LockerRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import FreezeAqua from 'assets/locker/freeze-aqua-banner.svg';
 
@@ -86,7 +86,7 @@ const BoostBanner = () => (
                 Freeze your AQUA into ICE and boost your rewards by up to 250%!
             </Description>
         </Content>
-        <StyledLink to={LockerRoutes.main}>
+        <StyledLink to={AppRoutes.section.locker.link.index}>
             <Button fullWidth>GET THE BOOST</Button>
         </StyledLink>
     </Container>

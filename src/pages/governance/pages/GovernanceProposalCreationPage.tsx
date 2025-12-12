@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { CREATE_DISCUSSION_COST } from 'constants/dao';
-import { GovernanceRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
@@ -37,7 +37,7 @@ const defaultText =
 
 const GovernanceProposalCreationPage = ({ isEdit }: { isEdit?: boolean }): React.ReactNode => {
     const { id } = useParams<{ id?: string }>();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const [title, setTitle] = useState('');
     const [text, setText] = useState(defaultText);
@@ -60,7 +60,7 @@ const GovernanceProposalCreationPage = ({ isEdit }: { isEdit?: boolean }): React
             })
             .catch(() => {
                 ToastService.showErrorToast('Something went wrong!');
-                history.push(`${GovernanceRoutes.proposal}/${id}`);
+                navigate(AppRoutes.section.governance.to.proposal({ id }));
             });
     }, [isEdit]);
 
