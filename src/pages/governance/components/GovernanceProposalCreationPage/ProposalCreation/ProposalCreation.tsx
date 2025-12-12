@@ -2,6 +2,11 @@ import { ReactNode } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
+import {
+    APPROVED_PROPOSAL_REWARD,
+    CREATE_DISCUSSION_COST,
+    CREATE_PROPOSAL_COST,
+} from 'constants/dao';
 import { AppRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';
@@ -16,12 +21,6 @@ import { cardBoxShadow, respondDown } from 'styles/mixins';
 import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import QuillEditor from './QuillEditor';
-
-import {
-    APPROVED_PROPOSAL_REWARD,
-    CREATE_DISCUSSION_COST,
-    CREATE_PROPOSAL_COST,
-} from '../../../pages/GovernanceMainPage';
 
 const Background = styled.div`
     width: 100%;

@@ -33,10 +33,6 @@ import { getProposalsRequest, PROPOSAL_FILTER } from '../api/api';
 import CreateProposal from '../components/GovernanceMainPage/CreateProposal/CreateProposal';
 import ProposalPreview from '../components/GovernanceMainPage/ProposalPreview/ProposalPreview';
 
-export const CREATE_DISCUSSION_COST = 100000;
-export const CREATE_PROPOSAL_COST = 900000;
-export const APPROVED_PROPOSAL_REWARD = 1500000;
-
 const MainBlock = styled.main`
     flex: 1 0 auto;
 `;

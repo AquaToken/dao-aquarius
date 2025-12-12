@@ -5,6 +5,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { APPROVED_PROPOSAL_REWARD, CREATE_PROPOSAL_COST } from 'constants/dao';
+
 import { getDateString } from 'helpers/date';
 import ErrorHandler from 'helpers/error-handler';
 import { formatBalance } from 'helpers/format-number';
@@ -31,7 +33,6 @@ import { Breakpoints, COLORS } from 'styles/style-constants';
 import { ProposalSimple } from 'pages/governance/api/types';
 
 import { checkProposalStatus, publishProposal } from '../../../api/api';
-import { APPROVED_PROPOSAL_REWARD, CREATE_PROPOSAL_COST } from '../../../pages/GovernanceMainPage';
 import { DAY } from '../ProposalCreation/ProposalCreation';
 
 const Description = styled(ModalDescription)`
