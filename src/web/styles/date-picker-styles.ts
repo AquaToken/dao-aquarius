@@ -55,10 +55,14 @@ export const DatePickerStyles = createGlobalStyle`
     div.react-datepicker__day--keyboard-selected {
         background-color: unset;
         color: unset;
-        
+
         &:hover {
-          background-color: ${COLORS.gray10};
+            background-color: ${COLORS.gray10}!important;
+            color: ${COLORS.black}!important;
         }
+    }
+    div.react-datepicker__day {
+        
     }
     div.react-datepicker__current-month  {
         color: ${COLORS.black};
