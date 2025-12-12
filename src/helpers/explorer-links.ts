@@ -12,6 +12,10 @@ export enum ExplorerSection {
 function getExplorerLink(section: ExplorerSection.tx, hash: string): string;
 function getExplorerLink(section: ExplorerSection.account, publicKey: string): string;
 function getExplorerLink(section: ExplorerSection.contract, contract: string): string;
+function getExplorerLink(
+    section: ExplorerSection.account | ExplorerSection.contract,
+    target: string,
+): string;
 function getExplorerLink(section: ExplorerSection.asset, assetString: string): string;
 function getExplorerLink(section: ExplorerSection, target: string): string {
     return `${EXPLORER_LINK}${getIsTestnetEnv() ? 'testnet' : 'public'}/${section}/${target}`;
