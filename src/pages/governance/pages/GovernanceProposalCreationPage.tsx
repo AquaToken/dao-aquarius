@@ -103,12 +103,8 @@ const GovernanceProposalCreationPage = ({ isEdit }: { isEdit?: boolean }): React
                         setText={setText}
                         hasData={hasData}
                         onSubmit={isEdit ? onEdit : onSubmit}
-                        discordChannel={discordChannel}
-                        setDiscordChannel={setDiscordChannel}
                         discordChannelOwner={discordChannelOwner}
                         setDiscordChannelOwner={setDiscordChannelOwner}
-                        discordChannelUrl={discordChannelUrl}
-                        setDiscordChannelUrl={setDiscordChannelUrl}
                     />
                 </MainBlock>
             );

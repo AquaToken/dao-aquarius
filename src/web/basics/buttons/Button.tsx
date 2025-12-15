@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { ReactElement } from 'react';
 import styled from 'styled-components';
 
 import { flexAllCenter } from 'styles/mixins';
@@ -269,7 +270,7 @@ const Button = ({
     isRounded,
     withGradient,
     ...props
-}: ButtonProps): JSX.Element => (
+}: ButtonProps): ReactElement => (
     <ButtonBody
         $pending={pending}
         $isBig={isBig}

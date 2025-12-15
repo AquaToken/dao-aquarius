@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, ReactElement } from 'react';
 import styled from 'styled-components';
 
 import { ENV_PRODUCTION, ENV_TESTNET } from 'constants/env';
@@ -27,7 +27,7 @@ const OPTIONS = [
 
 const SWITCH_TIMEOUT = 5000;
 
-const TestnetBanner = (): JSX.Element => {
+const TestnetBanner = (): ReactElement => {
     const [isTestnet, setIsTestnet] = useState(getIsTestnetEnv());
     const currentEnv = getEnv();
     const [toggleValue, setToggleValue] = useState(currentEnv);

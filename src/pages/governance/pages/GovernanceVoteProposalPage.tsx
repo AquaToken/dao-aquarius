@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -32,7 +32,7 @@ export enum SimpleProposalResultsLabels {
     votesAgainst = 'Against',
 }
 
-const GovernanceVoteProposalPage = (): JSX.Element => {
+const GovernanceVoteProposalPage = (): ReactElement => {
     const { id, version } = useParams<{ id?: string; version?: string }>();
 
     const [proposal, setProposal] = useState<null | Proposal>(null);

@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { Navigate } from 'react-router-dom';
 
 import { AppRoutes } from 'constants/routes';
@@ -13,7 +14,7 @@ import { COLORS } from 'styles/style-constants';
 
 import { CenteredWrapper, Container } from './BuyAqua.styled';
 
-const BuyAqua = (): JSX.Element => {
+const BuyAqua = (): React.ReactElement => {
     const { account, isLogged } = useAuthStore();
     const { aquaStellarAsset } = getAquaAssetData();
 
