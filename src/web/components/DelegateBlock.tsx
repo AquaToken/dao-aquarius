@@ -5,8 +5,6 @@ import { AppRoutes } from 'constants/routes';
 
 import { useScrollAnimation } from 'hooks/useScrollAnimation';
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import Logo from 'assets/delegate/delegate-promo.svg?url';
 import DAO from 'assets/icons/objects/icon-dao-16x17.svg';
 import Heart from 'assets/icons/objects/icon-heart.svg';

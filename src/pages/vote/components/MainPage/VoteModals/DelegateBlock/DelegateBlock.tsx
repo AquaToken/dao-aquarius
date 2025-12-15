@@ -1,8 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import Logo from 'assets/delegate/delegate-promo-small.svg?url';
 
 import { ExternalLink } from 'basics/links';
