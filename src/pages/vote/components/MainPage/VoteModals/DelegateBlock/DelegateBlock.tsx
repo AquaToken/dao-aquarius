@@ -1,7 +1,9 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import Logo from 'assets/delegate/delegate-promo-small.svg';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import Logo from 'assets/delegate/delegate-promo-small.svg?url';
 
 import { ExternalLink } from 'basics/links';
 
@@ -44,7 +46,7 @@ const DelegateBlock = () => (
             </p>
             <ExternalLink>Learn more</ExternalLink>
         </Content>
-        <Logo />
+        <img src={Logo} alt="Delegate block logo" />
     </Container>
 );
 

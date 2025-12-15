@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 
 import {
     MAX_BOOST,
@@ -14,6 +14,10 @@ import { roundToPrecision } from 'helpers/format-number';
 
 import AccountService from 'services/account.service';
 import { ModalService, ToastService } from 'services/globalServices';
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import DelegateLogo from 'assets/delegate/delegate-promo.svg?url';
 
 import DelegatePromoModal from 'modals/alerts/DelegatePromoModal';
 import ChooseLoginMethodModal from 'modals/auth/ChooseLoginMethodModal';
@@ -63,9 +67,13 @@ export const useLockAquaFormLogic = (
     const showDelegatePromo = () => {
         const isViewed = !!localStorage.getItem(LS_DELEGATE_PROMO_VIEWED_LOCKER);
         if (!isViewed) {
-            ModalService.openModal(DelegatePromoModal, {}, false, <ModalBG />);
+            ModalService.openModal(DelegatePromoModal, {}, false, <ModalBG src={DelegateLogo} />);
         }
     };
+
+    useEffect(() => {
+        showDelegatePromo();
+    }, []);
 
     const handleSubmit = () => {
         if (lockPeriod - Date.now() > MAX_LOCK_PERIOD) {
