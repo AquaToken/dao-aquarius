@@ -6,11 +6,7 @@ import { AppRoutes } from 'constants/routes';
 
 import { useScrollAnimation } from 'hooks/useScrollAnimation';
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import IconIce from 'assets/icons/small-icons/icon-ice-symbol-10.svg?url';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import BG from 'assets/token-page/ice-pattern.svg?url';
 import IceLogoIcon from 'assets/tokens/ice-logo.svg';
 

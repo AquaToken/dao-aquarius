@@ -15,7 +15,7 @@ import { ModalService } from 'services/globalServices';
 
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 
-import Bg from 'assets/token-page/token-page-bg.svg';
+import Bg from 'assets/token-page/token-page-bg.svg?url';
 
 import { Button } from 'basics/buttons';
 
@@ -60,7 +60,7 @@ const Content = styled.div`
     `}
 `;
 
-const Background = styled(Bg)`
+const Background = styled.img`
     position: absolute;
     height: 90rem;
     right: -20rem;
@@ -88,7 +88,9 @@ const Background = styled(Bg)`
 const fadeUp = css`
     opacity: 0;
     transform: translateY(30px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
+    transition:
+        opacity 0.6s ease,
+        transform 0.6s ease;
     &.visible {
         opacity: 1;
         transform: translateY(0);
@@ -203,7 +205,7 @@ const MainBlock = () => {
         <Container>
             <SocialLinks />
             <Content ref={ref as React.RefObject<HTMLDivElement>}>
-                <Background />
+                <Background src={Bg} />
                 <Title className={visible ? 'visible' : ''}>
                     AQUA
                     <AnimatedBorderedText text="Token" />
