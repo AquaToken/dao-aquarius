@@ -280,7 +280,7 @@ const ProposalScreen = ({
     proposal: Proposal;
     version?: string;
     setScreenState?: (state) => void;
-}): JSX.Element => {
+}): React.ReactElement => {
     const {
         id,
         title,

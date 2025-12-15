@@ -276,7 +276,7 @@ const Options = [
 
 const PAGE_SIZE = 5;
 
-const GovernanceMainPage = (): JSX.Element => {
+const GovernanceMainPage = (): React.ReactElement => {
     const [proposals, setProposals] = useState(null);
     const [filter, setFilter] = useState(null);
     const [loading, setLoading] = useState(false);

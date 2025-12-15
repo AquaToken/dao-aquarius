@@ -1,4 +1,3 @@
-// AppRoutesView.tsx (или прямо в App.tsx)
 import { lazy } from 'react';
 import { Navigate, useRoutes } from 'react-router-dom';
 
