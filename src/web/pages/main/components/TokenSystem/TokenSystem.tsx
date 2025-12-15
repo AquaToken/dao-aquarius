@@ -5,6 +5,9 @@ import { AppRoutes } from 'constants/routes';
 import { useScrollAnimation } from 'hooks/useScrollAnimation';
 
 import AquaLogo from 'assets/aqua/aqua-logo.svg';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import TokenSystemIcon from 'assets/main-page/token-system.svg?url';
 import IceLogo from 'assets/tokens/ice-logo.svg';
 
 import {
@@ -32,7 +35,7 @@ const TokenSystem: React.FC = () => {
         <Wrapper ref={ref as React.RefObject<HTMLDivElement>} $visible={visible} id="token-system">
             <BlocksWrapper>
                 <IconBlock $visible={visible}>
-                    <StyledTokenSystemIcon />
+                    <StyledTokenSystemIcon src={TokenSystemIcon} />
                 </IconBlock>
 
                 <TokensBlock $visible={visible}>

@@ -3,7 +3,9 @@ import styled from 'styled-components';
 
 import Present from 'assets/icons/objects/icon-present.svg';
 import Pending from 'assets/icons/status/pending-alt-32.svg';
-import Bg from 'assets/quest-page/quests-page-bg.svg';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import Bg from 'assets/quest-page/quests-page-bg.svg?url';
 
 import { commonMaxWidth, flexAllCenter, respondDown } from 'styles/mixins';
 import { Breakpoints, COLORS } from 'styles/style-constants';
@@ -38,7 +40,7 @@ const Content = styled.div`
     `}
 `;
 
-const Background = styled(Bg)`
+const Background = styled.img`
     position: absolute;
     height: 90rem;
     right: -20rem;
@@ -164,7 +166,7 @@ const Summary = styled.div`
 const MainBlock = () => (
     <Container>
         <Content>
-            <Background />
+            <Background src={Bg} />
             <Title>
                 <AnimatedBorderedText /> to Aquarius
             </Title>
