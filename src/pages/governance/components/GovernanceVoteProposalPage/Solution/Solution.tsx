@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { ReactElement } from 'react';
 import styled, { css } from 'styled-components';
 
 import Fail from 'assets/icons/status/fail-red.svg';
@@ -33,7 +34,7 @@ enum ChoiceLabel {
     vote_for = 'For',
 }
 
-const Solution = ({ choice }: { choice: VoteChoiceSimple }): JSX.Element => (
+const Solution = ({ choice }: { choice: VoteChoiceSimple }): ReactElement => (
     <SolutionBlock>
         {choice === 'vote_against' ? <FailIcon /> : <SuccessIcon />}
         <span>{ChoiceLabel[choice]}</span>

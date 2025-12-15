@@ -56,7 +56,7 @@ const Amount = styled.div`
 const CreateDiscussionModal = ({
     params,
     close,
-}: ModalProps<Proposal & { isEdit?: boolean }>): JSX.Element => {
+}: ModalProps<Proposal & { isEdit?: boolean }>): React.ReactNode => {
     const [loading, setLoading] = useState(false);
     const { account } = useAuthStore();
     const cost = formatBalance(CREATE_DISCUSSION_COST);

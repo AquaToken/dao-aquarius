@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { ReactElement } from 'react';
 import styled from 'styled-components';
 
 import { roundToPrecision } from 'helpers/format-number';
@@ -125,7 +126,7 @@ const getResultsData = (proposal: Proposal) => {
     return null;
 };
 
-const CurrentResults = ({ proposal }: { proposal: Proposal }): JSX.Element => {
+const CurrentResults = ({ proposal }: { proposal: Proposal }): ReactElement => {
     const results = getResultsData(proposal);
     const isEnd = new Date() >= new Date(proposal.end_at);
 

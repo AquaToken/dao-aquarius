@@ -1,3 +1,4 @@
+import * as React from 'react';
 import styled from 'styled-components';
 
 import { flexAllCenter } from 'styles/mixins';
@@ -9,7 +10,7 @@ const Container = styled.div`
     ${flexAllCenter};
 `;
 
-const PageLoader = (): JSX.Element => (
+const PageLoader = (): React.ReactElement => (
     <Container>
         <AquaLogoLoader />
     </Container>

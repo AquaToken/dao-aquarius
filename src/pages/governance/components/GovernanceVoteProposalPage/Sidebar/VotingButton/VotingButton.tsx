@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { ReactElement } from 'react';
 import styled from 'styled-components';
 
 import { COLORS } from 'styles/style-constants';
@@ -42,7 +43,7 @@ interface VotingButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement
     isVoteFor?: boolean;
 }
 
-const VotingButton = ({ isVoteFor, children, ...props }: VotingButtonProps): JSX.Element => (
+const VotingButton = ({ isVoteFor, children, ...props }: VotingButtonProps): ReactElement => (
     <ButtonBody isVoteFor={isVoteFor} {...props}>
         {children}
     </ButtonBody>
