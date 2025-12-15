@@ -3,8 +3,6 @@ import styled from 'styled-components';
 
 import { AppRoutes } from 'constants/routes';
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import Logo from 'assets/delegate/delegate-promo-small.svg?url';
 
 import { ExternalLink } from 'basics/links';

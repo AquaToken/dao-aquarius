@@ -15,8 +15,6 @@ import { ModalService } from 'services/globalServices';
 
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import Bg from 'assets/token-page/token-page-bg.svg?url';
 
 import { Button } from 'basics/buttons';

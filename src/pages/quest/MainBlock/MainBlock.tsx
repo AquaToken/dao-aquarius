@@ -3,8 +3,6 @@ import styled from 'styled-components';
 
 import Present from 'assets/icons/objects/icon-present.svg';
 import Pending from 'assets/icons/status/pending-alt-32.svg';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import Bg from 'assets/quest-page/quests-page-bg.svg?url';
 
 import { commonMaxWidth, flexAllCenter, respondDown } from 'styles/mixins';

@@ -15,8 +15,6 @@ import { roundToPrecision } from 'helpers/format-number';
 import AccountService from 'services/account.service';
 import { ModalService, ToastService } from 'services/globalServices';
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import DelegateLogo from 'assets/delegate/delegate-promo.svg?url';
 
 import DelegatePromoModal from 'modals/alerts/DelegatePromoModal';
