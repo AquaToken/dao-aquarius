@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { getDelegatees } from 'api/delegate';
 
-import { DelegateRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { useUpdateIndex } from 'hooks/useUpdateIndex';
 
@@ -67,8 +67,18 @@ const ButtonStyled = styled(Button)`
     border-radius: 4.6rem;
 `;
 
+const BlankExternalLinkStyled = styled(BlankExternalLink)`
+    ${respondDown(Breakpoints.sm)`
+        width: 100%
+    `}
+`;
+
 const ButtonReadMoreStyled = styled(ButtonStyled)`
     background-color: ${COLORS.purple800};
+
+    ${respondDown(Breakpoints.sm)`
+        width: 100%
+    `}
 `;
 
 const ArrowAlt16Styled = styled(ArrowAlt16)`
@@ -128,6 +138,11 @@ const MainLinksContainer = styled.div`
     justify-content: center;
     gap: 0.8rem;
     margin-top: 2.4rem;
+
+    ${respondDown(Breakpoints.sm)`
+        flex-direction: column;
+        gap: 1.6rem;
+    `}
 `;
 
 const Wrapper = styled.div`
@@ -247,17 +262,17 @@ const DelegateMain = () => {
                     Earn rewards without managing votes yourself or become a delegate and help shape
                     protocol incentives
                     <MainLinksContainer>
-                        <BlankRouterLink to={DelegateRoutes.become}>
+                        <BlankRouterLink to={AppRoutes.section.delegate.link.become}>
                             <ButtonStyled withGradient isRounded>
                                 Become a Delegate <ArrowAlt16Styled />
                             </ButtonStyled>
                         </BlankRouterLink>
 
-                        <BlankExternalLink href="https://docs.aqua.network/ice-delegation/overview">
+                        <BlankExternalLinkStyled href="https://docs.aqua.network/ice-delegation/overview">
                             <ButtonReadMoreStyled isRounded>
                                 Read more <ArrowAlt16Styled />
                             </ButtonReadMoreStyled>
-                        </BlankExternalLink>
+                        </BlankExternalLinkStyled>
                     </MainLinksContainer>
                 </MainDescription>
                 <BackgroundLeft />

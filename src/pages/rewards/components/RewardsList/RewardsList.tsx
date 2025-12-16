@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { FilterOptions, getPools, PoolsSortFields } from 'api/amm';
 import { getRewards, RewardsSort } from 'api/rewards';
 
-import { AmmRoutes, MarketRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { getTimeAgoValue } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
@@ -133,7 +133,7 @@ const RewardsList = () => {
     const { isLogged } = useAuthStore();
 
     const location = useLocation();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     useEffect(() => {
         getPools(FilterOptions.all, 1, 1000, PoolsSortFields.liquidityUp).then(res =>
@@ -186,7 +186,7 @@ const RewardsList = () => {
         const params = new URLSearchParams(location.search);
         if (!params.has(UrlParams.sort)) {
             params.append(UrlParams.sort, RewardsSort.totalUp);
-            history.replace({ search: params.toString() });
+            navigate(`${location.pathname}?${params.toString()}`, { replace: true });
             return;
         }
 
@@ -196,25 +196,25 @@ const RewardsList = () => {
     const changeSort = sortValue => {
         const params = new URLSearchParams(location.search);
         params.set(UrlParams.sort, sortValue);
-        history.push({ pathname: location.pathname, search: params.toString() });
+        navigate({ pathname: location.pathname, search: params.toString() });
     };
 
     const goToMarketPage = ({ asset1_code, asset1_issuer, asset2_code, asset2_issuer }) => {
-        history.push(
-            `${MarketRoutes.main}/${marketKeyToString(
-                asset1_code,
-                asset1_issuer,
-            )}/${marketKeyToString(asset2_code, asset2_issuer)}`,
+        navigate(
+            AppRoutes.section.market.to.market({
+                base: marketKeyToString(asset1_code, asset1_issuer),
+                counter: marketKeyToString(asset2_code, asset2_issuer),
+            }),
         );
     };
 
     const goToCreatePool = () => {
         if (isLogged) {
-            history.push(AmmRoutes.create);
+            navigate(AppRoutes.section.amm.link.create);
             return;
         }
         ModalService.openModal(ChooseLoginMethodModal, {
-            redirectURL: AmmRoutes.create,
+            redirectURL: AppRoutes.section.amm.link.create,
         });
     };
 

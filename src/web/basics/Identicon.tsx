@@ -1,3 +1,4 @@
+import { ReactElement } from 'react';
 import createStellarIdenticon from 'stellar-identicon-js';
 import styled from 'styled-components';
 
@@ -20,7 +21,7 @@ const IdenticonImage = styled.img`
     width: 50%;
 `;
 
-const Identicon = ({ pubKey, ...props }: { pubKey: string }): JSX.Element => {
+const Identicon = ({ pubKey, ...props }: { pubKey: string }): ReactElement => {
     const url = createStellarIdenticon(pubKey).toDataURL();
 
     return (

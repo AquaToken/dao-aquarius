@@ -2,7 +2,10 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
+
+import { getAquaAssetData, getAssetString } from 'helpers/assets';
+import { createLumen } from 'helpers/token';
 
 import { useScrollAnimation } from 'hooks/useScrollAnimation';
 
@@ -12,7 +15,7 @@ import { ModalService } from 'services/globalServices';
 
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 
-import Bg from 'assets/token-page/token-page-bg.svg';
+import Bg from 'assets/token-page/token-page-bg.svg?url';
 
 import { Button } from 'basics/buttons';
 
@@ -57,7 +60,7 @@ const Content = styled.div`
     `}
 `;
 
-const Background = styled(Bg)`
+const Background = styled.img`
     position: absolute;
     height: 90rem;
     right: -20rem;
@@ -85,7 +88,9 @@ const Background = styled(Bg)`
 const fadeUp = css`
     opacity: 0;
     transform: translateY(30px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
+    transition:
+        opacity 0.6s ease,
+        transform 0.6s ease;
     &.visible {
         opacity: 1;
         transform: translateY(0);
@@ -200,7 +205,7 @@ const MainBlock = () => {
         <Container>
             <SocialLinks />
             <Content ref={ref as React.RefObject<HTMLDivElement>}>
-                <Background />
+                <Background src={Bg} />
                 <Title className={visible ? 'visible' : ''}>
                     AQUA
                     <AnimatedBorderedText text="Token" />
@@ -212,12 +217,17 @@ const MainBlock = () => {
                     Earn AQUA rewards by providing liquidity and voting in the Aquarius ecosystem.
                 </SecondaryDescription>
                 <ButtonAndPriceBlock>
-                    <Link to={MainRoutes.swap}>
+                    <Link
+                        to={AppRoutes.section.swap.to.index({
+                            source: getAssetString(createLumen()),
+                            destination: getAquaAssetData().aquaAssetString,
+                        })}
+                    >
                         <ButtonStyled isRounded withGradient isBig>
                             swap aqua
                         </ButtonStyled>
                     </Link>
-                    <Link to={MainRoutes.buyAqua} onClick={buyAqua}>
+                    <Link to={AppRoutes.page.buyAqua} onClick={buyAqua}>
                         <ButtonStyled isRounded withGradient isBig secondary>
                             Buy with a card
                         </ButtonStyled>

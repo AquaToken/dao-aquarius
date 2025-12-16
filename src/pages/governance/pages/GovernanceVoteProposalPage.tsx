@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
-import { Redirect, useParams } from 'react-router-dom';
+import { ReactElement, useEffect, useState } from 'react';
+import { Navigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { GovernanceRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import PageLoader from 'basics/loaders/PageLoader';
 
@@ -32,7 +32,7 @@ export enum SimpleProposalResultsLabels {
     votesAgainst = 'Against',
 }
 
-const GovernanceVoteProposalPage = (): JSX.Element => {
+const GovernanceVoteProposalPage = (): ReactElement => {
     const { id, version } = useParams<{ id?: string; version?: string }>();
 
     const [proposal, setProposal] = useState<null | Proposal>(null);
@@ -70,7 +70,12 @@ const GovernanceVoteProposalPage = (): JSX.Element => {
         (Boolean(version) &&
             !proposal.history_proposal.find(history => history.version === Number(version)))
     ) {
-        return <Redirect to={`${GovernanceRoutes.proposal}/${proposal.id}`} />;
+        return (
+            <Navigate
+                to={AppRoutes.section.governance.to.proposal({ id: String(proposal.id) })}
+                replace
+            />
+        );
     }
 
     return (

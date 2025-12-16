@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { getPoolMembers } from 'api/amm';
 
-import { getIsTestnetEnv } from 'helpers/env';
+import getExplorerLink, { ExplorerSection } from 'helpers/explorer-links';
 import { formatBalance } from 'helpers/format-number';
 
 import { useUpdateIndex } from 'hooks/useUpdateIndex';
@@ -101,6 +101,7 @@ const PoolMembers = ({ poolId, totalShare }: { poolId: string; totalShare: strin
             </div>
         );
     }
+
     return (
         <div>
             <Title>Pool members</Title>
@@ -109,9 +110,12 @@ const PoolMembers = ({ poolId, totalShare }: { poolId: string; totalShare: strin
                 .map(member => (
                     <Row key={member.account_address}>
                         <LinkToExpert
-                            href={`https://stellar.expert/explorer/${
-                                getIsTestnetEnv() ? 'testnet' : 'public'
-                            }/account/${member.account_address}`}
+                            href={getExplorerLink(
+                                member.account_address.startsWith('G')
+                                    ? ExplorerSection.account
+                                    : ExplorerSection.contract,
+                                member.account_address,
+                            )}
                             target="_blank"
                         >
                             <PublicKeyWithIcon pubKey={member.account_address} />

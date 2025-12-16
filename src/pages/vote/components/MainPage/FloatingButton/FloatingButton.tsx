@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { ReactElement } from 'react';
 import styled from 'styled-components';
 
 import ArrowRight from 'assets/icons/arrows/arrow-right-16.svg';
@@ -86,7 +87,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     children: React.ReactNode;
 }
 
-const FloatingButton = ({ children, ...props }: ButtonProps): JSX.Element => (
+const FloatingButton = ({ children, ...props }: ButtonProps): ReactElement => (
     <FloatingButtonBody {...props}>
         <VotesCounter>{children}</VotesCounter>
         <InfoBlock>

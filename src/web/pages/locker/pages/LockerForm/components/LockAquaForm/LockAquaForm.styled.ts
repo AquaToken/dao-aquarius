@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 
-import DelegateLogo from 'assets/delegate/delegate-promo.svg';
 import Info from 'assets/icons/status/icon-info-16.svg';
 import Ice from 'assets/tokens/ice-logo.svg';
 
@@ -99,7 +98,7 @@ export const TooltipRow = styled.div`
 
 /* ------------------------------ Modal Background ------------------------------ */
 
-export const ModalBG = styled(DelegateLogo)`
+export const ModalBG = styled.img`
     object-position: center center;
     height: 28.2rem;
     width: 100%;

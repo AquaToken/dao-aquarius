@@ -1,19 +1,19 @@
 import { lazy } from 'react';
-import { Route, Switch } from 'react-router-dom';
+import * as React from 'react';
+import { Route, Routes } from 'react-router-dom';
 
-import { MarketRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import NotFoundPage from 'components/NotFoundPage';
 
 const MarketPage = lazy(() => import('./pages/MarketPage'));
 
 const Market = () => (
-    <Switch>
-        <Route exact path={`${MarketRoutes.main}/:base/:counter`}>
-            <MarketPage />
-        </Route>
-        <Route component={NotFoundPage} />
-    </Switch>
+    <Routes>
+        <Route path={AppRoutes.section.market.child.market} element={<MarketPage />} />
+
+        <Route path="*" element={<NotFoundPage />} />
+    </Routes>
 );
 
 export default Market;

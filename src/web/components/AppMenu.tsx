@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { ICE_CODE, ICE_ISSUER } from 'constants/assets';
-import { LockerRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { getIsTestnetEnv } from 'helpers/env';
 import { formatBalance } from 'helpers/format-number';
@@ -291,7 +291,7 @@ const AppMenu = ({
                                 {iceBalanceView}
                             </AccountBalanceValue>
                         </AccountBalance>
-                        <Link to={LockerRoutes.main}>
+                        <Link to={AppRoutes.section.locker.link.index}>
                             <CircleButton>
                                 <IconPlus />
                             </CircleButton>

@@ -31,3 +31,8 @@ declare module '*.svg' {
     const ReactComponent: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
     export default ReactComponent;
 }
+
+declare module '*.svg?url' {
+    const src: string;
+    export default src;
+}

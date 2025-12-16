@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Link, Redirect, useLocation } from 'react-router-dom';
+import { Link, Navigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
@@ -64,7 +64,7 @@ const NotFoundPage = (): React.ReactNode => {
     const location = useLocation();
 
     if (isLogged && location.pathname.startsWith('/account')) {
-        return <Redirect to={MainRoutes.account} />;
+        return <Navigate to={AppRoutes.page.account} replace />;
     }
     return (
         <MainBlock>

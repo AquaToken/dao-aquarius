@@ -1,4 +1,4 @@
-import { BribesRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
 
@@ -26,7 +26,7 @@ const AddBribePage = () => {
         <PageContainer>
             <FormPageHeaderWrap>
                 <FormPageContentWrap>
-                    <FormBackButton label="Bribes" to={BribesRoutes.bribes}>
+                    <FormBackButton label="Bribes" to={AppRoutes.section.bribes.link.index}>
                         <ArrowLeft />
                     </FormBackButton>
                     <FormPageHeaderTitle>Create Bribe</FormPageHeaderTitle>

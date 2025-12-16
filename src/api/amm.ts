@@ -361,7 +361,9 @@ export const getPoolsToMigrate = async (base: Asset, counter: Asset): Promise<Po
 export const getPoolsForIncentives = async (): Promise<PoolProcessed[] | null> => {
     const baseUrl = getAmmAquaUrl();
 
-    const { data } = await axios.get<ListResponse<Pool>>(`${baseUrl}/pools/?gauge_enabled=true`);
+    const { data } = await axios.get<ListResponse<Pool>>(
+        `${baseUrl}/pools/?gauge_enabled=true&size=500`,
+    );
 
     return processPools(data.items);
 };

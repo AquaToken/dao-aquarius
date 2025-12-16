@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { DOWN_ICE_CODE, GOV_ICE_CODE, ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'constants/assets';
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';
 import { createAsset } from 'helpers/token';
@@ -423,13 +423,13 @@ const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
                         <Header>
                             <BalanceTitle>Your Current ICE Balance</BalanceTitle>
                             <HeaderButtons>
-                                <Link to={MainRoutes.locker}>
+                                <Link to={AppRoutes.section.locker.link.index}>
                                     <Button isSmall>
                                         <PlusIcon /> get ice
                                     </Button>
                                 </Link>
 
-                                <Link to={MainRoutes.delegate}>
+                                <Link to={AppRoutes.section.delegate.link.index}>
                                     <Button isSmall secondary>
                                         <Withdraw /> delegate
                                     </Button>

@@ -23,7 +23,6 @@ export const API_AIRDROP_2 = 'https://airdrop2-checker-api.aqua.network/api/snap
 
 export const API_URLS = {
     [ENV_PRODUCTION]: {
-        moonpay: 'https://api.moonpay.com/v3',
         onRampProxy: 'https://soroban-on-ramp.coindisco.com',
         horizon: 'https://horizon.stellar.org',
         // soroban: 'https://mainnet.sorobanrpc.com/',
@@ -31,7 +30,6 @@ export const API_URLS = {
         ammAqua: 'https://amm-api.aqua.network',
     },
     [ENV_TESTNET]: {
-        moonpay: 'https://api.moonpay.com/v3',
         onRampProxy: 'https://soroban-on-ramp-testnet.aqua.network',
         horizon: 'https://horizon-testnet.stellar.org',
         soroban: 'https://soroban-testnet.stellar.org:443/',

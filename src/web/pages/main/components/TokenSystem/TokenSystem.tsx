@@ -1,10 +1,11 @@
 import * as React from 'react';
 
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { useScrollAnimation } from 'hooks/useScrollAnimation';
 
 import AquaLogo from 'assets/aqua/aqua-logo.svg';
+import TokenSystemIcon from 'assets/main-page/token-system.svg?url';
 import IceLogo from 'assets/tokens/ice-logo.svg';
 
 import {
@@ -32,7 +33,7 @@ const TokenSystem: React.FC = () => {
         <Wrapper ref={ref as React.RefObject<HTMLDivElement>} $visible={visible} id="token-system">
             <BlocksWrapper>
                 <IconBlock $visible={visible}>
-                    <StyledTokenSystemIcon />
+                    <StyledTokenSystemIcon src={TokenSystemIcon} />
                 </IconBlock>
 
                 <TokensBlock $visible={visible}>
@@ -42,7 +43,7 @@ const TokenSystem: React.FC = () => {
                         voting rewards, boost liquidity rewards, and participate in governance.
                     </Description>
 
-                    <LinkButton to={MainRoutes.token}>
+                    <LinkButton to={AppRoutes.page.token}>
                         <LinkContent>
                             <LogoWrapper>
                                 <AquaLogo />
@@ -58,7 +59,7 @@ const TokenSystem: React.FC = () => {
                         </LinkContent>
                     </LinkButton>
 
-                    <LinkButton to={MainRoutes.locker}>
+                    <LinkButton to={AppRoutes.section.locker.link.index}>
                         <LinkContent>
                             <LogoWrapper>
                                 <IceLogo />

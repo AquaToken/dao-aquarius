@@ -6,7 +6,7 @@ import styled, { css } from 'styled-components';
 import { getDelegateeVotes } from 'api/delegate';
 
 import { GD_ICE_CODE } from 'constants/assets';
-import { GovernanceRoutes, MarketRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { getAssetFromString, getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
@@ -368,7 +368,10 @@ const DelegateeStats = forwardRef(
                                 marketVotes.map(vote => (
                                     <StatsRow key={vote.id}>
                                         <LinkInner
-                                            to={`${MarketRoutes.main}/${vote.asset1}/${vote.asset2}`}
+                                            to={AppRoutes.section.market.to.market({
+                                                base: vote.asset1,
+                                                counter: vote.asset2,
+                                            })}
                                         >
                                             <AssetLogoStyled
                                                 isCircle
@@ -458,7 +461,9 @@ const DelegateeStats = forwardRef(
                                     {!!vote.sum_for && (
                                         <StatsRow>
                                             <LinkInner
-                                                to={`${GovernanceRoutes.proposal}/${vote.id}`}
+                                                to={AppRoutes.section.governance.to.proposal({
+                                                    id: vote.id,
+                                                })}
                                             >
                                                 <span>#{vote.id}</span>{' '}
                                             </LinkInner>
@@ -476,7 +481,9 @@ const DelegateeStats = forwardRef(
                                     {!!vote.sum_against && (
                                         <StatsRow>
                                             <LinkInner
-                                                to={`${GovernanceRoutes.proposal}/${vote.id}`}
+                                                to={AppRoutes.section.governance.to.proposal({
+                                                    id: vote.id,
+                                                })}
                                             >
                                                 <span>#{vote.id}</span>{' '}
                                             </LinkInner>

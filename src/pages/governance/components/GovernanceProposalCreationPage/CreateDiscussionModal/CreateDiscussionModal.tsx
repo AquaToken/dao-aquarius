@@ -2,8 +2,10 @@ import { MemoHash } from '@stellar/stellar-sdk';
 import { sha256 } from 'js-sha256';
 import * as React from 'react';
 import { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+
+import { CREATE_DISCUSSION_COST } from 'constants/dao';
 
 import ErrorHandler from 'helpers/error-handler';
 import { formatBalance } from 'helpers/format-number';
@@ -27,7 +29,6 @@ import { COLORS } from 'styles/style-constants';
 
 import { checkProposalStatus, createProposal, editProposal } from '../../../api/api';
 import { Proposal } from '../../../api/types';
-import { CREATE_DISCUSSION_COST } from '../../../pages/GovernanceMainPage';
 
 const ProposalCost = styled.div`
     ${flexRowSpaceBetween};
@@ -55,12 +56,12 @@ const Amount = styled.div`
 const CreateDiscussionModal = ({
     params,
     close,
-}: ModalProps<Proposal & { isEdit?: boolean }>): JSX.Element => {
+}: ModalProps<Proposal & { isEdit?: boolean }>): React.ReactNode => {
     const [loading, setLoading] = useState(false);
     const { account } = useAuthStore();
     const cost = formatBalance(CREATE_DISCUSSION_COST);
 
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const isMounted = useIsMounted();
 
@@ -145,7 +146,7 @@ const CreateDiscussionModal = ({
 
             ToastService.showSuccessToast('The proposal has been created');
 
-            history.push('/');
+            navigate('/');
         } catch (e) {
             const errorText = ErrorHandler(e);
             ToastService.showErrorToast(errorText);

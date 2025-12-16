@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { getTotalStats, getVolume24h } from 'api/amm';
 
-import { AmmRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';
 
@@ -146,7 +146,7 @@ const Analytics = () => {
     const [myTotal, setMyTotal] = useState(null);
     const [chartWidth, setChartWidth] = useState(0);
 
-    const history = useHistory();
+    const navigate = useNavigate();
     const location = useLocation();
 
     const mainContent = useRef(null);
@@ -172,7 +172,8 @@ const Analytics = () => {
         } else {
             params.append(AnalyticsUrlParams.tab, AnalyticsTabs.top);
             setActiveTab(AnalyticsTabs.top);
-            history.replace({ search: params.toString() });
+
+            navigate(`${location.pathname}?${params.toString()}`, { replace: true });
         }
     }, [location]);
 
@@ -184,13 +185,13 @@ const Analytics = () => {
                 callback: () => {
                     const params = new URLSearchParams('');
                     params.set(AnalyticsUrlParams.tab, AnalyticsTabs.my);
-                    history.replace({ search: params.toString() });
+                    navigate(`${location.pathname}?${params.toString()}`, { replace: true });
                 },
             });
         }
         const params = new URLSearchParams('');
         params.set(AnalyticsUrlParams.tab, tab);
-        history.push({ search: params.toString() });
+        navigate({ search: params.toString() });
     };
 
     useEffect(() => {
@@ -242,11 +243,11 @@ const Analytics = () => {
     const goToCreatePool = () => {
         if (!isLogged) {
             ModalService.openModal(ChooseLoginMethodModal, {
-                redirectURL: AmmRoutes.create,
+                redirectURL: AppRoutes.section.amm.link.create,
             });
             return;
         }
-        history.push(`${AmmRoutes.create}`);
+        navigate(AppRoutes.section.amm.link.create);
     };
 
     return (

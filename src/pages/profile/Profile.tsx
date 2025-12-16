@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { getAmmAquaBalance } from 'api/amm';
@@ -113,7 +113,7 @@ const Profile = () => {
     const { account } = useAuthStore();
 
     const location = useLocation();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const params = new URLSearchParams(location.search);
@@ -124,14 +124,14 @@ const Profile = () => {
         } else {
             params.append(ProfileUrlParams.tab, ProfileTabs.balances);
             setSelectedTab(ProfileTabs.balances);
-            history.replace({ search: params.toString() });
+            navigate(`${location.pathname}?${params.toString()}`, { replace: true });
         }
     }, [location]);
 
     const setTab = (tab: ProfileTabs) => {
         const params = new URLSearchParams('');
         params.set(ProfileUrlParams.tab, tab);
-        history.push({ search: params.toString() });
+        navigate({ search: params.toString() });
     };
 
     const updateIndex = useUpdateIndex(10000);

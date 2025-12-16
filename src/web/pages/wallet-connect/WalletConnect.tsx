@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
-import { Redirect, useLocation } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
@@ -27,7 +27,7 @@ const WalletConnect = () => {
         const params = new URLSearchParams(location.search);
         const redirect = params.get('redirect');
 
-        return <Redirect to={redirect ? `/${redirect}` : MainRoutes.main} />;
+        return <Navigate to={redirect ? `/${redirect}` : AppRoutes.page.main} replace />;
     }
 
     return <PageLoader />;

@@ -1,6 +1,9 @@
 import * as React from 'react';
 
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
+
+import { getAquaAssetData, getAssetString } from 'helpers/assets';
+import { createLumen } from 'helpers/token';
 
 import { useScrollAnimation } from 'hooks/useScrollAnimation';
 
@@ -44,7 +47,12 @@ const AquaSoroban: React.FC = () => {
                             <b>Swap instantly</b> with deep on-chain liquidity from Aquarius AMMs.
                         </BlockDesc>
                     </BlockWithIcon>
-                    <BlankRouterLink to={MainRoutes.swap}>
+                    <BlankRouterLink
+                        to={AppRoutes.section.swap.to.index({
+                            source: getAssetString(createLumen()),
+                            destination: getAquaAssetData().aquaAssetString,
+                        })}
+                    >
                         <SorobanButton withGradient secondary isBig isRounded>
                             Swap now <ArrowAlt16Styled />
                         </SorobanButton>
@@ -59,7 +67,7 @@ const AquaSoroban: React.FC = () => {
                             markets.
                         </BlockDesc>
                     </BlockWithIcon>
-                    <BlankRouterLink to={MainRoutes.amm}>
+                    <BlankRouterLink to={AppRoutes.section.amm.link.index}>
                         <SorobanButton withGradient secondary isBig isRounded>
                             View Pools <ArrowAlt16Styled />
                         </SorobanButton>

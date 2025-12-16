@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-import { IncentivesRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import {
     Background,
@@ -24,7 +24,7 @@ import IncentivesList from 'pages/incentives/components/IncentivesList/Incentive
 import { lpIncentivesQuestions } from 'pages/incentives/components/Questions/Questions';
 
 const IncentivesMainPage = () => {
-    const history = useHistory();
+    const navigate = useNavigate();
     return (
         <PageContainer>
             <Background>
@@ -38,7 +38,9 @@ const IncentivesMainPage = () => {
                         </Description>
                         <MainContentFooter>
                             <AddBribeButton
-                                onClick={() => history.push(IncentivesRoutes.addIncentive)}
+                                onClick={() =>
+                                    navigate(AppRoutes.section.incentive.link.addIncentive)
+                                }
                             >
                                 <span>add incentive</span>
                                 <PlusIcon />

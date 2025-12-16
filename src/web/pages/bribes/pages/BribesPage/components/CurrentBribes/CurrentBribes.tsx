@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { BRIBES_PAGE_SIZE } from 'constants/bribes';
-import { MarketRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { getAssetString } from 'helpers/assets';
 import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/date';
@@ -36,7 +36,7 @@ const CurrentBribes = () => {
     const [page, setPage] = useState(1);
     const [pending, setPending] = useState(true);
 
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const { processNewAssets } = useAssetsStore();
 
@@ -57,7 +57,12 @@ const CurrentBribes = () => {
     };
 
     const goToMarketPage = (asset1, asset2) => {
-        history.push(`${MarketRoutes.main}/${getAssetString(asset1)}/${getAssetString(asset2)}`);
+        navigate(
+            AppRoutes.section.market.to.market({
+                base: getAssetString(asset1),
+                counter: getAssetString(asset2),
+            }),
+        );
     };
 
     useEffect(() => {

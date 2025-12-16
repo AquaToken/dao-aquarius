@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { ReactElement, useMemo } from 'react';
 import styled from 'styled-components';
 
 import { formatBalance } from 'helpers/format-number';
@@ -64,7 +64,7 @@ interface Props {
     withWrapper?: boolean;
 }
 
-const Changes24 = ({ expertData, changes24h, withWrapper }: Props): JSX.Element => {
+const Changes24 = ({ expertData, changes24h, withWrapper }: Props): ReactElement => {
     const { change24hString, lastPrice, prevPrice } = useMemo(() => {
         if (!expertData) {
             return { change24hString: 0, lastPrice: 0, prevPrice: 0 };

@@ -2,7 +2,10 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
+
+import { getAquaAssetData, getAssetString } from 'helpers/assets';
+import { createLumen } from 'helpers/token';
 
 import { QuestTaskStatus, TaskName, TaskStatus as TaskStatusType } from 'types/quest';
 
@@ -103,7 +106,15 @@ const QuestTasks = ({ statuses }: Props) => {
                     <TaskDescription>
                         <ol>
                             <li>
-                                Go to <Link to={MainRoutes.swap}>https://aqua.network/swap</Link>
+                                Go to{' '}
+                                <Link
+                                    to={AppRoutes.section.swap.to.index({
+                                        source: getAssetString(createLumen()),
+                                        destination: getAquaAssetData().aquaAssetString,
+                                    })}
+                                >
+                                    https://aqua.network/swap
+                                </Link>
                             </li>
                             <li>
                                 Specify the receive amount as 10,000 AQUA (you can use any source
@@ -140,7 +151,9 @@ const QuestTasks = ({ statuses }: Props) => {
                         <ol>
                             <li>
                                 Go to{' '}
-                                <Link to={MainRoutes.locker}>https://aqua.network/locker</Link>
+                                <Link to={AppRoutes.section.locker.link.index}>
+                                    https://aqua.network/locker
+                                </Link>
                             </li>
                             <li>Enter amount of AQUA - 10,000</li>
                             <li>
@@ -175,7 +188,10 @@ const QuestTasks = ({ statuses }: Props) => {
                     <TaskDescription>
                         <ol>
                             <li>
-                                Go to <Link to={MainRoutes.amm}>https://aqua.network/pools</Link>
+                                Go to{' '}
+                                <Link to={AppRoutes.section.amm.link.index}>
+                                    https://aqua.network/pools
+                                </Link>
                             </li>
                             <li>Choose one of the pools to deposit to: AQUA/USDC or XLM/USDC.</li>
                             <li>
@@ -198,7 +214,7 @@ const QuestTasks = ({ statuses }: Props) => {
                         <h4>
                             Another important note: rewards are claimed manually. To do that, please
                             proceed to{' '}
-                            <Link to={MainRoutes.account}>https://aqua.network/account</Link>
+                            <Link to={AppRoutes.page.account}>https://aqua.network/account</Link>
                         </h4>
                         <ImageWrapper>
                             <img src={Task3} alt="" />
@@ -223,7 +239,8 @@ const QuestTasks = ({ statuses }: Props) => {
                     <TaskDescription>
                         <ol>
                             <li>
-                                Go to <Link to={MainRoutes.vote}>https://aqua.network/vote</Link>
+                                Go to{' '}
+                                <Link to={AppRoutes.page.vote}>https://aqua.network/vote</Link>
                             </li>
                             <li>Choose any market you like</li>
                             <li>Cast your vote</li>

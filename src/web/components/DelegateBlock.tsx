@@ -1,11 +1,11 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { useScrollAnimation } from 'hooks/useScrollAnimation';
 
-import Logo from 'assets/delegate/delegate-promo.svg';
+import Logo from 'assets/delegate/delegate-promo.svg?url';
 import DAO from 'assets/icons/objects/icon-dao-16x17.svg';
 import Heart from 'assets/icons/objects/icon-heart.svg';
 import Present from 'assets/icons/objects/icon-present.svg';
@@ -49,7 +49,7 @@ const Wrapper = styled.div`
     `}
 `;
 
-const LogoStyled = styled(Logo)`
+const LogoStyled = styled.img`
     position: absolute;
     width: 40.9rem;
 `;
@@ -146,7 +146,7 @@ const DelegateBlock = () => {
         <Container ref={ref as React.RefObject<HTMLDivElement>} $visible={visible}>
             <Wrapper>
                 <LogoWrapper $visible={visible}>
-                    <LogoStyled />
+                    <LogoStyled src={Logo} />
                 </LogoWrapper>
                 <ContentWrapper $visible={visible}>
                     <Tooltip
@@ -180,7 +180,9 @@ const DelegateBlock = () => {
                             Stay hands-off, or engage as deeply as you want
                         </ListItem>
                     </List>
-                    <ExternalLink to={MainRoutes.delegate}>Read more about Delegation</ExternalLink>
+                    <ExternalLink to={AppRoutes.section.delegate.link.index}>
+                        Read more about Delegation
+                    </ExternalLink>
                 </ContentWrapper>
             </Wrapper>
         </Container>
