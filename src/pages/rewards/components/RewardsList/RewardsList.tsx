@@ -11,6 +11,8 @@ import { getTimeAgoValue } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 import { createAsset } from 'helpers/token';
 
+import { useUrlParam } from 'hooks/useUrlParam';
+
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import useAuthStore from 'store/authStore/useAuthStore';
 
@@ -124,7 +126,7 @@ const marketKeyToString = (code, issuer) => {
 
 const RewardsList = () => {
     const [rewards, setRewards] = useState(null);
-    const [sort, setSort] = useState(null);
+
     const [loading, setLoading] = useState(false);
     const [pools, setPools] = useState(null);
 
@@ -132,8 +134,12 @@ const RewardsList = () => {
 
     const { isLogged } = useAuthStore();
 
-    const location = useLocation();
     const navigate = useNavigate();
+
+    const { value: sort, setValue: setSort } = useUrlParam<RewardsSort>(
+        UrlParams.sort,
+        RewardsSort.totalDown,
+    );
 
     useEffect(() => {
         getPools(FilterOptions.all, 1, 1000, PoolsSortFields.liquidityUp).then(res =>
@@ -181,23 +187,6 @@ const RewardsList = () => {
             processNewAssets(assets);
         });
     }, [sort]);
-
-    useEffect(() => {
-        const params = new URLSearchParams(location.search);
-        if (!params.has(UrlParams.sort)) {
-            params.append(UrlParams.sort, RewardsSort.totalUp);
-            navigate(`${location.pathname}?${params.toString()}`, { replace: true });
-            return;
-        }
-
-        setSort(params.get(UrlParams.sort));
-    }, [location]);
-
-    const changeSort = sortValue => {
-        const params = new URLSearchParams(location.search);
-        params.set(UrlParams.sort, sortValue);
-        navigate({ pathname: location.pathname, search: params.toString() });
-    };
 
     const goToMarketPage = ({ asset1_code, asset1_issuer, asset2_code, asset2_issuer }) => {
         navigate(
@@ -252,7 +241,7 @@ const RewardsList = () => {
                         children: 'Aquarius AMM daily reward',
                         sort: {
                             onClick: () =>
-                                changeSort(
+                                setSort(
                                     sort === RewardsSort.ammUp
                                         ? RewardsSort.ammDown
                                         : RewardsSort.ammUp,
@@ -266,7 +255,7 @@ const RewardsList = () => {
                         children: 'SDEX daily reward',
                         sort: {
                             onClick: () =>
-                                changeSort(
+                                setSort(
                                     sort === RewardsSort.sdexUp
                                         ? RewardsSort.sdexDown
                                         : RewardsSort.sdexUp,
@@ -280,7 +269,7 @@ const RewardsList = () => {
                         children: 'Total daily reward',
                         sort: {
                             onClick: () =>
-                                changeSort(
+                                setSort(
                                     sort === RewardsSort.totalUp
                                         ? RewardsSort.totalDown
                                         : RewardsSort.totalUp,

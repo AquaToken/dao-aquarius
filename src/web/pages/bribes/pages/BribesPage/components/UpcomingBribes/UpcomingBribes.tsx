@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { BribeSortFields, getUpcomingBribes } from 'api/bribes';
 
@@ -14,6 +14,7 @@ import { createAsset } from 'helpers/token';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
+import { ExternalLink } from 'basics/links';
 import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
 import Pagination from 'basics/Pagination';
@@ -22,6 +23,7 @@ import Table, { CellAlign } from 'basics/Table';
 import {
     CheckboxStyled,
     Container,
+    Empty,
     LoaderContainer,
     MobileAsset,
     SelectStyled,
@@ -115,115 +117,126 @@ const UpcomingBribes = () => {
 
             <SelectStyled options={SORT_OPTIONS} value={sort} onChange={changeSort} />
 
-            <Table
-                pending={bribes && loading}
-                head={[
-                    { children: 'Market', flexSize: 3 },
-                    {
-                        children: 'Bribe APY',
-                    },
-                    { children: 'Reward asset', flexSize: 2 },
-                    {
-                        children: 'Reward per day',
-                        sort: {
-                            onClick: () =>
-                                changeSort(
-                                    sort === BribeSortFields.aquaAmountUp
-                                        ? BribeSortFields.aquaAmountDown
-                                        : BribeSortFields.aquaAmountUp,
-                                ),
-                            isEnabled:
-                                sort === BribeSortFields.aquaAmountUp ||
-                                sort === BribeSortFields.aquaAmountDown,
-                            isReversed: sort === BribeSortFields.aquaAmountDown,
+            {bribes && bribes.lenght ? (
+                <Table
+                    pending={bribes && loading}
+                    head={[
+                        { children: 'Market', flexSize: 3 },
+                        {
+                            children: 'Bribe APY',
                         },
-                    },
-                    {
-                        children: 'Period',
-                        align: CellAlign.Center,
-                        sort: {
-                            onClick: () =>
-                                changeSort(
-                                    sort === BribeSortFields.startAtUp
-                                        ? BribeSortFields.startAtDown
-                                        : BribeSortFields.startAtUp,
-                                ),
-                            isEnabled:
-                                sort === BribeSortFields.startAtUp ||
-                                sort === BribeSortFields.startAtDown,
-                            isReversed: sort === BribeSortFields.startAtDown,
+                        { children: 'Reward asset', flexSize: 2 },
+                        {
+                            children: 'Reward per day',
+                            sort: {
+                                onClick: () =>
+                                    changeSort(
+                                        sort === BribeSortFields.aquaAmountUp
+                                            ? BribeSortFields.aquaAmountDown
+                                            : BribeSortFields.aquaAmountUp,
+                                    ),
+                                isEnabled:
+                                    sort === BribeSortFields.aquaAmountUp ||
+                                    sort === BribeSortFields.aquaAmountDown,
+                                isReversed: sort === BribeSortFields.aquaAmountDown,
+                            },
                         },
-                    },
-                ]}
-                body={bribes.map(item => {
-                    const startUTC = convertDateStrToTimestamp(item.start_at);
-                    const stopUTC = convertDateStrToTimestamp(item.stop_at);
-                    const base = createAsset(item.asset1_code, item.asset1_issuer);
-                    const counter = createAsset(item.asset2_code, item.asset2_issuer);
-                    const rewardAsset = createAsset(item.asset_code, item.asset_issuer);
+                        {
+                            children: 'Period',
+                            align: CellAlign.Center,
+                            sort: {
+                                onClick: () =>
+                                    changeSort(
+                                        sort === BribeSortFields.startAtUp
+                                            ? BribeSortFields.startAtDown
+                                            : BribeSortFields.startAtUp,
+                                    ),
+                                isEnabled:
+                                    sort === BribeSortFields.startAtUp ||
+                                    sort === BribeSortFields.startAtDown,
+                                isReversed: sort === BribeSortFields.startAtDown,
+                            },
+                        },
+                    ]}
+                    body={bribes.map(item => {
+                        const startUTC = convertDateStrToTimestamp(item.start_at);
+                        const stopUTC = convertDateStrToTimestamp(item.stop_at);
+                        const base = createAsset(item.asset1_code, item.asset1_issuer);
+                        const counter = createAsset(item.asset2_code, item.asset2_issuer);
+                        const rewardAsset = createAsset(item.asset_code, item.asset_issuer);
 
-                    const apy = item.upvote_value
-                        ? (item.aqua_total_reward_amount_equivalent /
-                              7 /
-                              Number(item.upvote_value) +
-                              1) **
-                              365 -
-                          1
-                        : 0;
-                    const MAX_APY_VALUE = 1e6; // 1B
-                    const apyMax = Math.min(getIceMaxApy({ apy }), MAX_APY_VALUE);
+                        const apy = item.upvote_value
+                            ? (item.aqua_total_reward_amount_equivalent /
+                                  7 /
+                                  Number(item.upvote_value) +
+                                  1) **
+                                  365 -
+                              1
+                            : 0;
+                        const MAX_APY_VALUE = 1e6; // 1B
+                        const apyMax = Math.min(getIceMaxApy({ apy }), MAX_APY_VALUE);
 
-                    return {
-                        onRowClick: () => goToMarketPage(item),
-                        key: item.claimable_balance_id,
-                        rowItems: [
-                            {
-                                children: (
-                                    <Market
-                                        assets={[base, counter]}
-                                        mobileVerticalDirections
-                                        withoutLink
-                                        isAmmBribes={item.is_amm_protocol}
-                                        isPrivateBribes={!item.is_amm_protocol}
-                                    />
-                                ),
-                                flexSize: 3,
-                            },
-                            {
-                                children: apyMax
-                                    ? `up to ${apyMax === MAX_APY_VALUE ? '>' : ''}${formatBalance(
-                                          apyMax,
-                                          true,
-                                      )}%`
-                                    : '-',
-                                label: 'Bribe APY:',
-                            },
-                            {
-                                children: (
-                                    <>
-                                        <WebAsset asset={rewardAsset} />
-                                        <MobileAsset asset={rewardAsset} inRow withMobileView />
-                                    </>
-                                ),
-                                label: 'Reward asset:',
-                                flexSize: 2,
-                            },
-                            {
-                                children: `${formatBalance(+item.amount / 7, true)} ${
-                                    rewardAsset.code
-                                }`,
-                                label: 'Reward per day:',
-                            },
-                            {
-                                children: `${getDateString(startUTC, {
-                                    withoutYear: true,
-                                })} - ${getDateString(stopUTC - 1)}`,
-                                label: 'Period:',
-                            },
-                        ],
-                    };
-                })}
-            />
+                        return {
+                            onRowClick: () => goToMarketPage(item),
+                            key: item.claimable_balance_id,
+                            rowItems: [
+                                {
+                                    children: (
+                                        <Market
+                                            assets={[base, counter]}
+                                            mobileVerticalDirections
+                                            withoutLink
+                                            isAmmBribes={item.is_amm_protocol}
+                                            isPrivateBribes={!item.is_amm_protocol}
+                                        />
+                                    ),
+                                    flexSize: 3,
+                                },
+                                {
+                                    children: apyMax
+                                        ? `up to ${apyMax === MAX_APY_VALUE ? '>' : ''}${formatBalance(
+                                              apyMax,
+                                              true,
+                                          )}%`
+                                        : '-',
+                                    label: 'Bribe APY:',
+                                },
+                                {
+                                    children: (
+                                        <>
+                                            <WebAsset asset={rewardAsset} />
+                                            <MobileAsset asset={rewardAsset} inRow withMobileView />
+                                        </>
+                                    ),
+                                    label: 'Reward asset:',
+                                    flexSize: 2,
+                                },
+                                {
+                                    children: `${formatBalance(+item.amount / 7, true)} ${
+                                        rewardAsset.code
+                                    }`,
+                                    label: 'Reward per day:',
+                                },
+                                {
+                                    children: `${getDateString(startUTC, {
+                                        withoutYear: true,
+                                    })} - ${getDateString(stopUTC - 1)}`,
+                                    label: 'Period:',
+                                },
+                            ],
+                        };
+                    })}
+                />
+            ) : (
+                <Empty>
+                    <h3>There's nothing here.</h3>
+                    <span>It looks like there are no upcoming bribes.</span>
+
+                    <ExternalLink asDiv>
+                        <Link to={AppRoutes.section.bribes.link.addBribe}>Create Bribe</Link>
+                    </ExternalLink>
+                </Empty>
+            )}
 
             <Pagination
                 pageSize={BRIBES_PAGE_SIZE}

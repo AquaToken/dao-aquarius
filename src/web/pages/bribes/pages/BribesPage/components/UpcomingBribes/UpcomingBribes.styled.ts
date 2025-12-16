@@ -4,7 +4,7 @@ import Asset from 'basics/Asset';
 import Checkbox from 'basics/inputs/Checkbox';
 import Select from 'basics/inputs/Select';
 
-import { flexAllCenter, flexColumn, respondDown } from 'styles/mixins';
+import { EmptyList, flexAllCenter, flexColumn, respondDown } from 'styles/mixins';
 import { Breakpoints } from 'styles/style-constants';
 
 export const Container = styled.div`
@@ -41,4 +41,8 @@ export const SelectStyled = styled(Select)`
     ${respondDown(Breakpoints.md)`
         display: flex;
     `}
+`;
+
+export const Empty = styled.div`
+    ${EmptyList};
 `;
