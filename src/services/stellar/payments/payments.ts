@@ -1,7 +1,5 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
 
-import { getPoolInfo } from 'api/amm';
-
 import { AMM_REWARDS_KEY, BRIBE_REWARDS_KEY, SDEX_REWARDS_KEY } from 'constants/stellar-accounts';
 
 import chunkFunction from 'helpers/chunk-function';
@@ -20,7 +18,6 @@ export default class Payments {
     nextPayments = null;
     loadMorePaymentsPending = false;
     paymentsFullyLoaded = false;
-    private poolsRewardsNoteCache = new Map<string, unknown>();
 
     constructor(horizon: Horizon, event: EventService<StellarEvents, StellarPayload>) {
         this.horizon = horizon;
@@ -119,99 +116,31 @@ export default class Payments {
             });
     }
 
-    private encodePaymentParameterValue(value: string) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        return StellarSdk.xdr.ScVal.fromXDR(value, 'base64').value()?.toString?.();
-    }
-
-    private getClaimRewardsNote(payment) {
-        const poolId = payment.asset_balance_changes[0].from;
-
-        if (this.poolsRewardsNoteCache.has(poolId)) {
-            payment.memo = this.poolsRewardsNoteCache.get(poolId);
-            this.event.trigger({ type: StellarEvents.paymentsHistoryUpdate });
-            return;
-        }
-
-        return getPoolInfo(poolId)
-            .then(poolInfo => {
-                const note = `Rewards for pool: ${poolInfo.tokens
-                    .map(({ code }) => code)
-                    .join('/')}`;
-                this.poolsRewardsNoteCache.set(poolId, note);
-                payment.memo = note;
-                this.event.trigger({ type: StellarEvents.paymentsHistoryUpdate });
-            })
-            .catch(() => {
-                const note = 'Rewards for unknown pool';
-                this.poolsRewardsNoteCache.set(poolId, note);
-                payment.memo = note;
-                this.event.trigger({ type: StellarEvents.paymentsHistoryUpdate });
-            });
-    }
-
     private loadNotes(payments) {
         chunkFunction<
             | (StellarSdk.Horizon.ServerApi.PaymentOperationRecord & { memo: string })
             | (StellarSdk.Horizon.ServerApi.InvokeHostFunctionOperationRecord & { memo: string }),
             void
-        >(payments, payment => {
-            if (
-                payment.type === 'invoke_host_function' &&
-                this.isPaymentCalledMethod(payment.parameters, 'claim')
-            ) {
-                return this.getClaimRewardsNote(payment);
-            }
-
-            if (
-                payment.type === 'invoke_host_function' &&
-                this.isPaymentCalledMethod(payment.parameters, 'batch')
-            ) {
-                if (
-                    payment.parameters.some(({ value }) => {
-                        const parsed = StellarSdk.scValToNative(
-                            StellarSdk.xdr.ScVal.fromXDR(value, 'base64'),
-                        );
-
-                        if (!Array.isArray(parsed)) return false;
-
-                        return parsed.some(arr => arr.includes('withdraw'));
-                    })
-                ) {
-                    return this.getClaimRewardsNote(payment);
-                }
-                payment.memo = `For ${payment.asset_balance_changes.length} pools`;
-                this.event.trigger({ type: StellarEvents.paymentsHistoryUpdate });
-                return;
-            }
-            return payment.transaction().then(({ memo }) => {
-                payment.memo = memo;
-                this.event.trigger({ type: StellarEvents.paymentsHistoryUpdate });
-            });
-        });
-    }
-
-    private isPaymentCalledMethod(
-        parameters: { value: string; type: string }[],
-        methodName: string,
-    ): boolean {
-        return parameters.some(
-            ({ type, value }) =>
-                type === 'Sym' && this.encodePaymentParameterValue(value) === methodName,
+        >(payments, payment =>
+            payment
+                .transaction()
+                .then(({ memo, source_account }) => {
+                    if (!memo && source_account === BRIBE_REWARDS_KEY) {
+                        payment.memo = 'Payment Refund';
+                        return;
+                    }
+                    payment.memo = memo;
+                })
+                .finally(() => {
+                    this.event.trigger({ type: StellarEvents.paymentsHistoryUpdate });
+                }),
         );
     }
 
     private processPayments(payments) {
         const filtered = payments.filter(
-            ({ from, type, parameters }) =>
-                from === AMM_REWARDS_KEY ||
-                from === SDEX_REWARDS_KEY ||
-                from === BRIBE_REWARDS_KEY ||
-                (type === 'invoke_host_function' &&
-                    this.isPaymentCalledMethod(parameters, 'claim')) ||
-                (type === 'invoke_host_function' &&
-                    this.isPaymentCalledMethod(parameters, 'batch')),
+            ({ from }) =>
+                from === AMM_REWARDS_KEY || from === SDEX_REWARDS_KEY || from === BRIBE_REWARDS_KEY,
         );
 
         this.loadNotes(filtered);
@@ -226,38 +155,6 @@ export default class Payments {
                     break;
                 case payment.from === BRIBE_REWARDS_KEY:
                     payment.title = 'Bribe Reward';
-                    break;
-
-                case payment.type === 'invoke_host_function' &&
-                    this.isPaymentCalledMethod(payment.parameters, 'claim'):
-                    payment.title = 'Claim Reward';
-                    payment.amount = payment.asset_balance_changes[0].amount;
-                    break;
-                case payment.type === 'invoke_host_function' &&
-                    this.isPaymentCalledMethod(payment.parameters, 'batch'):
-                    if (
-                        payment.parameters.some(({ value }) => {
-                            const parsed = StellarSdk.scValToNative(
-                                StellarSdk.xdr.ScVal.fromXDR(value, 'base64'),
-                            );
-
-                            if (!Array.isArray(parsed)) return false;
-
-                            return parsed.some(arr => arr.includes('withdraw'));
-                        })
-                    ) {
-                        payment.title = 'Claim Reward';
-                        payment.amount =
-                            payment.asset_balance_changes[
-                                payment.asset_balance_changes.length - 1
-                            ].amount;
-                        break;
-                    }
-                    payment.title = 'Claim Rewards';
-                    payment.amount = payment.asset_balance_changes.reduce((acc, item) => {
-                        acc += Number(item.amount);
-                        return acc;
-                    }, 0);
                     break;
             }
             return payment;

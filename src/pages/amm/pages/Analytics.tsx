@@ -15,14 +15,17 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
 
+import { Option } from 'types/option';
+
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 
 import Plus from 'assets/icons/nav/icon-plus-16.svg';
 
 import Button from 'basics/buttons/Button';
+import SectionPicker from 'basics/SectionPicker';
 
 import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'styles/mixins';
-import { Breakpoints, COLORS, hexWithOpacity } from 'styles/style-constants';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import AllPools from '../components/AllPools/AllPools';
 import LiquidityChart from '../components/LiquidityChart/LiquidityChart';
@@ -87,33 +90,6 @@ const ListHeader = styled.div`
     `}
 `;
 
-const ListTitles = styled.h3`
-    font-size: 3.6rem;
-    font-weight: 400;
-    line-height: 4.2rem;
-
-    ${respondDown(Breakpoints.sm)`
-        font-size: 2.4rem;
-    `}
-`;
-
-const ListTab = styled.span<{ $isActive: boolean }>`
-    cursor: pointer;
-    color: ${({ $isActive }) =>
-        $isActive ? COLORS.textPrimary : `${hexWithOpacity(COLORS.textPrimary, 30)}`};
-    white-space: nowrap;
-
-    &:hover {
-        color: ${({ $isActive }) => ($isActive ? COLORS.textPrimary : COLORS.gray200)};
-    }
-
-    &:first-child {
-        border-right: 0.1rem solid ${COLORS.gray100};
-        padding-right: 2.4rem;
-        margin-right: 2.4rem;
-    }
-`;
-
 const ListTotal = styled.span`
     font-size: 1.6rem;
     line-height: 2.8rem;
@@ -157,6 +133,11 @@ export enum AnalyticsTabs {
 export enum AnalyticsUrlParams {
     tab = 'tab',
 }
+
+const OPTIONS: Option<AnalyticsTabs>[] = [
+    { label: 'All Pools', value: AnalyticsTabs.top },
+    { label: 'My Liquidity', value: AnalyticsTabs.my },
+];
 
 const Analytics = () => {
     const [activeTab, setActiveTab] = useState(null);
@@ -300,20 +281,8 @@ const Analytics = () => {
                 <Section ref={mainContent}>
                     <ListBlock>
                         <ListHeader>
-                            <ListTitles>
-                                <ListTab
-                                    $isActive={activeTab === AnalyticsTabs.top}
-                                    onClick={() => setTab(AnalyticsTabs.top)}
-                                >
-                                    All Pools
-                                </ListTab>
-                                <ListTab
-                                    $isActive={activeTab === AnalyticsTabs.my}
-                                    onClick={() => setTab(AnalyticsTabs.my)}
-                                >
-                                    My Liquidity
-                                </ListTab>
-                            </ListTitles>
+                            <SectionPicker options={OPTIONS} onChange={setTab} value={activeTab} />
+
                             {activeTab === AnalyticsTabs.top && (
                                 <Button onClick={() => goToCreatePool()}>
                                     create pool <PlusIcon />
