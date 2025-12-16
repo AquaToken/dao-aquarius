@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { getNextUserHistory, getUserHistory } from 'api/amm';
 
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { normalizeHistoryItem, processHistory } from 'helpers/amm-history';
 
@@ -152,7 +152,7 @@ const AmmHistory = () => {
                         <h3>There's nothing here.</h3>
                         <span>It looks like you haven't pools activity</span>
                         <ExternalLinkStyled asDiv>
-                            <Link to={MainRoutes.amm}>Learn about pools</Link>
+                            <Link to={AppRoutes.section.amm.link.index}>Learn about pools</Link>
                         </ExternalLinkStyled>
                     </Empty>
                 ) : (
