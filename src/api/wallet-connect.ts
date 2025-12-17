@@ -15,8 +15,7 @@ export const getWalletsList = () =>
     axios.get<{ listings: Listings }>(registryUrl).then(({ data }) =>
         Object.values(data.listings)
             .filter(
-                wallet =>
-                    wallet.versions.includes('2') && wallet.chains[0].includes('stellar:pubnet'),
+                wallet => wallet.versions.includes('2') && wallet.chains.includes('stellar:pubnet'),
             )
             .sort((a, b) => {
                 const pa = WALLETS_PRIORITY[a.name.toLowerCase()] || 99;
