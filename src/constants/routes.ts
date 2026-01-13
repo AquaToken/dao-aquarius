@@ -18,6 +18,7 @@ export const AppRoutes = {
         airdrop: '/airdrop/',
         airdrop2: '/airdrop2/',
         account: '/dashboard/',
+        oldAccount: '/account/',
         walletConnect: '/wallet-connect/',
         buyAqua: '/buy-aqua/',
         testnet: '/testnet/',
