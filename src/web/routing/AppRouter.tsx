@@ -115,6 +115,10 @@ const AppRouter = () => {
             ),
         },
         {
+            path: AppRoutes.page.oldAccount,
+            element: <Navigate to={AppRoutes.page.account} replace />,
+        },
+        {
             path: AppRoutes.page.walletConnect,
             element: (
                 <PageTitle title="WalletConnect - Aquarius">
