@@ -4,7 +4,7 @@ import Asset from 'basics/Asset';
 import Select from 'basics/inputs/Select';
 
 import { EmptyList, flexAllCenter, flexColumn, respondDown } from 'styles/mixins';
-import { Breakpoints } from 'styles/style-constants';
+import { Breakpoints, COLORS, FONT_SIZE } from 'styles/style-constants';
 
 export const Container = styled.div`
     ${flexColumn};
@@ -59,4 +59,13 @@ export const FilterSelect = styled(Select)`
     width: 20rem;
     height: 4.4rem;
     min-height: 4.4rem;
+`;
+
+export const Amounts = styled.div`
+    ${flexColumn};
+
+    span:nth-child(2) {
+        ${FONT_SIZE.xs};
+        color: ${COLORS.textGray};
+    }
 `;

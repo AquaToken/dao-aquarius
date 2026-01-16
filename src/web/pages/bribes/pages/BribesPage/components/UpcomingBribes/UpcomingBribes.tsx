@@ -15,6 +15,7 @@ import {
 } from 'constants/bribes';
 import { AppRoutes } from 'constants/routes';
 
+import { getAquaAssetData, getAssetString } from 'helpers/assets';
 import { convertDateStrToTimestamp, getDateString, getWeekStart } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 import { getIceMaxApy } from 'helpers/ice';
@@ -34,6 +35,7 @@ import Table, { CellAlign } from 'basics/Table';
 import { Breakpoints } from 'styles/style-constants';
 
 import {
+    Amounts,
     Container,
     Empty,
     Filters,
@@ -68,6 +70,8 @@ const UpcomingBribes = () => {
     const [loading, setLoading] = useState(false);
     const [count, setCount] = useState(null);
     const [page, setPage] = useState(1);
+
+    const { aquaAssetString } = getAquaAssetData();
 
     const { value: sort, setValue: setSort } = useUrlParam<BribeSortFields>(
         UpcomingBribesParams.sort,
@@ -287,9 +291,25 @@ const UpcomingBribes = () => {
                                     flexSize: 1.5,
                                 },
                                 {
-                                    children: `${formatBalance(+item.amount / 7, true)} ${
-                                        rewardAsset.code
-                                    }`,
+                                    children: (
+                                        <Amounts>
+                                            <span>
+                                                {formatBalance(+item.amount / 7, true)}{' '}
+                                                {rewardAsset.code}
+                                            </span>
+                                            {aquaAssetString !== getAssetString(rewardAsset) && (
+                                                <span>
+                                                    ≈{' '}
+                                                    {formatBalance(
+                                                        +item.aqua_total_reward_amount_equivalent /
+                                                            7,
+                                                        true,
+                                                    )}{' '}
+                                                    AQUA
+                                                </span>
+                                            )}
+                                        </Amounts>
+                                    ),
                                     label: 'Reward per day:',
                                 },
                                 {
