@@ -55,12 +55,6 @@ export const Filters = styled.div`
     `}
 `;
 
-export const FilterSelect = styled(Select)`
-    width: 20rem;
-    height: 4.4rem;
-    min-height: 4.4rem;
-`;
-
 export const Amounts = styled.div`
     ${flexColumn};
 

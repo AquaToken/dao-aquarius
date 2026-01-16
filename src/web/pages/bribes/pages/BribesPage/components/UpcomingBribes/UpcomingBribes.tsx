@@ -25,7 +25,7 @@ import { useUrlParam } from 'hooks/useUrlParam';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
-import { Checkbox } from 'basics/inputs';
+import { Checkbox, ToggleGroup } from 'basics/inputs';
 import { ExternalLink } from 'basics/links';
 import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
@@ -39,7 +39,6 @@ import {
     Container,
     Empty,
     Filters,
-    FilterSelect,
     LoaderContainer,
     MobileAsset,
     SelectStyled,
@@ -174,11 +173,8 @@ const UpcomingBribes = () => {
     return (
         <Container ref={containerRef}>
             <Filters>
-                Type:
-                <FilterSelect value={type} options={BRIBES_TYPES_OPTIONS} onChange={setType} />
-                Week:
-                <FilterSelect
-                    label="Week"
+                <ToggleGroup value={type} options={BRIBES_TYPES_OPTIONS} onChange={setType} />
+                <ToggleGroup
                     value={weekFilter}
                     options={BRIBES_WEEKS_OPTIONS}
                     onChange={setWeekFilter}
