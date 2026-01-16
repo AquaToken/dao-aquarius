@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 import Asset from 'basics/Asset';
-import Checkbox from 'basics/inputs/Checkbox';
 import Select from 'basics/inputs/Select';
 
 import { EmptyList, flexAllCenter, flexColumn, respondDown } from 'styles/mixins';
@@ -30,10 +29,6 @@ export const LoaderContainer = styled.div`
     margin: 5rem 0;
 `;
 
-export const CheckboxStyled = styled(Checkbox)`
-    margin-bottom: 3rem;
-`;
-
 export const SelectStyled = styled(Select)`
     display: none;
     margin-bottom: 3rem;
@@ -45,4 +40,23 @@ export const SelectStyled = styled(Select)`
 
 export const Empty = styled.div`
     ${EmptyList};
+`;
+
+export const Filters = styled.div`
+    display: flex;
+    gap: 3.2rem;
+    align-items: center;
+    margin-bottom: 5rem;
+    padding-top: 3.2rem;
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column;
+        align-items: flex-start;
+    `}
+`;
+
+export const FilterSelect = styled(Select)`
+    width: 20rem;
+    height: 4.4rem;
+    min-height: 4.4rem;
 `;

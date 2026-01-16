@@ -53,8 +53,8 @@ interface Props<T> {
     value: T;
 }
 
-const SectionPicker = <T,>({ options, onChange, value }: Props<T>) => (
-    <Container>
+const SectionPicker = <T,>({ options, onChange, value, ...props }: Props<T>) => (
+    <Container {...props}>
         {options.map(option => (
             <Tab
                 key={option.value}

@@ -4,6 +4,7 @@ import Plus from 'assets/icons/nav/icon-plus-16.svg';
 
 import Button from 'basics/buttons/Button';
 import { ToggleGroup } from 'basics/inputs';
+import SectionPicker from 'basics/SectionPicker';
 
 import { flexRowSpaceBetween, respondDown } from 'styles/mixins';
 import { Breakpoints, COLORS } from 'styles/style-constants';
@@ -55,4 +56,9 @@ export const PlusIcon = styled(Plus)`
 export const ToggleGroupStyled = styled(ToggleGroup)`
     width: fit-content;
     margin-bottom: 5.3rem;
+`;
+
+export const SectionPickerStyled = styled(SectionPicker)`
+    width: fit-content;
+    //margin-bottom: 5.3rem;
 `;

@@ -1,55 +1,111 @@
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
-import { BribeSortFields, getUpcomingBribes } from 'api/bribes';
+import { getUpcomingBribes } from 'api/bribes';
 
-import { BRIBES_PAGE_SIZE } from 'constants/bribes';
+import {
+    BRIBES_PAGE_SIZE,
+    BRIBES_SORT_OPTIONS,
+    BRIBES_TYPES_OPTIONS,
+    BribeSortFields,
+    BribesTypes,
+    BribesWeeksFilters,
+    UpcomingBribesParams,
+} from 'constants/bribes';
 import { AppRoutes } from 'constants/routes';
 
-import { convertDateStrToTimestamp, getDateString } from 'helpers/date';
+import { convertDateStrToTimestamp, getDateString, getWeekStart } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 import { getIceMaxApy } from 'helpers/ice';
 import { createAsset } from 'helpers/token';
 
+import { useUrlParam } from 'hooks/useUrlParam';
+
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
+import { Checkbox } from 'basics/inputs';
 import { ExternalLink } from 'basics/links';
 import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
 import Pagination from 'basics/Pagination';
 import Table, { CellAlign } from 'basics/Table';
 
+import { Breakpoints } from 'styles/style-constants';
+
 import {
-    CheckboxStyled,
     Container,
     Empty,
+    Filters,
+    FilterSelect,
     LoaderContainer,
     MobileAsset,
     SelectStyled,
     WebAsset,
 } from './UpcomingBribes.styled';
 
-const SORT_OPTIONS = [
-    { label: 'Sort by: Period ▲', value: BribeSortFields.startAtDown },
-    { label: 'Sort by: Period ▼', value: BribeSortFields.startAtUp },
-    { label: 'Sort by: Reward ▲', value: BribeSortFields.aquaAmountDown },
-    { label: 'Sort by: Reward ▼', value: BribeSortFields.aquaAmountUp },
+const BRIBES_WEEKS_OPTIONS = [
+    {
+        label: 'All',
+        value: BribesWeeksFilters.all,
+    },
+    {
+        label: 'Next Week',
+        value: getWeekStart(1),
+    },
+    {
+        label: 'In 2 Weeks',
+        value: getWeekStart(2),
+    },
+    {
+        label: 'In 3 Weeks',
+        value: getWeekStart(3),
+    },
 ];
 
 const UpcomingBribes = () => {
     const [bribes, setBribes] = useState(null);
     const [loading, setLoading] = useState(false);
     const [count, setCount] = useState(null);
-    const [sort, setSort] = useState(BribeSortFields.startAtDown);
-    const [filterByAmount, setFilterByAmount] = useState(false);
     const [page, setPage] = useState(1);
+
+    const { value: sort, setValue: setSort } = useUrlParam<BribeSortFields>(
+        UpcomingBribesParams.sort,
+        BribeSortFields.startAtUp,
+    );
+
+    const { value: minBribeAmount, setValue: setMinBribeAmount } = useUrlParam<string>(
+        UpcomingBribesParams.minBribeAmount,
+        '100000',
+    );
+
+    const { value: weekFilter, setValue: setWeekFilter } = useUrlParam<BribesWeeksFilters>(
+        UpcomingBribesParams.week,
+        BribesWeeksFilters.all,
+    );
+
+    const { value: type, setValue: setType } = useUrlParam<BribesTypes>(
+        UpcomingBribesParams.type,
+        BribesTypes.all,
+    );
 
     const navigate = useNavigate();
 
     const { processNewAssets } = useAssetsStore();
 
     const containerRef = useRef(null);
+
+    const location = useLocation();
+
+    // Reset week filter if there not exist in options
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const weekParam = params.get(UpcomingBribesParams.week);
+
+        if (!BRIBES_WEEKS_OPTIONS.some(({ value }) => value === weekParam)) {
+            setWeekFilter(BribesWeeksFilters.all);
+        }
+    }, [location]);
 
     useEffect(() => {
         if (!bribes?.length || !containerRef.current) {
@@ -74,13 +130,20 @@ const UpcomingBribes = () => {
 
     useEffect(() => {
         setLoading(true);
-        getUpcomingBribes(BRIBES_PAGE_SIZE, page, sort, !filterByAmount).then(res => {
+        getUpcomingBribes(
+            BRIBES_PAGE_SIZE,
+            page,
+            sort as BribeSortFields,
+            minBribeAmount,
+            weekFilter,
+            type as BribesTypes,
+        ).then(res => {
             setCount(res.count);
             setBribes(res.bribes);
             processAssetsFromPairs(res.bribes);
             setLoading(false);
         });
-    }, [page, filterByAmount, sort]);
+    }, [page, minBribeAmount, sort, weekFilter, type]);
 
     const changeSort = newSort => {
         setSort(newSort);
@@ -106,26 +169,38 @@ const UpcomingBribes = () => {
 
     return (
         <Container ref={containerRef}>
-            <CheckboxStyled
-                label="Show bribes smaller than 100,000 AQUA"
-                checked={filterByAmount}
-                onChange={value => {
-                    setFilterByAmount(value);
-                    setPage(1);
-                }}
-            />
+            <Filters>
+                Type:
+                <FilterSelect value={type} options={BRIBES_TYPES_OPTIONS} onChange={setType} />
+                Week:
+                <FilterSelect
+                    label="Week"
+                    value={weekFilter}
+                    options={BRIBES_WEEKS_OPTIONS}
+                    onChange={setWeekFilter}
+                />
+                <Checkbox
+                    label="Show bribes smaller than 100,000 AQUA"
+                    checked={Number(minBribeAmount) === 0}
+                    onChange={value => {
+                        setMinBribeAmount(value ? '0' : '100000');
+                        setPage(1);
+                    }}
+                />
+            </Filters>
 
-            <SelectStyled options={SORT_OPTIONS} value={sort} onChange={changeSort} />
+            <SelectStyled options={BRIBES_SORT_OPTIONS} value={sort} onChange={changeSort} />
 
-            {bribes && bribes.lenght ? (
+            {!!bribes && !!bribes.length ? (
                 <Table
                     pending={bribes && loading}
+                    mobileBreakpoint={Breakpoints.lg}
                     head={[
-                        { children: 'Market', flexSize: 3 },
+                        { children: 'Market', flexSize: 2.5 },
                         {
                             children: 'Bribe APY',
                         },
-                        { children: 'Reward asset', flexSize: 2 },
+                        { children: 'Reward asset', flexSize: 1.5 },
                         {
                             children: 'Reward per day',
                             sort: {
@@ -190,7 +265,7 @@ const UpcomingBribes = () => {
                                             isPrivateBribes={!item.is_amm_protocol}
                                         />
                                     ),
-                                    flexSize: 3,
+                                    flexSize: 2.5,
                                 },
                                 {
                                     children: apyMax
@@ -209,7 +284,7 @@ const UpcomingBribes = () => {
                                         </>
                                     ),
                                     label: 'Reward asset:',
-                                    flexSize: 2,
+                                    flexSize: 1.5,
                                 },
                                 {
                                     children: `${formatBalance(+item.amount / 7, true)} ${
