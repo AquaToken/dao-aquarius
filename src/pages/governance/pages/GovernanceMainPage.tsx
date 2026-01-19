@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { AppRoutes } from 'constants/routes';
 
 import { useIsOnViewport } from 'hooks/useIsOnViewport';
+import { useUrlParam } from 'hooks/useUrlParam';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
@@ -278,14 +279,12 @@ const PAGE_SIZE = 5;
 
 const GovernanceMainPage = (): React.ReactElement => {
     const [proposals, setProposals] = useState(null);
-    const [filter, setFilter] = useState(null);
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(1);
 
     const { isLogged, account } = useAuthStore();
 
-    const location = useLocation();
     const navigate = useNavigate();
 
     const onLinkClick = () => {
@@ -299,57 +298,23 @@ const GovernanceMainPage = (): React.ReactElement => {
         navigate(AppRoutes.section.governance.link.create);
     };
 
-    const setFilterValue = (value: PROPOSAL_FILTER) => {
-        if (value === PROPOSAL_FILTER.MY && !isLogged) {
-            ModalService.openModal(ChooseLoginMethodModal, {
-                redirectURL: `${AppRoutes.section.governance.link.index}?${UrlParams.filter}=${PROPOSAL_FILTER.MY}`,
-            });
-            return;
-        }
-        if (value === PROPOSAL_FILTER.MY_VOTES && !isLogged) {
-            ModalService.openModal(ChooseLoginMethodModal, {
-                redirectURL: `${AppRoutes.section.governance.link.index}?${UrlParams.filter}=${PROPOSAL_FILTER.MY_VOTES}`,
-            });
-            return;
-        }
-        if (value === PROPOSAL_FILTER.HISTORY && !isLogged) {
-            ModalService.openModal(ChooseLoginMethodModal, {
-                redirectURL: `${AppRoutes.section.governance.link.index}?${UrlParams.filter}=${PROPOSAL_FILTER.HISTORY}`,
-            });
-            return;
-        }
-        const params = new URLSearchParams(location.search);
-        params.set(UrlParams.filter, value);
-        navigate({ pathname: location.pathname, search: params.toString() });
-    };
+    const { value: filter, setValue: setFilter } = useUrlParam<PROPOSAL_FILTER>(
+        UrlParams.filter,
+        PROPOSAL_FILTER.ALL,
+        {
+            authRequiredValues: [
+                PROPOSAL_FILTER.MY,
+                PROPOSAL_FILTER.MY_VOTES,
+                PROPOSAL_FILTER.HISTORY,
+            ],
+        },
+    );
 
-    const filterRef = useRef(null);
+    const filterRef = useRef(filter);
 
     useEffect(() => {
-        const params = new URLSearchParams(location.search);
-        if (!params.has(UrlParams.filter)) {
-            params.append(UrlParams.filter, PROPOSAL_FILTER.ALL);
-            navigate(`${location.pathname}?${params.toString()}`, { replace: true });
-            return;
-        }
-
-        filterRef.current = params.get(UrlParams.filter);
-        setFilter(params.get(UrlParams.filter));
-        setPage(1);
-    }, [location, isLogged]);
-
-    useEffect(() => {
-        if (isLogged || !filter) {
-            return;
-        }
-        if (
-            filter === PROPOSAL_FILTER.MY ||
-            filter === PROPOSAL_FILTER.MY_VOTES ||
-            filter === PROPOSAL_FILTER.HISTORY
-        ) {
-            setFilterValue(PROPOSAL_FILTER.ALL);
-        }
-    }, [isLogged, filter]);
+        filterRef.current = filter;
+    }, [filter]);
 
     useEffect(() => {
         if (!filter) {
@@ -398,12 +363,12 @@ const GovernanceMainPage = (): React.ReactElement => {
                                 <ToggleGroupStyled
                                     value={filter}
                                     options={Options}
-                                    onChange={setFilterValue}
+                                    onChange={setFilter}
                                 />
                                 <SelectStyled
                                     value={filter}
                                     options={Options}
-                                    onChange={setFilterValue}
+                                    onChange={setFilter}
                                 />
                             </TitleBlock>
 

@@ -34,8 +34,9 @@ import AppGlobalStyle from 'styles/global-styles';
 import { respondDown } from 'styles/mixins';
 import { Breakpoints, COLORS } from 'styles/style-constants';
 
-import AppRouter from './AppRouter';
 import useGlobalSubscriptions from './hooks/useGlobalSubscriptions';
+import AppRouter from './web/routing/AppRouter';
+import { UrlQueryBatchProvider } from './web/routing/UrlQueryBatchProvider';
 
 const UPDATE_ASSETS_DATE = 'update assets timestamp';
 const UPDATE_PERIOD = 24 * 60 * 60 * 1000;
@@ -193,7 +194,9 @@ const App = () => {
                 <TestnetBanner />
                 <Header />
                 <Suspense fallback={<PageLoader />}>
-                    <AppRouter />
+                    <UrlQueryBatchProvider>
+                        <AppRouter />
+                    </UrlQueryBatchProvider>
                 </Suspense>
                 <Footer />
 

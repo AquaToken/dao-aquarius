@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import {
@@ -17,6 +17,8 @@ import { getAssetString } from 'helpers/assets';
 import { getTimeAgoValue } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 import { createAsset, createLumen } from 'helpers/token';
+
+import { useUrlParam } from 'hooks/useUrlParam';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import { LoginTypes } from 'store/authStore/types';
@@ -354,7 +356,9 @@ const assetToUrlParams = (asset: ClassicToken) => {
     return `${assetInstance.code}:${assetInstance.issuer}`;
 };
 
-const assetFromUrlParams = (params: string) => {
+const assetFromUrlParams = (params: string | null) => {
+    if (!params) return null;
+
     if (params === 'native') {
         return createLumen();
     }
@@ -387,12 +391,9 @@ const MainPage = (): React.ReactNode => {
     const [updateIndex, setUpdateIndex] = useState(0);
     const { processNewAssets } = useAssetsStore();
     const [chosenPairs, setChosenPairs] = useState(getCachedChosenPairs());
-    const [sort, setSort] = useState(null);
     const [page, setPage] = useState(1);
     const { isLogged, account } = useAuthStore();
     const [claimUpdateId, setClaimUpdateId] = useState(0);
-    const [searchBase, setSearchBase] = useState(null);
-    const [searchCounter, setSearchCounter] = useState(null);
     const [pairsLoading, setPairsLoading] = useState(false);
     const [changePageLoading, setChangePageLoading] = useState(false);
     const [totalStats, setTotalStats] = useState(null);
@@ -400,82 +401,23 @@ const MainPage = (): React.ReactNode => {
     const [pairs, setPairs] = useState(null);
     const [count, setCount] = useState(0);
 
-    const location = useLocation();
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const params = new URLSearchParams(location.search);
-        if (
-            !params.has(UrlParams.sort) &&
-            !params.has(UrlParams.base) &&
-            !params.has(UrlParams.counter)
-        ) {
-            params.append(UrlParams.sort, SortTypes.topVoted);
-            navigate(`${location.pathname}?${params.toString()}`, { replace: true });
-            return;
-        }
-        if (
-            params.has(UrlParams.sort) &&
-            (params.has(UrlParams.base) || params.has(UrlParams.counter))
-        ) {
-            params.delete(UrlParams.base);
-            params.delete(UrlParams.counter);
-            navigate(`${location.pathname}?${params.toString()}`, { replace: true });
-            return;
-        }
+    const { value: searchBase, setValue: setSearchBase } = useUrlParam<string>(UrlParams.base, '');
 
-        if (params.has(UrlParams.counter) && !params.has(UrlParams.base)) {
-            params.append(UrlParams.base, params.get(UrlParams.counter));
-            params.delete(UrlParams.counter);
-            navigate(`${location.pathname}?${params.toString()}`, { replace: true });
-        }
+    const { value: searchCounter, setValue: setSearchCounter } = useUrlParam<string>(
+        UrlParams.counter,
+        '',
+    );
 
-        if (
-            params.get(UrlParams.base) &&
-            params.get(UrlParams.base) === params.get(UrlParams.counter)
-        ) {
-            params.delete(UrlParams.counter);
-            navigate(`${location.pathname}?${params.toString()}`, { replace: true });
-            return;
-        }
-
-        if (
-            params.has(UrlParams.sort) &&
-            !Object.values(SortTypes).includes(params.get(UrlParams.sort) as SortTypes)
-        ) {
-            params.delete(UrlParams.sort);
-            navigate(`${location.pathname}?${params.toString()}`, { replace: true });
-            return;
-        }
-
-        if (params.has(UrlParams.sort)) {
-            setSort(params.get(UrlParams.sort));
-        } else {
-            setSort(null);
-        }
-        if (params.has(UrlParams.base)) {
-            try {
-                const asset = assetFromUrlParams(params.get(UrlParams.base));
-                setSearchBase(asset);
-            } catch {
-                params.delete(UrlParams.base);
-                navigate(`${location.pathname}?${params.toString()}`, { replace: true });
-            }
-        } else {
-            setSearchBase(null);
-        }
-        if (params.has(UrlParams.counter)) {
-            try {
-                const asset = assetFromUrlParams(params.get(UrlParams.counter));
-                setSearchCounter(asset);
-            } catch {
-                params.delete(UrlParams.counter);
-                navigate(`${location.pathname}?${params.toString()}`, { replace: true });
-            }
-        } else {
-            setSearchCounter(null);
-        }
-    }, [location]);
+    const { value: sort, setValue: setSort } = useUrlParam<SortTypes>(
+        UrlParams.sort,
+        SortTypes.topVoted,
+        {
+            skipDefaultSync: !!searchBase,
+            authRequiredValues: [SortTypes.yourVotes],
+        },
+    );
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -537,24 +479,10 @@ const MainPage = (): React.ReactNode => {
         processNewAssets(assets);
     };
 
-    const changeSort = (sortValue: SortTypes) => {
-        if (!isLogged && sortValue === SortTypes.yourVotes) {
-            ModalService.openModal(ChooseLoginMethodModal, {
-                redirectURL: `${AppRoutes.page.vote}?${UrlParams.sort}=${SortTypes.yourVotes}`,
-            });
-            return;
-        }
-        const params = new URLSearchParams(location.search);
-        params.set(UrlParams.sort, sortValue);
-        params.delete(UrlParams.base);
-        params.delete(UrlParams.counter);
-        navigate({ pathname: location.pathname, search: params.toString() });
-        setPage(1);
-    };
-
     useEffect(() => {
+        setPage(1);
         if (sort === SortTypes.yourVotes && !isLogged) {
-            changeSort(SortTypes.topVoted);
+            setSort(SortTypes.topVoted);
         }
     }, [isLogged, sort]);
 
@@ -656,7 +584,12 @@ const MainPage = (): React.ReactNode => {
             return;
         }
         setPairsLoading(true);
-        getFilteredPairsList(searchBase, searchCounter, PAGE_SIZE, page).then(result => {
+        getFilteredPairsList(
+            assetFromUrlParams(searchBase),
+            assetFromUrlParams(searchCounter),
+            PAGE_SIZE,
+            page,
+        ).then(result => {
             setPairs(result.pairs);
             processAssetsFromPairs(result.pairs);
             setCount(result.count);
@@ -672,30 +605,6 @@ const MainPage = (): React.ReactNode => {
             setChosenPairs([]);
         }
     }, [isLogged]);
-
-    const changeSearch = (assets: ClassicToken[]): void => {
-        const [base, counter] = assets;
-
-        const params = new URLSearchParams(location.search);
-        params.delete(UrlParams.sort);
-
-        if (base) {
-            params.set(UrlParams.base, assetToUrlParams(base));
-        } else {
-            params.delete(UrlParams.base);
-        }
-
-        if (counter) {
-            params.set(UrlParams.counter, assetToUrlParams(counter));
-        } else {
-            params.delete(UrlParams.counter);
-        }
-
-        navigate(`${location.pathname}?${decodeURIComponent(params.toString())}`);
-
-        setPairsLoading(true);
-        setPage(1);
-    };
 
     const changePage = (page: number) => {
         setPage(page);
@@ -773,10 +682,8 @@ const MainPage = (): React.ReactNode => {
     const goToMarketPage = () => {
         navigate(
             AppRoutes.section.market.to.market({
-                base: searchBase.isNative() ? 'native' : `${searchBase.code}:${searchBase.issuer}`,
-                counter: searchCounter.isNative()
-                    ? 'native'
-                    : `${searchCounter.code}:${searchCounter.issuer}`,
+                base: searchBase,
+                counter: searchCounter,
             }),
         );
     };
@@ -796,14 +703,24 @@ const MainPage = (): React.ReactNode => {
             <ExploreBlock $hasChosenPairs={hasChosenPairs}>
                 <PairSearch>
                     <AssetDropdown
-                        assetsList={[searchBase, searchCounter].filter(Boolean)}
+                        assetsList={[
+                            assetFromUrlParams(searchBase),
+                            assetFromUrlParams(searchCounter),
+                        ].filter(Boolean)}
                         onUpdate={(assets: ClassicToken[]) => {
-                            changeSearch(assets);
+                            const [newBase, newCounter] = assets.map(assetToUrlParams);
+
+                            setSearchBase(newBase ? newBase : null);
+                            setSearchCounter(newCounter ?? null);
+                            setSort(newBase ? null : SortTypes.topVoted);
                         }}
-                        excludeList={[searchBase, searchCounter].filter(Boolean)}
+                        excludeList={[
+                            assetFromUrlParams(searchBase),
+                            assetFromUrlParams(searchCounter),
+                        ].filter(Boolean)}
                         label="Search asset by name, domain or issuer"
                         placeholder="AQUA or aqua.network or AQUA:GBNZ...AQUA"
-                        disabled={searchBase && searchCounter}
+                        disabled={!!searchBase && !!searchCounter}
                         withChips
                     />
                 </PairSearch>
@@ -813,7 +730,7 @@ const MainPage = (): React.ReactNode => {
                 <Header ref={headerRef}>
                     <ToggleGroupStyled
                         value={sort}
-                        onChange={(option: SortTypes) => changeSort(option)}
+                        onChange={(option: SortTypes) => setSort(option)}
                         options={options}
                     />
                     {Boolean(pairs.length && pairs.some(pair => Boolean(pair.timestamp))) && (
@@ -881,7 +798,13 @@ const MainPage = (): React.ReactNode => {
                     !pairsLoading && <SearchEnabled>No markets found</SearchEnabled>}
                 {searchBase && searchCounter && !pairs.length && (
                     <CreatePair onClick={() => goToMarketPage()}>
-                        <Market assets={[searchBase, searchCounter]} mobileVerticalDirections />
+                        <Market
+                            assets={[
+                                assetFromUrlParams(searchBase),
+                                assetFromUrlParams(searchCounter),
+                            ]}
+                            mobileVerticalDirections
+                        />
                         <Tooltip
                             content={
                                 <BeFirst>
@@ -896,14 +819,18 @@ const MainPage = (): React.ReactNode => {
                         </Tooltip>
                     </CreatePair>
                 )}
-                <Table
-                    pairs={pairs}
-                    selectedPairs={chosenPairs}
-                    selectPair={onVoteClick}
-                    loading={pairsLoading}
-                    totalStats={totalStats}
-                    isYourVotes={sort === SortTypes.yourVotes}
-                />
+                {totalStats ? (
+                    <Table
+                        pairs={pairs}
+                        selectedPairs={chosenPairs}
+                        selectPair={onVoteClick}
+                        loading={pairsLoading}
+                        totalStats={totalStats}
+                        isYourVotes={sort === SortTypes.yourVotes}
+                    />
+                ) : (
+                    <PageLoader />
+                )}
                 {(!pairsLoading || changePageLoading) && sort !== SortTypes.yourVotes && (
                     <Pagination
                         pageSize={PAGE_SIZE}

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { getUserPools } from 'api/amm';
@@ -15,6 +15,7 @@ import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
 import { useUpdateIndex } from 'hooks/useUpdateIndex';
+import { useUrlParam } from 'hooks/useUrlParam';
 
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
@@ -60,8 +61,6 @@ import MigratePoolButton from 'pages/amm/components/PoolsList/MigratePoolButton/
 import RewardsBanner from 'pages/amm/components/RewardsBanner/RewardsBanner';
 import RewardsTokens from 'pages/amm/components/RewardsTokens/RewardsTokens';
 import TotalApy from 'pages/amm/components/TotalApy/TotalApy';
-import { AnalyticsTabs, AnalyticsUrlParams } from 'pages/amm/pages/Analytics';
-import { ProfileTabs, ProfileUrlParams } from 'pages/profile/Profile';
 import { ExternalLinkStyled } from 'pages/profile/SdexRewards/SdexRewards';
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
 
@@ -200,7 +199,7 @@ enum FilterValues {
     classic = 'classic',
 }
 
-enum UrlParams {
+export enum MyLiquidityUrlParams {
     filter = 'filter',
 }
 
@@ -229,36 +228,11 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
     const [incentivesSum, setIncentivesSum] = useState(new Map());
     const [isUserIncentivesLoaded, setIsUserIncentivesLoaded] = useState(false);
     const [claimPendingId, setClaimPendingId] = useState(null);
-    const [filter, setFilter] = useState(null);
 
-    const location = useLocation();
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        const params = new URLSearchParams(location.search);
-
-        if (
-            params.get(AnalyticsUrlParams.tab) !== AnalyticsTabs.my &&
-            params.get(ProfileUrlParams.tab) !== ProfileTabs.liquidity
-        ) {
-            return;
-        }
-        const filterParam = params.get(UrlParams.filter);
-
-        if (filterParam) {
-            setFilter(filterParam as FilterValues);
-        } else {
-            params.append(UrlParams.filter, FilterValues.all);
-            setFilter(FilterValues.all);
-            navigate(`${location.pathname}?${params.toString()}`, { replace: true });
-        }
-    }, [location]);
-
-    const setFilterValue = (value: FilterValues) => {
-        const params = new URLSearchParams(location.search);
-        params.set(UrlParams.filter, value);
-        navigate({ search: params.toString() });
-    };
+    const { value: filter, setValue: setFilter } = useUrlParam<FilterValues>(
+        MyLiquidityUrlParams.filter,
+        FilterValues.all,
+    );
 
     const updateIndex = useUpdateIndex(5000);
 
@@ -491,10 +465,10 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                 </ListHeader>
             )}
 
-            <ToggleGroupStyled value={filter} options={FilterOptions} onChange={setFilterValue} />
+            <ToggleGroupStyled value={filter} options={FilterOptions} onChange={setFilter} />
 
             <SelectWrapper>
-                <SelectStyled value={filter} options={FilterOptions} onChange={setFilterValue} />
+                <SelectStyled value={filter} options={FilterOptions} onChange={setFilter} />
             </SelectWrapper>
 
             {isUserRewardsLoaded && isUserIncentivesLoaded && (

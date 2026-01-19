@@ -2,23 +2,28 @@ import * as React from 'react';
 import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { BribeTab, SELECT_OPTIONS } from 'constants/bribes';
+import { BribeTab, SELECT_OPTIONS, UpcomingBribesParams } from 'constants/bribes';
 import { AppRoutes } from 'constants/routes';
 
+import { useScopedSearchParams } from 'hooks/useScopedSearchParams';
+import { useUrlParam } from 'hooks/useUrlParam';
+
 import {
-    Container,
-    TitleBlock,
-    Title,
     AddBribeButton,
+    Container,
     PlusIcon,
-    ToggleGroupStyled,
+    SectionPickerStyled,
+    TitleBlock,
 } from './BribesList.styled';
 
 import CurrentBribes from '../CurrentBribes/CurrentBribes';
 import UpcomingBribes from '../UpcomingBribes/UpcomingBribes';
 
+enum UrlParams {
+    tab = 'tab',
+}
+
 const BribesList: React.FC = () => {
-    const [tab, setTab] = React.useState<BribeTab>(BribeTab.current);
     const navigate = useNavigate();
     const headerRef = useRef<HTMLDivElement>(null);
 
@@ -29,18 +34,32 @@ const BribesList: React.FC = () => {
         }, 200);
     }, []);
 
+    const { value: tab, setValue: setTab } = useUrlParam<BribeTab>(UrlParams.tab, BribeTab.current);
+
+    const allowedParams =
+        tab === BribeTab.current
+            ? [UrlParams.tab]
+            : [
+                  UrlParams.tab,
+                  UpcomingBribesParams.sort,
+                  UpcomingBribesParams.minBribeAmount,
+                  UpcomingBribesParams.week,
+                  UpcomingBribesParams.type,
+              ];
+
+    useScopedSearchParams(allowedParams);
+
     return (
         <Container>
             <TitleBlock ref={headerRef}>
-                <Title>Bribes</Title>
+                {/*<Title>Bribes</Title>*/}
+                <SectionPickerStyled options={SELECT_OPTIONS} onChange={setTab} value={tab} />
 
                 <AddBribeButton onClick={() => navigate(AppRoutes.section.bribes.link.addBribe)}>
                     <span>create bribe</span>
                     <PlusIcon />
                 </AddBribeButton>
             </TitleBlock>
-
-            <ToggleGroupStyled value={tab} options={SELECT_OPTIONS} onChange={setTab} />
 
             {tab === BribeTab.upcoming ? <UpcomingBribes /> : <CurrentBribes />}
         </Container>
