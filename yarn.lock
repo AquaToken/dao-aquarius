@@ -2360,10 +2360,10 @@
   resolved "https://registry.yarnpkg.com/@stellar/js-xdr/-/js-xdr-3.1.2.tgz#db7611135cf21e989602fd72f513c3bed621bc74"
   integrity sha512-VVolPL5goVEIsvuGqDc5uiKxV03lzfWdvYg1KikvwheDmTBO68CKDji3bAZ/kppZrx5iTA8z3Ld5yuytcvhvOQ==
 
-"@stellar/stellar-base@^14.0.3":
-  version "14.0.3"
-  resolved "https://registry.yarnpkg.com/@stellar/stellar-base/-/stellar-base-14.0.3.tgz#a4983b6814c39b0efc84094c644b130ae7325c49"
-  integrity sha512-mBxNArxWq4wKNJATPJpXB2vIRQ3vUzIvjMCloSsGbfKRrSy96ie8yy7DWh9vSOHV6tNwe85hd3v+p/shlyosqA==
+"@stellar/stellar-base@^14.0.4":
+  version "14.0.4"
+  resolved "https://registry.yarnpkg.com/@stellar/stellar-base/-/stellar-base-14.0.4.tgz#530511679588e8440277ded071e3a46a387c9fff"
+  integrity sha512-UbNW6zbdOBXJwLAV2mMak0bIC9nw3IZVlQXkv2w2dk1jgCbJjy3oRVC943zeGE5JAm0Z9PHxrIjmkpGhayY7kw==
   dependencies:
     "@noble/curves" "^1.9.6"
     "@stellar/js-xdr" "^3.1.2"
@@ -2372,13 +2372,13 @@
     buffer "^6.0.3"
     sha.js "^2.4.12"
 
-"@stellar/stellar-sdk@14.4.0":
-  version "14.4.0"
-  resolved "https://registry.yarnpkg.com/@stellar/stellar-sdk/-/stellar-sdk-14.4.0.tgz#dc7c0d66ee09df185b2b3caab1502e771cce98d5"
-  integrity sha512-YsWbcjdEMi8HsA9l5Sr+V3ajSrrM/ZXNyIGGGmpGH+IUfo6uskczGuOmN/fQ0xhuajuMrbitnuaXmsVb7pjKjg==
+"@stellar/stellar-sdk@14.4.3":
+  version "14.4.3"
+  resolved "https://registry.yarnpkg.com/@stellar/stellar-sdk/-/stellar-sdk-14.4.3.tgz#9907e9ecc94d813e75357f70c70d1d8330c0fb6d"
+  integrity sha512-QfaScSNd4Ku0GGfaZjR8679+M5gLHG+09OLLqV3Bv1VaDKXjHmhf8ikalz2jlx3oFnmlEpEgnqXIdf4kdD2x/w==
   dependencies:
-    "@stellar/stellar-base" "^14.0.3"
-    axios "^1.12.2"
+    "@stellar/stellar-base" "^14.0.4"
+    axios "^1.13.2"
     bignumber.js "^9.3.1"
     eventsource "^2.0.2"
     feaxios "^0.0.23"
@@ -4178,7 +4178,7 @@ available-typed-arrays@^1.0.7:
   dependencies:
     possible-typed-array-names "^1.0.0"
 
-axios@^1.12.2, axios@^1.13.2:
+axios@^1.13.2:
   version "1.13.2"
   resolved "https://registry.yarnpkg.com/axios/-/axios-1.13.2.tgz#9ada120b7b5ab24509553ec3e40123521117f687"
   integrity sha512-VPk9ebNqPcy5lRGuSlKx752IlDatOjT9paPlm8A7yOuW2Fbvp4X3JznJtT4f0GzGLLiWE9W8onz51SqLYwzGaA==
