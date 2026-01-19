@@ -25,7 +25,7 @@ import { useUrlParam } from 'hooks/useUrlParam';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
-import { Checkbox, ToggleGroup } from 'basics/inputs';
+import { Checkbox } from 'basics/inputs';
 import { ExternalLink } from 'basics/links';
 import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
@@ -39,9 +39,12 @@ import {
     Container,
     Empty,
     Filters,
+    LabelMobile,
     LoaderContainer,
     MobileAsset,
+    SelectMobile,
     SelectStyled,
+    ToggleGroupWeb,
     WebAsset,
 } from './UpcomingBribes.styled';
 
@@ -173,8 +176,16 @@ const UpcomingBribes = () => {
     return (
         <Container ref={containerRef}>
             <Filters>
-                <ToggleGroup value={type} options={BRIBES_TYPES_OPTIONS} onChange={setType} />
-                <ToggleGroup
+                <ToggleGroupWeb value={type} options={BRIBES_TYPES_OPTIONS} onChange={setType} />
+                <ToggleGroupWeb
+                    value={weekFilter}
+                    options={BRIBES_WEEKS_OPTIONS}
+                    onChange={setWeekFilter}
+                />
+                <LabelMobile>Type:</LabelMobile>
+                <SelectMobile value={type} options={BRIBES_TYPES_OPTIONS} onChange={setType} />
+                <LabelMobile>Week:</LabelMobile>
+                <SelectMobile
                     value={weekFilter}
                     options={BRIBES_WEEKS_OPTIONS}
                     onChange={setWeekFilter}

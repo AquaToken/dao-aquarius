@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 import Asset from 'basics/Asset';
+import { ToggleGroup } from 'basics/inputs';
 import Select from 'basics/inputs/Select';
 
 import { EmptyList, flexAllCenter, flexColumn, respondDown } from 'styles/mixins';
@@ -53,6 +54,10 @@ export const Filters = styled.div`
         flex-direction: column;
         align-items: flex-start;
     `}
+
+    ${respondDown(Breakpoints.sm)`
+        gap: 1.6rem;
+    `}
 `;
 
 export const Amounts = styled.div`
@@ -62,4 +67,28 @@ export const Amounts = styled.div`
         ${FONT_SIZE.xs};
         color: ${COLORS.textGray};
     }
+`;
+
+export const ToggleGroupWeb = styled(ToggleGroup)`
+    ${respondDown(Breakpoints.sm)`
+        display: none;
+    `}
+`;
+
+export const LabelMobile = styled.span`
+    display: none;
+
+    ${respondDown(Breakpoints.sm)`
+        display: inline;
+    `}
+`;
+
+export const SelectMobile = styled(Select)`
+    display: none;
+
+    ${respondDown(Breakpoints.sm)`
+        display: flex;
+        height: 4.4rem;
+        min-height: 4.4rem;
+    `}
 `;
