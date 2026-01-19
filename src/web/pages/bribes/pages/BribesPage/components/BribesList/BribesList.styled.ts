@@ -60,5 +60,8 @@ export const ToggleGroupStyled = styled(ToggleGroup)`
 
 export const SectionPickerStyled = styled(SectionPicker)`
     width: fit-content;
-    //margin-bottom: 5.3rem;
+
+    ${respondDown(Breakpoints.sm)`
+        margin: 0 auto;
+    `}
 `;
