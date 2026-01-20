@@ -236,21 +236,6 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
 
     const updateIndex = useUpdateIndex(5000);
 
-    const filteredPools = useMemo(() => {
-        if (!classicPools || !pools) return null;
-
-        if (filter === FilterValues.classic) {
-            return classicPools;
-        }
-        if (filter === FilterValues.volatile) {
-            return pools.filter(({ pool_type }) => pool_type === POOL_TYPE.constant);
-        }
-        if (filter === FilterValues.stable) {
-            return pools.filter(({ pool_type }) => pool_type === POOL_TYPE.stable);
-        }
-        return [...pools, ...classicPools];
-    }, [classicPools, pools, filter]);
-
     const updateData = () => {
         if (account) {
             getUserPools(account.accountId()).then(res => {
@@ -437,6 +422,28 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
 
         return (((+tps * DAY) / 1000) * +wBalance) / +wSupply;
     };
+
+    const filteredPools = useMemo(() => {
+        if (!classicPools || !pools) return null;
+
+        let result;
+
+        if (filter === FilterValues.classic) {
+            result = [...classicPools];
+        } else if (filter === FilterValues.volatile) {
+            result = pools.filter(({ pool_type }) => pool_type === POOL_TYPE.constant);
+        } else if (filter === FilterValues.stable) {
+            result = pools.filter(({ pool_type }) => pool_type === POOL_TYPE.stable);
+        } else {
+            result = [...pools, ...classicPools];
+        }
+
+        return result.sort((a, b) => {
+            const aLiquidity = poolsLiquidity.get(a.address || a.id) ?? 0;
+            const bLiquidity = poolsLiquidity.get(b.address || b.id) ?? 0;
+            return bLiquidity - aLiquidity;
+        });
+    }, [classicPools, pools, filter, poolsLiquidity]);
 
     if (!account) {
         return (
