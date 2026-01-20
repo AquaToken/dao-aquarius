@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { FilterOptions, getPools, PoolsSortFields } from 'api/amm';
@@ -138,7 +138,7 @@ const RewardsList = () => {
 
     const { value: sort, setValue: setSort } = useUrlParam<RewardsSort>(
         UrlParams.sort,
-        RewardsSort.totalDown,
+        RewardsSort.totalUp,
     );
 
     useEffect(() => {
