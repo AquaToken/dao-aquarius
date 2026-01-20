@@ -77,7 +77,7 @@ const UpcomingBribes = () => {
 
     const { value: sort, setValue: setSort } = useUrlParam<BribeSortFields>(
         UpcomingBribesParams.sort,
-        BribeSortFields.startAtUp,
+        BribeSortFields.startAtDown,
     );
 
     const { value: minBribeAmount, setValue: setMinBribeAmount } = useUrlParam<string>(
