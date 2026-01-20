@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { FilterOptions, getPools, PoolsSortFields } from 'api/amm';
@@ -33,7 +33,6 @@ import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import RewardsTokens from 'pages/amm/components/RewardsTokens/RewardsTokens';
 import TotalApy from 'pages/amm/components/TotalApy/TotalApy';
-import { AnalyticsTabs, AnalyticsUrlParams } from 'pages/amm/pages/Analytics';
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
 
 const Header = styled.div`
@@ -123,7 +122,7 @@ const AllPools = (): React.ReactNode => {
 
     const { value: sort, setValue: setSort } = useUrlParam<PoolsSortFields>(
         AllPoolsUrlParams.sort,
-        PoolsSortFields.liquidityDown,
+        PoolsSortFields.liquidityUp,
     );
 
     const { value: search, setValue: setSearch } = useUrlParam(AllPoolsUrlParams.search, '');
