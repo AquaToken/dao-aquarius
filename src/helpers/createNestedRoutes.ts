@@ -15,10 +15,10 @@ type ExtractRouteParams<Path extends string> = Path extends `${string}:${infer R
         ? (Param extends `${infer Name}?` ? { [K in Name]?: string } : { [K in Param]: string }) &
               ExtractRouteParams<Tail>
         : Rest extends `${infer ParamEnd}`
-        ? ParamEnd extends `${infer Name}?`
-            ? { [K in Name]?: string }
-            : { [K in ParamEnd]: string }
-        : EmptyParams
+          ? ParamEnd extends `${infer Name}?`
+              ? { [K in Name]?: string }
+              : { [K in ParamEnd]: string }
+          : EmptyParams
     : EmptyParams;
 
 // Checks "does this type have any keys?"

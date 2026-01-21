@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { FilterOptions, getPools, PoolsSortFields } from 'api/amm';
@@ -11,6 +11,7 @@ import { AppRoutes } from 'constants/routes';
 import { formatBalance } from 'helpers/format-number';
 
 import { useDebounce } from 'hooks/useDebounce';
+import { useUrlParam } from 'hooks/useUrlParam';
 
 import { PoolProcessed } from 'types/amm';
 
@@ -32,7 +33,6 @@ import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import RewardsTokens from 'pages/amm/components/RewardsTokens/RewardsTokens';
 import TotalApy from 'pages/amm/components/TotalApy/TotalApy';
-import { AnalyticsTabs, AnalyticsUrlParams } from 'pages/amm/pages/Analytics';
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
 
 const Header = styled.div`
@@ -93,7 +93,7 @@ export const TooltipInnerHead = styled.span`
     line-height: 2rem;
 `;
 
-enum UrlParams {
+export enum AllPoolsUrlParams {
     sort = 'sort',
     filter = 'filter',
     search = 'search',
@@ -108,76 +108,26 @@ const OPTIONS = [
 ];
 
 const AllPools = (): React.ReactNode => {
-    const [filter, setFilter] = useState(null);
-    const [sort, setSort] = useState(null);
     const [pools, setPools] = useState<PoolProcessed[] | null>(null);
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(1);
     const [pending, setPending] = useState(false);
-    const [search, setSearch] = useState('');
 
     const navigate = useNavigate();
-    const location = useLocation();
+
+    const { value: filter, setValue: setFilter } = useUrlParam<FilterOptions>(
+        AllPoolsUrlParams.filter,
+        FilterOptions.all,
+    );
+
+    const { value: sort, setValue: setSort } = useUrlParam<PoolsSortFields>(
+        AllPoolsUrlParams.sort,
+        PoolsSortFields.liquidityUp,
+    );
+
+    const { value: search, setValue: setSearch } = useUrlParam(AllPoolsUrlParams.search, '');
 
     const debouncedSearch = useDebounce(search, 700, true, () => setPage(1));
-
-    useEffect(() => {
-        const params = new URLSearchParams(location.search);
-        if (params.get(AnalyticsUrlParams.tab) !== AnalyticsTabs.top) {
-            return;
-        }
-        const filterParam = params.get(UrlParams.filter);
-        if (filterParam) {
-            setFilter(filterParam as FilterOptions);
-            setPage(1);
-        } else {
-            params.append(UrlParams.filter, FilterOptions.all);
-            setFilter(FilterOptions.all);
-            navigate(`${location.pathname}?${params.toString()}`, { replace: true });
-        }
-        const sortParam = params.get(UrlParams.sort);
-
-        if (sortParam) {
-            setSort(sortParam as PoolsSortFields);
-            setPage(1);
-        } else {
-            params.append(UrlParams.sort, PoolsSortFields.liquidityUp);
-            setSort(PoolsSortFields.liquidityUp);
-            navigate(`${location.pathname}?${params.toString()}`, { replace: true });
-        }
-
-        const searchParam = params.get(UrlParams.search);
-
-        if (searchParam) {
-            setSearch(searchParam);
-            setPage(1);
-        } else {
-            setSearch('');
-        }
-    }, [location]);
-
-    const setFilterParam = (filterOption: FilterOptions) => {
-        const params = new URLSearchParams(location.search);
-        params.set(UrlParams.filter, filterOption);
-        navigate({ search: params.toString() });
-    };
-
-    const setSortParam = (sort: PoolsSortFields) => {
-        const params = new URLSearchParams(location.search);
-        params.set(UrlParams.sort, sort);
-        navigate({ search: params.toString() });
-    };
-
-    const setSearchParam = (str: string) => {
-        const params = new URLSearchParams(location.search);
-        if (!str) {
-            params.delete(UrlParams.search);
-            navigate({ search: params.toString() });
-            return;
-        }
-        params.set(UrlParams.search, str);
-        navigate({ search: params.toString() });
-    };
 
     useEffect(() => {
         if (!sort || !filter) {
@@ -204,12 +154,12 @@ const AllPools = (): React.ReactNode => {
     ) : (
         <>
             <Header>
-                <ToggleGroupStyled value={filter} options={OPTIONS} onChange={setFilterParam} />
-                <SelectStyled value={filter} options={OPTIONS} onChange={setFilterParam} />
+                <ToggleGroupStyled value={filter} options={OPTIONS} onChange={setFilter} />
+                <SelectStyled value={filter} options={OPTIONS} onChange={setFilter} />
                 <StyledInput
                     placeholder="Search by token name or token address"
                     value={search}
-                    onChange={({ target }) => setSearchParam(target.value)}
+                    onChange={({ target }) => setSearch(target.value)}
                     postfix={<Search />}
                 />
             </Header>
@@ -225,7 +175,7 @@ const AllPools = (): React.ReactNode => {
                                 children: 'TVL',
                                 sort: {
                                     onClick: () =>
-                                        setSortParam(
+                                        setSort(
                                             sort === PoolsSortFields.liquidityUp
                                                 ? PoolsSortFields.liquidityDown
                                                 : PoolsSortFields.liquidityUp,
@@ -242,7 +192,7 @@ const AllPools = (): React.ReactNode => {
                                 children: 'Volume 24H',
                                 sort: {
                                     onClick: () =>
-                                        setSortParam(
+                                        setSort(
                                             sort === PoolsSortFields.volumeUp
                                                 ? PoolsSortFields.volumeDown
                                                 : PoolsSortFields.volumeUp,
@@ -286,7 +236,7 @@ const AllPools = (): React.ReactNode => {
                                 align: CellAlign.Left,
                                 sort: {
                                     onClick: () =>
-                                        setSortParam(
+                                        setSort(
                                             sort === PoolsSortFields.totalApyUp
                                                 ? PoolsSortFields.totalApyDown
                                                 : PoolsSortFields.totalApyUp,
