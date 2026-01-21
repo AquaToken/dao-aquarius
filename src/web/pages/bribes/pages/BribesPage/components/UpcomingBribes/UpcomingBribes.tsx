@@ -207,7 +207,7 @@ const UpcomingBribes = () => {
                     pending={bribes && loading}
                     mobileBreakpoint={Breakpoints.lg}
                     head={[
-                        { children: 'Market', flexSize: 2.5 },
+                        { children: 'Market', flexSize: 3 },
                         {
                             children: 'Bribe APY',
                         },
@@ -276,7 +276,7 @@ const UpcomingBribes = () => {
                                             isPrivateBribes={!item.is_amm_protocol}
                                         />
                                     ),
-                                    flexSize: 2.5,
+                                    flexSize: 3,
                                 },
                                 {
                                     children: apyMax
