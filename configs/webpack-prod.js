@@ -46,6 +46,7 @@ module.exports = merge(commonConfig, {
         new webpack.DefinePlugin({
             'process.variable': JSON.stringify({
                 WALLET_CONNECT_PROJECT_ID: process.env.WALLET_CONNECT_PROJECT_ID,
+                TESTNET_ASSETS_ISSUER_SECRET: process.env.TESTNET_ASSETS_ISSUER_SECRET,
                 SENTRY_CONTEXT: context,
             }),
             'process.horizon': JSON.stringify({

@@ -10,6 +10,10 @@ const wcProjectId = dotenv.config().parsed
     ? dotenv.config().parsed.WALLET_CONNECT_PROJECT_ID
     : null;
 
+const testnetAssetsIssuerSecret = dotenv.config().parsed
+    ? dotenv.config().parsed.TESTNET_ASSETS_ISSUER_SECRET
+    : null;
+
 module.exports = merge(commonConfig, {
     mode: 'development',
     entry: [
@@ -46,6 +50,7 @@ module.exports = merge(commonConfig, {
         new webpack.DefinePlugin({
             'process.variable': JSON.stringify({
                 WALLET_CONNECT_PROJECT_ID: wcProjectId,
+                TESTNET_ASSETS_ISSUER_SECRET: testnetAssetsIssuerSecret,
                 SENTRY_CONTEXT: null,
             }),
             'process.horizon': JSON.stringify({
