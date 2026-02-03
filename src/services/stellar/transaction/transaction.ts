@@ -1,6 +1,8 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
 import { FeeBumpTransaction, Memo, MemoType } from '@stellar/stellar-sdk';
 
+import { TESTNET_DISTRIBUTION_AMOUNTS } from 'constants/assets';
+import { ENV_TESTNET } from 'constants/env';
 import { BASE_FEE } from 'constants/stellar';
 import {
     DELEGATE_MARKER_KEY,
@@ -8,7 +10,8 @@ import {
     MARKET_KEY_MARKER_UP,
 } from 'constants/stellar-accounts';
 
-import { getNetworkPassphrase } from 'helpers/env';
+import { getAssetFromString } from 'helpers/assets';
+import { getEnv, getNetworkPassphrase } from 'helpers/env';
 
 import AccountService from 'services/account.service';
 import EventService from 'services/event.service';
@@ -158,5 +161,47 @@ export default class Transaction {
                 ],
             }),
         );
+    }
+
+    async createTestnetAssetsDistributeTx(
+        account: AccountService,
+    ): Promise<StellarSdk.Transaction> {
+        if (getEnv() !== ENV_TESTNET) {
+            throw new Error('Testnet faucet is testnet-only');
+        }
+
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        const TESTNET_ASSETS_ISSUER_SECRET = process.variable.TESTNET_ASSETS_ISSUER_SECRET;
+
+        const issuerKp = StellarSdk.Keypair.fromSecret(TESTNET_ASSETS_ISSUER_SECRET);
+        const issuerPub = issuerKp.publicKey();
+
+        const operations: StellarSdk.xdr.Operation[] = [];
+
+        TESTNET_DISTRIBUTION_AMOUNTS.forEach(([assetString, amount]) => {
+            const asset = getAssetFromString(assetString) as ClassicToken;
+
+            // Add trustline (safe even if already exists)
+            operations.push(
+                StellarSdk.Operation.changeTrust({
+                    asset,
+                }),
+            );
+
+            // Send configured amount from issuer
+            operations.push(
+                StellarSdk.Operation.payment({
+                    source: issuerPub,
+                    destination: account.accountId(),
+                    asset,
+                    amount,
+                }),
+            );
+        });
+
+        const tx = await this.buildTx(account, operations);
+        tx.sign(issuerKp);
+        return tx;
     }
 }

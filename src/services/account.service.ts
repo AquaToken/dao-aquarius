@@ -6,7 +6,8 @@ import { getNativePrices } from 'api/amm';
 import { sentToVault } from 'api/vault';
 
 import { POOL_TYPE } from 'constants/amm';
-import { ASSETS_ENV_DATA, DEFAULT_ICE_ASSETS } from 'constants/assets';
+import { ASSETS_ENV_DATA, DEFAULT_ICE_ASSETS, TESTNET_ASSETS } from 'constants/assets';
+import { ENV_TESTNET } from 'constants/env';
 
 import { getAssetFromString } from 'helpers/assets';
 import { getEnv, getNetworkPassphrase } from 'helpers/env';
@@ -526,5 +527,21 @@ export default class AccountService extends Horizon.AccountResponse {
             ...items,
             { label: 'Total', value: items.reduce((acc, item) => acc + item.value, 0) },
         ];
+    }
+
+    hasMissingTestnetTokenTrustlines(): boolean {
+        return (
+            // Only applicable for testnet
+            getEnv() === ENV_TESTNET &&
+            // Check if there is at least one asset without a trustline
+            [...TESTNET_ASSETS.keys()].some(assetString => {
+                const [code, issuer] = assetString.split(':');
+                // Create ClassicToken instance
+                const asset = createAsset(code, issuer);
+
+                // getAssetBalance returns null when trustline does not exist
+                return this.getAssetBalance(asset) === null;
+            })
+        );
     }
 }
