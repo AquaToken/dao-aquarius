@@ -1,6 +1,9 @@
 import { getLumenUsdPrice } from 'api/price';
 
+import { ENV_TESTNET } from 'constants/env';
+
 import { getAquaAssetData } from 'helpers/assets';
+import { getEnv } from 'helpers/env';
 import { roundToPrecision } from 'helpers/format-number';
 import { createAsset, createLumen } from 'helpers/token';
 
@@ -21,6 +24,9 @@ export default class Price {
     }
 
     async getAquaPrice(): Promise<number> {
+        if (getEnv() === ENV_TESTNET) {
+            return 0;
+        }
         const { aquaStellarAsset } = getAquaAssetData();
 
         const res = await this.horizon.server.orderbook(aquaStellarAsset, createLumen()).call();
