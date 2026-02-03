@@ -2,13 +2,18 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import ErrorHandler from 'helpers/error-handler';
 import { formatBalance } from 'helpers/format-number';
+import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
+import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { StellarService } from 'services/globalServices';
+import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
+import { StellarService, ToastService } from 'services/globalServices';
 
 import Asset from 'basics/Asset';
+import { Button } from 'basics/buttons';
 import PageLoader from 'basics/loaders/PageLoader';
 import Table, { CellAlign } from 'basics/Table';
 
@@ -28,6 +33,8 @@ const StyledContainer = styled(Container)`
 
 const BalancesBlock = () => {
     const [balances, setBalances] = useState(null);
+    const [pending, setPending] = useState(false);
+    const [distributionComplete, setDistributionComplete] = useState(false);
 
     const { account } = useAuthStore();
 
@@ -40,10 +47,51 @@ const BalancesBlock = () => {
         });
     }, [account]);
 
+    const addTestTokens = async () => {
+        if (account.authType === LoginTypes.walletConnect) {
+            openCurrentWalletIfExist();
+        }
+
+        try {
+            setPending(true);
+
+            const tx = await StellarService.tx.createTestnetAssetsDistributeTx(account);
+
+            const result = await account.signAndSubmitTx(tx);
+
+            // Handle pending multisig transactions
+            if (
+                (result as { status: BuildSignAndSubmitStatuses }).status ===
+                BuildSignAndSubmitStatuses.pending
+            ) {
+                ToastService.showSuccessToast('More signatures required to complete');
+                return;
+            }
+
+            ToastService.showSuccessToast('Testnet tokens added successfully!');
+            setPending(false);
+            setDistributionComplete(true);
+        } catch (e) {
+            const errorText = ErrorHandler(e);
+            ToastService.showErrorToast(errorText);
+            setPending(false);
+        }
+    };
+
     return (
         <StyledContainer>
             <Header>
                 <Title>Balances</Title>
+                {account.hasMissingTestnetTokenTrustlines() && !distributionComplete && (
+                    <Button
+                        withGradient
+                        isRounded
+                        onClick={() => addTestTokens()}
+                        pending={pending}
+                    >
+                        Add Test Tokens
+                    </Button>
+                )}
             </Header>
             {!balances ? (
                 <PageLoader />
