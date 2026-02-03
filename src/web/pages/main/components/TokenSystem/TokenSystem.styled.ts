@@ -1,7 +1,6 @@
 import styled, { css } from 'styled-components';
 
 import ArrowAlt16 from 'assets/icons/arrows/arrow-alt-16.svg';
-import TokenSystemIcon from 'assets/main-page/token-system.svg';
 
 import { BlankRouterLink } from 'basics/links';
 
@@ -104,7 +103,7 @@ export const Description = styled.div`
     ${respondDown(Breakpoints.xs)`font-size: 1.4rem;`};
 `;
 
-export const StyledTokenSystemIcon = styled(TokenSystemIcon)`
+export const StyledTokenSystemIcon = styled.img`
     position: absolute;
     top: -100px;
     left: -100px;

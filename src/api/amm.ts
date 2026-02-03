@@ -194,6 +194,31 @@ export const getUserPools = async (accountId: string): Promise<PoolUserProcessed
     return res;
 };
 
+export const getUserHistory = async (
+    accountId: string,
+    filter?: string,
+): Promise<ListResponse<PoolEvent>> => {
+    const baseUrl = getAmmAquaUrl();
+
+    const { data } = await axios.get<ListResponse<PoolEvent>>(
+        `${baseUrl}/events/user/${accountId}/`,
+        {
+            params: {
+                size: 500,
+                ...(event && { event_type__in: filter }),
+            },
+        },
+    );
+
+    return data;
+};
+
+export const getNextUserHistory = async (link: string): Promise<ListResponse<PoolEvent>> => {
+    const { data } = await axios.get<ListResponse<PoolEvent>>(link);
+
+    return data;
+};
+
 export const getAmmAquaBalance = async (accountId: string): Promise<number> => {
     const baseUrl = getAmmAquaUrl();
     const { aquaContract, aquaAssetString } = getAquaAssetData();
@@ -336,7 +361,9 @@ export const getPoolsToMigrate = async (base: Asset, counter: Asset): Promise<Po
 export const getPoolsForIncentives = async (): Promise<PoolProcessed[] | null> => {
     const baseUrl = getAmmAquaUrl();
 
-    const { data } = await axios.get<ListResponse<Pool>>(`${baseUrl}/pools/?gauge_enabled=true`);
+    const { data } = await axios.get<ListResponse<Pool>>(
+        `${baseUrl}/pools/?gauge_enabled=true&size=500`,
+    );
 
     return processPools(data.items);
 };

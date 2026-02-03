@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, ReactElement } from 'react';
 import styled from 'styled-components';
 
 import Loader from 'assets/loader.svg';
@@ -22,7 +22,7 @@ type CircleLoaderProps = {
     isWhite?: boolean;
 };
 
-const CircleLoader = ({ size = 'medium', isWhite = false }: CircleLoaderProps): JSX.Element => (
+const CircleLoader = ({ size = 'medium', isWhite = false }: CircleLoaderProps): ReactElement => (
     <SizedLoader size={SIZES[size]} isWhite={isWhite} />
 );
 

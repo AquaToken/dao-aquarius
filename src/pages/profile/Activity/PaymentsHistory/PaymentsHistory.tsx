@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { getDateString } from 'helpers/date';
-import { getIsTestnetEnv } from 'helpers/env';
+import getExplorerLink, { ExplorerSection } from 'helpers/explorer-links';
 import { formatBalance } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
@@ -20,8 +20,8 @@ import Table, { CellAlign } from 'basics/Table';
 
 import { COLORS } from 'styles/style-constants';
 
-import { ExternalLinkStyled, Header, Section, Title } from '../SdexRewards/SdexRewards';
-import { Empty } from '../YourVotes/YourVotes';
+import { ExternalLinkStyled, Section } from '../../SdexRewards/SdexRewards';
+import { Empty } from '../../YourVotes/YourVotes';
 
 const Container = styled.div`
     display: flex;
@@ -58,9 +58,6 @@ const PaymentsHistory = () => {
 
     return (
         <Container>
-            <Header>
-                <Title>Payments History</Title>
-            </Header>
             <Section>
                 {history ? (
                     <Table
@@ -103,16 +100,20 @@ const PaymentsHistory = () => {
                                         },
                                     },
                                     {
-                                        children: `${formatBalance(item.amount)} AQUA`,
+                                        children: `${formatBalance(item.amount)} ${
+                                            item.asset_code
+                                        }`,
                                         align: CellAlign.Right,
                                         label: 'Amount',
                                     },
                                     {
                                         children: (
                                             <ExternalLink
-                                                href={`https://stellar.expert/explorer/${
-                                                    getIsTestnetEnv() ? 'testnet' : 'public'
-                                                }/tx/${item.transaction_hash}#${opId}`}
+                                                href={getExplorerLink(
+                                                    ExplorerSection.tx,
+                                                    item.transaction_hash,
+                                                    opId,
+                                                )}
                                             >
                                                 View on Explorer
                                             </ExternalLink>
@@ -133,7 +134,7 @@ const PaymentsHistory = () => {
                             <span>It looks like you haven't received AQUA rewards.</span>
 
                             <ExternalLinkStyled asDiv>
-                                <Link to={MainRoutes.rewards}>Learn about rewards</Link>
+                                <Link to={AppRoutes.page.rewards}>Learn about rewards</Link>
                             </ExternalLinkStyled>
                         </Empty>
                     </Section>

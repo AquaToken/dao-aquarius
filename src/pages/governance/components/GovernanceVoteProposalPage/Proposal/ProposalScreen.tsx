@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
-import { GovernanceRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { getDateString } from 'helpers/date';
 import { getIsTestnetEnv } from 'helpers/env';
@@ -280,7 +280,7 @@ const ProposalScreen = ({
     proposal: Proposal;
     version?: string;
     setScreenState?: (state) => void;
-}): JSX.Element => {
+}): React.ReactElement => {
     const {
         id,
         title,
@@ -340,7 +340,10 @@ const ProposalScreen = ({
                                     <ArrowLeft />
                                 </CircleButton>
                             ) : (
-                                <CircleButton to={GovernanceRoutes.main} label="Proposals">
+                                <CircleButton
+                                    to={AppRoutes.section.governance.link.index}
+                                    label="Proposals"
+                                >
                                     <ArrowLeft />
                                 </CircleButton>
                             )}
@@ -352,7 +355,9 @@ const ProposalScreen = ({
                                     <>
                                         <EditButtonLabel>Edit proposal</EditButtonLabel>
                                         <CircleButton
-                                            to={`${GovernanceRoutes.edit}/${proposal.id}`}
+                                            to={AppRoutes.section.governance.to.edit({
+                                                id: String(proposal.id),
+                                            })}
                                         >
                                             <IconEdit />
                                         </CircleButton>

@@ -11,7 +11,7 @@ import {
     MAX_TOKEN_AMOUNT,
 } from 'constants/incentives';
 import { DAY } from 'constants/intervals';
-import { IncentivesRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { contractValueToAmount } from 'helpers/amount';
 import { getAquaAssetData } from 'helpers/assets';
@@ -154,7 +154,7 @@ enum Step {
 
 const AddIncentivePage = () => {
     const [markets, setMarkets] = useState<PoolProcessed[] | null>(null);
-    const [selectedMarket, setSelectedMarket] = useState<PoolProcessed | null>(null);
+    const [selectedMarket, setSelectedMarket] = useState<string | null>(null);
     const [step, setStep] = useState(Step.market);
     const [config, setConfig] = useState(null);
     const [firstStepPending, setFirstStepPending] = useState(false);
@@ -164,7 +164,7 @@ const AddIncentivePage = () => {
 
     const [rewardToken, setRewardToken] = useState<Token>(aquaStellarAsset);
     const [assetsList, setAssetsList] = useState(getTokensFromCache());
-    const [amount, setAmount] = useState<string | null>(null);
+    const [amount, setAmount] = useState<string>('');
     const [aquaEquivalent, setAquaEquivalent] = useState(null);
     const [xdr, setXDR] = useState(null);
 
@@ -268,7 +268,7 @@ const AddIncentivePage = () => {
                     </MarketTVL>
                 </OptionsRow>
             ),
-            value: market,
+            value: market.address,
         }));
     }, [markets]);
 
@@ -314,7 +314,7 @@ const AddIncentivePage = () => {
         setPoolConfig(null);
         setFirstStepPending(true);
 
-        SorobanService.amm.getPoolIncentivesMap(selectedMarket.address).then(res => {
+        SorobanService.amm.getPoolIncentivesMap(selectedMarket).then(res => {
             setPoolConfig(res);
 
             if (res.length !== MAX_INCENTIVES_TOKENS_PER_POOL) {
@@ -360,8 +360,10 @@ const AddIncentivePage = () => {
             return;
         }
 
+        const selectedPool = markets.find(({ address }) => address === selectedMarket);
+
         ModalService.openModal(ConfirmIncentiveModal, {
-            pool: selectedMarket,
+            pool: selectedPool,
             rewardToken,
             amountPerDay: amount,
             startDate: startDay,
@@ -382,7 +384,10 @@ const AddIncentivePage = () => {
         <PageContainer>
             <FormPageHeaderWrap>
                 <FormPageContentWrap>
-                    <FormBackButton label="Pool Incentives" to={IncentivesRoutes.main}>
+                    <FormBackButton
+                        label="Pool Incentives"
+                        to={AppRoutes.section.incentive.link.index}
+                    >
                         <ArrowLeft />
                     </FormBackButton>
 
@@ -499,14 +504,6 @@ const AddIncentivePage = () => {
                                         dateFormat="MM.dd.yyyy HH:mm"
                                         placeholderText="MM.DD.YYYY hh:mm"
                                         disabledKeyboardNavigation
-                                        popperModifiers={[
-                                            {
-                                                name: 'offset',
-                                                options: {
-                                                    offset: [0, -10],
-                                                },
-                                            },
-                                        ]}
                                         minDate={Date.now()}
                                         fullWidth
                                         showTimeSelect

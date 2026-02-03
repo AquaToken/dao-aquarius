@@ -29,7 +29,7 @@ switch (true) {
 
 module.exports = merge(commonConfig, {
     mode: 'production',
-    entry: ['@babel/polyfill', `./index.tsx`],
+    entry: [`./index.tsx`],
     output: {
         filename: 'js/bundle.[contenthash].min.js',
         path: resolve(__dirname, '../dist'),

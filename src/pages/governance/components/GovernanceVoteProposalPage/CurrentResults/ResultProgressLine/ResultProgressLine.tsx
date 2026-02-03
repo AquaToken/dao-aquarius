@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { ReactElement } from 'react';
 import styled, { css } from 'styled-components';
 
 import { formatBalance } from 'helpers/format-number';
@@ -66,7 +67,7 @@ const ResultProgressLine = ({
     result,
 }: {
     result: { label: string; percentage: string; amount: string; isIceSupported: boolean };
-}): JSX.Element => {
+}): ReactElement => {
     const { label, percentage, amount, isIceSupported } = result;
     const resultDescription = `${percentage ? `${percentage} - ` : ''}${formatBalance(
         Number(amount),

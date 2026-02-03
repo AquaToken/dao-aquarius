@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { getTotalStats, getVolume24h } from 'api/amm';
 
-import { AmmRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';
 
@@ -15,14 +15,17 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
 
+import { Option } from 'types/option';
+
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 
 import Plus from 'assets/icons/nav/icon-plus-16.svg';
 
 import Button from 'basics/buttons/Button';
+import SectionPicker from 'basics/SectionPicker';
 
 import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'styles/mixins';
-import { Breakpoints, COLORS, hexWithOpacity } from 'styles/style-constants';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import AllPools from '../components/AllPools/AllPools';
 import LiquidityChart from '../components/LiquidityChart/LiquidityChart';
@@ -87,33 +90,6 @@ const ListHeader = styled.div`
     `}
 `;
 
-const ListTitles = styled.h3`
-    font-size: 3.6rem;
-    font-weight: 400;
-    line-height: 4.2rem;
-
-    ${respondDown(Breakpoints.sm)`
-        font-size: 2.4rem;
-    `}
-`;
-
-const ListTab = styled.span<{ $isActive: boolean }>`
-    cursor: pointer;
-    color: ${({ $isActive }) =>
-        $isActive ? COLORS.textPrimary : `${hexWithOpacity(COLORS.textPrimary, 30)}`};
-    white-space: nowrap;
-
-    &:hover {
-        color: ${({ $isActive }) => ($isActive ? COLORS.textPrimary : COLORS.gray200)};
-    }
-
-    &:first-child {
-        border-right: 0.1rem solid ${COLORS.gray100};
-        padding-right: 2.4rem;
-        margin-right: 2.4rem;
-    }
-`;
-
 const ListTotal = styled.span`
     font-size: 1.6rem;
     line-height: 2.8rem;
@@ -158,6 +134,11 @@ export enum AnalyticsUrlParams {
     tab = 'tab',
 }
 
+const OPTIONS: Option<AnalyticsTabs>[] = [
+    { label: 'All Pools', value: AnalyticsTabs.top },
+    { label: 'My Liquidity', value: AnalyticsTabs.my },
+];
+
 const Analytics = () => {
     const [activeTab, setActiveTab] = useState(null);
     const [totalStats, setTotalStats] = useState(null);
@@ -165,7 +146,7 @@ const Analytics = () => {
     const [myTotal, setMyTotal] = useState(null);
     const [chartWidth, setChartWidth] = useState(0);
 
-    const history = useHistory();
+    const navigate = useNavigate();
     const location = useLocation();
 
     const mainContent = useRef(null);
@@ -191,7 +172,8 @@ const Analytics = () => {
         } else {
             params.append(AnalyticsUrlParams.tab, AnalyticsTabs.top);
             setActiveTab(AnalyticsTabs.top);
-            history.replace({ search: params.toString() });
+
+            navigate(`${location.pathname}?${params.toString()}`, { replace: true });
         }
     }, [location]);
 
@@ -203,13 +185,13 @@ const Analytics = () => {
                 callback: () => {
                     const params = new URLSearchParams('');
                     params.set(AnalyticsUrlParams.tab, AnalyticsTabs.my);
-                    history.replace({ search: params.toString() });
+                    navigate(`${location.pathname}?${params.toString()}`, { replace: true });
                 },
             });
         }
         const params = new URLSearchParams('');
         params.set(AnalyticsUrlParams.tab, tab);
-        history.push({ search: params.toString() });
+        navigate({ search: params.toString() });
     };
 
     useEffect(() => {
@@ -261,11 +243,11 @@ const Analytics = () => {
     const goToCreatePool = () => {
         if (!isLogged) {
             ModalService.openModal(ChooseLoginMethodModal, {
-                redirectURL: AmmRoutes.create,
+                redirectURL: AppRoutes.section.amm.link.create,
             });
             return;
         }
-        history.push(`${AmmRoutes.create}`);
+        navigate(AppRoutes.section.amm.link.create);
     };
 
     return (
@@ -299,20 +281,8 @@ const Analytics = () => {
                 <Section ref={mainContent}>
                     <ListBlock>
                         <ListHeader>
-                            <ListTitles>
-                                <ListTab
-                                    $isActive={activeTab === AnalyticsTabs.top}
-                                    onClick={() => setTab(AnalyticsTabs.top)}
-                                >
-                                    All Pools
-                                </ListTab>
-                                <ListTab
-                                    $isActive={activeTab === AnalyticsTabs.my}
-                                    onClick={() => setTab(AnalyticsTabs.my)}
-                                >
-                                    My Liquidity
-                                </ListTab>
-                            </ListTitles>
+                            <SectionPicker options={OPTIONS} onChange={setTab} value={activeTab} />
+
                             {activeTab === AnalyticsTabs.top && (
                                 <Button onClick={() => goToCreatePool()}>
                                     create pool <PlusIcon />

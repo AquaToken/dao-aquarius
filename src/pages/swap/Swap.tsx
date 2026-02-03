@@ -1,7 +1,7 @@
 import { lazy } from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { getAquaAssetData, getAssetString } from 'helpers/assets';
 import { createLumen } from 'helpers/token';
@@ -12,22 +12,22 @@ const Swap = () => {
     const { aquaAssetString } = getAquaAssetData();
 
     return (
-        <Switch>
-            <Route exact path={`${MainRoutes.swap}/:source/:destination/`}>
-                <SwapPageLazy />
-            </Route>
+        <Routes>
+            <Route path={AppRoutes.section.swap.child.index} element={<SwapPageLazy />} />
+
             <Route
-                component={() => (
-                    <Redirect
-                        to={{
-                            pathname: `${MainRoutes.swap}/${getAssetString(
-                                createLumen(),
-                            )}/${aquaAssetString}`,
-                        }}
+                path="*"
+                element={
+                    <Navigate
+                        to={AppRoutes.section.swap.to.index({
+                            source: getAssetString(createLumen()),
+                            destination: aquaAssetString,
+                        })}
+                        replace
                     />
-                )}
-            ></Route>
-        </Switch>
+                }
+            />
+        </Routes>
     );
 };
 

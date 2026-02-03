@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-import { GovernanceRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { QuestionType } from 'components/FAQ';
 
@@ -27,7 +27,9 @@ export const AirdropQuestions: QuestionType[] = [
                 <br />
                 On December 6, the AQUA community voted to pass proposal 19, moving the snapshot
                 date to January 15, 2022. You can learn more on our Gov page{' '}
-                <Link to={GovernanceRoutes.main}>https://aqua.network/governance</Link>
+                <Link to={AppRoutes.section.governance.link.index}>
+                    https://aqua.network/governance
+                </Link>
             </span>
         ),
     },

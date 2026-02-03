@@ -3,7 +3,7 @@ import { Horizon } from '@stellar/stellar-sdk';
 import { useEffect, useRef } from 'react';
 
 import { LS_FREIGHTER_ACCOUNT_CHANGE_IMMEDIATELY } from 'constants/local-storage';
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 import { LOBSTR_CONNECTION_KEY } from 'constants/session-storage';
 
 import PromisedTimeout from 'helpers/promised-timeout';
@@ -66,7 +66,7 @@ export default function useGlobalSubscriptions(): void {
 
         if (loginType === LoginTypes.walletConnect) {
             AuthService.walletConnect.onAppStart(
-                window.location.pathname === MainRoutes.walletConnect,
+                AppRoutes.page.walletConnect.startsWith(window.location.pathname),
             );
             return;
         }

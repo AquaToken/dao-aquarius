@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';
 import { createAsset, createLumen } from 'helpers/token';
@@ -401,7 +401,7 @@ const SdexRewards = ({ aquaUsdPrice }: SdexRewardsProps): React.ReactNode => {
                         <span>It looks like you don't get SDEX rewards</span>
 
                         <ExternalLinkStyled asDiv>
-                            <Link to={MainRoutes.rewards}>Learn about SDEX rewards</Link>
+                            <Link to={AppRoutes.page.rewards}>Learn about SDEX rewards</Link>
                         </ExternalLinkStyled>
                     </Empty>
                 </Section>

@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { GovernanceRoutes } from 'constants/routes';
+import { CREATE_DISCUSSION_COST } from 'constants/dao';
+import { AppRoutes } from 'constants/routes';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
@@ -11,8 +12,6 @@ import { ModalService, ToastService } from 'services/globalServices';
 
 import { respondDown } from 'styles/mixins';
 import { Breakpoints, COLORS } from 'styles/style-constants';
-
-import { CREATE_DISCUSSION_COST } from './GovernanceMainPage';
 
 import { getProposalRequest } from '../api/api';
 import NotEnoughAquaModal from '../components/GovernanceMainPage/NotEnoughAquaModal/NotEnoughAquaModal';
@@ -38,7 +37,7 @@ const defaultText =
 
 const GovernanceProposalCreationPage = ({ isEdit }: { isEdit?: boolean }): React.ReactNode => {
     const { id } = useParams<{ id?: string }>();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const [title, setTitle] = useState('');
     const [text, setText] = useState(defaultText);
@@ -61,7 +60,7 @@ const GovernanceProposalCreationPage = ({ isEdit }: { isEdit?: boolean }): React
             })
             .catch(() => {
                 ToastService.showErrorToast('Something went wrong!');
-                history.push(`${GovernanceRoutes.proposal}/${id}`);
+                navigate(AppRoutes.section.governance.to.proposal({ id }));
             });
     }, [isEdit]);
 
@@ -104,12 +103,8 @@ const GovernanceProposalCreationPage = ({ isEdit }: { isEdit?: boolean }): React
                         setText={setText}
                         hasData={hasData}
                         onSubmit={isEdit ? onEdit : onSubmit}
-                        discordChannel={discordChannel}
-                        setDiscordChannel={setDiscordChannel}
                         discordChannelOwner={discordChannelOwner}
                         setDiscordChannelOwner={setDiscordChannelOwner}
-                        discordChannelUrl={discordChannelUrl}
-                        setDiscordChannelUrl={setDiscordChannelUrl}
                     />
                 </MainBlock>
             );

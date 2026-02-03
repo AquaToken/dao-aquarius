@@ -4,6 +4,8 @@ import styled from 'styled-components';
 
 import useOnClickOutside from 'hooks/useOutsideClick';
 
+import { Option } from 'types/option';
+
 import ArrowDown from 'assets/icons/arrows/arrow-down-16.svg';
 
 import { cardBoxShadow, customScroll, noSelect, respondDown } from 'styles/mixins';
@@ -102,12 +104,6 @@ const DropdownList = styled.div`
         }
     }
 `;
-
-export type Option<T> = {
-    label: string | React.ReactNode;
-    value: T;
-    icon?: React.ReactNode;
-};
 
 type SelectProps<T> = {
     options: Option<T>[];

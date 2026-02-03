@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 import { getAquaAssetData } from 'helpers/assets';
@@ -70,7 +70,7 @@ const VoteButton = ({
     onButtonClick: () => void;
     disabled: boolean;
     withoutStats?: boolean;
-}): JSX.Element => {
+}): ReactElement => {
     const {
         market_key: marketKeyUp,
         downvote_account_id: marketKeyDown,

@@ -1,7 +1,4 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
-
-import { LockerRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';
 
@@ -10,8 +7,6 @@ import { AccountEligibility } from 'types/airdrop2';
 import Aqua from 'assets/aqua/aqua-logo.svg';
 import Xlm from 'assets/tokens/xlm-logo.svg';
 import YXlm from 'assets/tokens/yxlm-logo.svg';
-
-import { ExternalLink } from 'basics/links';
 
 import { COLORS } from 'styles/style-constants';
 
@@ -89,13 +84,6 @@ const SnapshotHoldings: React.FC<SnapshotHoldingsProps> = ({ accountEligibility 
                         AQUA locked:{' '}
                         <b>{formatBalance(+accountEligibility.aqua_lock_balance, true)} AQUA</b>
                     </div>
-                    <ExternalLink asDiv>
-                        <Link
-                            to={`${LockerRoutes.main}/GACCUBVEQDNC453CIF5XSB4PCF7IRQTET2Y4FOXV44TUEWI6Z65GXQ47`}
-                        >
-                            View locks history
-                        </Link>
-                    </ExternalLink>
                 </LockAmount>
             )}
         </Container>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { getAmmAquaBalance } from 'api/amm';
@@ -16,10 +16,11 @@ import ToggleGroup from 'basics/inputs/ToggleGroup';
 import { commonMaxWidth, respondDown } from 'styles/mixins';
 import { Breakpoints, COLORS } from 'styles/style-constants';
 
+import Activity from 'pages/profile/Activity/Activity';
+
 import AccountInfo from './AccountInfo/AccountInfo';
 import Balances from './Balances/Balances';
 import IceLocks from './IceLocks/IceLocks';
-import PaymentsHistory from './PaymentsHistory/PaymentsHistory';
 import SdexRewards from './SdexRewards/SdexRewards';
 import YourGovernanceVotes from './YourGovernanceVotes/YourGovernanceVotes';
 import YourVotes from './YourVotes/YourVotes';
@@ -91,7 +92,7 @@ export enum ProfileTabs {
     your = 'liquidity_votes',
     governance = 'governance',
     iceLocks = 'ice_locks',
-    history = 'payments_history',
+    activity = 'activity',
 }
 
 const OPTIONS = [
@@ -101,7 +102,7 @@ const OPTIONS = [
     { label: 'Liquidity Votes', value: ProfileTabs.your },
     { label: 'Governance Votes', value: ProfileTabs.governance },
     { label: 'ICE Locks', value: ProfileTabs.iceLocks },
-    { label: 'Payments History', value: ProfileTabs.history },
+    { label: 'Activity', value: ProfileTabs.activity },
 ];
 
 const Profile = () => {
@@ -112,7 +113,7 @@ const Profile = () => {
     const { account } = useAuthStore();
 
     const location = useLocation();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const params = new URLSearchParams(location.search);
@@ -123,14 +124,14 @@ const Profile = () => {
         } else {
             params.append(ProfileUrlParams.tab, ProfileTabs.balances);
             setSelectedTab(ProfileTabs.balances);
-            history.replace({ search: params.toString() });
+            navigate(`${location.pathname}?${params.toString()}`, { replace: true });
         }
     }, [location]);
 
     const setTab = (tab: ProfileTabs) => {
         const params = new URLSearchParams('');
         params.set(ProfileUrlParams.tab, tab);
-        history.push({ search: params.toString() });
+        navigate({ search: params.toString() });
     };
 
     const updateIndex = useUpdateIndex(10000);
@@ -166,7 +167,7 @@ const Profile = () => {
                     {selectedTab === ProfileTabs.iceLocks && (
                         <IceLocks ammAquaBalance={ammAquaBalance} />
                     )}
-                    {selectedTab === ProfileTabs.history && <PaymentsHistory />}
+                    {selectedTab === ProfileTabs.activity && <Activity />}
                 </Content>
             </ContentWrap>
         </Container>

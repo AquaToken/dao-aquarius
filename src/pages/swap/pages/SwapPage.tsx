@@ -1,17 +1,15 @@
 import { useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { getAssetsList } from 'api/amm';
 
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { getAquaAssetData, getAssetFromString, getAssetString } from 'helpers/assets';
 import { createLumen, getTokensFromCache } from 'helpers/token';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
-
-import { Token } from 'types/token';
 
 import PageLoader from 'basics/loaders/PageLoader';
 
@@ -35,7 +33,7 @@ const SwapPage = () => {
     const [assetsList, setAssetsList] = useState(getTokensFromCache());
 
     const params = useParams<{ source: string; destination: string }>();
-    const history = useHistory();
+    const navigate = useNavigate();
     const { aquaAssetString } = getAquaAssetData();
 
     const { processNewAssets } = useAssetsStore();
@@ -51,8 +49,12 @@ const SwapPage = () => {
         const { source, destination } = params;
 
         if (source === destination && !base && !counter) {
-            history.replace(
-                `${MainRoutes.swap}/${getAssetString(createLumen() as Token)}/${aquaAssetString}`,
+            navigate(
+                AppRoutes.section.swap.to.index({
+                    source: getAssetString(createLumen()),
+                    destination: aquaAssetString,
+                }),
+                { replace: true },
             );
             return;
         }
@@ -70,19 +72,35 @@ const SwapPage = () => {
         }
 
         if (source === destination) {
-            history.replace(
-                `${MainRoutes.swap}/${getAssetString(counter)}/${getAssetString(base)}`,
+            navigate(
+                AppRoutes.section.swap.to.index({
+                    source: getAssetString(counter),
+                    destination: getAssetString(base),
+                }),
+                {
+                    replace: true,
+                },
             );
             return;
         }
     }, [params]);
 
     const setSource = asset => {
-        history.push(`${MainRoutes.swap}/${getAssetString(asset)}/${getAssetString(counter)}`);
+        navigate(
+            AppRoutes.section.swap.to.index({
+                source: getAssetString(asset),
+                destination: getAssetString(counter),
+            }),
+        );
     };
 
     const setDestination = asset => {
-        history.push(`${MainRoutes.swap}/${getAssetString(base)}/${getAssetString(asset)}`);
+        navigate(
+            AppRoutes.section.swap.to.index({
+                source: getAssetString(base),
+                destination: getAssetString(asset),
+            }),
+        );
     };
 
     if (!base || !counter || !assetsList) {

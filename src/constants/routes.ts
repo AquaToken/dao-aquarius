@@ -1,69 +1,66 @@
-//TODO: move to consts
-export enum MainRoutes {
-    main = '/',
-    bribes = '/bribes',
-    vote = '/vote',
-    locker = '/locker',
-    governance = '/governance',
-    market = '/market',
-    rewards = '/rewards',
-    airdrop = '/airdrop',
-    airdrop2 = '/airdrop2',
-    account = '/dashboard',
-    walletConnect = '/wallet-connect',
-    amm = '/pools',
-    swap = '/swap',
-    buyAqua = '/buy-aqua',
-    testnet = '/testnet',
-    terms = '/terms',
-    privacy = '/privacy',
-    token = '/token',
-    quest = '/quest',
-    delegate = '/delegate',
-    incentives = '/incentives',
+import { createNestedRoutes } from 'helpers/createNestedRoutes';
+
+enum SectionBases {
+    bribes = '/bribes/',
+    locker = '/locker/',
+    governance = '/governance/',
+    market = '/market/',
+    amm = '/pools/',
+    swap = '/swap/',
+    delegate = '/delegate/',
+    incentives = '/incentives/',
 }
 
-//TODO: Replace constants with enums after TS 5.0 release
-// export enum LockerRoutes {
-//     main = `${MainRoutes.locker}`,
-// };
-
-export const LockerRoutes = {
-    main: `${MainRoutes.locker}`,
-    about: `${MainRoutes.locker}/about`,
-};
-
-export const GovernanceRoutes = {
-    main: `${MainRoutes.governance}`,
-    proposal: `${MainRoutes.governance}/proposal`,
-    create: `${MainRoutes.governance}/create`,
-    edit: `${MainRoutes.governance}/edit`,
-};
-
-export const VoteRoutes = {
-    main: `${MainRoutes.vote}`,
-};
-
-export const IncentivesRoutes = {
-    main: `${MainRoutes.incentives}`,
-    addIncentive: `${MainRoutes.incentives}/add`,
-};
-
-export const BribesRoutes = {
-    bribes: `${MainRoutes.bribes}`,
-    addBribe: `${MainRoutes.bribes}/add`,
-};
-
-export const MarketRoutes = {
-    main: `${MainRoutes.market}`,
-};
-
-export const AmmRoutes = {
-    analytics: `${MainRoutes.amm}/`,
-    create: `${MainRoutes.amm}/create-pool/`,
-};
-
-export const DelegateRoutes = {
-    main: `${MainRoutes.delegate}/`,
-    become: `${MainRoutes.delegate}/apply/`,
+export const AppRoutes = {
+    page: {
+        main: '/',
+        rewards: '/rewards/',
+        airdrop: '/airdrop/',
+        airdrop2: '/airdrop2/',
+        account: '/dashboard/',
+        oldAccount: '/account/',
+        walletConnect: '/wallet-connect/',
+        buyAqua: '/buy-aqua/',
+        testnet: '/testnet/',
+        terms: '/terms/',
+        privacy: '/privacy/',
+        token: '/token/',
+        quest: '/quest/',
+        vote: '/vote/',
+    },
+    section: {
+        locker: createNestedRoutes(SectionBases.locker, {
+            index: '',
+            about: 'about',
+        }),
+        governance: createNestedRoutes(SectionBases.governance, {
+            index: '',
+            proposal: 'proposal/:id/:version?',
+            create: 'create',
+            edit: 'edit/:id',
+        }),
+        incentive: createNestedRoutes(SectionBases.incentives, {
+            index: '',
+            addIncentive: 'add',
+        }),
+        bribes: createNestedRoutes(SectionBases.bribes, {
+            index: '',
+            addBribe: 'add',
+        }),
+        market: createNestedRoutes(SectionBases.market, {
+            market: ':base/:counter',
+        }),
+        amm: createNestedRoutes(SectionBases.amm, {
+            index: '',
+            create: 'create-pool',
+            pool: ':poolAddress',
+        }),
+        delegate: createNestedRoutes(SectionBases.delegate, {
+            index: '',
+            become: 'apply',
+        }),
+        swap: createNestedRoutes(SectionBases.swap, {
+            index: ':source/:destination/',
+        }),
+    },
 };

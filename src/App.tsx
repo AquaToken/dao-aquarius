@@ -1,15 +1,12 @@
-import { MoonPayProvider } from '@moonpay/moonpay-react';
-import { lazy, Suspense, useEffect, useState } from 'react';
-import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
+import { Suspense, useEffect, useState } from 'react';
+import { BrowserRouter as Router, Navigate } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
 
 import { getAssetsList } from 'api/amm';
 
 import { D_ICE_CODE, GD_ICE_CODE, GOV_ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'constants/assets';
-import { MainRoutes } from 'constants/routes';
 
-import { getEnv, getIsTestnetEnv, setProductionEnv } from 'helpers/env';
-import { getMoonpayKeyByEnv } from 'helpers/moonpay';
+import { getEnv, setProductionEnv } from 'helpers/env';
 import { cacheTokens, createAsset } from 'helpers/token';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
@@ -28,8 +25,6 @@ import ErrorBoundary from 'components/ErrorBoundary';
 import Footer from 'components/Footer';
 import Header from 'components/Header/Header';
 import ModalContainer from 'components/ModalContainer';
-import NotFoundPage from 'components/NotFoundPage';
-import PageTitle from 'components/PageTitle';
 import TestnetBanner from 'components/TestnetBanner';
 import ToastContainer from 'components/ToastContainer';
 
@@ -39,30 +34,8 @@ import AppGlobalStyle from 'styles/global-styles';
 import { respondDown } from 'styles/mixins';
 import { Breakpoints, COLORS } from 'styles/style-constants';
 
-import Governance from 'pages/governance/Governance';
-
+import AppRouter from './AppRouter';
 import useGlobalSubscriptions from './hooks/useGlobalSubscriptions';
-
-const MainPage = lazy(() => import('web/pages/main/MainPage'));
-const LockerPage = lazy(() => import('./web/pages/locker/Locker'));
-const VotePage = lazy(() => import('pages/vote/Vote'));
-const BribesPage = lazy(() => import('./web/pages/bribes/Bribes'));
-const MarketPage = lazy(() => import('pages/market/Market'));
-const RewardsPage = lazy(() => import('pages/rewards/Rewards'));
-const AirdropPage = lazy(() => import('web/pages/airdrop/Airdrop'));
-const Airdrop2Page = lazy(() => import('web/pages/airdrop2/Airdrop2'));
-const ProfilePage = lazy(() => import('pages/profile/Profile'));
-const WalletConnectPage = lazy(() => import('./web/pages/wallet-connect/WalletConnect'));
-const AmmPage = lazy(() => import('pages/amm/Amm'));
-const SwapPage = lazy(() => import('pages/swap/Swap'));
-const BuyAquaPage = lazy(() => import('web/pages/buy-aqua/BuyAqua'));
-const TestnetSwitcherPage = lazy(() => import('web/pages/testnet-switcher/TestnetSwitcher'));
-const TermsPage = lazy(() => import('web/pages/terms/Terms'));
-const PrivacyPage = lazy(() => import('web/pages/privacy/Privacy'));
-const TokenPage = lazy(() => import('pages/token/TokenPage'));
-const QuestPage = lazy(() => import('pages/quest/Quest'));
-const DelegatePage = lazy(() => import('pages/delegate/Delegate'));
-const IncentivesPage = lazy(() => import('pages/incentives/Incentives'));
 
 const UPDATE_ASSETS_DATE = 'update assets timestamp';
 const UPDATE_PERIOD = 24 * 60 * 60 * 1000;
@@ -216,129 +189,11 @@ const App = () => {
     return (
         <Router>
             <ErrorBoundary>
-                {isLogged && Boolean(redirectURL) && <Redirect to={redirectURL} />}
+                {isLogged && Boolean(redirectURL) && <Navigate to={redirectURL} replace />}
                 <TestnetBanner />
                 <Header />
                 <Suspense fallback={<PageLoader />}>
-                    <Switch>
-                        <Route exact path={MainRoutes.main}>
-                            <PageTitle title="Aquarius">
-                                <MainPage />
-                            </PageTitle>
-                        </Route>
-                        <Route path={MainRoutes.locker}>
-                            <PageTitle title="Locker - Aquarius">
-                                <LockerPage />
-                            </PageTitle>
-                        </Route>
-                        <Route path={MainRoutes.governance}>
-                            <PageTitle title="Governance - Aquarius">
-                                <Governance />
-                            </PageTitle>
-                        </Route>
-                        <Route path={MainRoutes.vote}>
-                            <PageTitle title="Voting - Aquarius">
-                                <VotePage />
-                            </PageTitle>
-                        </Route>
-                        <Route path={MainRoutes.bribes}>
-                            <PageTitle title="Bribes - Aquarius">
-                                <BribesPage />
-                            </PageTitle>
-                        </Route>
-                        <Route path={MainRoutes.market}>
-                            <MarketPage />
-                        </Route>
-                        <Route path={MainRoutes.rewards}>
-                            <PageTitle title="Rewards - Aquarius">
-                                <RewardsPage />
-                            </PageTitle>
-                        </Route>
-                        <Route path={MainRoutes.airdrop}>
-                            <PageTitle title="Airdrop - Aquarius">
-                                <AirdropPage />
-                            </PageTitle>
-                        </Route>
-                        <Route path={MainRoutes.airdrop2}>
-                            <PageTitle title="Airdrop #2 - Aquarius">
-                                <Airdrop2Page />
-                            </PageTitle>
-                        </Route>
-
-                        <Route path={MainRoutes.account}>
-                            <PageTitle title="Dashboard - Aquarius">
-                                {isLogged ? <ProfilePage /> : <Redirect to={MainRoutes.main} />}
-                            </PageTitle>
-                        </Route>
-
-                        <Route path={MainRoutes.walletConnect}>
-                            <PageTitle title="WalletConnect - Aquarius">
-                                <WalletConnectPage />
-                            </PageTitle>
-                        </Route>
-
-                        <Route path={MainRoutes.amm}>
-                            <PageTitle title="Pools - Aquarius">
-                                <AmmPage />
-                            </PageTitle>
-                        </Route>
-
-                        <Route path={MainRoutes.swap}>
-                            <PageTitle title="Swap - Aquarius">
-                                <SwapPage />
-                            </PageTitle>
-                        </Route>
-
-                        <Route path={MainRoutes.buyAqua}>
-                            <PageTitle title="Buy Aqua - Aquarius">
-                                <BuyAquaPage />
-                            </PageTitle>
-                        </Route>
-
-                        <Route path={MainRoutes.testnet}>
-                            <PageTitle title="Testnet - Aquarius">
-                                <TestnetSwitcherPage />
-                            </PageTitle>
-                        </Route>
-
-                        <Route path={MainRoutes.terms}>
-                            <PageTitle title="Terms Of Use - Aquarius">
-                                <TermsPage />
-                            </PageTitle>
-                        </Route>
-
-                        <Route path={MainRoutes.privacy}>
-                            <PageTitle title="Privacy Policy - Aquarius">
-                                <PrivacyPage />
-                            </PageTitle>
-                        </Route>
-
-                        <Route path={MainRoutes.token}>
-                            <PageTitle title="AQUA Token - Aquarius">
-                                <TokenPage />
-                            </PageTitle>
-                        </Route>
-
-                        <Route path={MainRoutes.quest}>
-                            <PageTitle title="Onboard To Aquarius">
-                                <QuestPage />
-                            </PageTitle>
-                        </Route>
-
-                        <Route path={MainRoutes.delegate}>
-                            <PageTitle title="Delegates - Aquarius">
-                                <DelegatePage />
-                            </PageTitle>
-                        </Route>
-
-                        <Route path={MainRoutes.incentives}>
-                            <PageTitle title="Incentives - Aquarius">
-                                <IncentivesPage />
-                            </PageTitle>
-                        </Route>
-
-                        <Route component={NotFoundPage} />
-                    </Switch>
+                    <AppRouter />
                 </Suspense>
                 <Footer />
 
@@ -358,12 +213,10 @@ const BodyStyle = createGlobalStyle`
 `;
 
 const ProvidedApp = () => (
-    <MoonPayProvider apiKey={getMoonpayKeyByEnv()} debug={getIsTestnetEnv()}>
-        <Provider>
-            <AppGlobalStyle />
-            <BodyStyle />
-            <App />
-        </Provider>
-    </MoonPayProvider>
+    <Provider>
+        <AppGlobalStyle />
+        <BodyStyle />
+        <App />
+    </Provider>
 );
 export default ProvidedApp;

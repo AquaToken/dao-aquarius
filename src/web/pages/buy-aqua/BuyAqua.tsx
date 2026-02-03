@@ -1,6 +1,7 @@
-import { Redirect } from 'react-router-dom';
+import * as React from 'react';
+import { Navigate } from 'react-router-dom';
 
-import { MainRoutes } from 'constants/routes';
+import { AppRoutes } from 'constants/routes';
 
 import { getAquaAssetData } from 'helpers/assets';
 import { getOnRampWidgetUrl } from 'helpers/url';
@@ -13,7 +14,7 @@ import { COLORS } from 'styles/style-constants';
 
 import { CenteredWrapper, Container } from './BuyAqua.styled';
 
-const BuyAqua = (): JSX.Element => {
+const BuyAqua = (): React.ReactElement => {
     const { account, isLogged } = useAuthStore();
     const { aquaStellarAsset } = getAquaAssetData();
 
@@ -36,7 +37,7 @@ const BuyAqua = (): JSX.Element => {
     };
 
     if (!isLogged) {
-        return <Redirect to={MainRoutes.main} />;
+        return <Navigate to={AppRoutes.page.main} replace />;
     }
 
     return (
