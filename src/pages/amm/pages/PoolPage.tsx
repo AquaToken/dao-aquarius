@@ -23,12 +23,13 @@ import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
-import { SorobanService, ToastService } from 'services/globalServices';
+import { ModalService, SorobanService, ToastService } from 'services/globalServices';
 
 import { PoolExtended, PoolIncentives } from 'types/amm';
 import { ClassicToken, SorobanToken, TokenType } from 'types/token';
 
 import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
+import SettingsIcon from 'assets/icons/nav/icon-settings-16.svg';
 
 import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
@@ -40,6 +41,8 @@ import Market from 'basics/Market';
 
 import MigrateToSorobanBanner from 'components/MigrateToSorobanBanner';
 import NoTrustline from 'components/NoTrustline';
+
+import RewardsSettingsModal from 'modals/RewardsSettingsModal';
 
 import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'styles/mixins';
 import { Breakpoints, COLORS } from 'styles/style-constants';
@@ -63,14 +66,6 @@ const Background = styled.div`
 
     ${respondDown(Breakpoints.md)`
         padding: 1.6rem 0;
-    `}
-`;
-
-const BackButton = styled(CircleButton)`
-    margin-bottom: 7.2rem;
-
-    ${respondDown(Breakpoints.md)`
-        margin-bottom: 3.2rem;
     `}
 `;
 
@@ -192,6 +187,22 @@ const Links = styled.div`
 
 const ExternalLinkStyled = styled(ExternalLink)`
     margin-top: 1.6rem;
+`;
+
+const SettingsIconPurple = styled(SettingsIcon)`
+    path {
+        stroke: ${COLORS.purple500};
+    }
+`;
+
+const PageHeader = styled.div`
+    ${flexRowSpaceBetween};
+    align-items: center;
+    margin-bottom: 7.2rem;
+
+    ${respondDown(Breakpoints.md)`
+        margin-bottom: 3.2rem;
+    `}
 `;
 
 const PoolPage = () => {
@@ -333,14 +344,22 @@ const PoolPage = () => {
         <MainBlock>
             <Background>
                 <Section>
-                    <BackButton
-                        label="Pools"
-                        onClick={() => {
-                            navigate(AppRoutes.section.amm.link.index);
-                        }}
-                    >
-                        <ArrowLeft />
-                    </BackButton>
+                    <PageHeader>
+                        <CircleButton
+                            label="Pools"
+                            onClick={() => {
+                                navigate(AppRoutes.section.amm.link.index);
+                            }}
+                        >
+                            <ArrowLeft />
+                        </CircleButton>
+
+                        <CircleButton
+                            onClick={() => ModalService.openModal(RewardsSettingsModal, { pool })}
+                        >
+                            <SettingsIconPurple />
+                        </CircleButton>
+                    </PageHeader>
                     <Market
                         assets={pool.tokens}
                         leftAlign

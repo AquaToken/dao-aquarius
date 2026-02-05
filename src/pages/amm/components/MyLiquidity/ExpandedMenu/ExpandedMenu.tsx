@@ -12,12 +12,15 @@ import MigrateLiquidityStep1 from 'web/modals/migrate-liquidity/MigrateLiquidity
 
 import IconDeposit from 'assets/icons/actions/icon-deposit-16.svg';
 import IconWithdraw from 'assets/icons/actions/icon-withdraw-16.svg';
+import Settings from 'assets/icons/nav/icon-settings-16.svg';
 import IconThreeDots from 'assets/icons/nav/icon-three-dots-10x16.svg';
 
 import Button from 'basics/buttons/Button';
 
+import RewardsSettingsModal from 'modals/RewardsSettingsModal';
+
 import { cardBoxShadow } from 'styles/mixins';
-import { COLORS } from 'styles/style-constants';
+import { COLORS, FONT_SIZE } from 'styles/style-constants';
 
 import DepositToPool from 'pages/amm/components/DepositToPool/DepositToPool';
 import WithdrawFromPool from 'pages/amm/components/WithdrawFromPool/WithdrawFromPool';
@@ -35,7 +38,7 @@ const Menu = styled.div`
     border-radius: 0.5rem;
     right: 0;
     top: 100%;
-    padding: 2.4rem 0.8rem;
+    padding: 1.2rem 0.4rem;
     z-index: 100;
 `;
 
@@ -45,6 +48,9 @@ const MenuRow = styled.div`
     cursor: pointer;
     height: 3.6rem;
     padding: 0 1.6rem;
+
+    ${FONT_SIZE.xs};
+    white-space: nowrap;
 
     &:hover {
         background-color: ${COLORS.gray50};
@@ -62,7 +68,7 @@ interface Props {
 const ExpandedMenu = ({ pool }: Props) => {
     const [isShowMenu, setIsShowMenu] = useState(false);
 
-    const menuRef = useRef();
+    const menuRef = useRef(null);
 
     useOnClickOutside(menuRef, () => setIsShowMenu(null));
 
@@ -101,6 +107,14 @@ const ExpandedMenu = ({ pool }: Props) => {
                     >
                         <IconWithdraw />
                         Withdraw
+                    </MenuRow>
+                    <MenuRow
+                        onClick={() => {
+                            ModalService.openModal(RewardsSettingsModal, { pool });
+                        }}
+                    >
+                        <Settings />
+                        Rewards settings
                     </MenuRow>
                 </Menu>
             )}

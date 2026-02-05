@@ -9,6 +9,12 @@ import { DAY } from 'constants/intervals';
 import { contractValueToAmount } from 'helpers/amount';
 import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
+import {
+    calculateBoostValue,
+    calculateDailyRewards,
+    estimateBoostValue,
+    estimateDailyRewards,
+} from 'helpers/rewards';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
 import { LoginTypes } from 'store/authStore/types';
@@ -84,8 +90,12 @@ const FormRow = styled.div`
 
 const DescriptionRow = styled.div`
     ${flexRowSpaceBetween};
-    margin-bottom: 1.6rem;
+
     color: ${COLORS.textGray};
+
+    &:not(:last-child) {
+        margin-bottom: 1.6rem;
+    }
 
     span {
         display: flex;
@@ -195,6 +205,16 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
     const [priceIndex, setPriceIndex] = useState(0);
 
     const [incentives, setIncentives] = useState<PoolIncentives[] | null>(null);
+
+    const [isRewardsEnabled, setIsRewardsEnabled] = useState(null);
+
+    useEffect(() => {
+        if (!account) return;
+
+        SorobanService.amm
+            .getUserRewardsStatus(pool.address, account.accountId())
+            .then(setIsRewardsEnabled);
+    }, [account]);
 
     useEffect(() => {
         if (!account) {
@@ -365,72 +385,24 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
         return map;
     }, [reserves, pool, amounts]);
 
+    const dailyRewards = calculateDailyRewards(poolRewards);
+
     const getDailyRewards = (rewardsInfo: PoolRewardsInfo) => {
         if (!rewardsInfo) return <DotsLoader />;
 
-        const tps = +rewardsInfo.tps;
-        const wSupply = +rewardsInfo.working_supply;
-        const wBalance = +rewardsInfo.working_balance;
+        if (!rewardsInfo.tps || !rewardsInfo.wSupply || !rewardsInfo.wBalance) return '0 AQUA';
 
-        if (!tps || !wSupply || !wBalance) return '0 AQUA';
-
-        const secondsInDay = 60 * 60 * 24;
-
-        return `${formatBalance((tps * wBalance * secondsInDay) / wSupply, true)} AQUA`;
+        return `${formatBalance(dailyRewards, true)} AQUA`;
     };
 
     const getNewDailyRewards = (rewardsInfo: PoolRewardsInfo) => {
         if (!rewardsInfo) return <DotsLoader />;
 
-        const supply = +rewardsInfo.supply;
-        const lockedSupply = +rewardsInfo.boost_supply;
-        const lockedBalance = +rewardsInfo.boost_balance;
+        if (!rewardsInfo.tps) return '0 AQUA';
 
-        const newWBalance = Math.min(
-            +sharesAfterValue + (1.5 * lockedBalance * supply) / lockedSupply,
-            +sharesAfterValue * 2.5,
-        );
+        const newRewards = estimateDailyRewards(rewardsInfo, sharesAfterValue, accountShare);
 
-        const tps = +rewardsInfo.tps;
-        const newWSupply = +rewardsInfo.working_supply - accountShare + sharesAfterValue;
-
-        if (!tps) return '0 AQUA';
-
-        const secondsInDay = 60 * 60 * 24;
-
-        return `${formatBalance((tps * newWBalance * secondsInDay) / newWSupply, true)} AQUA`;
-    };
-
-    const calculateBoostValue = (rewardsInfo: PoolRewardsInfo) => {
-        if (!rewardsInfo) return 1;
-        const tps = +rewardsInfo.tps;
-        const wSupply = +rewardsInfo.working_supply;
-        const wBalance = +rewardsInfo.working_balance;
-
-        if (!tps || !wSupply || !wBalance) return 1;
-
-        const tpsWithoutBoost =
-            ((+accountShare / Math.pow(10, pool.share_token_decimals)) * tps) / wSupply;
-        const expectedTps = (tps * wBalance) / wSupply;
-
-        if (tpsWithoutBoost === 0) return 1;
-
-        return expectedTps / tpsWithoutBoost / 1e7;
-    };
-
-    const calculateNewBoostValue = (rewardsInfo: PoolRewardsInfo) => {
-        if (!rewardsInfo) return 1;
-
-        const supply = +rewardsInfo.supply;
-        const lockedSupply = +rewardsInfo.boost_supply;
-        const lockedBalance = +rewardsInfo.boost_balance;
-
-        const newWBalance = Math.min(
-            +sharesAfterValue + (1.5 * lockedBalance * supply) / lockedSupply,
-            +sharesAfterValue * 2.5,
-        );
-
-        return newWBalance / sharesAfterValue;
+        return `${formatBalance(newRewards, true)} AQUA`;
     };
 
     const onSubmit = () => {
@@ -715,33 +687,36 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                             )}
                         </span>
                     </DescriptionRow>
-                    {Boolean(Number(pool.total_share)) && Boolean(poolRewards) && (
-                        <DescriptionRow>
-                            <span>ICE Reward Boost</span>
-                            <span>
-                                <Label
-                                    labelText={`x${(+calculateBoostValue(poolRewards)).toFixed(2)}`}
-                                    labelSize="medium"
-                                    background={COLORS.blue700}
-                                    withoutUppercase
-                                />
-                                {sharesAfter && (
-                                    <>
-                                        <Arrow />
-                                        <Label
-                                            labelText={`x${calculateNewBoostValue(
-                                                poolRewards,
-                                            ).toFixed(2)}`}
-                                            labelSize="medium"
-                                            background={COLORS.blue700}
-                                            withoutUppercase
-                                        />
-                                    </>
-                                )}
-                            </span>
-                        </DescriptionRow>
-                    )}
-                    {Boolean(Number(pool.reward_tps)) && (
+                    {isRewardsEnabled &&
+                        Boolean(Number(pool.total_share)) &&
+                        Boolean(poolRewards) && (
+                            <DescriptionRow>
+                                <span>ICE Reward Boost</span>
+                                <span>
+                                    <Label
+                                        labelText={`x${(+calculateBoostValue(poolRewards, accountShare)).toFixed(2)}`}
+                                        labelSize="medium"
+                                        background={COLORS.blue700}
+                                        withoutUppercase
+                                    />
+                                    {sharesAfter && (
+                                        <>
+                                            <Arrow />
+                                            <Label
+                                                labelText={`x${estimateBoostValue(
+                                                    poolRewards,
+                                                    sharesAfterValue,
+                                                ).toFixed(2)}`}
+                                                labelSize="medium"
+                                                background={COLORS.blue700}
+                                                withoutUppercase
+                                            />
+                                        </>
+                                    )}
+                                </span>
+                            </DescriptionRow>
+                        )}
+                    {isRewardsEnabled && Boolean(Number(pool.reward_tps)) && (
                         <DescriptionRow>
                             <span>Daily rewards</span>
                             <span>
@@ -756,7 +731,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                         </DescriptionRow>
                     )}
 
-                    {incentives?.length
+                    {isRewardsEnabled && incentives?.length
                         ? incentives
                               .filter(incentive => !!Number(incentive.info.tps))
                               .map(incentive => (

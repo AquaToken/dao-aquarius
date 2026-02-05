@@ -1085,6 +1085,30 @@ export default class AmmContract {
         return result;
     }
 
+    getChangeUserRewardsStatusTx(poolId: string, accountId: string, rewardsEnabled: boolean) {
+        return this.connection
+            .buildSmartContractTx(
+                accountId,
+                poolId,
+                AMM_CONTRACT_METHOD.SET_REWARDS_STATE,
+                publicKeyToScVal(accountId),
+                xdr.ScVal.scvBool(rewardsEnabled),
+            )
+            .then(tx => this.connection.prepareTransaction(tx));
+    }
+
+    getUserRewardsStatus(poolId: string, accountId: string): Promise<boolean> {
+        return this.connection
+            .buildSmartContractTx(
+                accountId,
+                poolId,
+                AMM_CONTRACT_METHOD.GET_REWARDS_STATE,
+                publicKeyToScVal(accountId),
+            )
+            .then(tx => this.connection.simulateTx(tx))
+            .then(result => result.result.retval.value() as unknown as boolean);
+    }
+
     private getAssetContractHash(asset: Token): string {
         return new StellarSdk.Contract(asset.contract).address().toBuffer().toString('hex');
     }

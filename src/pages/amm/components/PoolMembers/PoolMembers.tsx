@@ -12,35 +12,25 @@ import { useUpdateIndex } from 'hooks/useUpdateIndex';
 import { PoolBalance } from 'types/amm';
 
 import LinkIcon from 'assets/icons/nav/icon-external-link-16.svg';
+import Lock from 'assets/icons/objects/icon-lock-16.svg';
 
+import Label from 'basics/Label';
 import PageLoader from 'basics/loaders/PageLoader';
 import Pagination from 'basics/Pagination';
+import Table, { CellAlign } from 'basics/Table';
 
 import PublicKeyWithIcon from 'components/PublicKeyWithIcon';
 
 import { respondDown } from 'styles/mixins';
-import { Breakpoints, COLORS } from 'styles/style-constants';
+import { Breakpoints, COLORS, FONT_SIZE } from 'styles/style-constants';
 
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
 
 const PAGE_SIZE = 10;
 
 const Title = styled.h3`
-    margin-bottom: 2.4rem;
-`;
-const Row = styled.div`
-    display: flex;
-    align-items: center;
-    color: ${COLORS.textGray};
-    margin: 1rem 0;
-    height: 2.8rem;
-
-    span:last-child {
-        margin-left: auto;
-    }
-
     ${respondDown(Breakpoints.md)`
-        font-size: 1rem;
+        margin-bottom: 1.2rem;
     `}
 `;
 
@@ -53,6 +43,7 @@ const LinkToExpert = styled.a`
     color: ${COLORS.textTertiary};
     text-decoration: none;
     width: 22rem;
+    margin-right: auto;
 
     svg {
         margin-left: 0.4rem;
@@ -61,11 +52,15 @@ const LinkToExpert = styled.a`
     ${respondDown(Breakpoints.md)`
         font-size: 1rem;
         width: 17rem;
-        
-        svg {
-            margin-bottom: 0.2rem;
-        }
     `}
+`;
+
+const LabelInner = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 0.4rem !important;
+    font-weight: 400;
+    ${FONT_SIZE.sm};
 `;
 
 const PoolMembers = ({ poolId, totalShare }: { poolId: string; totalShare: string }) => {
@@ -105,37 +100,94 @@ const PoolMembers = ({ poolId, totalShare }: { poolId: string; totalShare: strin
     return (
         <div>
             <Title>Pool members</Title>
-            {members
-                .sort((a, b) => Number(b.balance) - Number(a.balance))
-                .map(member => (
-                    <Row key={member.account_address}>
-                        <LinkToExpert
-                            href={getExplorerLink(
-                                member.account_address.startsWith('G')
-                                    ? ExplorerSection.account
-                                    : ExplorerSection.contract,
-                                member.account_address,
-                            )}
-                            target="_blank"
-                        >
-                            <PublicKeyWithIcon pubKey={member.account_address} />
-                            <LinkIcon />
-                        </LinkToExpert>
+            <Table
+                head={[]}
+                body={members
+                    .sort((a, b) => Number(b.balance) - Number(a.balance))
+                    .map(member => ({
+                        key: member.account_address,
+                        isNarrow: true,
+                        mobileBackground: COLORS.gray50,
+                        rowItems: [
+                            {
+                                children: (
+                                    <LinkToExpert
+                                        href={getExplorerLink(
+                                            member.account_address.startsWith('G')
+                                                ? ExplorerSection.account
+                                                : ExplorerSection.contract,
+                                            member.account_address,
+                                        )}
+                                        target="_blank"
+                                    >
+                                        <PublicKeyWithIcon pubKey={member.account_address} />
+                                        <LinkIcon />
+                                    </LinkToExpert>
+                                ),
+                                label: 'Account',
+                            },
+                            {
+                                children: !member.rewards_enabled && (
+                                    <Label
+                                        labelText={
+                                            <LabelInner>
+                                                <Lock /> <span>Rewards Disabled</span>
+                                            </LabelInner>
+                                        }
+                                        background={COLORS.white}
+                                        color={COLORS.textGray}
+                                        withoutBorder
+                                        labelSize="default"
+                                        withoutUppercase
+                                    />
+                                ),
+                                label: 'Rewards',
+                                align: CellAlign.Right,
+                                hideOnMobile: true,
+                            },
+                            {
+                                children: !member.rewards_enabled && (
+                                    <Label
+                                        labelText={
+                                            <LabelInner>
+                                                <Lock /> <span>Rewards Disabled</span>
+                                            </LabelInner>
+                                        }
+                                        background={COLORS.gray50}
+                                        color={COLORS.textGray}
+                                        withoutBorder
+                                        labelSize="default"
+                                        withoutUppercase
+                                    />
+                                ),
+                                label: 'Rewards',
+                                align: CellAlign.Right,
+                                hideOnMobile: member.rewards_enabled,
+                                hideOnWeb: true,
+                            },
+                            {
+                                children: (
+                                    <span>
+                                        {formatBalance(Number(member.balance) / 1e7, true)} (
+                                        {Number(totalShare)
+                                            ? formatBalance(
+                                                  (100 * Number(member.balance)) /
+                                                      1e7 /
+                                                      (Number(totalShare) / 1e7),
+                                                  true,
+                                              )
+                                            : '0'}
+                                        %)
+                                    </span>
+                                ),
+                                flexSize: 0.4,
+                                align: CellAlign.Right,
+                                label: 'Shares',
+                            },
+                        ],
+                    }))}
+            />
 
-                        <span>
-                            {formatBalance(Number(member.balance) / 1e7, true)} (
-                            {Number(totalShare)
-                                ? formatBalance(
-                                      (100 * Number(member.balance)) /
-                                          1e7 /
-                                          (Number(totalShare) / 1e7),
-                                      true,
-                                  )
-                                : '0'}
-                            %)
-                        </span>
-                    </Row>
-                ))}
             <Pagination
                 pageSize={PAGE_SIZE}
                 totalCount={total}
