@@ -214,7 +214,7 @@ const PoolPage = () => {
     const [claimIncentivePending, setClaimIncentivePending] = useState(false);
     const [chartWidth, setChartWidth] = useState(0);
 
-    const { account } = useAuthStore();
+    const { account, isLogged } = useAuthStore();
 
     const navigate = useNavigate();
 
@@ -354,11 +354,15 @@ const PoolPage = () => {
                             <ArrowLeft />
                         </CircleButton>
 
-                        <CircleButton
-                            onClick={() => ModalService.openModal(RewardsSettingsModal, { pool })}
-                        >
-                            <SettingsIconPurple />
-                        </CircleButton>
+                        {isLogged && (
+                            <CircleButton
+                                onClick={() =>
+                                    ModalService.openModal(RewardsSettingsModal, { pool })
+                                }
+                            >
+                                <SettingsIconPurple />
+                            </CircleButton>
+                        )}
                     </PageHeader>
                     <Market
                         assets={pool.tokens}

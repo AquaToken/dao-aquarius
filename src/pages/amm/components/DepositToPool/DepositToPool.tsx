@@ -4,15 +4,16 @@ import { NumericFormat } from 'react-number-format';
 import styled from 'styled-components';
 
 import { POOL_TYPE } from 'constants/amm';
-import { DAY } from 'constants/intervals';
 
 import { contractValueToAmount } from 'helpers/amount';
 import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 import {
     calculateBoostValue,
+    calculateDailyIncentives,
     calculateDailyRewards,
     estimateBoostValue,
+    estimateDailyIncentives,
     estimateDailyRewards,
 } from 'helpers/rewards';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
@@ -390,7 +391,8 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
     const getDailyRewards = (rewardsInfo: PoolRewardsInfo) => {
         if (!rewardsInfo) return <DotsLoader />;
 
-        if (!rewardsInfo.tps || !rewardsInfo.wSupply || !rewardsInfo.wBalance) return '0 AQUA';
+        if (!rewardsInfo.tps || !rewardsInfo.working_balance || !rewardsInfo.working_supply)
+            return '0 AQUA';
 
         return `${formatBalance(dailyRewards, true)} AQUA`;
     };
@@ -739,9 +741,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                                       <span>Daily incentives {incentive.token.code}</span>
                                       <span>
                                           {formatBalance(
-                                              (+incentive.info.tps * DAY * sharesBefore) /
-                                                  1000 /
-                                                  100,
+                                              calculateDailyIncentives(poolRewards, incentive),
                                               true,
                                           )}{' '}
                                           {incentive.token.code}
@@ -749,9 +749,12 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                                               <>
                                                   <Arrow />
                                                   {formatBalance(
-                                                      (+incentive.info.tps * DAY * sharesAfter) /
-                                                          1000 /
-                                                          100,
+                                                      estimateDailyIncentives(
+                                                          poolRewards,
+                                                          incentive,
+                                                          sharesAfterValue,
+                                                          accountShare,
+                                                      ),
                                                       true,
                                                   )}{' '}
                                                   {incentive.token.code}
