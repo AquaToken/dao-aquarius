@@ -52,7 +52,6 @@ const BribesList: React.FC = () => {
     return (
         <Container>
             <TitleBlock ref={headerRef}>
-                {/*<Title>Bribes</Title>*/}
                 <SectionPickerStyled options={SELECT_OPTIONS} onChange={setTab} value={tab} />
 
                 <AddBribeButton onClick={() => navigate(AppRoutes.section.bribes.link.addBribe)}>

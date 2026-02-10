@@ -226,7 +226,7 @@ export const getPairsWithBribes = async (pageSize: number, page: number) => {
         })
         .filter(({ is_banned }) => !is_banned);
 
-    return { pairs, count: pairs.length };
+    return { pairs, count: bribes.data.count };
 };
 
 const getAssetParam = (asset: AssetSimple) => getAssetString(createAsset(asset.code, asset.issuer));
@@ -307,9 +307,9 @@ export const getTotalVotingStats = (): Promise<TotalStats> =>
 
 export const getUpcomingBribesForMarket = (marketKey: string): Promise<UpcomingBribe[]> =>
     axios
-        .get<ListResponse<UpcomingBribe>>(
-            `${BRIBES_API_URL}pending-bribes/?limit=200&ordering=start_at&market_key=${marketKey}`,
-        )
+        .get<
+            ListResponse<UpcomingBribe>
+        >(`${BRIBES_API_URL}pending-bribes/?limit=200&ordering=start_at&market_key=${marketKey}`)
         .then(({ data }) => data.results);
 
 export const getRewards = (): Promise<Rewards[]> =>
