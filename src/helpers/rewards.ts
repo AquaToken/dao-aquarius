@@ -41,6 +41,8 @@ export const calculateDailyRewards = (rewardsInfo: PoolRewardsInfo) => {
     const wSupply = +rewardsInfo.working_supply;
     const wBalance = +rewardsInfo.working_balance;
 
+    if (!wSupply) return 0;
+
     return (((+tps * DAY) / 1000) * +wBalance) / +wSupply;
 };
 
@@ -54,6 +56,8 @@ export const calculateDailyIncentives = (
     const tps = +incentiveInfo.info.tps;
     const wSupply = +rewardsInfo.working_supply;
     const wBalance = +rewardsInfo.working_balance;
+
+    if (!wSupply) return 0;
 
     return (((+tps * DAY) / 1000) * +wBalance) / +wSupply;
 };
