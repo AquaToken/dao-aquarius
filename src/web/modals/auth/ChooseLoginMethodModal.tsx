@@ -20,7 +20,6 @@ import BG from 'assets/wallets/lobstr/get-extension-bg.svg';
 import LobstrLogo from 'assets/wallets/lobstr/lobstr-logo-black.svg';
 import WalletConnectLogo from 'assets/wallets/wallet-connect-logo.svg';
 
-import Label from 'basics/Label';
 import { ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import { respondDown } from 'styles/mixins';
@@ -201,9 +200,7 @@ const ChooseLoginMethodModal = ({
                 <StellarLogo />
 
                 <LoginMethodWithDescription>
-                    <LoginMethodName>
-                        Stellar Wallet Kit <Label labelText="NEW!" />
-                    </LoginMethodName>
+                    <LoginMethodName>Stellar Wallets</LoginMethodName>
                     <LoginMethodDescription>
                         Freighter, HOT Wallet, xBull, Albedo, Hana Wallet, Rabet
                     </LoginMethodDescription>
