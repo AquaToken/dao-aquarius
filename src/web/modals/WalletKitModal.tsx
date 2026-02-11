@@ -1,4 +1,3 @@
-import { HOTWALLET_ID } from '@creit.tech/stellar-wallets-kit';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
@@ -8,7 +7,6 @@ import { ModalProps } from 'types/modal';
 
 import ArrowRightIcon from 'assets/icons/arrows/arrow-right-16.svg';
 
-import Label from 'basics/Label';
 import { ExternalLink } from 'basics/links';
 import { ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
@@ -51,7 +49,7 @@ const WalletKitModal = ({ params, close }: ModalProps<{ modules: Modules[] }>) =
 
     return (
         <ModalWrapper>
-            <ModalTitle>Stellar Wallet Kit</ModalTitle>
+            <ModalTitle>Stellar Wallets</ModalTitle>
 
             {params.modules.map(({ productName, productIcon, productUrl, productId }) => (
                 <LoginMethod
@@ -66,9 +64,7 @@ const WalletKitModal = ({ params, close }: ModalProps<{ modules: Modules[] }>) =
                 >
                     <img src={productIcon} alt={productName} width={40} height={40} />
                     <LoginMethodWithDescription>
-                        <LoginMethodName>
-                            {productName} {productId === HOTWALLET_ID && <Label labelText="NEW!" />}
-                        </LoginMethodName>
+                        <LoginMethodName>{productName}</LoginMethodName>
                         {isAvailableMap && !isAvailableMap.get(productName) && (
                             <LoginMethodDescription>
                                 <ExternalLink href={productUrl}>Install</ExternalLink>
