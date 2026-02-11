@@ -402,7 +402,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
 
         if (!rewardsInfo.tps) return '0 AQUA';
 
-        const newRewards = estimateDailyRewards(rewardsInfo, sharesAfterValue, accountShare);
+        const newRewards = estimateDailyRewards(rewardsInfo, sharesAfterValue);
 
         return `${formatBalance(newRewards, true)} AQUA`;
     };
@@ -753,7 +753,6 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                                                           poolRewards,
                                                           incentive,
                                                           sharesAfterValue,
-                                                          accountShare,
                                                       ),
                                                       true,
                                                   )}{' '}
