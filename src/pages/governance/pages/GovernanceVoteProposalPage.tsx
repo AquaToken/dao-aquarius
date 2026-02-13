@@ -25,11 +25,6 @@ const Main = styled.main`
     `}
 `;
 
-export enum SimpleProposalResultsLabels {
-    votesFor = 'For',
-    votesAgainst = 'Against',
-}
-
 const GovernanceVoteProposalPage = (): ReactElement => {
     const { id, version } = useParams<{ id?: string; version?: string }>();
 

@@ -2,6 +2,8 @@ import * as React from 'react';
 import { ReactElement } from 'react';
 import styled from 'styled-components';
 
+import { VoteOptions } from 'constants/dao';
+
 import { getQuorumPercentage, getVotingTokens, isQuorumReached } from 'helpers/dao';
 import { roundToPrecision } from 'helpers/format-number';
 
@@ -16,8 +18,6 @@ import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'styles/mixins';
 import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import ResultProgressLine from './ResultProgressLine/ResultProgressLine';
-
-import { SimpleProposalResultsLabels } from '../../../pages/GovernanceVoteProposalPage';
 
 const ResultBlock = styled.div`
     width: 100%;
@@ -106,31 +106,44 @@ const getResultsData = (proposal: Proposal) => {
         const voteAgainstValue = Number(voteAgainst);
         const voteAbstainValue = Number(voteAbstain);
 
-        const percentFor =
-            (voteForValue / (voteForValue + voteAgainstValue + voteAbstainValue)) * 100;
+        const totalValue = voteForValue + voteAgainstValue + voteAbstainValue;
 
-        const percentAgainst =
-            (voteAgainstValue / (voteForValue + voteAgainstValue + voteAbstainValue)) * 100;
+        const percentFor = (voteForValue / totalValue) * 100;
+
+        const percentAgainst = (voteAgainstValue / totalValue) * 100;
+
+        const percentAbstain = (voteAbstainValue / totalValue) * 100;
 
         const roundedPercentFor = roundToPrecision(percentFor, 2);
         const roundedPercentAgainst = roundToPrecision(percentAgainst, 2);
+        const roundedPercentAbstain = roundToPrecision(percentAbstain, 2);
 
         return [
             {
-                label: SimpleProposalResultsLabels.votesFor,
                 percentage: Number.isNaN(percentFor) ? '' : `${roundedPercentFor}%`,
                 amount: voteFor,
                 votingTokens: getVotingTokens(proposal),
+                vote: VoteOptions.for,
             },
             {
-                label: SimpleProposalResultsLabels.votesAgainst,
-                percentage: Number.isNaN(percentFor)
-                    ? ''
-                    : `${roundToPrecision(roundedPercentAgainst, 2)}%`,
+                percentage: Number.isNaN(percentAbstain) ? '' : `${roundedPercentAbstain}%`,
+                amount: voteAbstain,
+                votingTokens: getVotingTokens(proposal),
+                vote: VoteOptions.abstain,
+            },
+            {
+                percentage: Number.isNaN(percentAgainst) ? '' : `${roundedPercentAgainst}%`,
                 amount: voteAgainst,
                 votingTokens: getVotingTokens(proposal),
+                vote: VoteOptions.against,
             },
-        ];
+            // show abstain line only for proposals later then 125
+        ].filter(({ vote }) => {
+            if (Number(proposal.id) < 125) {
+                return vote !== VoteOptions.abstain;
+            }
+            return true;
+        });
     }
     return null;
 };
@@ -150,7 +163,7 @@ const CurrentResults = ({ proposal }: { proposal: Proposal }): ReactElement => {
             </Header>
 
             {results?.map(result => (
-                <ResultProgressLine key={result.label} result={result} />
+                <ResultProgressLine key={result.vote} result={result} />
             ))}
             <Quorum>
                 <Label>Participation Rate:</Label>

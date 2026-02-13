@@ -43,8 +43,8 @@ export const getProposalStatus = (proposal: ProposalSimple | Proposal): PROPOSAL
 };
 
 export const getVotingTokens = (proposal: ProposalSimple | Proposal) => {
-    if (!proposal.aqua_circulating_supply) return 'ICE';
-    if (!proposal.ice_circulating_supply) return 'AQUA';
+    if (!Number(proposal.aqua_circulating_supply)) return 'ICE';
+    if (!Number(proposal.ice_circulating_supply)) return 'AQUA';
 
     return 'AQUA + ICE';
 };
