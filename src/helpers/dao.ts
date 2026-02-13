@@ -41,3 +41,10 @@ export const getProposalStatus = (proposal: ProposalSimple | Proposal): PROPOSAL
         ? PROPOSAL_STATUS.ACCEPTED
         : PROPOSAL_STATUS.REJECTED;
 };
+
+export const getVotingTokens = (proposal: ProposalSimple | Proposal) => {
+    if (!proposal.aqua_circulating_supply) return 'ICE';
+    if (!proposal.ice_circulating_supply) return 'AQUA';
+
+    return 'AQUA + ICE';
+};

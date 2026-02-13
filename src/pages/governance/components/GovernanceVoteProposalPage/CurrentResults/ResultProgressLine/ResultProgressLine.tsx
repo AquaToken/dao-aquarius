@@ -66,12 +66,12 @@ const Inner = styled.div<{ $width: string; $isAgainst: boolean }>`
 const ResultProgressLine = ({
     result,
 }: {
-    result: { label: string; percentage: string; amount: string; isIceSupported: boolean };
+    result: { label: string; percentage: string; amount: string; votingTokens: string };
 }): ReactElement => {
-    const { label, percentage, amount, isIceSupported } = result;
+    const { label, percentage, amount, votingTokens } = result;
     const resultDescription = `${percentage ? `${percentage} - ` : ''}${formatBalance(
         Number(amount),
-    )} ${isIceSupported ? 'AQUA + ICE' : 'AQUA'}`;
+    )} ${votingTokens}`;
 
     const isFor = SimpleProposalResultsLabels.votesFor === label;
 

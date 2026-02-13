@@ -2,7 +2,7 @@ import * as React from 'react';
 import { ReactElement } from 'react';
 import styled from 'styled-components';
 
-import { getQuorumPercentage, isQuorumReached } from 'helpers/dao';
+import { getQuorumPercentage, getVotingTokens, isQuorumReached } from 'helpers/dao';
 import { roundToPrecision } from 'helpers/format-number';
 
 import { Proposal } from 'types/governance';
@@ -99,7 +99,6 @@ const getResultsData = (proposal: Proposal) => {
         vote_for_result: voteFor,
         vote_against_result: voteAgainst,
         vote_abstain_result: voteAbstain,
-        ice_circulating_supply: iceCirculatingSupply,
     } = proposal;
 
     if (isSimple) {
@@ -116,14 +115,12 @@ const getResultsData = (proposal: Proposal) => {
         const roundedPercentFor = roundToPrecision(percentFor, 2);
         const roundedPercentAgainst = roundToPrecision(percentAgainst, 2);
 
-        const isIceSupported = Number(iceCirculatingSupply) !== 0;
-
         return [
             {
                 label: SimpleProposalResultsLabels.votesFor,
                 percentage: Number.isNaN(percentFor) ? '' : `${roundedPercentFor}%`,
                 amount: voteFor,
-                isIceSupported,
+                votingTokens: getVotingTokens(proposal),
             },
             {
                 label: SimpleProposalResultsLabels.votesAgainst,
@@ -131,7 +128,7 @@ const getResultsData = (proposal: Proposal) => {
                     ? ''
                     : `${roundToPrecision(roundedPercentAgainst, 2)}%`,
                 amount: voteAgainst,
-                isIceSupported,
+                votingTokens: getVotingTokens(proposal),
             },
         ];
     }

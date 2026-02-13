@@ -10,7 +10,12 @@ import {
 } from 'constants/dao';
 import { AppRoutes } from 'constants/routes';
 
-import { getProposalStatus, getQuorumPercentage, isQuorumReached } from 'helpers/dao';
+import {
+    getProposalStatus,
+    getQuorumPercentage,
+    getVotingTokens,
+    isQuorumReached,
+} from 'helpers/dao';
 import { getDateString } from 'helpers/date';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
 
@@ -233,7 +238,6 @@ const Sidebar = forwardRef(
             start_at: startDate,
             end_at: endDate,
             proposal_status: status,
-            ice_circulating_supply: iceCirculatingSupply,
         } = proposal;
 
         if (status === 'VOTED') {
@@ -276,7 +280,7 @@ const Sidebar = forwardRef(
                                     : `${roundedPercent}% votes - ${formatBalance(
                                           isVoteForWon ? voteForValue : voteAgainstValue,
                                           true,
-                                      )} ${iceCirculatingSupply ? 'AQUA + ICE' : 'AQUA'}`}
+                                      )} ${getVotingTokens(proposal)}`}
                             </FinalResult>
                         </Results>
                     </Container>

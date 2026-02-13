@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { AppRoutes } from 'constants/routes';
 
-import { getProposalStatus, getQuorumPercentage } from 'helpers/dao';
+import { getProposalStatus, getQuorumPercentage, getVotingTokens } from 'helpers/dao';
 import { getDateString } from 'helpers/date';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
 
@@ -256,19 +256,20 @@ const ProposalPreview = ({
         const {
             vote_for_result: voteFor,
             vote_against_result: voteAgainst,
-            ice_circulating_supply: iceCirculatingSupply,
+            vote_abstain_result: voteAbstain,
         } = proposal;
 
         const voteForValue = Number(voteFor);
         const voteAgainstValue = Number(voteAgainst);
+        const voteAbstainValue = Number(voteAbstain);
 
         const rate = getQuorumPercentage(proposal);
 
         const roundedRate = roundToPrecision(rate, 2);
 
-        return `${roundedRate}% (${formatBalance(voteForValue + voteAgainstValue, true)} ${
-            Number(iceCirculatingSupply) === 0 ? 'AQUA' : 'AQUA + ICE'
-        })`;
+        return `${roundedRate}% (${formatBalance(voteForValue + voteAgainstValue + voteAbstainValue, true)} ${getVotingTokens(
+            proposal,
+        )})`;
     };
 
     const getActiveParticipationRate = () => {
