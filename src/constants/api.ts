@@ -21,6 +21,8 @@ export const API_DELEGATION_URL = 'https://api-delegation.aqua.network/api/deleg
 
 export const API_AIRDROP_2 = 'https://airdrop2-checker-api.aqua.network/api/snapshot/';
 
+export const API_GOVERNANCE = 'https://governance-api.aqua.network/api';
+
 export const API_URLS = {
     [ENV_PRODUCTION]: {
         onRampProxy: 'https://soroban-on-ramp.coindisco.com',

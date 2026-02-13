@@ -27,6 +27,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import { ModalService, StellarService } from 'services/globalServices';
 import { StellarEvents } from 'services/stellar/events/events';
 
+import { Option } from 'types/option';
 import { ClassicToken } from 'types/token';
 
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
@@ -39,7 +40,6 @@ import BackgroundImageRight from 'assets/vote-page/background-right.svg';
 
 import AssetDropdown from 'basics/asset-pickers/AssetDropdown';
 import Button from 'basics/buttons/Button';
-import { Option } from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';

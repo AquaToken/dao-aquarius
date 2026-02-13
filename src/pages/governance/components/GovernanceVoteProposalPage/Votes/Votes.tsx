@@ -3,11 +3,16 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { getVotes, getVoteTxHash, VoteFields } from 'api/governance';
+
 import { GD_ICE_CODE } from 'constants/assets';
+import { DAO_UPDATE_INTERVAL } from 'constants/dao';
 
 import { getDateString } from 'helpers/date';
 import { getIsTestnetEnv } from 'helpers/env';
 import { formatBalance } from 'helpers/format-number';
+
+import { Vote } from 'types/governance';
 
 import ExternalLinkIcon from 'assets/icons/nav/icon-external-link-16.svg';
 import DIce from 'assets/tokens/dice-logo.svg';
@@ -22,8 +27,6 @@ import PublicKeyWithIcon from 'components/PublicKeyWithIcon';
 import { flexAllCenter, respondDown } from 'styles/mixins';
 import { Breakpoints, COLORS } from 'styles/style-constants';
 
-import { getVotes, getVoteTxHash, UPDATE_INTERVAL, VoteFields } from '../../../api/api';
-import { Vote } from '../../../api/types';
 import Solution from '../Solution/Solution';
 
 const VotesBlock = styled.div`
@@ -168,15 +171,15 @@ const Votes = (): React.ReactNode => {
 
     useEffect(() => {
         getVotes(id, PAGE_SIZE, page, sort, isReversedSort).then(result => {
-            setTotalVotes(result.data.count);
-            setVotes(result.data.results);
+            setTotalVotes(result.count);
+            setVotes(result.results);
         });
     }, [sort, isReversedSort, updateIndex, page]);
 
     useEffect(() => {
         const interval = setInterval(() => {
             setUpdateIndex(prev => prev + 1);
-        }, UPDATE_INTERVAL);
+        }, DAO_UPDATE_INTERVAL);
 
         return () => clearInterval(interval);
     }, []);

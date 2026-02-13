@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+
+import { getProposalsRequest, PROPOSAL_FILTER } from 'api/governance';
 
 import { AppRoutes } from 'constants/routes';
 
@@ -30,7 +32,6 @@ import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { governanceQuestions } from 'pages/governance/components/GovernanceMainPage/FAQ/Questions';
 
-import { getProposalsRequest, PROPOSAL_FILTER } from '../api/api';
 import CreateProposal from '../components/GovernanceMainPage/CreateProposal/CreateProposal';
 import ProposalPreview from '../components/GovernanceMainPage/ProposalPreview/ProposalPreview';
 
@@ -310,6 +311,11 @@ const GovernanceMainPage = (): React.ReactElement => {
         },
     );
 
+    const setFilterValue = (value: PROPOSAL_FILTER) => {
+        setFilter(value);
+        setPage(1);
+    };
+
     const filterRef = useRef(filter);
 
     useEffect(() => {
@@ -363,12 +369,12 @@ const GovernanceMainPage = (): React.ReactElement => {
                                 <ToggleGroupStyled
                                     value={filter}
                                     options={Options}
-                                    onChange={setFilter}
+                                    onChange={setFilterValue}
                                 />
                                 <SelectStyled
                                     value={filter}
                                     options={Options}
-                                    onChange={setFilter}
+                                    onChange={setFilterValue}
                                 />
                             </TitleBlock>
 
