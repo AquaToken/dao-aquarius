@@ -11,6 +11,8 @@ import { useIsOnViewport, useIsOverScrolled } from 'hooks/useIsOnViewport';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { Proposal } from 'types/governance';
+
 import IconEdit from 'assets/icons/actions/icon-edit-16.svg';
 import ArrowDown from 'assets/icons/arrows/arrow-down-16.svg';
 import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
@@ -24,7 +26,6 @@ import PublicKeyWithIcon from 'components/PublicKeyWithIcon';
 import { commonMaxWidth, flexAllCenter, respondDown } from 'styles/mixins';
 import { Breakpoints, COLORS } from 'styles/style-constants';
 
-import { Proposal } from '../../../api/types';
 import { statePage } from '../../../pages/GovernanceProposalCreationPage';
 import CurrentResults from '../CurrentResults/CurrentResults';
 import Sidebar from '../Sidebar/Sidebar';

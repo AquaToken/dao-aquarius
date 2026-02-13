@@ -17,9 +17,9 @@ import EventService from 'services/event.service';
 import { StellarEvents, StellarPayload } from 'services/stellar/events/events';
 import Horizon from 'services/stellar/horizon/horizon';
 
+import { ProposalSimple } from 'types/governance';
 import { ClaimableBalance } from 'types/stellar';
 
-import { ProposalSimple } from 'pages/governance/api/types';
 import { PairStats } from 'pages/vote/api/types';
 
 export default class ClaimableBalances {

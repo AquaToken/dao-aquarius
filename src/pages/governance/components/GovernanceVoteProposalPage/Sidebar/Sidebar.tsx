@@ -1,10 +1,16 @@
 import { forwardRef, RefObject, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
-import { CREATE_DISCUSSION_COST, CREATE_PROPOSAL_COST } from 'constants/dao';
+import {
+    CREATE_DISCUSSION_COST,
+    CREATE_PROPOSAL_COST,
+    PROPOSAL_STATUS,
+    VoteOptions,
+} from 'constants/dao';
 import { AppRoutes } from 'constants/routes';
 
+import { getProposalStatus, getQuorumPercentage, isQuorumReached } from 'helpers/dao';
 import { getDateString } from 'helpers/date';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
 
@@ -12,25 +18,19 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
 
+import { Proposal } from 'types/governance';
+
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 
-import Fail from 'assets/icons/status/fail-red.svg';
-import Success from 'assets/icons/status/success.svg';
-
 import Button from 'basics/buttons/Button';
+import { VoteIcon } from 'basics/icons';
 import { ExternalLink } from 'basics/links';
 
-import { cardBoxShadow, flexAllCenter, respondDown } from 'styles/mixins';
+import { cardBoxShadow, respondDown } from 'styles/mixins';
 import { Breakpoints, COLORS } from 'styles/style-constants';
 
-import NativeVotingButton from './VotingButton/VotingButton';
-
-import { Proposal } from '../../../api/types';
-import { SimpleProposalOptions } from '../../../pages/GovernanceVoteProposalPage';
 import NotEnoughAquaModal from '../../GovernanceMainPage/NotEnoughAquaModal/NotEnoughAquaModal';
-import ProposalStatus, {
-    PROPOSAL_STATUS,
-} from '../../GovernanceMainPage/ProposalStatus/ProposalStatus';
+import ProposalStatus from '../../GovernanceMainPage/ProposalStatus/ProposalStatus';
 import CreateDiscussionModal from '../../GovernanceProposalCreationPage/CreateDiscussionModal/CreateDiscussionModal';
 import PublishProposalModal from '../../GovernanceProposalCreationPage/PublishProposalModal/PublishProposalModal';
 import ConfirmVoteModal from '../ConfirmVoteModal/ConfirmVoteModal';
@@ -91,7 +91,18 @@ const Notice = styled.div`
     margin-bottom: 2rem;
 `;
 
-const VotingButton = styled(NativeVotingButton)`
+const VotingButton = styled(Button)`
+    text-transform: none;
+    justify-content: flex-start;
+
+    &:hover {
+        opacity: 0.6;
+    }
+
+    &:active {
+        transform: scale(0.9);
+    }
+
     & > svg {
         margin-right: 1.3rem;
     }
@@ -101,91 +112,40 @@ const VotingButton = styled(NativeVotingButton)`
     }
 `;
 
+const ForButton = styled(VotingButton)`
+    background: ${COLORS.purple500};
+
+    &:hover {
+        background: ${COLORS.purple500};
+    }
+`;
+
+const AbstainButton = styled(VotingButton)`
+    background: ${COLORS.gray100};
+
+    &:hover {
+        background: ${COLORS.gray100};
+    }
+`;
+
+const AgainstButton = styled(VotingButton)`
+    background: ${COLORS.red500};
+
+    &:hover {
+        background: ${COLORS.red500};
+    }
+`;
+
 const BoldText = styled.span`
     font-weight: bold;
     margin-left: 0.8rem;
 `;
 
-const iconStyles = css`
-    height: 2.4rem;
-    width: 2.4rem;
-`;
-
-const FailIcon = styled(Fail)`
-    ${iconStyles}
-`;
-const SuccessIcon = styled(Success)`
-    ${iconStyles}
-`;
-
-// const VoteOption = styled.label`
-//     display: flex;
-//     align-items: center;
-//     position: relative;
-//     padding: 2.2rem;
-//     width: 100%;
-//     margin-bottom: 1.2rem;
-//     background: ${COLORS.gray50};
-//     border-radius: 0.5rem;
-//
-//     font-size: 1.6rem;
-//     line-height: 1.8rem;
-//
-//     transition: all ease 200ms;
-//
-//     ${({ isChecked }: { isChecked: boolean }) =>
-//         isChecked
-//             ? `color: ${COLORS.white};
-//                background: ${COLORS.purple500} ;
-//             `
-//             : `color: ${COLORS.textTertiary};
-//                background: ${COLORS.gray50};
-//             `};
-//     &:hover {
-//         ${({ isChecked }: { isChecked: boolean }) =>
-//             !isChecked &&
-//             `cursor: pointer;
-//              background: ${COLORS.white};
-//              box-shadow: 0px 20px 30px rgba(0, 6, 54, 0.06);
-//              & > span {
-//                 border-color: ${COLORS.purple500} ;
-//              }
-//              `};
-//     }
-// `;
-//
-// const Divider = styled.div`
-//     height: 0;
-//     width: 100%;
-//     border-bottom: 0.1rem dashed #e8e8ed; ;
-// `;
-//
-// const InputItem = styled.input`
-//     position: absolute;
-//     top: 0;
-//     left: 0;
-//     opacity: 0;
-// `;
-//
-// const NonSelectedIcon = styled.span`
-//     width: 2.2rem;
-//     height: 2.2rem;
-//     margin-right: 1.4rem;
-//
-//     background: ${COLORS.white};
-//     border: 0.1rem solid ${COLORS.gray100};
-//     border-radius: 50%;
-//     transition: all ease 200ms;
-// `;
-//
-// const Checked = styled(CheckedIcon)`
-//     margin-right: 1.4rem;
-// `;
-
 const Results = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 1.2rem;
 `;
 
 const Title = styled.span`
@@ -193,38 +153,6 @@ const Title = styled.span`
     font-weight: 400;
     color: ${COLORS.textSecondary};
     margin-top: 2.2rem;
-`;
-
-const Winner = styled.div<{ $isVoteFor?: boolean }>`
-    height: 3.5rem;
-    padding: 0 1.5rem;
-    ${flexAllCenter};
-    width: min-content;
-    white-space: nowrap;
-    border-radius: 1.75rem;
-    background-color: ${({ $isVoteFor }) => ($isVoteFor ? COLORS.purple500 : COLORS.red500)};
-    color: ${COLORS.white};
-    font-weight: 400;
-    margin-top: 1rem;
-    margin-bottom: 6rem;
-`;
-
-const Canceled = styled(Winner)`
-    background-color: ${COLORS.gray100};
-    color: ${COLORS.textDark};
-`;
-
-const FailIconGray = styled(Fail)`
-    height: 1.4rem;
-    width: 1.4rem;
-    margin-right: 0.6rem;
-
-    rect {
-        fill: ${COLORS.white};
-    }
-    path {
-        stroke: ${COLORS.textGray};
-    }
 `;
 
 const EndDate = styled.span`
@@ -236,7 +164,6 @@ const EndDate = styled.span`
 const FinalResult = styled.span`
     color: ${COLORS.textGray};
     font-size: 1.4rem;
-    margin-top: 1rem;
 `;
 
 const DiscussionDescription = styled.div`
@@ -300,25 +227,22 @@ const Sidebar = forwardRef(
         const {
             vote_for_issuer: voteForKey,
             vote_against_issuer: voteAgainstKey,
+            abstain_issuer: voteAbstainKey,
             vote_for_result: voteForResult,
             vote_against_result: voteAgainstResult,
             start_at: startDate,
             end_at: endDate,
-            aqua_circulating_supply: aquaCirculatingSupply,
             proposal_status: status,
             ice_circulating_supply: iceCirculatingSupply,
-            percent_for_quorum: percentForQuorum,
         } = proposal;
 
         if (status === 'VOTED') {
             const voteForValue = Number(voteForResult);
             const voteAgainstValue = Number(voteAgainstResult);
+
             const isVoteForWon = voteForValue > voteAgainstValue;
 
-            const percent =
-                ((isVoteForWon ? voteForValue : voteAgainstValue) /
-                    (voteForValue + voteAgainstValue)) *
-                100;
+            const percent = getQuorumPercentage(proposal);
 
             if (Number.isNaN(percent)) {
                 return (
@@ -334,28 +258,14 @@ const Sidebar = forwardRef(
 
             const roundedPercent = roundToPrecision(percent, 2);
 
-            const isCanceled =
-                ((voteForValue + voteAgainstValue) /
-                    (Number(aquaCirculatingSupply) + Number(iceCirculatingSupply))) *
-                    100 <
-                percentForQuorum;
+            const isCanceled = !isQuorumReached(proposal);
 
             return (
                 <SidebarBlock ref={ref} {...props}>
                     <Container>
                         <Results>
                             <Title>Result</Title>
-                            {isCanceled ? (
-                                <Canceled>
-                                    <FailIconGray />
-                                    Canceled
-                                </Canceled>
-                            ) : (
-                                <Winner $isVoteFor={isVoteForWon}>
-                                    {isVoteForWon ? <SuccessIcon /> : <FailIcon />}
-                                    <BoldText>{isVoteForWon ? 'For' : 'Against'}</BoldText>
-                                </Winner>
-                            )}
+                            <ProposalStatus status={getProposalStatus(proposal)} />
                             <EndDate>
                                 {isCanceled ? 'Canceled' : 'Ended'} on{' '}
                                 {getDateString(new Date(endDate).getTime())}
@@ -379,33 +289,48 @@ const Sidebar = forwardRef(
                 <SidebarBlock ref={ref} {...props}>
                     <Container>
                         <SidebarTitle>Cast your votes</SidebarTitle>
-                        <VotingButton
+                        <ForButton
+                            fullWidth
                             onClick={() =>
                                 onVoteClick({
-                                    option: SimpleProposalOptions.voteFor,
+                                    option: VoteOptions.for,
                                     key: voteForKey,
                                     endDate,
                                     startDate,
                                 })
                             }
                         >
-                            <SuccessIcon />
+                            <VoteIcon option={VoteOptions.for} size="medium" />
                             <BoldText>For</BoldText>
-                        </VotingButton>
-                        <VotingButton
-                            isVoteFor
+                        </ForButton>
+                        <AbstainButton
+                            fullWidth
                             onClick={() =>
                                 onVoteClick({
-                                    option: SimpleProposalOptions.voteAgainst,
+                                    option: VoteOptions.abstain,
+                                    key: voteAbstainKey,
+                                    endDate,
+                                    startDate,
+                                })
+                            }
+                        >
+                            <VoteIcon option={VoteOptions.abstain} size="medium" />
+                            <BoldText>Abstain</BoldText>
+                        </AbstainButton>
+                        <AgainstButton
+                            fullWidth
+                            onClick={() =>
+                                onVoteClick({
+                                    option: VoteOptions.against,
                                     key: voteAgainstKey,
                                     endDate,
                                     startDate,
                                 })
                             }
                         >
-                            <FailIcon />
+                            <VoteIcon option={VoteOptions.against} size="medium" />
                             <BoldText>Against</BoldText>
-                        </VotingButton>
+                        </AgainstButton>
                     </Container>
                 </SidebarBlock>
             );
@@ -554,36 +479,6 @@ const Sidebar = forwardRef(
                         </Button>
                     </Container>
                 )}
-                {/*(*/}
-                {/*    <>*/}
-                {/*        <Container>*/}
-                {/*            <SidebarTitle>Cast your votes</SidebarTitle>*/}
-                {/*            {voteOptionsMockData?.options.map((item) => {*/}
-                {/*                const { name } = item;*/}
-                {/*                const isSelected = selectedOption?.name === name;*/}
-                {/*                return (*/}
-                {/*                    <VoteOption key={name} isChecked={isSelected}>*/}
-                {/*                        <InputItem*/}
-                {/*                            type="checkbox"*/}
-                {/*                            checked={isSelected}*/}
-                {/*                            onChange={() => {*/}
-                {/*                                setSelectedOption({ ...item });*/}
-                {/*                            }}*/}
-                {/*                        />*/}
-                {/*                        {isSelected ? <Checked /> : <NonSelectedIcon />}*/}
-                {/*                        {name}*/}
-                {/*                    </VoteOption>*/}
-                {/*                );*/}
-                {/*            })}*/}
-                {/*        </Container>*/}
-                {/*        <Divider />*/}
-                {/*        <Container>*/}
-                {/*            <Button fullWidth isBig onClick={() => onVoteClick(selectedOption)}>*/}
-                {/*                Cast vote*/}
-                {/*            </Button>*/}
-                {/*        </Container>*/}
-                {/*    </>*/}
-                {/*)}*/}
             </SidebarBlock>
         );
     },

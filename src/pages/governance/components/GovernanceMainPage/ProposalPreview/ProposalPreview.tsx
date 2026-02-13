@@ -4,8 +4,11 @@ import styled from 'styled-components';
 
 import { AppRoutes } from 'constants/routes';
 
+import { getProposalStatus, getQuorumPercentage } from 'helpers/dao';
 import { getDateString } from 'helpers/date';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
+
+import { ProposalSimple } from 'types/governance';
 
 import IconFail from 'assets/icons/status/fail-red.svg';
 import IconSuccess from 'assets/icons/status/success.svg';
@@ -16,8 +19,7 @@ import { Breakpoints, COLORS } from 'styles/style-constants';
 import CurrentResults from './CurrentResults/CurrentResults';
 import YourVotes from './YourVotes/YourVotes';
 
-import { ProposalSimple } from '../../../api/types';
-import ProposalStatus, { PROPOSAL_STATUS } from '../ProposalStatus/ProposalStatus';
+import ProposalStatus from '../ProposalStatus/ProposalStatus';
 
 const Container = styled.div`
     display: flex;
@@ -192,19 +194,6 @@ const Red = styled.span`
     color: ${COLORS.red500};
 `;
 
-const getStatus = (proposal: ProposalSimple) => {
-    switch (proposal.proposal_status) {
-        case 'DISCUSSION':
-            return PROPOSAL_STATUS.DISCUSSION;
-        case 'VOTING':
-            return PROPOSAL_STATUS.ACTIVE;
-        case 'VOTED':
-            return PROPOSAL_STATUS.CLOSED;
-        case 'EXPIRED':
-            return PROPOSAL_STATUS.EXPIRED;
-    }
-};
-
 const ProposalPreview = ({
     proposal,
     withMyVotes,
@@ -212,34 +201,33 @@ const ProposalPreview = ({
     proposal: ProposalSimple;
     withMyVotes: boolean;
 }) => {
-    const status = getStatus(proposal);
+    const status = getProposalStatus(proposal);
 
     const getVotedProposalResult = () => {
         const {
             vote_for_result: voteFor,
             vote_against_result: voteAgainst,
-            aqua_circulating_supply: aquaCirculatingSupply,
-            ice_circulating_supply: iceCirculatingSupply,
+            vote_abstain_result: voteAbstain,
             percent_for_quorum: percentForQuorum,
         } = proposal;
 
         const voteForValue = Number(voteFor);
         const voteAgainstValue = Number(voteAgainst);
+        const voteAbstainValue = Number(voteAbstain);
 
         const isVoteForWin = voteForValue > voteAgainstValue;
 
-        const percentFor = (voteForValue / (voteForValue + voteAgainstValue)) * 100;
+        const percentFor =
+            (voteForValue / (voteForValue + voteAgainstValue + voteAbstainValue)) * 100;
 
-        const percentAgainst = (voteAgainstValue / (voteForValue + voteAgainstValue)) * 100;
+        const percentAgainst =
+            (voteAgainstValue / (voteForValue + voteAgainstValue + voteAbstainValue)) * 100;
 
         if (Number.isNaN(percentFor)) {
             return <span>No votes yet</span>;
         }
 
-        const rate =
-            ((voteForValue + voteAgainstValue) /
-                (Number(aquaCirculatingSupply) + Number(iceCirculatingSupply))) *
-            100;
+        const rate = getQuorumPercentage(proposal);
 
         const isCancelled = rate < percentForQuorum;
 
@@ -268,17 +256,13 @@ const ProposalPreview = ({
         const {
             vote_for_result: voteFor,
             vote_against_result: voteAgainst,
-            aqua_circulating_supply: aquaCirculatingSupply,
             ice_circulating_supply: iceCirculatingSupply,
         } = proposal;
 
         const voteForValue = Number(voteFor);
         const voteAgainstValue = Number(voteAgainst);
 
-        const rate =
-            ((voteForValue + voteAgainstValue) /
-                (Number(aquaCirculatingSupply) + Number(iceCirculatingSupply))) *
-            100;
+        const rate = getQuorumPercentage(proposal);
 
         const roundedRate = roundToPrecision(rate, 2);
 
@@ -288,21 +272,9 @@ const ProposalPreview = ({
     };
 
     const getActiveParticipationRate = () => {
-        const {
-            vote_for_result: voteFor,
-            vote_against_result: voteAgainst,
-            aqua_circulating_supply: aquaCirculatingSupply,
-            ice_circulating_supply: iceCirculatingSupply,
-            percent_for_quorum: percentForQuorum,
-        } = proposal;
+        const { percent_for_quorum: percentForQuorum } = proposal;
 
-        const voteForValue = Number(voteFor);
-        const voteAgainstValue = Number(voteAgainst);
-
-        const rate =
-            ((voteForValue + voteAgainstValue) /
-                (Number(aquaCirculatingSupply) + Number(iceCirculatingSupply))) *
-            100;
+        const rate = getQuorumPercentage(proposal);
 
         if (rate >= percentForQuorum || rate === 0) {
             return null;
@@ -337,6 +309,7 @@ const ProposalPreview = ({
                     <ProposalStatusStyled status={status} />
                 </Header>
                 <Text>{proposal.text.replace(/<[^>]*>?/gm, ' ')}</Text>
+
                 <SummaryBlock>
                     {proposal.proposal_status === 'DISCUSSION' && !withMyVotes && (
                         <>

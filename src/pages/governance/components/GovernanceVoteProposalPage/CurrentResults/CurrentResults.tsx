@@ -2,7 +2,10 @@ import * as React from 'react';
 import { ReactElement } from 'react';
 import styled from 'styled-components';
 
+import { getQuorumPercentage, isQuorumReached } from 'helpers/dao';
 import { roundToPrecision } from 'helpers/format-number';
+
+import { Proposal } from 'types/governance';
 
 import Fail from 'assets/icons/status/fail-red.svg';
 import Info from 'assets/icons/status/icon-info-16.svg';
@@ -14,7 +17,6 @@ import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import ResultProgressLine from './ResultProgressLine/ResultProgressLine';
 
-import { Proposal } from '../../../api/types';
 import { SimpleProposalResultsLabels } from '../../../pages/GovernanceVoteProposalPage';
 
 const ResultBlock = styled.div`
@@ -96,20 +98,30 @@ const getResultsData = (proposal: Proposal) => {
         is_simple_proposal: isSimple,
         vote_for_result: voteFor,
         vote_against_result: voteAgainst,
+        vote_abstain_result: voteAbstain,
         ice_circulating_supply: iceCirculatingSupply,
     } = proposal;
 
     if (isSimple) {
         const voteForValue = Number(voteFor);
         const voteAgainstValue = Number(voteAgainst);
-        const percentFor = (voteForValue / (voteForValue + voteAgainstValue)) * 100;
-        const roundedPercent = roundToPrecision(percentFor, 2);
+        const voteAbstainValue = Number(voteAbstain);
+
+        const percentFor =
+            (voteForValue / (voteForValue + voteAgainstValue + voteAbstainValue)) * 100;
+
+        const percentAgainst =
+            (voteAgainstValue / (voteForValue + voteAgainstValue + voteAbstainValue)) * 100;
+
+        const roundedPercentFor = roundToPrecision(percentFor, 2);
+        const roundedPercentAgainst = roundToPrecision(percentAgainst, 2);
+
         const isIceSupported = Number(iceCirculatingSupply) !== 0;
 
         return [
             {
                 label: SimpleProposalResultsLabels.votesFor,
-                percentage: Number.isNaN(percentFor) ? '' : `${roundedPercent}%`,
+                percentage: Number.isNaN(percentFor) ? '' : `${roundedPercentFor}%`,
                 amount: voteFor,
                 isIceSupported,
             },
@@ -117,7 +129,7 @@ const getResultsData = (proposal: Proposal) => {
                 label: SimpleProposalResultsLabels.votesAgainst,
                 percentage: Number.isNaN(percentFor)
                     ? ''
-                    : `${roundToPrecision(100 - Number(roundedPercent), 2)}%`,
+                    : `${roundToPrecision(roundedPercentAgainst, 2)}%`,
                 amount: voteAgainst,
                 isIceSupported,
             },
@@ -130,12 +142,8 @@ const CurrentResults = ({ proposal }: { proposal: Proposal }): ReactElement => {
     const results = getResultsData(proposal);
     const isEnd = new Date() >= new Date(proposal.end_at);
 
-    const votesSum = Number(proposal.vote_against_result) + Number(proposal.vote_for_result);
-    const percentVote =
-        (votesSum /
-            (Number(proposal.aqua_circulating_supply) + Number(proposal.ice_circulating_supply))) *
-        100;
-    const isApproved = percentVote > proposal.percent_for_quorum;
+    const percentVote = getQuorumPercentage(proposal);
+    const isApproved = isQuorumReached(proposal);
 
     return (
         <ResultBlock>

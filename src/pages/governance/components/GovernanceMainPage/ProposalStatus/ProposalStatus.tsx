@@ -1,34 +1,22 @@
 import * as React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
+import { PROPOSAL_STATUS, StatusLabels } from 'constants/dao';
+
+import IconError from 'assets/icons/status/fail-red.svg';
 import IconPending from 'assets/icons/status/pending.svg';
 import IconSuccess from 'assets/icons/status/success.svg';
 
 import { flexAllCenter } from 'styles/mixins';
 import { COLORS } from 'styles/style-constants';
 
-export enum PROPOSAL_STATUS {
-    DISCUSSION = 'discussion',
-    ACTIVE = 'active',
-    CLOSED = 'closed',
-    DEPRECATED = 'deprecated',
-    EXPIRED = 'expired',
-}
-
-const StatusLabels = {
-    [PROPOSAL_STATUS.DISCUSSION]: 'Discussion',
-    [PROPOSAL_STATUS.ACTIVE]: 'Active',
-    [PROPOSAL_STATUS.CLOSED]: 'Finished',
-    [PROPOSAL_STATUS.DEPRECATED]: 'Deprecated',
-    [PROPOSAL_STATUS.EXPIRED]: 'Expired',
-};
-
 const Container = styled.div<{ $status: PROPOSAL_STATUS }>`
     ${flexAllCenter};
     height: 3.2rem;
     padding: ${({ $status }) => {
         switch ($status) {
-            case PROPOSAL_STATUS.CLOSED:
+            case PROPOSAL_STATUS.EXPIRED:
+            case PROPOSAL_STATUS.NO_QUORUM:
                 return '0 1.4rem';
             default:
                 return '0 0.8rem';
@@ -36,40 +24,50 @@ const Container = styled.div<{ $status: PROPOSAL_STATUS }>`
     }};
     border-radius: 1.6rem;
     width: min-content;
+    white-space: nowrap;
     background-color: ${({ $status }) => {
         switch ($status) {
             case PROPOSAL_STATUS.DISCUSSION:
                 return COLORS.orange500;
             case PROPOSAL_STATUS.ACTIVE:
                 return COLORS.purple500;
-            case PROPOSAL_STATUS.CLOSED:
-                return COLORS.gray100;
+
+            case PROPOSAL_STATUS.ACCEPTED:
+                return COLORS.green500;
+
+            case PROPOSAL_STATUS.REJECTED:
+                return COLORS.red500;
+
             case PROPOSAL_STATUS.DEPRECATED:
-                return COLORS.gray200;
             case PROPOSAL_STATUS.EXPIRED:
+            case PROPOSAL_STATUS.NO_QUORUM:
                 return COLORS.gray200;
         }
     }};
     color: ${({ $status }) => {
         switch ($status) {
             case PROPOSAL_STATUS.DISCUSSION:
-                return COLORS.white;
             case PROPOSAL_STATUS.ACTIVE:
-                return COLORS.white;
-            case PROPOSAL_STATUS.CLOSED:
-                return COLORS.textDark;
+            case PROPOSAL_STATUS.ACCEPTED:
+            case PROPOSAL_STATUS.REJECTED:
             case PROPOSAL_STATUS.DEPRECATED:
                 return COLORS.white;
+
             case PROPOSAL_STATUS.EXPIRED:
+            case PROPOSAL_STATUS.NO_QUORUM:
                 return COLORS.white;
         }
     }};
 `;
 
-const ActiveIcon = styled(IconSuccess)`
+const iconStyles = css`
     height: 1.6rem;
     width: 1.6rem;
     margin-right: 0.4rem;
+`;
+
+const ActiveIcon = styled(IconSuccess)`
+    ${iconStyles};
     rect {
         fill: ${COLORS.white};
     }
@@ -80,9 +78,7 @@ const ActiveIcon = styled(IconSuccess)`
 `;
 
 const DiscussionIcon = styled(IconPending)`
-    height: 1.6rem;
-    width: 1.6rem;
-    margin-right: 0.4rem;
+    ${iconStyles};
     rect {
         fill: ${COLORS.white};
     }
@@ -94,9 +90,7 @@ const DiscussionIcon = styled(IconPending)`
 `;
 
 const DeprecatedIcon = styled(IconPending)`
-    height: 1.6rem;
-    width: 1.6rem;
-    margin-right: 0.4rem;
+    ${iconStyles};
     rect {
         fill: ${COLORS.white};
     }
@@ -107,11 +101,38 @@ const DeprecatedIcon = styled(IconPending)`
     }
 `;
 
+const AcceptedIcon = styled(IconSuccess)`
+    ${iconStyles};
+    rect {
+        fill: ${COLORS.white};
+    }
+
+    path,
+    circle {
+        stroke: ${COLORS.green500};
+    }
+`;
+
+const RejectedIcon = styled(IconError)`
+    ${iconStyles};
+
+    rect {
+        fill: ${COLORS.white};
+    }
+
+    path,
+    circle {
+        stroke: ${COLORS.red500};
+    }
+`;
+
 const ProposalStatus = ({ status, ...props }: { status: PROPOSAL_STATUS }) => (
     <Container $status={status} {...props}>
         {status === PROPOSAL_STATUS.ACTIVE && <ActiveIcon />}
         {status === PROPOSAL_STATUS.DISCUSSION && <DiscussionIcon />}
         {status === PROPOSAL_STATUS.DEPRECATED && <DeprecatedIcon />}
+        {status === PROPOSAL_STATUS.ACCEPTED && <AcceptedIcon />}
+        {status === PROPOSAL_STATUS.REJECTED && <RejectedIcon />}
         {StatusLabels[status]}
     </Container>
 );
