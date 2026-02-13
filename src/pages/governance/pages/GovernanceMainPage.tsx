@@ -311,6 +311,11 @@ const GovernanceMainPage = (): React.ReactElement => {
         },
     );
 
+    const setFilterValue = (value: PROPOSAL_FILTER) => {
+        setFilter(value);
+        setPage(1);
+    };
+
     const filterRef = useRef(filter);
 
     useEffect(() => {
@@ -364,12 +369,12 @@ const GovernanceMainPage = (): React.ReactElement => {
                                 <ToggleGroupStyled
                                     value={filter}
                                     options={Options}
-                                    onChange={setFilter}
+                                    onChange={setFilterValue}
                                 />
                                 <SelectStyled
                                     value={filter}
                                     options={Options}
-                                    onChange={setFilter}
+                                    onChange={setFilterValue}
                                 />
                             </TitleBlock>
 
