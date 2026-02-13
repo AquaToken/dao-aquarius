@@ -124,13 +124,17 @@ export default class ClaimableBalances {
             const hasAgainstMarker = claim.claimants.some(
                 claimant => claimant.destination === proposal.vote_against_issuer,
             );
+
+            const hasAbstainMarker = claim.claimants.some(
+                claimant => claimant.destination === proposal.abstain_issuer,
+            );
             const selfClaim = claim.claimants.find(claimant => claimant.destination === accountId);
             const isAqua = claim.asset === aquaAssetString;
             const isGovIce = claim.asset === `${GOV_ICE_CODE}:${ICE_ISSUER}`;
             const isGDIce = claim.asset === `${GD_ICE_CODE}:${ICE_ISSUER}`;
 
             if (
-                (hasForMarker || hasAgainstMarker) &&
+                (hasForMarker || hasAgainstMarker || hasAbstainMarker) &&
                 Boolean(selfClaim) &&
                 (isAqua || isGovIce || isGDIce)
             ) {
