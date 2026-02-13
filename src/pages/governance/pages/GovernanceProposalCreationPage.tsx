@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { getProposalRequest } from 'api/governance';
+
 import { CREATE_DISCUSSION_COST } from 'constants/dao';
 import { AppRoutes } from 'constants/routes';
 
@@ -13,7 +15,6 @@ import { ModalService, ToastService } from 'services/globalServices';
 import { respondDown } from 'styles/mixins';
 import { Breakpoints, COLORS } from 'styles/style-constants';
 
-import { getProposalRequest } from '../api/api';
 import NotEnoughAquaModal from '../components/GovernanceMainPage/NotEnoughAquaModal/NotEnoughAquaModal';
 import CreateDiscussionModal from '../components/GovernanceProposalCreationPage/CreateDiscussionModal/CreateDiscussionModal';
 import ProposalCreation from '../components/GovernanceProposalCreationPage/ProposalCreation/ProposalCreation';
@@ -52,11 +53,11 @@ const GovernanceProposalCreationPage = ({ isEdit }: { isEdit?: boolean }): React
         }
         getProposalRequest(id)
             .then(response => {
-                setTitle(response.data.title);
-                setText(response.data.text);
-                setDiscordChannel(response.data.discord_channel_name ?? '');
-                setDiscordChannelOwner(response.data.discord_username ?? '');
-                setDiscordChannelUrl(response.data.discord_channel_url ?? '');
+                setTitle(response.title);
+                setText(response.text);
+                setDiscordChannel(response.discord_channel_name ?? '');
+                setDiscordChannelOwner(response.discord_username ?? '');
+                setDiscordChannelUrl(response.discord_channel_url ?? '');
             })
             .catch(() => {
                 ToastService.showErrorToast('Something went wrong!');

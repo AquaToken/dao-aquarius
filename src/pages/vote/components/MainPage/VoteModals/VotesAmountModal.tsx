@@ -21,6 +21,7 @@ import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-
 import { StellarService, ToastService } from 'services/globalServices';
 
 import { ModalProps } from 'types/modal';
+import { Option } from 'types/option';
 import { ClassicToken } from 'types/token';
 
 import CloseIcon from 'assets/icons/nav/icon-close-alt-16.svg';
@@ -31,7 +32,7 @@ import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
 import RangeInput from 'basics/inputs/RangeInput';
-import Select, { Option } from 'basics/inputs/Select';
+import Select from 'basics/inputs/Select';
 import { ExternalLink } from 'basics/links';
 import Market from 'basics/Market';
 import { ModalDescription, ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms';
@@ -510,8 +511,8 @@ const VotesAmountModal = ({
                 {isDownVoteModal
                     ? 'Downvote market'
                     : isSingleVoteForModal
-                    ? 'Upvote market'
-                    : 'Selected Markets'}
+                      ? 'Upvote market'
+                      : 'Selected Markets'}
             </ModalTitle>
             <ModalDescription>
                 {isDownVoteModal

@@ -4,8 +4,9 @@ import { Link as LinkRouter } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
 import { getDelegateeVotes } from 'api/delegate';
+import { getProposalsRequest, PROPOSAL_FILTER } from 'api/governance';
 
-import { GD_ICE_CODE } from 'constants/assets';
+import { VoteOptions } from 'constants/dao';
 import { AppRoutes } from 'constants/routes';
 
 import { getAssetFromString, getAssetString } from 'helpers/assets';
@@ -26,11 +27,10 @@ import DelegateModal from 'web/modals/DelegateModal';
 
 import Discord from 'assets/community/discord.svg';
 import Twitter from 'assets/community/twitter.svg';
-import IconFail from 'assets/icons/status/fail-red.svg';
-import IconSuccess from 'assets/icons/status/success.svg';
 
 import AssetLogo from 'basics/AssetLogo';
 import { Button } from 'basics/buttons';
+import { VoteIcon } from 'basics/icons';
 import { ToggleGroup } from 'basics/inputs';
 import { PageLoader } from 'basics/loaders';
 import { CircularProgress } from 'basics/progress';
@@ -38,7 +38,6 @@ import { CircularProgress } from 'basics/progress';
 import { cardBoxShadow, customScroll, flexAllCenter, flexColumn, respondDown } from 'styles/mixins';
 import { Breakpoints, COLORS } from 'styles/style-constants';
 
-import { getProposalsRequest, PROPOSAL_FILTER } from 'pages/governance/api/api';
 import { MarketKey } from 'pages/vote/api/types';
 import { GOV_ICE, UP_ICE } from 'pages/vote/components/MainPage/MainPage';
 import { getPercent } from 'pages/vote/components/MainPage/Table/VoteAmount/VoteAmount';
@@ -211,18 +210,6 @@ const AssetLogoSecond = styled(AssetLogoStyled)`
     margin-left: -0.8rem;
 `;
 
-const IconAgainst = styled(IconFail)`
-    height: 1.6rem;
-    width: 1.6rem;
-    margin-right: 0.5rem;
-`;
-
-const IconFor = styled(IconSuccess)`
-    height: 1.6rem;
-    width: 1.6rem;
-    margin-right: 0.5rem;
-`;
-
 const OPTIONS = [
     { value: UP_ICE, label: 'Markets' },
     { value: GOV_ICE, label: 'DAO' },
@@ -285,25 +272,30 @@ const DelegateeStats = forwardRef(
                             const amount = Number(vote.amount);
 
                             const isFor = vote.vote_choice === 'vote_for';
+                            const isAgainst = vote.vote_choice === 'vote_against';
 
-                            const key = isFor ? 'sum_for' : 'sum_against';
+                            const key = isFor
+                                ? 'sum_for'
+                                : isAgainst
+                                  ? 'sum_against'
+                                  : 'sum_abstain';
+
                             acc[key] += amount;
-
-                            if (vote.asset_code === GD_ICE_CODE) {
-                                acc[`${key}_gdice`] += amount;
-                            }
 
                             return acc;
                         },
-                        { sum_for: 0, sum_against: 0, sum_for_gdice: 0, sum_against_gdice: 0 },
+                        {
+                            sum_for: 0,
+                            sum_against: 0,
+                            sum_abstain: 0,
+                        },
                     );
 
                     return {
                         id,
                         sum_for: result.sum_for,
                         sum_against: result.sum_against,
-                        sum_for_gdice: result.sum_for_gdice,
-                        sum_against_gdice: result.sum_against_gdice,
+                        sum_abstain: result.sum_abstain,
                     };
                 });
 
@@ -468,12 +460,33 @@ const DelegateeStats = forwardRef(
                                                 <span>#{vote.id}</span>{' '}
                                             </LinkInner>
                                             <VoteType>
-                                                <IconFor />
+                                                <VoteIcon option={VoteOptions.for} />
                                                 For
                                             </VoteType>
                                             <VoteAmount>
                                                 <span>
                                                     {formatBalance(vote.sum_for, true, true)} ICE
+                                                </span>
+                                            </VoteAmount>
+                                        </StatsRow>
+                                    )}
+                                    {!!vote.sum_abstain && (
+                                        <StatsRow>
+                                            <LinkInner
+                                                to={AppRoutes.section.governance.to.proposal({
+                                                    id: vote.id,
+                                                })}
+                                            >
+                                                <span>#{vote.id}</span>{' '}
+                                            </LinkInner>
+                                            <VoteType>
+                                                <VoteIcon option={VoteOptions.abstain} />
+                                                Abstain
+                                            </VoteType>
+                                            <VoteAmount>
+                                                <span>
+                                                    {formatBalance(vote.sum_abstain, true, true)}{' '}
+                                                    ICE
                                                 </span>
                                             </VoteAmount>
                                         </StatsRow>
@@ -488,7 +501,7 @@ const DelegateeStats = forwardRef(
                                                 <span>#{vote.id}</span>{' '}
                                             </LinkInner>
                                             <VoteType>
-                                                <IconAgainst />
+                                                <VoteIcon option={VoteOptions.against} />
                                                 Against
                                             </VoteType>
                                             <VoteAmount>
