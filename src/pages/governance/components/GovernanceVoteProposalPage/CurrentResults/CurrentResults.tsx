@@ -170,10 +170,10 @@ const CurrentResults = ({ proposal }: { proposal: Proposal }): ReactElement => {
                     <Tooltip
                         content={
                             <TooltipInner>
-                                Participation rate is the percentage of the circulating AQUA and ICE
-                                supply that has taken part in the voting. Participation rate is
-                                required to be above {proposal.percent_for_quorum}% for the proposal
-                                to be approved.
+                                Participation rate is the percentage of the circulating ICE supply
+                                that has taken part in the voting. Participation rate is required to
+                                be above {proposal.percent_for_quorum}% for the proposal to be
+                                approved.
                             </TooltipInner>
                         }
                         position={
