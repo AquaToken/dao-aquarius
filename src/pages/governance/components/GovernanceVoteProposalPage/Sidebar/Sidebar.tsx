@@ -125,8 +125,17 @@ const ForButton = styled(VotingButton)`
     }
 `;
 
+const BoldText = styled.span`
+    font-weight: bold;
+    margin-left: 0.8rem;
+`;
+
 const AbstainButton = styled(VotingButton)`
     background: ${COLORS.gray100};
+
+    span {
+        color: ${COLORS.textGray};
+    }
 
     &:hover {
         background: ${COLORS.gray100};
@@ -139,11 +148,6 @@ const AgainstButton = styled(VotingButton)`
     &:hover {
         background: ${COLORS.red500};
     }
-`;
-
-const BoldText = styled.span`
-    font-weight: bold;
-    margin-left: 0.8rem;
 `;
 
 const Results = styled.div`
