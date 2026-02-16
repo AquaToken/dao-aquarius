@@ -1,107 +1,25 @@
 import { DAY } from 'constants/intervals';
 
-import { PoolIncentives, PoolRewardsInfo } from 'types/amm';
-
-export const calculateBoostValue = (rewardsInfo: PoolRewardsInfo, userBalance: string) => {
-    if (!rewardsInfo) return 0;
-    const tps = +rewardsInfo.tps;
-    const wSupply = +rewardsInfo.working_supply;
-    const wBalance = +rewardsInfo.working_balance;
-
-    if (!tps || !wSupply || !wBalance) return 1;
-
-    const tpsWithoutBoost = (+userBalance * tps) / wSupply;
-    const expectedTps = (tps * wBalance) / wSupply;
-
-    if (tpsWithoutBoost === 0) return 1;
-
-    return expectedTps / tpsWithoutBoost;
-};
-
-export const estimateBoostValue = (rewardsInfo: PoolRewardsInfo, sharesAfterValue: number) => {
-    if (!rewardsInfo) return 1;
-
-    const supply = +rewardsInfo.supply;
-    const lockedSupply = +rewardsInfo.boost_supply;
-    const lockedBalance = +rewardsInfo.boost_balance;
-
-    const newWBalance = Math.min(
-        +sharesAfterValue + (1.5 * lockedBalance * supply) / lockedSupply,
-        +sharesAfterValue * 2.5,
-    );
-
-    return newWBalance / sharesAfterValue;
-};
-
-export const calculateDailyRewards = (rewardsInfo: PoolRewardsInfo) => {
-    if (!rewardsInfo) return 0;
-
-    if (rewardsInfo.exp_at * 1000 < Date.now()) return 0;
-    const tps = +rewardsInfo.tps;
-    const wSupply = +rewardsInfo.working_supply;
-    const wBalance = +rewardsInfo.working_balance;
-
-    if (!wSupply) return 0;
-
-    return (((+tps * DAY) / 1000) * +wBalance) / +wSupply;
-};
-
-export const calculateDailyIncentives = (
-    rewardsInfo: PoolRewardsInfo,
-    incentiveInfo: PoolIncentives,
+export const calculateBoostValue = (
+    workingBalance: string | number,
+    userBalance: string | number,
 ) => {
-    if (!rewardsInfo || !incentiveInfo) return 0;
+    const wBal = +workingBalance;
+    const userBal = +userBalance;
 
-    if (+incentiveInfo.info.expired_at * 1000 < Date.now()) return 0;
-    const tps = +incentiveInfo.info.tps;
-    const wSupply = +rewardsInfo.working_supply;
-    const wBalance = +rewardsInfo.working_balance;
+    if (!wBal || !userBal) return 1;
 
-    if (!wSupply) return 0;
-
-    return (((+tps * DAY) / 1000) * +wBalance) / +wSupply;
+    return wBal / userBal;
 };
 
-export const estimateDailyRewards = (rewardsInfo: PoolRewardsInfo, sharesAfterValue: number) => {
-    const supply = +rewardsInfo.supply;
-    const lockedSupply = +rewardsInfo.boost_supply;
-    const lockedBalance = +rewardsInfo.boost_balance;
-
-    const oldWBalance = +rewardsInfo.working_balance;
-
-    const newWBalance = Math.min(
-        +sharesAfterValue + (1.5 * lockedBalance * supply) / lockedSupply,
-        +sharesAfterValue * 2.5,
-    );
-
-    const tps = +rewardsInfo.tps;
-    const newWSupply = +rewardsInfo.working_supply - oldWBalance + newWBalance;
-
-    if (!tps) return 0;
-
-    return (tps * newWBalance * DAY) / 1000 / newWSupply;
-};
-
-export const estimateDailyIncentives = (
-    rewardsInfo: PoolRewardsInfo,
-    incentiveInfo: PoolIncentives,
-    sharesAfterValue: number,
+export const calculateDailyRewards = (
+    tps: number,
+    workingBalance: number,
+    workingSupply: number,
 ) => {
-    const supply = +rewardsInfo.supply;
-    const lockedSupply = +rewardsInfo.boost_supply;
-    const lockedBalance = +rewardsInfo.boost_balance;
+    if (!workingSupply || !workingBalance) return 0;
 
-    const oldWBalance = +rewardsInfo.working_balance;
+    const seconds = DAY / 1000;
 
-    const newWBalance = Math.min(
-        +sharesAfterValue + (1.5 * lockedBalance * supply) / lockedSupply,
-        +sharesAfterValue * 2.5,
-    );
-
-    const tps = +incentiveInfo.info.tps;
-    const newWSupply = +rewardsInfo.working_supply - oldWBalance + newWBalance;
-
-    if (!tps) return 0;
-
-    return (tps * newWBalance * DAY) / 1000 / newWSupply;
+    return (tps * seconds * workingBalance) / workingSupply;
 };

@@ -11,6 +11,7 @@ import { AppRoutes } from 'constants/routes';
 import { apyValueToDisplay, contractValueToAmount } from 'helpers/amount';
 import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
+import { getPercentValue } from 'helpers/number';
 import { calculateBoostValue, calculateDailyRewards } from 'helpers/rewards';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
@@ -547,11 +548,17 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                     body={filteredPools.map(pool => {
                         const userRewardsForPool = userRewards.get(pool.address);
                         const boostValue = calculateBoostValue(
-                            userRewardsForPool,
+                            +userRewardsForPool.working_balance,
                             contractValueToAmount(pool.balance),
                         );
 
-                        const dailyRewards = calculateDailyRewards(userRewardsForPool);
+                        const dailyRewards = userRewardsForPool
+                            ? calculateDailyRewards(
+                                  +userRewardsForPool.tps,
+                                  +userRewardsForPool.working_balance,
+                                  +userRewardsForPool.working_supply,
+                              )
+                            : 0;
 
                         const incentivesForPool = userIncentives
                             .get(pool.address)
@@ -622,18 +629,17 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                                                     true,
                                                                 )}{' '}
                                                                 (
-                                                                {+(
-                                                                    (100 * pool.balance) /
-                                                                    Number(pool.total_share)
+                                                                {+getPercentValue(
+                                                                    pool.balance,
+                                                                    pool.total_share,
+                                                                    2,
                                                                 ) > 0.01
                                                                     ? formatBalance(
-                                                                          +(
-                                                                              (100 *
-                                                                                  +pool.balance) /
-                                                                              Number(
-                                                                                  pool.total_share,
-                                                                              )
-                                                                          ).toFixed(2),
+                                                                          +getPercentValue(
+                                                                              pool.balance,
+                                                                              pool.total_share,
+                                                                              2,
+                                                                          ),
                                                                           true,
                                                                       )
                                                                     : '< 0.01'}
