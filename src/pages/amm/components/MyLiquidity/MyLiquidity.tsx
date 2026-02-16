@@ -548,15 +548,15 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                     body={filteredPools.map(pool => {
                         const userRewardsForPool = userRewards.get(pool.address);
                         const boostValue = calculateBoostValue(
-                            +userRewardsForPool.working_balance,
+                            +userRewardsForPool?.working_balance,
                             contractValueToAmount(pool.balance),
                         );
 
                         const dailyRewards = userRewardsForPool
                             ? calculateDailyRewards(
-                                  +userRewardsForPool.tps,
-                                  +userRewardsForPool.working_balance,
-                                  +userRewardsForPool.working_supply,
+                                  +userRewardsForPool?.tps,
+                                  +userRewardsForPool?.working_balance,
+                                  +userRewardsForPool?.working_supply,
                               )
                             : 0;
 
