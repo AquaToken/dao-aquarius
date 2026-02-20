@@ -118,7 +118,7 @@ const AccountData = styled.div`
     `}
 `;
 
-const CopyWrap = styled.span`
+const Buttons = styled.span`
     display: flex;
     align-items: center;
     gap: 1.5rem;
@@ -182,7 +182,7 @@ const AccountInfo = () => {
                             </AccountData>
                         </AccountInfoBLock>
 
-                        <CopyWrap>
+                        <Buttons>
                             <a
                                 target="_blank"
                                 href={`https://stellar.expert/explorer/${
@@ -201,7 +201,7 @@ const AccountInfo = () => {
                                     <Copy />
                                 </ButtonBlock>
                             </CopyButton>
-                        </CopyWrap>
+                        </Buttons>
                     </Main>
                 </Wrapper>
             </BgContainer>

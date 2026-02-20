@@ -52,6 +52,7 @@ export type PoolRewards = {
 
 export interface PoolUser extends Pool {
     balance: string;
+    rewards_enabled: boolean;
 }
 
 export interface PoolProcessed extends Pool {
@@ -79,6 +80,7 @@ export type PoolVolume24h = {
 export type PoolBalance = {
     balance: string;
     account_address: string;
+    rewards_enabled: boolean;
 };
 
 export enum PoolEventType {
@@ -161,6 +163,8 @@ export type PoolRewardsInfo = {
     supply: string;
     working_balance: string;
     working_supply: string;
+    wSupply: string;
+    wBalance: string;
 };
 
 export type PoolIncentives = {

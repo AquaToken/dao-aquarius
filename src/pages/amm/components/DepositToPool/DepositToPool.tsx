@@ -4,12 +4,15 @@ import { NumericFormat } from 'react-number-format';
 import styled from 'styled-components';
 
 import { POOL_TYPE } from 'constants/amm';
-import { DAY } from 'constants/intervals';
 
 import { contractValueToAmount } from 'helpers/amount';
 import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
+import { getPercentValue } from 'helpers/number';
+import { calculateBoostValue, calculateDailyRewards } from 'helpers/rewards';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { useDebounce } from 'hooks/useDebounce';
 
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
@@ -84,8 +87,12 @@ const FormRow = styled.div`
 
 const DescriptionRow = styled.div`
     ${flexRowSpaceBetween};
-    margin-bottom: 1.6rem;
+
     color: ${COLORS.textGray};
+
+    &:not(:last-child) {
+        margin-bottom: 1.6rem;
+    }
 
     span {
         display: flex;
@@ -184,7 +191,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
 
     const [accountShare, setAccountShare] = useState(null);
     const [assetsReserves, setAssetsReserves] = useState(null);
-    const [poolRewards, setPoolRewards] = useState(null);
+    const [poolRewards, setPoolRewards] = useState<PoolRewardsInfo>(null);
     const [balances, setBalances] = useState(null);
     const [amounts, setAmounts] = useState<Map<string, string>>(
         new Map<string, string>(pool.tokens.map(asset => [getAssetString(asset), ''])),
@@ -195,6 +202,20 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
     const [priceIndex, setPriceIndex] = useState(0);
 
     const [incentives, setIncentives] = useState<PoolIncentives[] | null>(null);
+
+    const [isRewardsEnabled, setIsRewardsEnabled] = useState(null);
+
+    const [depositShares, setDepositShares] = useState(null);
+    const [newWorkingBalance, setNewWorkingBalance] = useState(null);
+    const [newWorkingSupply, setNewWorkingSupply] = useState(null);
+
+    useEffect(() => {
+        if (!account) return;
+
+        SorobanService.amm
+            .getUserRewardsStatus(pool.address, account.accountId())
+            .then(setIsRewardsEnabled);
+    }, [account]);
 
     useEffect(() => {
         if (!account) {
@@ -270,76 +291,6 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
         [amounts],
     );
 
-    const isValidForDepositAmounts = useMemo(() => {
-        const hasSomeAmount = [...amounts.values()].some(value => Boolean(+value));
-
-        return isBalancedDeposit ? hasAllAmounts : hasSomeAmount;
-    }, [hasAllAmounts, isBalancedDeposit, amounts]);
-
-    const { sharesBefore, sharesAfter, sharesAfterValue } = useMemo(() => {
-        const totalShare = Number(pool.total_share) / Math.pow(10, pool.share_token_decimals);
-
-        if (!reserves || reserves.size === 0 || totalShare <= 0) {
-            return {
-                sharesBefore: 0,
-                sharesAfter: isValidForDepositAmounts ? 100 : null,
-                sharesAfterValue: null,
-            };
-        }
-
-        const accountShareNum = Number(accountShare) || 0;
-        const sharesBefore = (accountShareNum / totalShare) * 100;
-
-        // Collect pool reserves and user deposit amounts
-        const tokenReserves: number[] = [];
-        const tokenDeposits: number[] = [];
-        for (const token of pool.tokens) {
-            const key = getAssetString(token);
-            tokenReserves.push(Number(reserves.get(key) || 0));
-            tokenDeposits.push(Number(amounts.get(key) || 0));
-        }
-
-        const totalReserves = tokenReserves.reduce((a, b) => a + b, 0);
-        const totalDeposit = tokenDeposits.reduce((a, b) => a + b, 0);
-
-        if (totalReserves === 0 || totalDeposit === 0) {
-            return {
-                sharesBefore,
-                sharesAfter: null,
-                sharesAfterValue: null,
-            };
-        }
-
-        // === One-sided deposit handling ===
-        // The idea: if only one token is deposited,
-        // the protocol internally swaps part of it to the missing tokens
-        // so that the effective deposit matches pool proportions.
-        const effectiveDeposits: number[] = [];
-        for (let i = 0; i < tokenReserves.length; i++) {
-            const proportion = tokenReserves[i] / totalReserves;
-            effectiveDeposits[i] = totalDeposit * proportion;
-        }
-
-        // Effective ratio of deposit to reserve (same for all tokens after balancing)
-        const ratio = effectiveDeposits[0] / tokenReserves[0];
-
-        // Minted LP shares based on this ratio
-        const mintedShares = totalShare * ratio;
-
-        // New account share and total supply after deposit
-        const newAccountShare = accountShareNum + mintedShares;
-        const newTotalShare = totalShare + mintedShares;
-
-        const sharesAfter = (newAccountShare / newTotalShare) * 100;
-        const sharesAfterValue = newAccountShare;
-
-        return {
-            sharesBefore,
-            sharesAfter,
-            sharesAfterValue,
-        };
-    }, [amounts, pool, reserves, accountShare, isValidForDepositAmounts]);
-
     const rates: Map<string, string> = useMemo(() => {
         if (Number(pool.total_share) === 0 && !hasAllAmounts) {
             return null;
@@ -365,72 +316,87 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
         return map;
     }, [reserves, pool, amounts]);
 
-    const getDailyRewards = (rewardsInfo: PoolRewardsInfo) => {
-        if (!rewardsInfo) return <DotsLoader />;
+    const debouncedAmounts = useDebounce(amounts, 1000);
 
-        const tps = +rewardsInfo.tps;
-        const wSupply = +rewardsInfo.working_supply;
-        const wBalance = +rewardsInfo.working_balance;
+    useEffect(() => {
+        setDepositShares(null);
+        SorobanService.amm
+            .estimateDeposit(
+                account.accountId(),
+                pool.address,
+                pool.tokens,
+                debouncedAmounts.current,
+            )
+            .then(setDepositShares);
+    }, [pool, debouncedAmounts]);
 
-        if (!tps || !wSupply || !wBalance) return '0 AQUA';
+    useEffect(() => {
+        setNewWorkingBalance(null);
+        setNewWorkingSupply(null);
 
-        const secondsInDay = 60 * 60 * 24;
+        if (!depositShares) return;
 
-        return `${formatBalance((tps * wBalance * secondsInDay) / wSupply, true)} AQUA`;
+        SorobanService.amm
+            .estimateWorkingBalanceAndSupply(
+                pool,
+                account.accountId(),
+                Math.floor(Number(accountShare) + depositShares).toFixed(),
+            )
+            .then(({ workingBalance, workingSupply }) => {
+                setNewWorkingBalance(workingBalance);
+                setNewWorkingSupply(workingSupply);
+            });
+    }, [depositShares, accountShare]);
+
+    const sharesBeforePercent = useMemo(() => {
+        if (!Number(pool.total_share)) return 0;
+
+        return +getPercentValue(Number(accountShare), +contractValueToAmount(pool.total_share), 2);
+    }, [pool, accountShare]);
+
+    const sharesAfterPercent = useMemo(() => {
+        if (!depositShares) return 0;
+
+        return +getPercentValue(
+            Number(accountShare) + depositShares,
+            +contractValueToAmount(pool.total_share) + depositShares,
+            2,
+        );
+    }, [pool, accountShare, depositShares]);
+
+    const dailyRewards = calculateDailyRewards(
+        +poolRewards?.tps,
+        +poolRewards?.working_balance,
+        +poolRewards?.working_supply,
+    );
+
+    const getDailyRewards = () => {
+        if (!poolRewards) return <DotsLoader />;
+
+        if (!poolRewards.tps || !poolRewards.working_balance || !poolRewards.working_supply)
+            return '0 AQUA';
+
+        return `${formatBalance(dailyRewards, true)} AQUA`;
     };
 
-    const getNewDailyRewards = (rewardsInfo: PoolRewardsInfo) => {
-        if (!rewardsInfo) return <DotsLoader />;
+    const getNewDailyRewards = () => {
+        if (
+            !poolRewards ||
+            depositShares === null ||
+            newWorkingBalance === null ||
+            newWorkingSupply === null
+        )
+            return <DotsLoader />;
 
-        const supply = +rewardsInfo.supply;
-        const lockedSupply = +rewardsInfo.boost_supply;
-        const lockedBalance = +rewardsInfo.boost_balance;
+        if (!poolRewards.tps) return '0 AQUA';
 
-        const newWBalance = Math.min(
-            +sharesAfterValue + (1.5 * lockedBalance * supply) / lockedSupply,
-            +sharesAfterValue * 2.5,
+        const newRewards = calculateDailyRewards(
+            +poolRewards.tps,
+            newWorkingBalance,
+            newWorkingSupply,
         );
 
-        const tps = +rewardsInfo.tps;
-        const newWSupply = +rewardsInfo.working_supply - accountShare + sharesAfterValue;
-
-        if (!tps) return '0 AQUA';
-
-        const secondsInDay = 60 * 60 * 24;
-
-        return `${formatBalance((tps * newWBalance * secondsInDay) / newWSupply, true)} AQUA`;
-    };
-
-    const calculateBoostValue = (rewardsInfo: PoolRewardsInfo) => {
-        if (!rewardsInfo) return 1;
-        const tps = +rewardsInfo.tps;
-        const wSupply = +rewardsInfo.working_supply;
-        const wBalance = +rewardsInfo.working_balance;
-
-        if (!tps || !wSupply || !wBalance) return 1;
-
-        const tpsWithoutBoost =
-            ((+accountShare / Math.pow(10, pool.share_token_decimals)) * tps) / wSupply;
-        const expectedTps = (tps * wBalance) / wSupply;
-
-        if (tpsWithoutBoost === 0) return 1;
-
-        return expectedTps / tpsWithoutBoost / 1e7;
-    };
-
-    const calculateNewBoostValue = (rewardsInfo: PoolRewardsInfo) => {
-        if (!rewardsInfo) return 1;
-
-        const supply = +rewardsInfo.supply;
-        const lockedSupply = +rewardsInfo.boost_supply;
-        const lockedBalance = +rewardsInfo.boost_balance;
-
-        const newWBalance = Math.min(
-            +sharesAfterValue + (1.5 * lockedBalance * supply) / lockedSupply,
-            +sharesAfterValue * 2.5,
-        );
-
-        return newWBalance / sharesAfterValue;
+        return `${formatBalance(newRewards, true)} AQUA`;
     };
 
     const onSubmit = () => {
@@ -706,50 +672,53 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                     <DescriptionRow>
                         <span>Share of Pool</span>
                         <span>
-                            {formatBalance(sharesBefore, true)}%
-                            {sharesAfter && (
+                            {formatBalance(sharesBeforePercent, true)}%
+                            {!!sharesAfterPercent && (
                                 <>
                                     <Arrow />
-                                    {formatBalance(sharesAfter, true)}%
+                                    {formatBalance(sharesAfterPercent, true)}%
                                 </>
                             )}
                         </span>
                     </DescriptionRow>
-                    {Boolean(Number(pool.total_share)) && Boolean(poolRewards) && (
-                        <DescriptionRow>
-                            <span>ICE Reward Boost</span>
-                            <span>
-                                <Label
-                                    labelText={`x${(+calculateBoostValue(poolRewards)).toFixed(2)}`}
-                                    labelSize="medium"
-                                    background={COLORS.blue700}
-                                    withoutUppercase
-                                />
-                                {sharesAfter && (
-                                    <>
-                                        <Arrow />
-                                        <Label
-                                            labelText={`x${calculateNewBoostValue(
-                                                poolRewards,
-                                            ).toFixed(2)}`}
-                                            labelSize="medium"
-                                            background={COLORS.blue700}
-                                            withoutUppercase
-                                        />
-                                    </>
-                                )}
-                            </span>
-                        </DescriptionRow>
-                    )}
-                    {Boolean(Number(pool.reward_tps)) && (
+                    {isRewardsEnabled &&
+                        Boolean(Number(pool.total_share)) &&
+                        Boolean(poolRewards) && (
+                            <DescriptionRow>
+                                <span>ICE Reward Boost</span>
+                                <span>
+                                    <Label
+                                        labelText={`x${(+calculateBoostValue(poolRewards.working_balance, accountShare)).toFixed(2)}`}
+                                        labelSize="medium"
+                                        background={COLORS.blue700}
+                                        withoutUppercase
+                                    />
+                                    {!!newWorkingBalance && (
+                                        <>
+                                            <Arrow />
+                                            <Label
+                                                labelText={`x${calculateBoostValue(
+                                                    newWorkingBalance,
+                                                    +accountShare + +depositShares,
+                                                ).toFixed(2)}`}
+                                                labelSize="medium"
+                                                background={COLORS.blue700}
+                                                withoutUppercase
+                                            />
+                                        </>
+                                    )}
+                                </span>
+                            </DescriptionRow>
+                        )}
+                    {isRewardsEnabled && Boolean(Number(pool.reward_tps)) && (
                         <DescriptionRow>
                             <span>Daily rewards</span>
                             <span>
-                                {getDailyRewards(poolRewards)}
-                                {sharesAfter && (
+                                {getDailyRewards()}
+                                {!!newWorkingBalance && (
                                     <>
                                         <Arrow />
-                                        {getNewDailyRewards(poolRewards)}
+                                        {getNewDailyRewards()}
                                     </>
                                 )}
                             </span>
@@ -764,19 +733,23 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                                       <span>Daily incentives {incentive.token.code}</span>
                                       <span>
                                           {formatBalance(
-                                              (+incentive.info.tps * DAY * sharesBefore) /
-                                                  1000 /
-                                                  100,
+                                              calculateDailyRewards(
+                                                  +incentive.info.tps,
+                                                  +poolRewards?.working_balance,
+                                                  +poolRewards?.working_supply,
+                                              ),
                                               true,
                                           )}{' '}
                                           {incentive.token.code}
-                                          {sharesAfter && (
+                                          {!!depositShares && (
                                               <>
                                                   <Arrow />
                                                   {formatBalance(
-                                                      (+incentive.info.tps * DAY * sharesAfter) /
-                                                          1000 /
-                                                          100,
+                                                      calculateDailyRewards(
+                                                          +incentive.info.tps,
+                                                          newWorkingBalance,
+                                                          newWorkingSupply,
+                                                      ),
                                                       true,
                                                   )}{' '}
                                                   {incentive.token.code}

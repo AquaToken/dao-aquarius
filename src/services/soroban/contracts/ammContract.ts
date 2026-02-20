@@ -28,7 +28,13 @@ import {
     scValToNative,
 } from 'services/soroban/utils/scValHelpers';
 
-import { PoolIncentives, PoolProcessed, PoolRewardsInfo, RewardType } from 'types/amm';
+import {
+    PoolExtended,
+    PoolIncentives,
+    PoolProcessed,
+    PoolRewardsInfo,
+    RewardType,
+} from 'types/amm';
 import { SorobanToken, Token } from 'types/token';
 
 import Connection from '../connection/connection';
@@ -1085,22 +1091,85 @@ export default class AmmContract {
         return result;
     }
 
-    private getAssetContractHash(asset: Token): string {
-        return new StellarSdk.Contract(asset.contract).address().toBuffer().toString('hex');
+    getChangeUserRewardsStatusTx(poolId: string, accountId: string, rewardsEnabled: boolean) {
+        return this.connection
+            .buildSmartContractTx(
+                accountId,
+                poolId,
+                AMM_CONTRACT_METHOD.SET_REWARDS_STATE,
+                publicKeyToScVal(accountId),
+                xdr.ScVal.scvBool(rewardsEnabled),
+            )
+            .then(tx => this.connection.prepareTransaction(tx));
     }
 
-    orderTokens(assets: Token[]) {
-        for (let i = 0; i < assets.length; i++) {
-            for (let j = 0; j < assets.length - 1; j++) {
-                const hash1 = parseInt(this.getAssetContractHash(assets[j]), 16);
-                const hash2 = parseInt(this.getAssetContractHash(assets[j + 1]), 16);
-                if (hash1 > hash2) {
-                    const temp = assets[j];
-                    assets[j] = assets[j + 1];
-                    assets[j + 1] = temp;
+    getUserRewardsStatus(poolId: string, accountId: string): Promise<boolean> {
+        return this.connection
+            .buildSmartContractTx(
+                accountId,
+                poolId,
+                AMM_CONTRACT_METHOD.GET_REWARDS_STATE,
+                publicKeyToScVal(accountId),
+            )
+            .then(tx => this.connection.simulateTx(tx))
+            .then(result => result.result.retval.value() as unknown as boolean);
+    }
+
+    estimateDeposit(
+        account: string,
+        poolId: string,
+        assets: Token[],
+        amounts: Map<string, string>,
+    ) {
+        return this.connection
+            .buildSmartContractTx(
+                account,
+                poolId,
+                AMM_CONTRACT_METHOD.ESTIMATE_DEPOSIT,
+                scValToArray(
+                    this.token
+                        .orderTokens(assets)
+                        .map(asset =>
+                            amountToUint128(
+                                amounts.get(getAssetString(asset)) || '0',
+                                (asset as SorobanToken).decimal,
+                            ),
+                        ),
+                ),
+            )
+            .then(tx => this.connection.simulateTx(tx))
+            .then(result => {
+                if (!result.result) {
+                    return 0;
                 }
-            }
-        }
-        return assets;
+
+                return Number(i128ToInt(result.result.retval));
+            });
+    }
+
+    estimateWorkingBalanceAndSupply(
+        pool: PoolExtended,
+        accountId: string,
+        shares: string,
+    ): Promise<{
+        workingBalance: number;
+        workingSupply: number;
+    }> {
+        return this.connection
+            .buildSmartContractTx(
+                accountId,
+                pool.address,
+                AMM_CONTRACT_METHOD.ESTIMATE_WORKING_BALANCE,
+                publicKeyToScVal(accountId),
+                amountToUint128(shares, pool.share_token_decimals),
+            )
+            .then(tx => this.connection.simulateTx(tx))
+            .then(res => {
+                const [workingBalance, workingSupply] = (
+                    res.result.retval.value() as unknown as Array<xdr.ScVal>
+                ).map(v => Number(i128ToInt(v)));
+
+                return { workingBalance, workingSupply };
+            });
     }
 }
