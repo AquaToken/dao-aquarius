@@ -9,7 +9,7 @@ export const calculateBoostValue = (
 
     if (!wBal || !userBal) return 1;
 
-    return wBal / userBal;
+    return Math.max(wBal / userBal, 1);
 };
 
 export const calculateDailyRewards = (
