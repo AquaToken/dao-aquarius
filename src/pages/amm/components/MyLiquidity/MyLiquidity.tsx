@@ -247,6 +247,21 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
 
     const updateIndex = useUpdateIndex(5000);
 
+    const filteredPools = useMemo(() => {
+        if (!classicPools || !pools) return null;
+
+        if (filter === FilterValues.classic) {
+            return classicPools;
+        }
+        if (filter === FilterValues.volatile) {
+            return pools.filter(({ pool_type }) => pool_type === POOL_TYPE.constant);
+        }
+        if (filter === FilterValues.stable) {
+            return pools.filter(({ pool_type }) => pool_type === POOL_TYPE.stable);
+        }
+        return [...pools, ...classicPools];
+    }, [classicPools, pools, filter]);
+
     const updateData = () => {
         if (account) {
             getUserPools(account.accountId()).then(res => {
