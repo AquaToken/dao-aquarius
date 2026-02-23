@@ -340,7 +340,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
             .estimateWorkingBalanceAndSupply(
                 pool,
                 account.accountId(),
-                Math.floor(Number(accountShare) + depositShares).toFixed(),
+                Number(accountShare) + depositShares,
             )
             .then(({ workingBalance, workingSupply }) => {
                 setNewWorkingBalance(workingBalance);
