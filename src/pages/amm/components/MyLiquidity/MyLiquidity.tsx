@@ -547,18 +547,24 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                     ]}
                     body={filteredPools.map(pool => {
                         const userRewardsForPool = userRewards.get(pool.address);
+
+                        const isRewardsExpired =
+                            userRewardsForPool?.exp_at &&
+                            userRewardsForPool?.exp_at * 1000 < Date.now();
+
                         const boostValue = calculateBoostValue(
                             +userRewardsForPool?.working_balance,
                             contractValueToAmount(pool.balance),
                         );
 
-                        const dailyRewards = userRewardsForPool
-                            ? calculateDailyRewards(
-                                  +userRewardsForPool?.tps,
-                                  +userRewardsForPool?.working_balance,
-                                  +userRewardsForPool?.working_supply,
-                              )
-                            : 0;
+                        const dailyRewards =
+                            userRewardsForPool && !isRewardsExpired
+                                ? calculateDailyRewards(
+                                      +userRewardsForPool?.tps,
+                                      +userRewardsForPool?.working_balance,
+                                      +userRewardsForPool?.working_supply,
+                                  )
+                                : 0;
 
                         const incentivesForPool = userIncentives
                             .get(pool.address)
