@@ -646,24 +646,26 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                     align: CellAlign.Right,
                                 },
                                 {
-                                    children: !pool.rewards_enabled ? (
-                                        <Label
-                                            labelText={
-                                                <LabelInner>
-                                                    <Lock /> <span>Disabled</span>
-                                                </LabelInner>
-                                            }
-                                            background={COLORS.gray100}
-                                            color={COLORS.textGray}
-                                            withoutBorder
-                                            labelSize="medium"
-                                            withoutUppercase
-                                        />
-                                    ) : Number(dailyRewards) ? (
-                                        `${formatBalance(dailyRewards, true, true)} AQUA`
-                                    ) : (
-                                        '-'
-                                    ),
+                                    children:
+                                        pool.pool_type !== POOL_TYPE.classic &&
+                                        !pool.rewards_enabled ? (
+                                            <Label
+                                                labelText={
+                                                    <LabelInner>
+                                                        <Lock /> <span>Disabled</span>
+                                                    </LabelInner>
+                                                }
+                                                background={COLORS.gray100}
+                                                color={COLORS.textGray}
+                                                withoutBorder
+                                                labelSize="medium"
+                                                withoutUppercase
+                                            />
+                                        ) : Number(dailyRewards) ? (
+                                            `${formatBalance(dailyRewards, true, true)} AQUA`
+                                        ) : (
+                                            '-'
+                                        ),
                                     label: (
                                         <TitleWithTooltip>
                                             Daily Rewards

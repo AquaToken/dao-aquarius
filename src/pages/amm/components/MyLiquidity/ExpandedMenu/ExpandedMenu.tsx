@@ -2,6 +2,8 @@ import * as React from 'react';
 import { useRef, useState } from 'react';
 import styled from 'styled-components';
 
+import { POOL_TYPE } from 'constants/amm';
+
 import useOnClickOutside from 'hooks/useOutsideClick';
 
 import { ModalService } from 'services/globalServices';
@@ -79,7 +81,7 @@ const ExpandedMenu = ({ pool }: Props) => {
             </Button>
             {isShowMenu && (
                 <Menu>
-                    {Boolean((pool as PoolUserProcessed).address) && (
+                    {pool.pool_type !== POOL_TYPE.classic && (
                         <MenuRow
                             onClick={() => {
                                 ModalService.openModal(DepositToPool, { pool });
@@ -108,14 +110,16 @@ const ExpandedMenu = ({ pool }: Props) => {
                         <IconWithdraw />
                         Withdraw
                     </MenuRow>
-                    <MenuRow
-                        onClick={() => {
-                            ModalService.openModal(RewardsSettingsModal, { pool });
-                        }}
-                    >
-                        <Settings />
-                        Rewards settings
-                    </MenuRow>
+                    {pool.pool_type !== POOL_TYPE.classic && (
+                        <MenuRow
+                            onClick={() => {
+                                ModalService.openModal(RewardsSettingsModal, { pool });
+                            }}
+                        >
+                            <Settings />
+                            Rewards settings
+                        </MenuRow>
+                    )}
                 </Menu>
             )}
         </Container>

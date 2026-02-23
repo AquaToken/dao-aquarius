@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import ErrorHandler from 'helpers/error-handler';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
 import { useIsMounted } from 'hooks/useIsMounted';
@@ -92,8 +93,8 @@ const RewardsSettingsModal = ({ params, close }: ModalProps<{ pool: PoolExtended
 
             close();
         } catch (e) {
-            console.log(e);
-            ToastService.showErrorToast('Something went wrong!');
+            const errorText = ErrorHandler(e);
+            ToastService.showErrorToast(errorText);
             setPending(false);
         }
     };
