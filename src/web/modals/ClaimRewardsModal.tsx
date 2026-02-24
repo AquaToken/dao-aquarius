@@ -238,10 +238,10 @@ const ClaimRewardsModal = ({ confirm, close }: ModalProps<never>) => {
                                 {!selectedRewards.size
                                     ? 'select rewards'
                                     : selectedRewards.size > CLAIM_ALL_COUNT
-                                    ? `maximum ${CLAIM_ALL_COUNT} rewards at a time `
-                                    : `claim ${selectedRewards.size} reward${
-                                          selectedRewards.size > 1 ? 's' : ''
-                                      }`}
+                                      ? `maximum ${CLAIM_ALL_COUNT} rewards at a time `
+                                      : `claim ${selectedRewards.size} reward${
+                                            selectedRewards.size > 1 ? 's' : ''
+                                        }`}
                             </Button>
                         </StickyButtonWrapper>
                     </>

@@ -88,6 +88,7 @@ export enum KnownPrepareErrors {
     'Error(Contract, #206)' = 'Swapping is currently disabled for this pool. Please reach out to support.',
     'Error(Contract, #207)' = 'Claiming is currently disabled for this pool. Please reach out to support.',
     'Error(Contract, #2006)' = 'The amount is too small to deposit to this pool',
+    'Error(Budget, ExceededLimit)' = 'The contract call failed because it exceeded the allowed resource limit. Try reducing the operation size if possible.',
 }
 
 type UnknownError = {
