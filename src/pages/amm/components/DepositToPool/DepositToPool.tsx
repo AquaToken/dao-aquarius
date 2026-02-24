@@ -320,6 +320,9 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
 
     useEffect(() => {
         setDepositShares(null);
+
+        if ([...debouncedAmounts.current.values()].some(v => Number.isNaN(+v))) return;
+
         SorobanService.amm
             .estimateDeposit(
                 account.accountId(),
