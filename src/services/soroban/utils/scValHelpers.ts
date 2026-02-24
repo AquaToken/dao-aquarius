@@ -31,21 +31,21 @@ export function amountToUint32(amount: number): xdr.ScVal {
 export function amountToUint64(amount: string, decimals = 7): xdr.ScVal {
     return new StellarSdk.XdrLargeInt(
         'u64',
-        new BigNumber(amount).times(Math.pow(10, decimals)).toFixed(),
+        new BigNumber(Number(amount).toFixed(decimals)).times(Math.pow(10, decimals)).toFixed(),
     ).toU64();
 }
 
 export function amountToInt128(amount: string, decimals = 7): xdr.ScVal {
     return new StellarSdk.XdrLargeInt(
         'i128',
-        new BigNumber(amount).times(Math.pow(10, decimals)).toFixed(),
+        new BigNumber(Number(amount).toFixed(decimals)).times(Math.pow(10, decimals)).toFixed(),
     ).toI128();
 }
 
 export function amountToUint128(amount: string, decimals = 7): xdr.ScVal {
     return new StellarSdk.XdrLargeInt(
         'u128',
-        new BigNumber(amount).times(Math.pow(10, decimals)).toFixed(),
+        new BigNumber(Number(amount).toFixed(decimals)).times(Math.pow(10, decimals)).toFixed(),
     ).toU128();
 }
 
