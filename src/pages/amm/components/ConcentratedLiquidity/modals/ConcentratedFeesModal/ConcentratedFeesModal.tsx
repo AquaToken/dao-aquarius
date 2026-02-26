@@ -104,18 +104,14 @@ const ConcentratedFeesModal = ({
         load();
     }, [account, pool.address]);
 
-    const ensureWalletOpened = () => {
-        if (account?.authType === LoginTypes.walletConnect) {
-            openCurrentWalletIfExist();
-        }
-    };
-
     const claimAllFees = () => {
         if (!account || pending) {
             return;
         }
+        if (account.authType === LoginTypes.walletConnect) {
+            openCurrentWalletIfExist();
+        }
 
-        ensureWalletOpened();
         setPending(true);
 
         SorobanService.amm

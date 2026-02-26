@@ -746,14 +746,11 @@ const ConcentratedDepositModal = ({
         [],
     );
 
-    const ensureWalletOpened = () => {
-        if (account?.authType === LoginTypes.walletConnect) {
-            openCurrentWalletIfExist();
-        }
-    };
-
     const deposit = () => {
         if (!account || pending || !hasTickRange || rangeError) return;
+        if (account.authType === LoginTypes.walletConnect) {
+            openCurrentWalletIfExist();
+        }
         if (!areAmountsFilled) {
             ToastService.showErrorToast('Enter amount for at least one token');
             return;
@@ -768,7 +765,6 @@ const ConcentratedDepositModal = ({
             [getAssetString(pool.tokens[1]), depositEstimate.amounts[1] || '0'],
         ]);
 
-        ensureWalletOpened();
         setPending(true);
 
         SorobanService.amm

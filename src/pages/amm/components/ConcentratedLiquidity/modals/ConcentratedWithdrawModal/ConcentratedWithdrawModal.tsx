@@ -371,22 +371,18 @@ const ConcentratedWithdrawModal = ({
         pool.tokens,
     ]);
 
-    const ensureWalletOpened = () => {
-        if (account?.authType === LoginTypes.walletConnect) {
-            openCurrentWalletIfExist();
-        }
-    };
-
     const withdraw = () => {
         if (!account || !selectedPosition || pending) {
             return;
+        }
+        if (account.authType === LoginTypes.walletConnect) {
+            openCurrentWalletIfExist();
         }
         if (!normalizedWithdrawLiquidity || withdrawLiquidityError) {
             ToastService.showErrorToast(withdrawLiquidityError || 'Enter liquidity to burn');
             return;
         }
 
-        ensureWalletOpened();
         setPending(true);
 
         SorobanService.amm
