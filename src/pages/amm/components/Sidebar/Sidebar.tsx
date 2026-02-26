@@ -4,6 +4,8 @@ import styled from 'styled-components';
 
 import { getAssetsList } from 'api/amm';
 
+import { POOL_TYPE } from 'constants/amm';
+
 import { contractValueToAmount } from 'helpers/amount';
 import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
@@ -31,6 +33,9 @@ import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import SwapForm from 'pages/swap/components/SwapForm/SwapForm';
 
+import ConcentratedDepositModal from '../ConcentratedLiquidity/modals/ConcentratedDepositModal/ConcentratedDepositModal';
+import ConcentratedFeesModal from '../ConcentratedLiquidity/modals/ConcentratedFeesModal/ConcentratedFeesModal';
+import ConcentratedWithdrawModal from '../ConcentratedLiquidity/modals/ConcentratedWithdrawModal/ConcentratedWithdrawModal';
 import DepositToPool from '../DepositToPool/DepositToPool';
 import WithdrawFromPool from '../WithdrawFromPool/WithdrawFromPool';
 
@@ -119,6 +124,14 @@ const Buttons = styled.div`
     }
 `;
 
+const ManageFeesRow = styled.div`
+    margin-top: 1.6rem;
+
+    Button {
+        padding: unset;
+    }
+`;
+
 const Sidebar = ({ pool }: { pool: PoolExtended }) => {
     const { isLogged, account } = useAuthStore();
     const [accountShare, setAccountShare] = useState(null);
@@ -127,6 +140,7 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
     const [assetsList, setAssetsList] = useState(getTokensFromCache());
 
     const { processNewAssets } = useAssetsStore();
+    const isConcentrated = pool.pool_type === POOL_TYPE.concentrated;
 
     const changeSource = asset => {
         if (getAssetString(asset) === getAssetString(destination)) {
@@ -150,6 +164,11 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
     }, []);
 
     useEffect(() => {
+        if (isConcentrated) {
+            setAccountShare(null);
+            return;
+        }
+
         if (!account) {
             setAccountShare(null);
             return;
@@ -159,8 +178,26 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
             .then(res => {
                 setAccountShare(res);
             });
-    }, [account]);
+    }, [account, isConcentrated, pool.share_token_address]);
     const openDepositModal = () => {
+        if (isConcentrated) {
+            if (!isLogged) {
+                return ModalService.openModal(ChooseLoginMethodModal, {
+                    callback: () =>
+                        ModalService.openModal(
+                            ConcentratedDepositModal,
+                            { pool },
+                            false,
+                            null,
+                            true,
+                        ),
+                });
+            }
+
+            ModalService.openModal(ConcentratedDepositModal, { pool }, false, null, true);
+            return;
+        }
+
         if (!isLogged) {
             return ModalService.openModal(ChooseLoginMethodModal, {
                 callback: () => ModalService.openModal(DepositToPool, { pool }, false, null, true),
@@ -169,18 +206,41 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
         ModalService.openModal(DepositToPool, { pool }, false, null, true);
     };
     const openWithdrawModal = () => {
+        if (isConcentrated) {
+            if (!isLogged) {
+                return ModalService.openModal(ChooseLoginMethodModal, {
+                    callback: () => ModalService.openModal(ConcentratedWithdrawModal, { pool }),
+                });
+            }
+            ModalService.openModal(ConcentratedWithdrawModal, { pool });
+            return;
+        }
+
         if (!isLogged) {
             return ModalService.openModal(ChooseLoginMethodModal, {});
         }
         ModalService.openModal(WithdrawFromPool, { pool });
     };
+    const openManageFeesModal = () => {
+        if (!isConcentrated) {
+            return;
+        }
+        if (!isLogged) {
+            return ModalService.openModal(ChooseLoginMethodModal, {
+                callback: () => ModalService.openModal(ConcentratedFeesModal, { pool }),
+            });
+        }
+
+        ModalService.openModal(ConcentratedFeesModal, { pool });
+    };
     return (
         <Container>
             <Card>
-                {isLogged && accountShare === null ? (
+                {!isConcentrated && isLogged && accountShare === null ? (
                     <PageLoader />
                 ) : (
-                    isLogged && (
+                    isLogged &&
+                    !isConcentrated && (
                         <UserShares>
                             <SidebarRow>
                                 <span>Pool shares:</span>
@@ -189,7 +249,12 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
                                     {Number(pool.total_share)
                                         ? formatBalance(
                                               (100 * accountShare) /
-                                                  (Number(pool.total_share) / 1e7),
+                                                  Number(
+                                                      contractValueToAmount(
+                                                          pool.total_share,
+                                                          pool.share_token_decimals,
+                                                      ),
+                                                  ),
                                               true,
                                           )
                                         : '0'}
@@ -211,8 +276,12 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
                                                           ),
                                                       ) *
                                                           accountShare) /
-                                                      (Number(pool.total_share) /
-                                                          Math.pow(10, pool.share_token_decimals))
+                                                      Number(
+                                                          contractValueToAmount(
+                                                              pool.total_share,
+                                                              pool.share_token_decimals,
+                                                          ),
+                                                      )
                                                   ).toFixed(
                                                       (pool.tokens[index] as SorobanToken)
                                                           .decimal ?? 7,
@@ -232,7 +301,7 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
                         fullWidth
                         isBig
                         onClick={() => openDepositModal()}
-                        disabled={pool.deposit_killed}
+                        disabled={!isConcentrated && pool.deposit_killed}
                     >
                         <DepositIconStyled />
                         Deposit
@@ -242,12 +311,20 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
                         isBig
                         secondary
                         onClick={() => openWithdrawModal()}
-                        disabled={isLogged && Number(accountShare) === 0}
+                        disabled={!isConcentrated && isLogged && Number(accountShare) === 0}
                     >
                         <WithdrawIconStyled />
                         Withdraw
                     </Button>
                 </Buttons>
+                {isConcentrated && (
+                    <ManageFeesRow>
+                        <Button fullWidth isBig secondary onClick={() => openManageFeesModal()}>
+                            <WithdrawIconStyled />
+                            Manage fees
+                        </Button>
+                    </ManageFeesRow>
+                )}
             </Card>
             <Card>
                 <SwapForm

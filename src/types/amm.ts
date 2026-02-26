@@ -176,6 +176,24 @@ export type PoolIncentives = {
     };
 };
 
+export type ConcentratedPoolInfo = {
+    pool_type: string;
+    fee?: number | string;
+    tick_spacing?: number;
+};
+
+export type ConcentratedSlot0 = {
+    sqrt_price_x96?: string;
+    tick?: number;
+    [key: string]: unknown;
+};
+
+export type ConcentratedPosition = {
+    tickLower: number;
+    tickUpper: number;
+    liquidity: string;
+};
+
 export enum RewardType {
     aquaReward = 'aqua_reward',
     incentive = 'incentive',

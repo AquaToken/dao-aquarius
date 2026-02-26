@@ -35,12 +35,14 @@ export enum FilterOptions {
     all = 'all',
     stable = 'stable',
     constant = 'volatile',
+    concentrated = 'concentrated',
 }
 
 const FilterOptionsMap = {
     [FilterOptions.all]: '',
     [FilterOptions.stable]: 'stable',
     [FilterOptions.constant]: 'constant_product',
+    [FilterOptions.concentrated]: 'concentrated',
 };
 
 export enum PoolsSortFields {

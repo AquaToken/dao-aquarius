@@ -208,6 +208,7 @@ enum FilterValues {
     all = 'all',
     volatile = 'volatile',
     stable = 'stable',
+    concentrated = 'concentrated',
     classic = 'classic',
 }
 
@@ -219,6 +220,7 @@ const FilterOptions = [
     { label: 'All', value: FilterValues.all },
     { label: 'Stable', value: FilterValues.stable },
     { label: 'Volatile', value: FilterValues.volatile },
+    { label: 'Concentrated', value: FilterValues.concentrated },
     { label: 'Classic', value: FilterValues.classic },
 ];
 
@@ -284,6 +286,9 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
         }
         if (filter === FilterValues.stable) {
             return pools.filter(({ pool_type }) => pool_type === POOL_TYPE.stable);
+        }
+        if (filter === FilterValues.concentrated) {
+            return pools.filter(({ pool_type }) => pool_type === POOL_TYPE.concentrated);
         }
         return [...pools, ...classicPools];
     }, [classicPools, pools, filter]);

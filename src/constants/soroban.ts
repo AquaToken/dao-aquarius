@@ -15,6 +15,7 @@ export enum AMM_CONTRACT_METHOD {
     GET_POOLS = 'get_pools',
     INIT_CONSTANT_POOL = 'init_standard_pool',
     INIT_STABLESWAP_POOL = 'init_stableswap_pool',
+    INIT_CONCENTRATED_POOL = 'init_concentrated_pool',
     DEPOSIT = 'deposit',
     SHARE_ID = 'share_id',
     ESTIMATE_SWAP_ROUTED = 'estimate_swap_routed',
@@ -48,6 +49,19 @@ export enum AMM_CONTRACT_METHOD {
     GET_REWARDS_STATE = 'get_rewards_state',
     ESTIMATE_DEPOSIT = 'estimate_deposit',
     ESTIMATE_WORKING_BALANCE = 'estimate_working_balance',
+    GET_SLOT0 = 'get_slot0',
+    GET_TICK_SPACING = 'get_tick_spacing',
+    GET_ACTIVE_LIQUIDITY = 'get_active_liquidity',
+    GET_POSITION = 'get_position',
+    GET_USER_POSITION_SNAPSHOT = 'get_user_position_snapshot',
+    ESTIMATE_DEPOSIT_POSITION = 'estimate_deposit_position',
+    DEPOSIT_POSITION = 'deposit_position',
+    ESTIMATE_WITHDRAW_POSITION = 'estimate_withdraw_position',
+    WITHDRAW_POSITION = 'withdraw_position',
+    GET_POSITION_FEES = 'get_position_fees',
+    CLAIM_POSITION_FEES = 'claim_position_fees',
+    GET_ALL_POSITION_FEES = 'get_all_position_fees',
+    CLAIM_ALL_POSITION_FEES = 'claim_all_position_fees',
 }
 
 export enum BATCH_CONTRACT_METHOD {

@@ -105,6 +105,7 @@ const OPTIONS = [
     { label: 'All', value: FilterOptions.all },
     { label: 'Stable', value: FilterOptions.stable },
     { label: 'Volatile', value: FilterOptions.constant },
+    { label: 'Concentrated', value: FilterOptions.concentrated },
 ];
 
 const AllPools = (): React.ReactNode => {

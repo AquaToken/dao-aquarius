@@ -236,7 +236,7 @@ const CreatePool = () => {
             Number(stableFee) > Number(STABLE_POOL_FEE_PERCENTS.max));
 
     useEffect(() => {
-        if (type === POOL_TYPE.constant) {
+        if (type === POOL_TYPE.constant || type === POOL_TYPE.concentrated) {
             setAssetsCount(2);
             setThirdAsset(null);
             setFourthAsset(null);
@@ -270,7 +270,7 @@ const CreatePool = () => {
                 ) &&
                 selectedAssets.length === pool.tokens.length &&
                 type === pool.pool_type &&
-                +(type === POOL_TYPE.constant ? constantFee / 100 : stableFee) ===
+                +(type === POOL_TYPE.stable ? stableFee : constantFee / 100) ===
                     +(Number(pool.fee) * 100).toFixed(2),
         );
     }, [pools, firstAsset, secondAsset, thirdAsset, fourthAsset, type, stableFee, constantFee]);
@@ -418,9 +418,41 @@ const CreatePool = () => {
             });
     };
 
+    const createConcentratedPool = () => {
+        if (
+            createInfo &&
+            Number(account.getAssetBalance(createInfo.token)) < Number(createInfo.constantFee)
+        ) {
+            ToastService.showErrorToast(
+                `You need at least ${createInfo.constantFee} ${createInfo.token.code} to create pool`,
+            );
+            return;
+        }
+        if (account.authType === LoginTypes.walletConnect) {
+            openCurrentWalletIfExist();
+        }
+        setPending(true);
+        SorobanService.amm
+            .getInitConcentratedPoolTx(
+                account.accountId(),
+                firstAsset,
+                secondAsset,
+                constantFee,
+                createInfo,
+            )
+            .then(tx => signAndSubmitCreation(tx))
+            .catch(e => {
+                ToastService.showErrorToast(e.message ?? e.toString());
+                setPending(false);
+            });
+    };
+
     const createPool = () => {
         if (type === POOL_TYPE.stable) {
             return createStablePool();
+        }
+        if (type === POOL_TYPE.concentrated) {
+            return createConcentratedPool();
         }
         createConstantPool();
     };
@@ -486,6 +518,19 @@ const CreatePool = () => {
                                     <p>
                                         Highly efficient AMM model for correlated assets (e.g.,
                                         stablecoins) with lower slippage.
+                                    </p>
+                                </div>
+                                <Tick />
+                            </PoolType>
+                            <PoolType
+                                $isActive={type === POOL_TYPE.concentrated}
+                                onClick={() => setType(POOL_TYPE.concentrated)}
+                            >
+                                <div>
+                                    <h3>Concentrated</h3>
+                                    <p>
+                                        Concentrated liquidity model with custom tick ranges and
+                                        better capital efficiency.
                                     </p>
                                 </div>
                                 <Tick />
@@ -691,7 +736,7 @@ const CreatePool = () => {
                                         fourthAssetStatus,
                                     ].some(status => status === CONTRACT_STATUS.NOT_FOUND) ||
                                     isStableFeeInputError ||
-                                    !stableFee ||
+                                    (type === POOL_TYPE.stable && !stableFee) ||
                                     Boolean(existingPools.length)
                                 }
                             >
@@ -704,7 +749,12 @@ const CreatePool = () => {
                             <StyledFormSection>
                                 <FormSectionTitle>Existing pools</FormSectionTitle>
                                 <FormDescription>
-                                    {type === POOL_TYPE.constant ? 'Volatile' : 'Stable'} pool{' '}
+                                    {type === POOL_TYPE.constant
+                                        ? 'Volatile'
+                                        : type === POOL_TYPE.stable
+                                          ? 'Stable'
+                                          : 'Concentrated'}{' '}
+                                    pool{' '}
                                     {existingPools[0].tokens.map(({ code }) => code).join(' / ')}{' '}
                                     with fee = {(Number(existingPools[0].fee) * 100).toFixed(2)}%
                                     already exists.

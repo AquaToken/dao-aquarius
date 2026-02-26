@@ -2,7 +2,10 @@ import * as StellarSdk from '@stellar/stellar-sdk';
 import { Asset, StrKey, xdr } from '@stellar/stellar-sdk';
 import BigNumber from 'bignumber.js';
 
+import { getAssetString } from 'helpers/assets';
 import { getNetworkPassphrase } from 'helpers/env';
+
+import { SorobanToken, Token } from 'types/token';
 
 export function contractIdToScVal(contractId: string) {
     return StellarSdk.Address.contract(StrKey.decodeContract(contractId)).toScVal();
@@ -61,4 +64,29 @@ export function hashToScVal(hash: string): xdr.ScVal {
     const bytes = Buffer.from(hash, 'hex');
 
     return xdr.ScVal.scvBytes(bytes);
+}
+
+export function tickToScVal(tick: number): xdr.ScVal {
+    return xdr.ScVal.scvI32(Math.trunc(tick));
+}
+
+export function getAmountByAsset(amounts: Map<string, string>, asset: Token): string {
+    return amounts.get(getAssetString(asset)) || amounts.get(asset.contract) || '0';
+}
+
+export function toTokenAmountsScVal(
+    orderedTokens: Token[],
+    amounts: Map<string, string>,
+): xdr.ScVal {
+    return scValToArray(
+        orderedTokens.map(asset =>
+            amountToUint128(getAmountByAsset(amounts, asset), (asset as SorobanToken).decimal),
+        ),
+    );
+}
+
+export function parseTokenAmountsScVal(values: xdr.ScVal[], orderedTokens: Token[]): string[] {
+    return values.map((val, index) =>
+        i128ToInt(val, (orderedTokens[index] as SorobanToken).decimal),
+    );
 }

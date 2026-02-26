@@ -16,19 +16,32 @@ import { getEnv } from 'helpers/env';
 
 import TokenContract from 'services/soroban/contracts/tokenContract';
 import {
+    createBurnInvocation,
+    createClaimInvocation,
+    createRootAuthorization,
+    createWithdrawInvocation,
+} from 'services/soroban/utils/ammContractUtils';
+import {
     amountToInt128,
     amountToUint128,
     amountToUint32,
     amountToUint64,
     contractIdToScVal,
+    getAmountByAsset,
     hashToScVal,
     i128ToInt,
+    parseTokenAmountsScVal,
     publicKeyToScVal,
     scValToArray,
     scValToNative,
+    tickToScVal,
+    toTokenAmountsScVal,
 } from 'services/soroban/utils/scValHelpers';
 
 import {
+    ConcentratedPoolInfo,
+    ConcentratedPosition,
+    ConcentratedSlot0,
     PoolExtended,
     PoolIncentives,
     PoolProcessed,
@@ -154,6 +167,64 @@ export default class AmmContract {
         const operation = StellarSdk.Operation.invokeContractFunction({
             contract: this.AMM_SMART_CONTRACT_ID,
             function: AMM_CONTRACT_METHOD.INIT_STABLESWAP_POOL,
+            args,
+            auth: [rootInvocation],
+        });
+
+        return this.connection
+            .buildSmartContractTxFromOp(accountId, operation)
+            .then(tx => this.connection.prepareTransaction(tx));
+    }
+
+    getInitConcentratedPoolTx(
+        accountId: string,
+        base: Token,
+        counter: Token,
+        fee: number,
+        createInfo,
+    ) {
+        const args = [
+            publicKeyToScVal(accountId),
+            scValToArray(
+                this.token
+                    .orderTokens([base, counter])
+                    .map(asset => contractIdToScVal(asset.contract)),
+            ),
+            amountToUint32(fee),
+        ];
+
+        const transferInvocation = new xdr.SorobanAuthorizedInvocation({
+            function: xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(
+                new xdr.InvokeContractArgs({
+                    functionName: ASSET_CONTRACT_METHOD.TRANSFER,
+                    contractAddress: contractIdToScVal(createInfo.token.contract).address(),
+                    args: [
+                        publicKeyToScVal(accountId),
+                        contractIdToScVal(createInfo.destination),
+                        amountToInt128(createInfo.constantFee, createInfo.token.decimal),
+                    ],
+                }),
+            ),
+            subInvocations: [],
+        });
+
+        const rootInvocation = new xdr.SorobanAuthorizationEntry({
+            credentials: xdr.SorobanCredentials.sorobanCredentialsSourceAccount(),
+            rootInvocation: new xdr.SorobanAuthorizedInvocation({
+                function: xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(
+                    new xdr.InvokeContractArgs({
+                        contractAddress: contractIdToScVal(this.AMM_SMART_CONTRACT_ID).address(),
+                        functionName: AMM_CONTRACT_METHOD.INIT_CONCENTRATED_POOL,
+                        args,
+                    }),
+                ),
+                subInvocations: [transferInvocation],
+            }),
+        });
+
+        const operation = StellarSdk.Operation.invokeContractFunction({
+            contract: this.AMM_SMART_CONTRACT_ID,
+            function: AMM_CONTRACT_METHOD.INIT_CONCENTRATED_POOL,
             args,
             auth: [rootInvocation],
         });
@@ -385,72 +456,6 @@ export default class AmmContract {
             .then(tx => this.connection.prepareTransaction(tx));
     }
 
-    // Helper functions for creating core invocations and authorizations
-
-    /**
-     * Creates the burn authorization invocation required to burn shares.
-     */
-    createBurnInvocation(accountId: string, shareAmount: string, shareAddress: string) {
-        return new xdr.SorobanAuthorizedInvocation({
-            function: xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(
-                new xdr.InvokeContractArgs({
-                    functionName: ASSET_CONTRACT_METHOD.BURN,
-                    contractAddress: contractIdToScVal(shareAddress).address(),
-                    args: [publicKeyToScVal(accountId), amountToInt128(shareAmount)],
-                }),
-            ),
-            subInvocations: [],
-        });
-    }
-
-    /**
-     * Creates the withdraw invocation with burn as a sub-invocation.
-     */
-    createWithdrawInvocation(
-        accountId: string,
-        poolAddress: string,
-        functionName: string,
-        args: xdr.ScVal[],
-        burnInvocation: xdr.SorobanAuthorizedInvocation,
-    ) {
-        return new xdr.SorobanAuthorizedInvocation({
-            function: xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(
-                new xdr.InvokeContractArgs({
-                    contractAddress: contractIdToScVal(poolAddress).address(),
-                    functionName,
-                    args,
-                }),
-            ),
-            subInvocations: [burnInvocation],
-        });
-    }
-
-    /**
-     * Creates the claim invocation which doesn't require any sub-invocations.
-     */
-    createClaimInvocation(accountId: string, poolAddress: string, functionName: string) {
-        return new xdr.SorobanAuthorizedInvocation({
-            function: xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(
-                new xdr.InvokeContractArgs({
-                    contractAddress: contractIdToScVal(poolAddress).address(),
-                    functionName,
-                    args: [publicKeyToScVal(accountId)],
-                }),
-            ),
-            subInvocations: [],
-        });
-    }
-
-    /**
-     * Wraps the root invocation into an authorization entry.
-     */
-    createRootAuthorization(accountId: string, rootInvocation: xdr.SorobanAuthorizedInvocation) {
-        return new xdr.SorobanAuthorizationEntry({
-            credentials: xdr.SorobanCredentials.sorobanCredentialsSourceAccount(),
-            rootInvocation,
-        });
-    }
-
     /**
      * Builds a transaction for a single withdraw  (either normal or single coin).
      */
@@ -462,10 +467,9 @@ export default class AmmContract {
         functionName: string,
         args: xdr.ScVal[],
     ): Promise<StellarSdk.Transaction> {
-        const burnInvocation = this.createBurnInvocation(accountId, shareAmount, shareAddress);
+        const burnInvocation = createBurnInvocation(accountId, shareAmount, shareAddress);
 
-        const rootInvocation = this.createRootAuthorization(
-            accountId,
+        const rootInvocation = createRootAuthorization(
             new xdr.SorobanAuthorizedInvocation({
                 function: xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(
                     new xdr.InvokeContractArgs({
@@ -510,10 +514,9 @@ export default class AmmContract {
         ]);
 
         // Prepare authorizations
-        const burnInvocation = this.createBurnInvocation(accountId, shareAmount, shareAddress);
+        const burnInvocation = createBurnInvocation(accountId, shareAmount, shareAddress);
 
-        const withdrawAuthInvocation = this.createWithdrawInvocation(
-            accountId,
+        const withdrawAuthInvocation = createWithdrawInvocation(
             poolAddress,
             withdrawFunctionName,
             withdrawArgs,
@@ -532,7 +535,7 @@ export default class AmmContract {
 
             batchCalls.push(claimRewardsCall);
 
-            const claimRewardsInvocations = this.createClaimInvocation(
+            const claimRewardsInvocations = createClaimInvocation(
                 accountId,
                 poolAddress,
                 AMM_CONTRACT_METHOD.CLAIM,
@@ -549,7 +552,7 @@ export default class AmmContract {
             ]);
             batchCalls.push(claimIncentivesCall);
 
-            const claimIncentivesInvocations = this.createClaimInvocation(
+            const claimIncentivesInvocations = createClaimInvocation(
                 accountId,
                 poolAddress,
                 AMM_CONTRACT_METHOD.CLAIM_INCENTIVES,
@@ -573,7 +576,7 @@ export default class AmmContract {
             subInvocations,
         });
 
-        const batchAuth = this.createRootAuthorization(accountId, rootInvocation);
+        const batchAuth = createRootAuthorization(rootInvocation);
 
         const batchOperation = StellarSdk.Operation.invokeContractFunction({
             contract: this.BATCH_SMART_CONTRACT_ID,
@@ -1171,5 +1174,288 @@ export default class AmmContract {
 
                 return { workingBalance, workingSupply };
             });
+    }
+
+    getConcentratedPoolInfo(poolId: string): Promise<ConcentratedPoolInfo> {
+        return this.connection
+            .buildSmartContractTx(ACCOUNT_FOR_SIMULATE, poolId, AMM_CONTRACT_METHOD.GET_INFO)
+            .then(tx => this.connection.simulateTx(tx))
+            .then(({ result }) => scValToNative(result.retval) as ConcentratedPoolInfo);
+    }
+
+    getConcentratedSlot0(poolId: string): Promise<ConcentratedSlot0> {
+        return this.connection
+            .buildSmartContractTx(ACCOUNT_FOR_SIMULATE, poolId, AMM_CONTRACT_METHOD.GET_SLOT0)
+            .then(tx => this.connection.simulateTx(tx))
+            .then(({ result }) => scValToNative(result.retval) as ConcentratedSlot0);
+    }
+
+    getConcentratedTickSpacing(poolId: string): Promise<number> {
+        return this.connection
+            .buildSmartContractTx(
+                ACCOUNT_FOR_SIMULATE,
+                poolId,
+                AMM_CONTRACT_METHOD.GET_TICK_SPACING,
+            )
+            .then(tx => this.connection.simulateTx(tx))
+            .then(({ result }) => Number(scValToNative(result.retval)));
+    }
+
+    getUserPositionSnapshot(poolId: string, user: string): Promise<unknown> {
+        return this.connection
+            .buildSmartContractTx(
+                ACCOUNT_FOR_SIMULATE,
+                poolId,
+                AMM_CONTRACT_METHOD.GET_USER_POSITION_SNAPSHOT,
+                publicKeyToScVal(user),
+            )
+            .then(tx => this.connection.simulateTx(tx))
+            .then(({ result }) => scValToNative(result.retval));
+    }
+
+    getPosition(
+        poolId: string,
+        owner: string,
+        tickLower: number,
+        tickUpper: number,
+    ): Promise<ConcentratedPosition | null> {
+        return this.connection
+            .buildSmartContractTx(
+                ACCOUNT_FOR_SIMULATE,
+                poolId,
+                AMM_CONTRACT_METHOD.GET_POSITION,
+                publicKeyToScVal(owner),
+                tickToScVal(tickLower),
+                tickToScVal(tickUpper),
+            )
+            .then(tx => this.connection.simulateTx(tx))
+            .then(({ result }) => {
+                const native = scValToNative(result.retval) as Record<string, unknown>;
+                if (!native) {
+                    return null;
+                }
+
+                return {
+                    tickLower,
+                    tickUpper,
+                    liquidity: String(native.liquidity ?? native.L ?? '0'),
+                };
+            });
+    }
+
+    estimateDepositPosition(
+        accountId: string,
+        poolId: string,
+        tokens: Token[],
+        tickLower: number,
+        tickUpper: number,
+        desiredAmounts: Map<string, string>,
+    ): Promise<{ amounts: string[]; liquidity: string }> {
+        return this.connection
+            .buildSmartContractTx(
+                accountId,
+                poolId,
+                AMM_CONTRACT_METHOD.ESTIMATE_DEPOSIT_POSITION,
+                tickToScVal(tickLower),
+                tickToScVal(tickUpper),
+                toTokenAmountsScVal(this.token.orderTokens(tokens), desiredAmounts),
+            )
+            .then(tx => this.connection.simulateTx(tx))
+            .then(({ result }) => {
+                const [amountsScVal, liquidityScVal] =
+                    result.retval.value() as unknown as xdr.ScVal[];
+                return {
+                    amounts: parseTokenAmountsScVal(
+                        amountsScVal.value() as xdr.ScVal[],
+                        this.token.orderTokens(tokens),
+                    ),
+                    liquidity: i128ToInt(liquidityScVal, 0),
+                };
+            });
+    }
+
+    getDepositPositionTx(
+        accountId: string,
+        poolAddress: string,
+        tokens: Token[],
+        tickLower: number,
+        tickUpper: number,
+        desiredAmounts: Map<string, string>,
+        minLiquidity: string,
+    ): Promise<StellarSdk.Transaction> {
+        const args = [
+            publicKeyToScVal(accountId),
+            tickToScVal(tickLower),
+            tickToScVal(tickUpper),
+            toTokenAmountsScVal(this.token.orderTokens(tokens), desiredAmounts),
+            amountToUint128(minLiquidity, 0),
+        ];
+
+        const transferInvocations = this.token.orderTokens(tokens).map(
+            asset =>
+                new xdr.SorobanAuthorizedInvocation({
+                    function: xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(
+                        new xdr.InvokeContractArgs({
+                            functionName: ASSET_CONTRACT_METHOD.TRANSFER,
+                            contractAddress: contractIdToScVal(asset.contract).address(),
+                            args: [
+                                publicKeyToScVal(accountId),
+                                contractIdToScVal(poolAddress),
+                                amountToInt128(
+                                    getAmountByAsset(desiredAmounts, asset),
+                                    (asset as SorobanToken).decimal,
+                                ),
+                            ],
+                        }),
+                    ),
+                    subInvocations: [],
+                }),
+        );
+
+        const rootInvocation = new xdr.SorobanAuthorizationEntry({
+            credentials: xdr.SorobanCredentials.sorobanCredentialsSourceAccount(),
+            rootInvocation: new xdr.SorobanAuthorizedInvocation({
+                function: xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(
+                    new xdr.InvokeContractArgs({
+                        contractAddress: contractIdToScVal(poolAddress).address(),
+                        functionName: AMM_CONTRACT_METHOD.DEPOSIT_POSITION,
+                        args,
+                    }),
+                ),
+                subInvocations: transferInvocations,
+            }),
+        });
+
+        const operation = StellarSdk.Operation.invokeContractFunction({
+            contract: poolAddress,
+            function: AMM_CONTRACT_METHOD.DEPOSIT_POSITION,
+            args,
+            auth: [rootInvocation],
+        });
+
+        return this.connection
+            .buildSmartContractTxFromOp(accountId, operation)
+            .then(tx => this.connection.prepareTransaction(tx));
+    }
+
+    estimateWithdrawPosition(
+        accountId: string,
+        poolId: string,
+        tokens: Token[],
+        tickLower: number,
+        tickUpper: number,
+        liquidity: string,
+    ): Promise<string[]> {
+        return this.connection
+            .buildSmartContractTx(
+                accountId,
+                poolId,
+                AMM_CONTRACT_METHOD.ESTIMATE_WITHDRAW_POSITION,
+                publicKeyToScVal(accountId),
+                tickToScVal(tickLower),
+                tickToScVal(tickUpper),
+                amountToUint128(liquidity, 0),
+            )
+            .then(tx => this.connection.simulateTx(tx))
+            .then(({ result }) =>
+                parseTokenAmountsScVal(
+                    result.retval.value() as unknown as xdr.ScVal[],
+                    this.token.orderTokens(tokens),
+                ),
+            );
+    }
+
+    getWithdrawPositionTx(
+        accountId: string,
+        poolId: string,
+        tokens: Token[],
+        tickLower: number,
+        tickUpper: number,
+        liquidity: string,
+        minAmounts: Map<string, string>,
+    ): Promise<StellarSdk.Transaction> {
+        return this.connection
+            .buildSmartContractTx(
+                accountId,
+                poolId,
+                AMM_CONTRACT_METHOD.WITHDRAW_POSITION,
+                publicKeyToScVal(accountId),
+                tickToScVal(tickLower),
+                tickToScVal(tickUpper),
+                amountToUint128(liquidity, 0),
+                toTokenAmountsScVal(this.token.orderTokens(tokens), minAmounts),
+            )
+            .then(tx => this.connection.prepareTransaction(tx));
+    }
+
+    getPositionFees(
+        poolId: string,
+        accountId: string,
+        tokens: Token[],
+        tickLower: number,
+        tickUpper: number,
+    ): Promise<string[]> {
+        return this.connection
+            .buildSmartContractTx(
+                accountId,
+                poolId,
+                AMM_CONTRACT_METHOD.GET_POSITION_FEES,
+                publicKeyToScVal(accountId),
+                tickToScVal(tickLower),
+                tickToScVal(tickUpper),
+            )
+            .then(tx => this.connection.simulateTx(tx))
+            .then(({ result }) =>
+                parseTokenAmountsScVal(
+                    result.retval.value() as unknown as xdr.ScVal[],
+                    this.token.orderTokens(tokens),
+                ),
+            );
+    }
+
+    getAllPositionFees(poolId: string, accountId: string, tokens: Token[]): Promise<string[]> {
+        return this.connection
+            .buildSmartContractTx(
+                accountId,
+                poolId,
+                AMM_CONTRACT_METHOD.GET_ALL_POSITION_FEES,
+                publicKeyToScVal(accountId),
+            )
+            .then(tx => this.connection.simulateTx(tx))
+            .then(({ result }) =>
+                parseTokenAmountsScVal(
+                    result.retval.value() as unknown as xdr.ScVal[],
+                    this.token.orderTokens(tokens),
+                ),
+            );
+    }
+
+    getClaimPositionFeesTx(
+        accountId: string,
+        poolId: string,
+        tickLower: number,
+        tickUpper: number,
+    ): Promise<StellarSdk.Transaction> {
+        return this.connection
+            .buildSmartContractTx(
+                accountId,
+                poolId,
+                AMM_CONTRACT_METHOD.CLAIM_POSITION_FEES,
+                publicKeyToScVal(accountId),
+                tickToScVal(tickLower),
+                tickToScVal(tickUpper),
+            )
+            .then(tx => this.connection.prepareTransaction(tx));
+    }
+
+    getClaimAllPositionFeesTx(accountId: string, poolId: string): Promise<StellarSdk.Transaction> {
+        return this.connection
+            .buildSmartContractTx(
+                accountId,
+                poolId,
+                AMM_CONTRACT_METHOD.CLAIM_ALL_POSITION_FEES,
+                publicKeyToScVal(accountId),
+            )
+            .then(tx => this.connection.prepareTransaction(tx));
     }
 }

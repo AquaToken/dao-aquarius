@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import { getPoolMembers } from 'api/amm';
 
+import { contractValueToAmount } from 'helpers/amount';
 import getExplorerLink, { ExplorerSection } from 'helpers/explorer-links';
 import { formatBalance } from 'helpers/format-number';
 
@@ -63,7 +64,15 @@ const LabelInner = styled.div`
     ${FONT_SIZE.sm};
 `;
 
-const PoolMembers = ({ poolId, totalShare }: { poolId: string; totalShare: string }) => {
+const PoolMembers = ({
+    poolId,
+    totalShare,
+    shareTokenDecimals,
+}: {
+    poolId: string;
+    totalShare: string;
+    shareTokenDecimals: number;
+}) => {
     const [members, setMembers] = useState<PoolBalance[]>(null);
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(null);
@@ -168,12 +177,31 @@ const PoolMembers = ({ poolId, totalShare }: { poolId: string; totalShare: strin
                             {
                                 children: (
                                     <span>
-                                        {formatBalance(Number(member.balance) / 1e7, true)} (
+                                        {formatBalance(
+                                            Number(
+                                                contractValueToAmount(
+                                                    member.balance,
+                                                    shareTokenDecimals,
+                                                ),
+                                            ),
+                                            true,
+                                        )}{' '}
+                                        (
                                         {Number(totalShare)
                                             ? formatBalance(
-                                                  (100 * Number(member.balance)) /
-                                                      1e7 /
-                                                      (Number(totalShare) / 1e7),
+                                                  (100 *
+                                                      Number(
+                                                          contractValueToAmount(
+                                                              member.balance,
+                                                              shareTokenDecimals,
+                                                          ),
+                                                      )) /
+                                                      Number(
+                                                          contractValueToAmount(
+                                                              totalShare,
+                                                              shareTokenDecimals,
+                                                          ),
+                                                      ),
                                                   true,
                                               )
                                             : '0'}
