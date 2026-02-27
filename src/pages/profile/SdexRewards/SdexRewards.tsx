@@ -306,7 +306,9 @@ const SdexRewards = ({ aquaUsdPrice }: SdexRewardsProps): React.ReactNode => {
                             }) => {
                                 const dailyReward = reward * 24;
 
-                                const boostValue = (reward / (reward - boost)).toFixed(2);
+                                const boostValue = Math.min(reward / (reward - boost), 2.5).toFixed(
+                                    2,
+                                );
 
                                 const {
                                     asset1_code: baseCode,
