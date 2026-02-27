@@ -140,11 +140,13 @@ const RewardsBanner = ({
             res.push(aquaStellarAsset);
         }
 
-        [...incentivesSum.keys()].forEach(token => {
-            if (!userRewardsCount || token.contract !== aquaStellarAsset.contract) {
-                res.push(token);
-            }
-        });
+        [...incentivesSum.entries()]
+            .filter(([, val]) => Boolean(val))
+            .forEach(([token]) => {
+                if (!userRewardsCount || token.contract !== aquaStellarAsset.contract) {
+                    res.push(token);
+                }
+            });
 
         return res;
     }, [userRewardsCount, incentivesSum]);
