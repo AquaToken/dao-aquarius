@@ -316,6 +316,14 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
         return map;
     }, [reserves, pool, amounts]);
 
+    const hasActiveIncentives = useMemo(() => {
+        if (!incentives || !incentives.length) return false;
+
+        return incentives.some(
+            i => !!Number(i.info.tps) && Number(i.info.expired_at) * 1000 < Date.now(),
+        );
+    }, [incentives]);
+
     const debouncedAmounts = useDebounce(amounts, 1000);
 
     useEffect(() => {
@@ -684,7 +692,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                             )}
                         </span>
                     </DescriptionRow>
-                    {isRewardsEnabled &&
+                    {(Boolean(Number(pool.reward_tps)) || hasActiveIncentives) &&
                         Boolean(Number(pool.total_share)) &&
                         Boolean(poolRewards) && (
                             <DescriptionRow>
@@ -728,7 +736,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                         </DescriptionRow>
                     )}
 
-                    {incentives?.length
+                    {hasActiveIncentives
                         ? incentives
                               .filter(incentive => !!Number(incentive.info.tps))
                               .map(incentive => (
