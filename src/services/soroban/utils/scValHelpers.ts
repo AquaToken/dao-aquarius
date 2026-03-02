@@ -30,8 +30,8 @@ export function amountToUint32(amount: number): xdr.ScVal {
 
 const scaleAmount = (amount: string, decimals: number) =>
     new BigNumber(amount)
-        .integerValue(BigNumber.ROUND_DOWN)
         .times(new BigNumber(10).pow(decimals))
+        .integerValue(BigNumber.ROUND_DOWN)
         .toFixed(0);
 
 export function amountToUint64(amount: string, decimals = 7): xdr.ScVal {
