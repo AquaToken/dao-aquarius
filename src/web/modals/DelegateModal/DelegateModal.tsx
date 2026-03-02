@@ -1,12 +1,9 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
-import { NumericFormat } from 'react-number-format';
-import styled from 'styled-components';
+import { useEffect, useMemo, useState } from 'react';
 
 import { processIceTx } from 'api/ice';
 
 import ErrorHandler from 'helpers/error-handler';
-import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
 import { LoginTypes } from 'store/authStore/types';
@@ -21,126 +18,30 @@ import { ModalProps } from 'types/modal';
 import { ClassicToken } from 'types/token';
 
 import IconProfile from 'assets/icons/nav/icon-profile.svg';
-import Ice from 'assets/tokens/ice-logo.svg';
 
-import AssetLogo from 'basics/AssetLogo';
-import { Button } from 'basics/buttons';
-import { Input, RangeInput, Select, ToggleGroup } from 'basics/inputs';
+import TokenAmountFormField from 'basics/form/TokenAmountFormField';
+import { Input, Select, ToggleGroup } from 'basics/inputs';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
-
-import PublicKeyWithIcon from 'components/PublicKeyWithIcon';
-
-import { flexAllCenter, respondDown } from 'styles/mixins';
-import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { GOV_ICE, UP_ICE } from 'pages/vote/components/MainPage/MainPage';
 
-const DelegateButton = styled(Button)`
-    margin-top: 4rem;
-`;
-
-const IceLogo = styled(Ice)`
-    height: 1.8rem;
-    width: 1.8rem;
-    margin-right: 0.5rem;
-`;
-
-const FormRow = styled.div`
-    display: flex;
-    margin: 8rem 0 4rem;
-    position: relative;
-`;
-
-const Balance = styled.div`
-    position: absolute;
-    bottom: calc(100% + 1.2rem);
-    right: 0;
-    font-size: 1.6rem;
-    line-height: 1.8rem;
-    color: ${COLORS.textTertiary};
-    display: flex;
-    align-items: center;
-
-    svg {
-        margin-left: 0.4rem;
-    }
-
-    ${respondDown(Breakpoints.sm)`
-        font-size: 1.2rem;
-    `}
-`;
-
-const Labels = styled.div`
-    position: absolute;
-    bottom: calc(100% + 1.2rem);
-    left: 0;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-`;
-
-const BalanceClickable = styled.span`
-    color: ${COLORS.purple500};
-    cursor: pointer;
-    margin-left: 0.4rem;
-    margin-right: 0.4rem;
-`;
-
-const SelectItem = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-`;
-
-const Avatar = styled.img`
-    border-radius: 50%;
-`;
-
-const RangeInputStyled = styled(RangeInput)`
-    margin-bottom: 10rem;
-`;
-
-const IconWrapper = styled.div`
-    height: 2.4rem;
-    width: 2.4rem;
-    background: ${COLORS.gray100};
-    border-radius: 50%;
-    ${flexAllCenter};
-    color: ${COLORS.gray300};
-
-    svg {
-        margin: 0 !important;
-        height: 1.2rem;
-        width: 1.2rem;
-    }
-`;
-
-const PublicKeyWithIconStyled = styled(PublicKeyWithIcon)`
-    color: ${COLORS.textGray};
-    margin-left: 1rem;
-`;
+import {
+    Amounts,
+    Avatar,
+    DelegateButton,
+    FormRow,
+    IconWrapper,
+    Labels,
+    PublicKeyWithIconStyled,
+    SelectItem,
+} from './DelegateModal.styled';
 
 const MINIMUM_AMOUNT = 10;
 
-const OPTIONS = [
-    {
-        value: UP_ICE,
-        label: (
-            <SelectItem>
-                {UP_ICE.code} <AssetLogo asset={UP_ICE} />
-            </SelectItem>
-        ),
-    },
-    {
-        value: GOV_ICE,
-        label: (
-            <SelectItem>
-                {GOV_ICE.code} <AssetLogo asset={GOV_ICE} />
-            </SelectItem>
-        ),
-    },
-];
+type DelegationInput = {
+    token: ClassicToken;
+    amount: string;
+};
 
 const DelegateModal = ({
     params,
@@ -149,68 +50,80 @@ const DelegateModal = ({
     const { delegatee, delegatees } = params;
 
     const isKnownDelegatee =
-        delegatee && !!delegatees.find(({ account }) => account === delegatee.account);
-
-    const [selectedToken, setSelectedToken] = useState<ClassicToken>(UP_ICE);
-    const [amount, setAmount] = useState('');
-    const [percent, setPercent] = useState(0);
+        delegatee &&
+        !!delegatees.find(({ account: itemAccount }) => itemAccount === delegatee.account);
+    const [upvoteAmount, setUpvoteAmount] = useState('');
+    const [governAmount, setGovernAmount] = useState('');
     const [pending, setPending] = useState(false);
     const [isManualInput, setIsManualInput] = useState<boolean>(!!delegatee && !isKnownDelegatee);
     const [destination, setDestination] = useState<string>(delegatee?.account ?? '');
 
     const { account } = useAuthStore();
 
-    const availableBalance = account.getAvailableForSwapBalance(selectedToken);
-
     useEffect(() => {
         if (!delegatee) {
             return;
         }
+
         if (isManualInput) {
             setDestination(isKnownDelegatee ? '' : delegatee.account);
         } else {
             setDestination(isKnownDelegatee ? delegatee.account : '');
         }
-    }, [isManualInput, isKnownDelegatee]);
+    }, [delegatee, isKnownDelegatee, isManualInput]);
 
-    const onPercentChange = (percent: number) => {
-        setPercent(percent);
+    const destinationValue = destination.trim();
 
-        const newAmount = ((availableBalance * percent) / 100).toFixed(7);
+    const delegations: DelegationInput[] = useMemo(
+        () =>
+            [
+                { token: UP_ICE, amount: upvoteAmount },
+                { token: GOV_ICE, amount: governAmount },
+            ].filter(({ amount }) => Number(amount) > 0),
+        [governAmount, upvoteAmount],
+    );
 
-        setAmount(newAmount);
-    };
+    const validateDelegations = () => {
+        if (!delegations.length) {
+            ToastService.showErrorToast('Enter amount for at least one token');
+            return false;
+        }
 
-    const onAmountChange = (amount: string) => {
-        setAmount(amount);
+        for (const { token, amount } of delegations) {
+            if (Number(amount) < MINIMUM_AMOUNT) {
+                ToastService.showErrorToast(
+                    `The value must be greater than ${MINIMUM_AMOUNT.toFixed(7)} ${token.code}`,
+                );
+                return false;
+            }
 
-        const newPercent = ((Number(amount) / availableBalance) * 100).toFixed(2);
+            const availableBalance = account.getAvailableForSwapBalance(token);
+            if (Number(amount) > availableBalance) {
+                ToastService.showErrorToast(`Insufficient ${token.code} balance`);
+                return false;
+            }
+        }
 
-        setPercent(Number(newPercent));
+        return true;
     };
 
     const onSubmit = async () => {
         try {
-            if (Number(amount) < MINIMUM_AMOUNT) {
-                ToastService.showErrorToast(
-                    `The value must be greater than ${MINIMUM_AMOUNT.toFixed(7)} ${
-                        selectedToken.code
-                    }`,
-                );
+            if (!destinationValue) {
+                ToastService.showErrorToast('Select a destination');
                 return;
             }
 
-            if (+amount > +account.getAssetBalance(selectedToken)) {
-                ToastService.showErrorToast(`Insufficient ${selectedToken.code} balance`);
+            if (!validateDelegations()) {
                 return;
             }
 
-            if (isManualInput && !isValidPublicKey(destination)) {
+            if (isManualInput && !isValidPublicKey(destinationValue)) {
                 ToastService.showErrorToast('Invalid destination address');
                 return;
             }
 
-            if (destination === account.accountId()) {
+            if (destinationValue === account.accountId()) {
                 ToastService.showErrorToast('You cannot delegate tokens to yourself');
                 return;
             }
@@ -218,16 +131,19 @@ const DelegateModal = ({
             if (account.authType === LoginTypes.walletConnect) {
                 openCurrentWalletIfExist();
             }
-            setPending(true);
-            const tx = await StellarService.tx.createDelegateTx(
-                account,
-                selectedToken,
-                destination,
-                amount,
-            );
-            const processedTx = await processIceTx(tx, selectedToken);
-            const result = await account.signAndSubmitTx(processedTx);
 
+            setPending(true);
+            let processedTx = await StellarService.tx.createDelegateTx(
+                account,
+                destinationValue,
+                delegations,
+            );
+
+            for (const { token } of delegations) {
+                processedTx = await processIceTx(processedTx, token);
+            }
+
+            const result = await account.signAndSubmitTx(processedTx);
             setPending(false);
 
             if (
@@ -238,6 +154,7 @@ const DelegateModal = ({
                 confirm();
                 return;
             }
+
             ToastService.showSuccessToast('Your tokens delegated successfully');
             confirm();
         } catch (e) {
@@ -255,31 +172,27 @@ const DelegateModal = ({
                 Put your ICE under the control of a trusted delegate
             </ModalDescription>
 
-            <FormRow>
-                <Balance>
-                    Available:{' '}
-                    <BalanceClickable onClick={() => onAmountChange(availableBalance.toFixed(7))}>
-                        {formatBalance(availableBalance)}
-                    </BalanceClickable>
-                    {selectedToken.code}
-                </Balance>
-                <NumericFormat
-                    value={amount}
-                    onValueChange={value => onAmountChange(value.value)}
-                    placeholder="Enter amount"
-                    customInput={Input}
-                    label="ICE amount"
-                    postfix={<IceLogo />}
-                    inputMode="decimal"
-                    allowedDecimalSeparators={[',']}
-                    thousandSeparator=","
-                    decimalScale={7}
-                    allowNegative={false}
+            <Amounts>
+                <TokenAmountFormField
+                    asset={UP_ICE}
+                    amount={upvoteAmount}
+                    setAmount={setUpvoteAmount}
+                    balance={account.getAvailableForSwapBalance(UP_ICE)}
+                    isBalanceClickable
+                    withPercentButtons
+                    disabled={pending}
                 />
-                <Select options={OPTIONS} value={selectedToken} onChange={setSelectedToken} />
-            </FormRow>
 
-            <RangeInputStyled onChange={onPercentChange} value={percent} />
+                <TokenAmountFormField
+                    asset={GOV_ICE}
+                    amount={governAmount}
+                    setAmount={setGovernAmount}
+                    balance={account.getAvailableForSwapBalance(GOV_ICE)}
+                    isBalanceClickable
+                    withPercentButtons
+                    disabled={pending}
+                />
+            </Amounts>
 
             <FormRow>
                 <Labels>
@@ -291,6 +204,7 @@ const DelegateModal = ({
                         ]}
                         value={isManualInput}
                         onChange={setIsManualInput}
+                        disabled={pending}
                     />
                 </Labels>
 
@@ -299,9 +213,11 @@ const DelegateModal = ({
                         placeholder="G..."
                         value={destination}
                         onChange={({ target }) => setDestination(target.value)}
+                        disabled={pending}
                     />
                 ) : (
                     <Select
+                        disabled={pending}
                         options={delegatees.map(delegate => ({
                             label: (
                                 <SelectItem>
@@ -316,7 +232,7 @@ const DelegateModal = ({
                                         <IconWrapper>
                                             <IconProfile />
                                         </IconWrapper>
-                                    )}{' '}
+                                    )}
                                     {delegate.name}
                                     <PublicKeyWithIconStyled
                                         pubKey={delegate.account}
@@ -336,9 +252,11 @@ const DelegateModal = ({
 
             <DelegateButton
                 isBig
+                withGradient
+                isRounded
                 fullWidth
-                onClick={() => onSubmit()}
-                disabled={!Number(amount) || !destination}
+                onClick={onSubmit}
+                disabled={!destinationValue || !delegations.length}
                 pending={pending}
             >
                 Delegate
