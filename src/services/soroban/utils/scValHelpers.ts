@@ -28,25 +28,22 @@ export function amountToUint32(amount: number): xdr.ScVal {
     return xdr.ScVal.scvU32(Math.floor(amount));
 }
 
+const scaleAmount = (amount: string, decimals: number) =>
+    new BigNumber(amount)
+        .integerValue(BigNumber.ROUND_DOWN)
+        .times(new BigNumber(10).pow(decimals))
+        .toFixed(0);
+
 export function amountToUint64(amount: string, decimals = 7): xdr.ScVal {
-    return new StellarSdk.XdrLargeInt(
-        'u64',
-        new BigNumber(Number(amount).toFixed(decimals)).times(Math.pow(10, decimals)).toFixed(),
-    ).toU64();
+    return new StellarSdk.XdrLargeInt('u64', scaleAmount(amount, decimals)).toU64();
 }
 
 export function amountToInt128(amount: string, decimals = 7): xdr.ScVal {
-    return new StellarSdk.XdrLargeInt(
-        'i128',
-        new BigNumber(Number(amount).toFixed(decimals)).times(Math.pow(10, decimals)).toFixed(),
-    ).toI128();
+    return new StellarSdk.XdrLargeInt('i128', scaleAmount(amount, decimals)).toI128();
 }
 
 export function amountToUint128(amount: string, decimals = 7): xdr.ScVal {
-    return new StellarSdk.XdrLargeInt(
-        'u128',
-        new BigNumber(Number(amount).toFixed(decimals)).times(Math.pow(10, decimals)).toFixed(),
-    ).toU128();
+    return new StellarSdk.XdrLargeInt('u128', scaleAmount(amount, decimals)).toU128();
 }
 
 export function scValToNative(value: xdr.ScVal) {
