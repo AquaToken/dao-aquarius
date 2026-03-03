@@ -22,13 +22,15 @@ import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import PercentButtons from 'pages/swap/components/SwapForm/PercentButtons/PercentButtons';
 
-const Container = styled.div<{ $isEmbedded?: boolean }>`
+const Container = styled.div<{ $isEmbedded?: boolean; $disabled: boolean }>`
     display: flex;
     position: relative;
     padding: ${({ $isEmbedded }) => ($isEmbedded ? '2.4rem 3.2rem' : '3.2rem 4rem')};
     background-color: ${COLORS.gray50};
     border-radius: 4rem;
     justify-content: space-between;
+    pointer-events: ${({ $disabled }) => ($disabled ? 'none' : 'auto')};
+    opacity: ${({ $disabled }) => ($disabled ? '0.7' : '1')};
 
     ${respondDown(Breakpoints.sm)`
         padding: 3.2rem 1.6rem;
@@ -122,6 +124,7 @@ interface SwapFormRowProps {
     balanceLabel?: string;
     isBalanceClickable?: boolean;
     withReserveTooltip?: boolean;
+    disabled?: boolean;
 }
 
 const TokenAmountFormField = ({
@@ -140,6 +143,7 @@ const TokenAmountFormField = ({
     balanceLabel,
     isBalanceClickable,
     withReserveTooltip,
+    disabled,
     ...props
 }: SwapFormRowProps) => {
     const { account } = useAuthStore();
@@ -176,7 +180,7 @@ const TokenAmountFormField = ({
     };
 
     return (
-        <Container $isEmbedded={isEmbedded} {...props}>
+        <Container $isEmbedded={isEmbedded} {...props} $disabled={disabled}>
             <AmountContainer>
                 <span>{amountLabel ?? 'Amount'}</span>
                 <NumericFormat
