@@ -21,6 +21,7 @@ import MigrateLiquidityStep1 from 'web/modals/migrate-liquidity/MigrateLiquidity
 
 import Arrow from 'assets/icons/arrows/arrow-down-16.svg';
 
+import Alert from 'basics/Alert';
 import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';
 import CopyButton from 'basics/buttons/CopyButton';
@@ -35,6 +36,8 @@ import VolumeChart from 'pages/amm/components/VolumeChart/VolumeChart';
 
 import MigratePoolButton from './MigratePoolButton/MigratePoolButton';
 
+import ConcentratedDepositModal from '../ConcentratedLiquidity/modals/ConcentratedDepositModal/ConcentratedDepositModal';
+import ConcentratedWithdrawModal from '../ConcentratedLiquidity/modals/ConcentratedWithdrawModal/ConcentratedWithdrawModal';
 import DepositToPool from '../DepositToPool/DepositToPool';
 import WithdrawFromPool from '../WithdrawFromPool/WithdrawFromPool';
 
@@ -425,23 +428,30 @@ const PoolsList = ({
                         ) && (
                             <ExpandedBlock $withoutTopPadding={withDeposit}>
                                 {withDeposit ? (
-                                    <DepositToPool
-                                        params={{
-                                            pool: pool as PoolExtended,
-                                            isModal: false,
-                                            baseAmount,
-                                            counterAmount,
-                                            base,
-                                            counter,
-                                            onUpdate,
-                                        }}
-                                        confirm={() => {
-                                            if (onConfirm) {
-                                                onConfirm();
-                                            }
-                                        }}
-                                        close={() => void 0}
-                                    />
+                                    pool.pool_type === POOL_TYPE.concentrated ? (
+                                        <Alert
+                                            title="Concentrated pool detected"
+                                            text="For concentrated pools use Deposit position to add liquidity in a tick range."
+                                        />
+                                    ) : (
+                                        <DepositToPool
+                                            params={{
+                                                pool: pool as PoolExtended,
+                                                isModal: false,
+                                                baseAmount,
+                                                counterAmount,
+                                                base,
+                                                counter,
+                                                onUpdate,
+                                            }}
+                                            confirm={() => {
+                                                if (onConfirm) {
+                                                    onConfirm();
+                                                }
+                                            }}
+                                            close={() => void 0}
+                                        />
+                                    )
                                 ) : (
                                     <>
                                         {isCommonList &&
@@ -509,7 +519,16 @@ const PoolsList = ({
                                                 <ExpandedDataRow>
                                                     <span>Total share:</span>
                                                     <span>
-                                                        {formatBalance(+pool.total_share / 1e7)}
+                                                        {formatBalance(
+                                                            Number(
+                                                                contractValueToAmount(
+                                                                    String(pool.total_share),
+                                                                    (pool as SorobanPool)
+                                                                        .share_token_decimals,
+                                                                ),
+                                                            ),
+                                                            true,
+                                                        )}
                                                     </span>
                                                 </ExpandedDataRow>
                                                 <ExpandedDataRow>
@@ -567,23 +586,39 @@ const PoolsList = ({
                                                 {Boolean((pool as PoolUserProcessed).balance) && (
                                                     <Button
                                                         fullWidth
-                                                        onClick={() =>
-                                                            pool.pool_type === POOL_TYPE.classic
-                                                                ? ModalService.openModal(
-                                                                      MigrateLiquidityStep1,
-                                                                      {
-                                                                          pool,
-                                                                          base: pool.tokens[0],
-                                                                          counter: pool.tokens[1],
-                                                                      },
-                                                                  ).then(() => onUpdate())
-                                                                : ModalService.openModal(
-                                                                      WithdrawFromPool,
-                                                                      {
-                                                                          pool,
-                                                                      },
-                                                                  ).then(() => onUpdate())
-                                                        }
+                                                        onClick={() => {
+                                                            if (
+                                                                pool.pool_type === POOL_TYPE.classic
+                                                            ) {
+                                                                ModalService.openModal(
+                                                                    MigrateLiquidityStep1,
+                                                                    {
+                                                                        pool,
+                                                                        base: pool.tokens[0],
+                                                                        counter: pool.tokens[1],
+                                                                    },
+                                                                ).then(() => onUpdate());
+                                                                return;
+                                                            }
+
+                                                            if (
+                                                                pool.pool_type ===
+                                                                POOL_TYPE.concentrated
+                                                            ) {
+                                                                ModalService.openModal(
+                                                                    ConcentratedWithdrawModal,
+                                                                    { pool },
+                                                                ).then(() => onUpdate());
+                                                                return;
+                                                            }
+
+                                                            ModalService.openModal(
+                                                                WithdrawFromPool,
+                                                                {
+                                                                    pool,
+                                                                },
+                                                            ).then(() => onUpdate());
+                                                        }}
                                                     >
                                                         Remove liquidity
                                                     </Button>
@@ -594,6 +629,24 @@ const PoolsList = ({
                                                         pool={pool as PoolClassicProcessed}
                                                         onUpdate={() => onUpdate()}
                                                     />
+                                                ) : pool.pool_type === POOL_TYPE.concentrated ? (
+                                                    <Button
+                                                        fullWidth
+                                                        onClick={(e: React.MouseEvent) => {
+                                                            e.preventDefault();
+                                                            ModalService.openModal(
+                                                                ConcentratedDepositModal,
+                                                                {
+                                                                    pool,
+                                                                },
+                                                                false,
+                                                                null,
+                                                                true,
+                                                            );
+                                                        }}
+                                                    >
+                                                        Deposit
+                                                    </Button>
                                                 ) : (
                                                     <Button
                                                         fullWidth

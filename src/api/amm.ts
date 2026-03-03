@@ -35,12 +35,14 @@ export enum FilterOptions {
     all = 'all',
     stable = 'stable',
     constant = 'volatile',
+    concentrated = 'concentrated',
 }
 
 const FilterOptionsMap = {
     [FilterOptions.all]: '',
     [FilterOptions.stable]: 'stable',
     [FilterOptions.constant]: 'constant_product',
+    [FilterOptions.concentrated]: 'concentrated',
 };
 
 export enum PoolsSortFields {
@@ -289,14 +291,14 @@ export const convertNativePriceToToken = (item: NativePrice): Token =>
     item.name === 'native' && item.is_sac
         ? createLumen()
         : item.is_sac
-        ? createAsset(item.code, item.issuer)
-        : {
-              contract: item.address,
-              type: TokenType.soroban,
-              name: item.name,
-              code: item.code,
-              decimal: item.decimals,
-          };
+          ? createAsset(item.code, item.issuer)
+          : {
+                contract: item.address,
+                type: TokenType.soroban,
+                name: item.name,
+                code: item.code,
+                decimal: item.decimals,
+            };
 
 export const getNativePrices = async (
     opts?: GetNativePricesOpts,
@@ -477,7 +479,7 @@ export const getUserRewardsList = async (accountId: string): Promise<UserReward[
 
     const processed = await processPools(data.items);
 
-    const chunked = chunkArray(processed);
+    const chunked = chunkArray(processed, 4);
 
     await chunkFunction(chunked, async chunk => {
         const rewards = await SorobanService.amm.getPoolsRewards(

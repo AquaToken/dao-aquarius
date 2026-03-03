@@ -129,6 +129,8 @@ const getEventAmounts = (event: PoolEvent, pool: PoolExtended) => {
             return (
                 <Amounts>
                     {event.amounts.map((amount, index) => {
+                        if (!Number(amount)) return null;
+
                         const token = getAssetFromString(event.tokens[index]);
                         return (
                             <span key={token.contract}>

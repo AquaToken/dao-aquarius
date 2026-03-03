@@ -116,6 +116,16 @@ export const StablePoolLabel = () => (
     />
 );
 
+export const ConcentratedPoolLabel = () => (
+    <StyledLabel
+        labelText="CONCENTRATED"
+        tooltipText="Concentrated liquidity pool with range positions."
+        background={COLORS.white}
+        color={COLORS.blue500}
+        tooltipColor={COLORS.textPrimary}
+    />
+);
+
 export const FeeLabel = ({ fee }: { fee: string }) => (
     <StyledLabel
         labelText={`${(Number(fee) * 100).toFixed(2)}%`}

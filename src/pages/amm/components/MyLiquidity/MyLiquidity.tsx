@@ -6,12 +6,13 @@ import styled from 'styled-components';
 import { getUserPools } from 'api/amm';
 
 import { POOL_TYPE } from 'constants/amm';
-import { DAY } from 'constants/intervals';
 import { AppRoutes } from 'constants/routes';
 
-import { contractValueToAmount } from 'helpers/amount';
+import { apyValueToDisplay, contractValueToAmount } from 'helpers/amount';
 import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
+import { getPercentValue } from 'helpers/number';
+import { calculateBoostValue, calculateDailyRewards } from 'helpers/rewards';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
 import { useUpdateIndex } from 'hooks/useUpdateIndex';
@@ -33,12 +34,14 @@ import { SorobanToken, Token } from 'types/token';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 
 import IconClaim from 'assets/icons/actions/icon-claim-17x16.svg';
+import Lock from 'assets/icons/objects/icon-lock-16.svg';
 import Info from 'assets/icons/status/icon-info-16.svg';
 
 import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
 import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
+import Label from 'basics/Label';
 import { CircleLoader } from 'basics/loaders';
 import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
@@ -52,7 +55,7 @@ import {
     respondDown,
     textEllipsis,
 } from 'styles/mixins';
-import { Breakpoints, COLORS } from 'styles/style-constants';
+import { Breakpoints, COLORS, FONT_SIZE, hexWithOpacity } from 'styles/style-constants';
 
 import { TitleWithTooltip, TooltipInnerHead } from 'pages/amm/components/AllPools/AllPools';
 import ExpandedMenu from 'pages/amm/components/MyLiquidity/ExpandedMenu/ExpandedMenu';
@@ -193,10 +196,19 @@ const IconInfoStyled = styled(Info)`
     cursor: help;
 `;
 
+const LabelInner = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 400;
+    ${FONT_SIZE.sm};
+`;
+
 enum FilterValues {
     all = 'all',
     volatile = 'volatile',
     stable = 'stable',
+    concentrated = 'concentrated',
     classic = 'classic',
 }
 
@@ -208,6 +220,7 @@ const FilterOptions = [
     { label: 'All', value: FilterValues.all },
     { label: 'Stable', value: FilterValues.stable },
     { label: 'Volatile', value: FilterValues.volatile },
+    { label: 'Concentrated', value: FilterValues.concentrated },
     { label: 'Classic', value: FilterValues.classic },
 ];
 
@@ -273,6 +286,9 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
         }
         if (filter === FilterValues.stable) {
             return pools.filter(({ pool_type }) => pool_type === POOL_TYPE.stable);
+        }
+        if (filter === FilterValues.concentrated) {
+            return pools.filter(({ pool_type }) => pool_type === POOL_TYPE.concentrated);
         }
         return [...pools, ...classicPools];
     }, [classicPools, pools, filter]);
@@ -437,33 +453,6 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
             });
     };
 
-    const calculateBoostValue = (rewardsInfo: PoolRewardsInfo, userBalance: string) => {
-        if (!rewardsInfo) return 0;
-        const tps = +rewardsInfo.tps;
-        const wSupply = +rewardsInfo.working_supply;
-        const wBalance = +rewardsInfo.working_balance;
-
-        if (!tps || !wSupply || !wBalance) return 1;
-
-        const tpsWithoutBoost = ((+userBalance / 1e7) * tps) / wSupply;
-        const expectedTps = (tps * wBalance) / wSupply;
-
-        if (tpsWithoutBoost === 0) return 1;
-
-        return expectedTps / tpsWithoutBoost;
-    };
-
-    const calculateDailyRewards = (rewardsInfo: PoolRewardsInfo) => {
-        if (!rewardsInfo) return 0;
-
-        if (rewardsInfo.exp_at * 1000 < Date.now()) return 0;
-        const tps = +rewardsInfo.tps;
-        const wSupply = +rewardsInfo.working_supply;
-        const wBalance = +rewardsInfo.working_balance;
-
-        return (((+tps * DAY) / 1000) * +wBalance) / +wSupply;
-    };
-
     if (!account) {
         return (
             <Section>
@@ -516,7 +505,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                 <PageLoader />
             ) : filteredPools.length ? (
                 <Table
-                    mobileBreakpoint={Breakpoints.lg}
+                    mobileBreakpoint={Breakpoints.xl}
                     head={[
                         {
                             children: 'Pool',
@@ -556,16 +545,31 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                         {
                             children: 'Total APR',
                             align: CellAlign.Left,
-                            flexSize: 2,
+                            flexSize: 2.5,
                             style: { paddingLeft: '5rem' },
                         },
                         { children: '' },
                     ]}
                     body={filteredPools.map(pool => {
                         const userRewardsForPool = userRewards.get(pool.address);
-                        const boostValue = calculateBoostValue(userRewardsForPool, pool.balance);
 
-                        const dailyRewards = calculateDailyRewards(userRewardsForPool);
+                        const isRewardsExpired =
+                            userRewardsForPool?.exp_at &&
+                            userRewardsForPool?.exp_at * 1000 < Date.now();
+
+                        const boostValue = calculateBoostValue(
+                            +userRewardsForPool?.working_balance,
+                            contractValueToAmount(pool.balance),
+                        );
+
+                        const dailyRewards =
+                            userRewardsForPool && !isRewardsExpired
+                                ? calculateDailyRewards(
+                                      +userRewardsForPool?.tps,
+                                      +userRewardsForPool?.working_balance,
+                                      +userRewardsForPool?.working_supply,
+                                  )
+                                : 0;
 
                         const incentivesForPool = userIncentives
                             .get(pool.address)
@@ -636,18 +640,17 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                                                     true,
                                                                 )}{' '}
                                                                 (
-                                                                {+(
-                                                                    (100 * pool.balance) /
-                                                                    Number(pool.total_share)
+                                                                {+getPercentValue(
+                                                                    pool.balance,
+                                                                    pool.total_share,
+                                                                    2,
                                                                 ) > 0.01
                                                                     ? formatBalance(
-                                                                          +(
-                                                                              (100 *
-                                                                                  +pool.balance) /
-                                                                              Number(
-                                                                                  pool.total_share,
-                                                                              )
-                                                                          ).toFixed(2),
+                                                                          +getPercentValue(
+                                                                              pool.balance,
+                                                                              pool.total_share,
+                                                                              2,
+                                                                          ),
                                                                           true,
                                                                       )
                                                                     : '< 0.01'}
@@ -674,9 +677,26 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                     align: CellAlign.Right,
                                 },
                                 {
-                                    children: Number(dailyRewards)
-                                        ? `${formatBalance(dailyRewards, true, true)} AQUA`
-                                        : '-',
+                                    children:
+                                        pool.pool_type !== POOL_TYPE.classic &&
+                                        !pool.rewards_enabled ? (
+                                            <Label
+                                                labelText={
+                                                    <LabelInner>
+                                                        <Lock /> <span>Disabled</span>
+                                                    </LabelInner>
+                                                }
+                                                background={COLORS.gray100}
+                                                color={COLORS.textGray}
+                                                withoutBorder
+                                                labelSize="medium"
+                                                withoutUppercase
+                                            />
+                                        ) : Number(dailyRewards) ? (
+                                            `${formatBalance(dailyRewards, true, true)} AQUA`
+                                        ) : (
+                                            '-'
+                                        ),
                                     label: (
                                         <TitleWithTooltip>
                                             Daily Rewards
@@ -716,10 +736,21 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                     },
                                 },
                                 {
-                                    children: <TotalApy pool={pool} userBoost={boostValue} />,
+                                    children: pool.rewards_enabled ? (
+                                        <TotalApy pool={pool} userBoost={boostValue} />
+                                    ) : (
+                                        <Label
+                                            labelText={apyValueToDisplay(pool.apy)}
+                                            labelSize="extraLarge"
+                                            background={hexWithOpacity(COLORS.gray200, 20)}
+                                            color={COLORS.textTertiary}
+                                            withoutBorder
+                                            fontWeight={400}
+                                        />
+                                    ),
                                     label: 'Total APR',
                                     align: CellAlign.Left,
-                                    flexSize: 2,
+                                    flexSize: 2.5,
                                     style: {
                                         marginLeft: '5rem',
                                     },

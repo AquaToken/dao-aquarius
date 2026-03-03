@@ -52,6 +52,7 @@ export type PoolRewards = {
 
 export interface PoolUser extends Pool {
     balance: string;
+    rewards_enabled: boolean;
 }
 
 export interface PoolProcessed extends Pool {
@@ -79,6 +80,7 @@ export type PoolVolume24h = {
 export type PoolBalance = {
     balance: string;
     account_address: string;
+    rewards_enabled: boolean;
 };
 
 export enum PoolEventType {
@@ -161,6 +163,8 @@ export type PoolRewardsInfo = {
     supply: string;
     working_balance: string;
     working_supply: string;
+    wSupply: string;
+    wBalance: string;
 };
 
 export type PoolIncentives = {
@@ -170,6 +174,24 @@ export type PoolIncentives = {
         tps: string;
         user_reward: string;
     };
+};
+
+export type ConcentratedPoolInfo = {
+    pool_type: string;
+    fee?: number | string;
+    tick_spacing?: number;
+};
+
+export type ConcentratedSlot0 = {
+    sqrt_price_x96?: string;
+    tick?: number;
+    [key: string]: unknown;
+};
+
+export type ConcentratedPosition = {
+    tickLower: number;
+    tickUpper: number;
+    liquidity: string;
 };
 
 export enum RewardType {

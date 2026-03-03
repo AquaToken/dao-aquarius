@@ -49,11 +49,20 @@ const DropdownItem = styled.div`
     svg {
         margin-right: 0.8rem;
     }
+
+    &:hover {
+        background-color: ${COLORS.gray50};
+    }
 `;
 
 const DropdownItemHead = styled(DropdownItem)`
     padding: 0 6rem 0 1.2rem;
     min-height: 6.6rem;
+    cursor: inherit;
+
+    &:hover {
+        background-color: transparent;
+    }
 
     ${respondDown(Breakpoints.md)`
         padding: 1.2rem 6rem 1.2rem 1.2rem;;
