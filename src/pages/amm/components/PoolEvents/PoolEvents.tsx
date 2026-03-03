@@ -128,15 +128,20 @@ const getEventAmounts = (event: PoolEvent, pool: PoolExtended) => {
         case PoolEventType.claimIncentives: {
             return (
                 <Amounts>
-                    {event.amounts.map((amount, index) => {
-                        const token = getAssetFromString(event.tokens[index]);
-                        return (
-                            <span key={token.contract}>
-                                {formatBalance(+contractValueToAmount(amount, token.decimal), true)}{' '}
-                                {token.code}
-                            </span>
-                        );
-                    })}
+                    {event.amounts
+                        .filter(amount => !!Number(amount))
+                        .map((amount, index) => {
+                            const token = getAssetFromString(event.tokens[index]);
+                            return (
+                                <span key={token.contract}>
+                                    {formatBalance(
+                                        +contractValueToAmount(amount, token.decimal),
+                                        true,
+                                    )}{' '}
+                                    {token.code}
+                                </span>
+                            );
+                        })}
                 </Amounts>
             );
         }

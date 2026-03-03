@@ -320,7 +320,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
         if (!incentives || !incentives.length) return false;
 
         return incentives.some(
-            i => !!Number(i.info.tps) && Number(i.info.expired_at) * 1000 < Date.now(),
+            i => !!Number(i.info.tps) && Number(i.info.expired_at) * 1000 > Date.now(),
         );
     }, [incentives]);
 
