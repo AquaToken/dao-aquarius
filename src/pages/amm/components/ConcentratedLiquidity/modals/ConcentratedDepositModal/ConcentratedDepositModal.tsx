@@ -70,8 +70,11 @@ type ConcentratedDepositModalParams = {
     pool: PoolExtended;
 };
 
+type DepositPresetKey = 'full' | '2' | '1.2' | '1.01';
+
 const ConcentratedDepositModal = ({
     params,
+    close,
 }: ModalProps<ConcentratedDepositModalParams>): React.ReactNode => {
     const { pool } = params;
     const { account } = useAuthStore();
@@ -84,6 +87,7 @@ const ConcentratedDepositModal = ({
     const [maxPriceInput, setMaxPriceInput] = useState('');
     const [amount0, setAmount0] = useState('');
     const [amount1, setAmount1] = useState('');
+    const [selectedPreset, setSelectedPreset] = useState<DepositPresetKey | null>(null);
     const liquidityEstimateTimeoutRef = useRef<number | null>(null);
     const liquidityEstimateCallIdRef = useRef(0);
     const minPriceTimeoutRef = useRef<number | null>(null);
@@ -102,19 +106,29 @@ const ConcentratedDepositModal = ({
 
     const title = 'Concentrated Deposit';
 
+    const isEmptyPool = new BigNumber(pool.total_share || pool.liquidity || '0').lte(0);
+
     const currentTick = Number(slot0?.tick);
     const hasTickRange = tickLower !== null && tickUpper !== null;
-    const areAmountsFilled =
-        (parseConcentratedAmount(amount0)?.gt(0) ?? false) ||
-        (parseConcentratedAmount(amount1)?.gt(0) ?? false);
+    const amount0Value = parseConcentratedAmount(amount0);
+    const amount1Value = parseConcentratedAmount(amount1);
+    const hasPositiveAmount0 = amount0Value?.gt(0) ?? false;
+    const hasPositiveAmount1 = amount1Value?.gt(0) ?? false;
+    const hasBothPositiveAmounts = hasPositiveAmount0 && hasPositiveAmount1;
+    const areAmountsFilled = (amount0Value?.gt(0) ?? false) || (amount1Value?.gt(0) ?? false);
     const isRangeBelowCurrent =
         hasTickRange && Number.isFinite(currentTick) && currentTick > (tickUpper as number);
     const isRangeAboveCurrent =
         hasTickRange && Number.isFinite(currentTick) && currentTick < (tickLower as number);
     const decimalsDiff = pool.tokens[0].decimal - pool.tokens[1].decimal;
-    const currentPriceValue = Number.isFinite(currentTick)
+    const poolPriceValue = Number.isFinite(currentTick)
         ? tickToPrice(currentTick, decimalsDiff)
         : NaN;
+    const amountsDerivedPriceValue = hasBothPositiveAmounts
+        ? Number(amount1Value?.dividedBy(amount0Value || 1).toString())
+        : NaN;
+    const referencePriceValue = isEmptyPool ? amountsDerivedPriceValue : poolPriceValue;
+    const canUseRangeControls = !isEmptyPool || Number.isFinite(referencePriceValue);
 
     const [minTickBound, maxTickBound] = useMemo(() => {
         if (tickSpacing === null) {
@@ -127,54 +141,79 @@ const ConcentratedDepositModal = ({
         ];
     }, [tickSpacing]);
 
+    const referenceTick = useMemo(() => {
+        if (
+            tickSpacing === null ||
+            !Number.isFinite(referencePriceValue) ||
+            referencePriceValue <= 0
+        ) {
+            return null;
+        }
+
+        return clamp(
+            snapDown(priceToTick(referencePriceValue, decimalsDiff), tickSpacing),
+            minTickBound,
+            maxTickBound,
+        );
+    }, [tickSpacing, referencePriceValue, decimalsDiff, minTickBound, maxTickBound]);
+
+    const resolvePresetTicks = (multiplier: number) => {
+        if (
+            tickSpacing === null ||
+            !Number.isFinite(referencePriceValue) ||
+            referencePriceValue <= 0 ||
+            !Number.isFinite(multiplier) ||
+            multiplier <= 0
+        ) {
+            return null;
+        }
+
+        const lowerPrice = referencePriceValue / multiplier;
+        const upperPrice = referencePriceValue * multiplier;
+        const nextLower = clamp(
+            snapDown(priceToTick(lowerPrice, decimalsDiff), tickSpacing),
+            minTickBound,
+            maxTickBound - tickSpacing,
+        );
+        const nextUpper = clamp(
+            snapUp(priceToTick(upperPrice, decimalsDiff), tickSpacing),
+            nextLower + tickSpacing,
+            maxTickBound,
+        );
+
+        return [nextLower, nextUpper] as const;
+    };
+
     useEffect(() => {
-        if (tickSpacing === null || !Number.isFinite(currentTick)) {
+        if (
+            tickSpacing === null ||
+            !Number.isFinite(referencePriceValue) ||
+            referencePriceValue <= 0
+        ) {
             return;
         }
         if (tickLower !== null && tickUpper !== null) {
             return;
         }
 
-        const lowerPrice = currentPriceValue / 1.2;
-        const upperPrice = currentPriceValue * 1.2;
-        const presetLower = clamp(
-            snapDown(priceToTick(lowerPrice, decimalsDiff), tickSpacing),
-            minTickBound,
-            maxTickBound - tickSpacing,
-        );
-        const presetUpper = clamp(
-            snapUp(priceToTick(upperPrice, decimalsDiff), tickSpacing),
-            presetLower + tickSpacing,
-            maxTickBound,
-        );
+        const preset = resolvePresetTicks(1.2);
+        if (!preset) {
+            return;
+        }
+        const [presetLower, presetUpper] = preset;
 
-        setTickLower(
-            Number.isFinite(lowerPrice) && lowerPrice > 0
-                ? presetLower
-                : clamp(
-                      snapDown(currentTick - tickSpacing * 5, tickSpacing),
-                      minTickBound,
-                      maxTickBound - tickSpacing,
-                  ),
-        );
-        setTickUpper(
-            Number.isFinite(upperPrice) && upperPrice > 0
-                ? presetUpper
-                : clamp(
-                      snapUp(currentTick + tickSpacing * 5, tickSpacing),
-                      minTickBound + tickSpacing,
-                      maxTickBound,
-                  ),
-        );
+        setTickLower(presetLower);
+        setTickUpper(presetUpper);
+        setSelectedPreset('1.2');
     }, [
         tickSpacing,
-        currentTick,
         tickLower,
         tickUpper,
         minTickBound,
         maxTickBound,
-        currentPriceValue,
+        referencePriceValue,
         decimalsDiff,
+        referenceTick,
     ]);
 
     useEffect(() => {
@@ -213,7 +252,7 @@ const ConcentratedDepositModal = ({
         if (rangeLower === null || rangeUpper === null) {
             return null;
         }
-        if (!Number.isFinite(currentPriceValue) || currentPriceValue <= 0) {
+        if (!Number.isFinite(referencePriceValue) || referencePriceValue <= 0) {
             return null;
         }
 
@@ -228,7 +267,7 @@ const ConcentratedDepositModal = ({
 
         const sqrtPl = new BigNumber(lowerPrice).sqrt();
         const sqrtPu = new BigNumber(upperPrice).sqrt();
-        const sqrtP = new BigNumber(currentPriceValue).sqrt();
+        const sqrtP = new BigNumber(referencePriceValue).sqrt();
         const denominator = sqrtPu.minus(sqrtP);
 
         if (!denominator.isFinite() || denominator.isZero()) {
@@ -257,6 +296,9 @@ const ConcentratedDepositModal = ({
         const normalizedAmount0 = rawAmount0.replaceAll(',', '').trim();
         const normalizedAmount1 = rawAmount1.replaceAll(',', '').trim();
         if (nextTickLower === null || nextTickUpper === null) {
+            return { amount0: normalizedAmount0, amount1: normalizedAmount1 };
+        }
+        if (isEmptyPool) {
             return { amount0: normalizedAmount0, amount1: normalizedAmount1 };
         }
 
@@ -438,9 +480,72 @@ const ConcentratedDepositModal = ({
         updateLocalDepositPreview(normalized.amount0, normalized.amount1, nextLower, nextUpper);
     };
 
+    useEffect(() => {
+        if (
+            !isEmptyPool ||
+            !hasBothPositiveAmounts ||
+            !canUseRangeControls ||
+            selectedPreset === null
+        ) {
+            return;
+        }
+        if (
+            !Number.isFinite(referencePriceValue) ||
+            referencePriceValue <= 0 ||
+            tickSpacing === null
+        ) {
+            return;
+        }
+
+        if (selectedPreset === 'full') {
+            if (tickLower === minTickBound && tickUpper === maxTickBound) {
+                return;
+            }
+            applyTickRangeAndRecalculate(minTickBound, maxTickBound);
+            return;
+        }
+
+        const multiplier = Number(selectedPreset);
+        const preset = resolvePresetTicks(multiplier);
+        if (!preset) {
+            return;
+        }
+
+        const [nextLower, nextUpper] = preset;
+
+        if (nextLower === tickLower && nextUpper === tickUpper) {
+            return;
+        }
+
+        applyTickRangeAndRecalculate(nextLower, nextUpper);
+    }, [
+        isEmptyPool,
+        hasBothPositiveAmounts,
+        canUseRangeControls,
+        selectedPreset,
+        referencePriceValue,
+        tickSpacing,
+        decimalsDiff,
+        minTickBound,
+        maxTickBound,
+        tickLower,
+        tickUpper,
+    ]);
+
     const handleAmount0Change = (value: string) => {
         lastUserEditedAmountRef.current = 'token0';
         const normalized = value.replaceAll(',', '').trim();
+
+        if (isEmptyPool) {
+            if (normalized !== '' && !isValidNonNegativeConcentratedAmount(normalized)) {
+                return;
+            }
+            if (normalized !== amount0) {
+                setAmount0(normalized);
+            }
+            updateLocalDepositPreview(normalized, amount1, tickLower, tickUpper);
+            return;
+        }
 
         if (isRangeBelowCurrent) {
             if (amount0 !== '0') {
@@ -491,6 +596,17 @@ const ConcentratedDepositModal = ({
         lastUserEditedAmountRef.current = 'token1';
         const normalized = value.replaceAll(',', '').trim();
 
+        if (isEmptyPool) {
+            if (normalized !== '' && !isValidNonNegativeConcentratedAmount(normalized)) {
+                return;
+            }
+            if (normalized !== amount1) {
+                setAmount1(normalized);
+            }
+            updateLocalDepositPreview(amount0, normalized, tickLower, tickUpper);
+            return;
+        }
+
         if (isRangeAboveCurrent) {
             if (amount1 !== '0') {
                 setAmount1('0');
@@ -538,7 +654,7 @@ const ConcentratedDepositModal = ({
 
     const handleMinPriceChange = (value: string) => {
         setMinPriceInput(value);
-        if (tickSpacing === null || !hasTickRange) {
+        if (tickSpacing === null || !hasTickRange || !canUseRangeControls) {
             return;
         }
         if (minPriceTimeoutRef.current) {
@@ -557,13 +673,14 @@ const ConcentratedDepositModal = ({
                 (tickUpper ?? maxTickBound) - tickSpacing,
             );
 
+            setSelectedPreset(null);
             applyTickRangeAndRecalculate(nextLower, tickUpper ?? maxTickBound);
         }, 2000);
     };
 
     const handleMaxPriceChange = (value: string) => {
         setMaxPriceInput(value);
-        if (tickSpacing === null || !hasTickRange) {
+        if (tickSpacing === null || !hasTickRange || !canUseRangeControls) {
             return;
         }
         if (maxPriceTimeoutRef.current) {
@@ -582,12 +699,13 @@ const ConcentratedDepositModal = ({
                 maxTickBound,
             );
 
+            setSelectedPreset(null);
             applyTickRangeAndRecalculate(tickLower ?? minTickBound, nextUpper);
         }, 2000);
     };
 
     useEffect(() => {
-        if (!hasTickRange) {
+        if (!hasTickRange || isEmptyPool) {
             return;
         }
 
@@ -607,9 +725,21 @@ const ConcentratedDepositModal = ({
         tickUpper,
         amount0,
         amount1,
+        isEmptyPool,
     ]);
 
+    useEffect(() => {
+        if (!isEmptyPool || !hasTickRange) {
+            return;
+        }
+
+        updateLocalDepositPreview(amount0, amount1, tickLower, tickUpper);
+    }, [isEmptyPool, hasTickRange, tickLower, tickUpper, amount0, amount1]);
+
     const rangeError = useMemo(() => {
+        if (isEmptyPool && !canUseRangeControls) {
+            return null;
+        }
         if (!hasTickRange || tickSpacing === null) {
             return 'Price range is not set';
         }
@@ -622,35 +752,33 @@ const ConcentratedDepositModal = ({
         if (tickLower < minTickBound || tickUpper > maxTickBound) {
             return `Range is out of bounds (${minTickBound}..${maxTickBound})`;
         }
+        if (referenceTick !== null && (tickLower > referenceTick || tickUpper < referenceTick)) {
+            return isEmptyPool
+                ? 'Price range does not match entered amounts'
+                : 'Price range must include current pool price';
+        }
 
         return null;
-    }, [hasTickRange, tickLower, tickUpper, tickSpacing, minTickBound, maxTickBound]);
+    }, [
+        hasTickRange,
+        tickLower,
+        tickUpper,
+        tickSpacing,
+        minTickBound,
+        maxTickBound,
+        referenceTick,
+        isEmptyPool,
+        canUseRangeControls,
+    ]);
 
     const activeDepositPreset = useMemo(() => {
-        if (!hasTickRange || tickSpacing === null || !Number.isFinite(currentPriceValue)) {
+        if (!hasTickRange || tickSpacing === null || !Number.isFinite(referencePriceValue)) {
             return null;
         }
 
         if (tickLower === minTickBound && tickUpper === maxTickBound) {
             return 'full' as const;
         }
-
-        const resolvePresetTicks = (multiplier: number) => {
-            const lowerPrice = currentPriceValue / multiplier;
-            const upperPrice = currentPriceValue * multiplier;
-            const expectedLower = clamp(
-                snapDown(priceToTick(lowerPrice, decimalsDiff), tickSpacing),
-                minTickBound,
-                maxTickBound - tickSpacing,
-            );
-            const expectedUpper = clamp(
-                snapUp(priceToTick(upperPrice, decimalsDiff), tickSpacing),
-                expectedLower + tickSpacing,
-                maxTickBound,
-            );
-
-            return [expectedLower, expectedUpper] as const;
-        };
 
         const presets = [
             { key: '2', value: 2 },
@@ -659,7 +787,11 @@ const ConcentratedDepositModal = ({
         ] as const;
 
         const matched = presets.find(item => {
-            const [expectedLower, expectedUpper] = resolvePresetTicks(item.value);
+            const expected = resolvePresetTicks(item.value);
+            if (!expected) {
+                return false;
+            }
+            const [expectedLower, expectedUpper] = expected;
             return tickLower === expectedLower && tickUpper === expectedUpper;
         });
 
@@ -667,7 +799,7 @@ const ConcentratedDepositModal = ({
     }, [
         hasTickRange,
         tickSpacing,
-        currentPriceValue,
+        referencePriceValue,
         tickLower,
         tickUpper,
         minTickBound,
@@ -675,11 +807,29 @@ const ConcentratedDepositModal = ({
         decimalsDiff,
     ]);
 
+    const isFirstDepositAmountsInvalid = isEmptyPool && !hasBothPositiveAmounts;
+    const disableAmount0Input = !isEmptyPool && isRangeBelowCurrent;
+    const disableAmount1Input = !isEmptyPool && isRangeAboveCurrent;
+    const disableLowerUpByReference =
+        isEmptyPool &&
+        referenceTick !== null &&
+        hasTickRange &&
+        tickSpacing !== null &&
+        (tickLower as number) + tickSpacing > referenceTick;
+    const disableUpperDownByReference =
+        isEmptyPool &&
+        referenceTick !== null &&
+        hasTickRange &&
+        tickSpacing !== null &&
+        (tickUpper as number) - tickSpacing < referenceTick;
+
     const isModalLoading = loading;
     const isMinScientific = /e/i.test(minPriceInput);
     const isMaxScientific = /e/i.test(maxPriceInput);
     const isDepositDisabled =
         !areAmountsFilled ||
+        isFirstDepositAmountsInvalid ||
+        !canUseRangeControls ||
         !hasTickRange ||
         !!rangeError ||
         !depositEstimate ||
@@ -755,14 +905,20 @@ const ConcentratedDepositModal = ({
             ToastService.showErrorToast('Enter amount for at least one token');
             return;
         }
+        if (isFirstDepositAmountsInvalid) {
+            ToastService.showErrorToast(
+                'For the first deposit both token amounts must be greater than zero',
+            );
+            return;
+        }
         if (!depositEstimate || depositEstimate.liquidityLoading) {
             ToastService.showErrorToast('Waiting for estimate');
             return;
         }
 
-        const estimatedDesiredAmounts = new Map([
-            [getAssetString(pool.tokens[0]), depositEstimate.amounts[0] || '0'],
-            [getAssetString(pool.tokens[1]), depositEstimate.amounts[1] || '0'],
+        const desiredAmountsFromInputs = new Map([
+            [getAssetString(pool.tokens[0]), amount0 || '0'],
+            [getAssetString(pool.tokens[1]), amount1 || '0'],
         ]);
 
         setPending(true);
@@ -774,7 +930,7 @@ const ConcentratedDepositModal = ({
                 pool.tokens,
                 tickLower,
                 tickUpper,
-                estimatedDesiredAmounts,
+                desiredAmountsFromInputs,
                 '1',
             )
             .then(tx => account.signAndSubmitTx(tx, true))
@@ -793,6 +949,7 @@ const ConcentratedDepositModal = ({
                 setAmount1('');
                 setDepositEstimate(null);
                 load();
+                close();
             })
             .catch(e => {
                 ToastService.showErrorToast(e?.message || 'Deposit failed');
@@ -803,7 +960,7 @@ const ConcentratedDepositModal = ({
     };
 
     const handleStepLowerDown = () => {
-        if (tickSpacing === null) {
+        if (tickSpacing === null || !canUseRangeControls) {
             return;
         }
         const nextLower = clamp(
@@ -811,11 +968,12 @@ const ConcentratedDepositModal = ({
             minTickBound,
             (tickUpper ?? maxTickBound) - tickSpacing,
         );
+        setSelectedPreset(null);
         applyTickRangeAndRecalculate(nextLower, tickUpper ?? maxTickBound);
     };
 
     const handleStepLowerUp = () => {
-        if (tickSpacing === null) {
+        if (tickSpacing === null || !canUseRangeControls || disableLowerUpByReference) {
             return;
         }
         const nextLower = clamp(
@@ -823,11 +981,12 @@ const ConcentratedDepositModal = ({
             minTickBound,
             (tickUpper ?? maxTickBound) - tickSpacing,
         );
+        setSelectedPreset(null);
         applyTickRangeAndRecalculate(nextLower, tickUpper ?? maxTickBound);
     };
 
     const handleStepUpperDown = () => {
-        if (tickSpacing === null) {
+        if (tickSpacing === null || !canUseRangeControls || disableUpperDownByReference) {
             return;
         }
         const nextUpper = clamp(
@@ -835,11 +994,12 @@ const ConcentratedDepositModal = ({
             (tickLower ?? minTickBound) + tickSpacing,
             maxTickBound,
         );
+        setSelectedPreset(null);
         applyTickRangeAndRecalculate(tickLower ?? minTickBound, nextUpper);
     };
 
     const handleStepUpperUp = () => {
-        if (tickSpacing === null) {
+        if (tickSpacing === null || !canUseRangeControls) {
             return;
         }
         const nextUpper = clamp(
@@ -847,29 +1007,28 @@ const ConcentratedDepositModal = ({
             (tickLower ?? minTickBound) + tickSpacing,
             maxTickBound,
         );
+        setSelectedPreset(null);
         applyTickRangeAndRecalculate(tickLower ?? minTickBound, nextUpper);
     };
 
     const handleFullRange = () => {
+        if (!canUseRangeControls) {
+            return;
+        }
+        setSelectedPreset('full');
         applyTickRangeAndRecalculate(minTickBound, maxTickBound);
     };
 
     const handlePreset = (multiplier: number) => {
-        if (tickSpacing === null) {
+        if (tickSpacing === null || !canUseRangeControls || !Number.isFinite(referencePriceValue)) {
             return;
         }
-        const lowerPrice = currentPriceValue / multiplier;
-        const upperPrice = currentPriceValue * multiplier;
-        const nextLower = clamp(
-            snapDown(priceToTick(lowerPrice, decimalsDiff), tickSpacing),
-            minTickBound,
-            maxTickBound - tickSpacing,
-        );
-        const nextUpper = clamp(
-            snapUp(priceToTick(upperPrice, decimalsDiff), tickSpacing),
-            nextLower + tickSpacing,
-            maxTickBound,
-        );
+        const preset = resolvePresetTicks(multiplier);
+        if (!preset) {
+            return;
+        }
+        const [nextLower, nextUpper] = preset;
+        setSelectedPreset(String(multiplier) as Exclude<DepositPresetKey, 'full'>);
         applyTickRangeAndRecalculate(nextLower, nextUpper);
     };
 
@@ -886,7 +1045,8 @@ const ConcentratedDepositModal = ({
                 ) : (
                     <>
                         <Section>
-                            {tickSpacing === null || !Number.isFinite(currentTick) ? (
+                            {tickSpacing === null ||
+                            (!isEmptyPool && !Number.isFinite(currentTick)) ? (
                                 <Alert
                                     title="Range unavailable"
                                     text="Pool price data is not loaded yet."
@@ -900,17 +1060,18 @@ const ConcentratedDepositModal = ({
                                                     Available:
                                                     <BalanceClickable
                                                         onClick={() => {
-                                                            if (!isRangeBelowCurrent) {
-                                                                handleAmount0Change(
-                                                                    String(
-                                                                        tokenBalances.get(
-                                                                            getAssetString(
-                                                                                pool.tokens[0],
-                                                                            ),
-                                                                        ) || 0,
-                                                                    ),
-                                                                );
+                                                            if (disableAmount0Input) {
+                                                                return;
                                                             }
+                                                            handleAmount0Change(
+                                                                String(
+                                                                    tokenBalances.get(
+                                                                        getAssetString(
+                                                                            pool.tokens[0],
+                                                                        ),
+                                                                    ) || 0,
+                                                                ),
+                                                            );
                                                         }}
                                                     >
                                                         {' '}
@@ -943,7 +1104,7 @@ const ConcentratedDepositModal = ({
                                                         .decimal ?? 7
                                                 }
                                                 allowNegative={false}
-                                                disabled={isRangeBelowCurrent}
+                                                disabled={disableAmount0Input}
                                             />
                                         </FormRow>
 
@@ -953,17 +1114,18 @@ const ConcentratedDepositModal = ({
                                                     Available:
                                                     <BalanceClickable
                                                         onClick={() => {
-                                                            if (!isRangeAboveCurrent) {
-                                                                handleAmount1Change(
-                                                                    String(
-                                                                        tokenBalances.get(
-                                                                            getAssetString(
-                                                                                pool.tokens[1],
-                                                                            ),
-                                                                        ) || 0,
-                                                                    ),
-                                                                );
+                                                            if (disableAmount1Input) {
+                                                                return;
                                                             }
+                                                            handleAmount1Change(
+                                                                String(
+                                                                    tokenBalances.get(
+                                                                        getAssetString(
+                                                                            pool.tokens[1],
+                                                                        ),
+                                                                    ) || 0,
+                                                                ),
+                                                            );
                                                         }}
                                                     >
                                                         {' '}
@@ -996,7 +1158,7 @@ const ConcentratedDepositModal = ({
                                                         .decimal ?? 7
                                                 }
                                                 allowNegative={false}
-                                                disabled={isRangeAboveCurrent}
+                                                disabled={disableAmount1Input}
                                             />
                                         </FormRow>
                                     </CardStack>
@@ -1005,178 +1167,237 @@ const ConcentratedDepositModal = ({
                                         <RangeTitleRow>
                                             <RangeTitle>Price Range</RangeTitle>
                                             <CurrentPrice>
-                                                {formatConcentratedPrice(currentPriceValue)}{' '}
+                                                {Number.isFinite(referencePriceValue)
+                                                    ? formatConcentratedPrice(referencePriceValue)
+                                                    : '-'}{' '}
                                                 {pool.tokens[1].code} per {pool.tokens[0].code}
                                             </CurrentPrice>
                                         </RangeTitleRow>
 
-                                        <Presets>
-                                            <PresetButton
-                                                $active={activeDepositPreset === 'full'}
-                                                onClick={handleFullRange}
-                                            >
-                                                Full Range
-                                            </PresetButton>
-                                            <PresetButton
-                                                $active={activeDepositPreset === '2'}
-                                                onClick={() => handlePreset(2)}
-                                            >
-                                                x÷2
-                                            </PresetButton>
-                                            <PresetButton
-                                                $active={activeDepositPreset === '1.2'}
-                                                onClick={() => handlePreset(1.2)}
-                                            >
-                                                x÷1.2
-                                            </PresetButton>
-                                            <PresetButton
-                                                $active={activeDepositPreset === '1.01'}
-                                                onClick={() => handlePreset(1.01)}
-                                            >
-                                                x÷1.01
-                                            </PresetButton>
-                                        </Presets>
+                                        {isEmptyPool && !hasBothPositiveAmounts ? (
+                                            <Alert
+                                                title="Set initial price"
+                                                text="Enter both token amounts to initialize price and range controls."
+                                            />
+                                        ) : (
+                                            <>
+                                                <Presets>
+                                                    <PresetButton
+                                                        $active={activeDepositPreset === 'full'}
+                                                        onClick={handleFullRange}
+                                                        disabled={!canUseRangeControls}
+                                                    >
+                                                        Full Range
+                                                    </PresetButton>
+                                                    <PresetButton
+                                                        $active={activeDepositPreset === '2'}
+                                                        onClick={() => handlePreset(2)}
+                                                        disabled={!canUseRangeControls}
+                                                    >
+                                                        x÷2
+                                                    </PresetButton>
+                                                    <PresetButton
+                                                        $active={activeDepositPreset === '1.2'}
+                                                        onClick={() => handlePreset(1.2)}
+                                                        disabled={!canUseRangeControls}
+                                                    >
+                                                        x÷1.2
+                                                    </PresetButton>
+                                                    <PresetButton
+                                                        $active={activeDepositPreset === '1.01'}
+                                                        onClick={() => handlePreset(1.01)}
+                                                        disabled={!canUseRangeControls}
+                                                    >
+                                                        x÷1.01
+                                                    </PresetButton>
+                                                </Presets>
 
-                                        <RangeGrid>
-                                            <div>
-                                                <Label>Min Price</Label>
-                                                <PriceControl>
-                                                    <StepBtn onClick={handleStepLowerDown}>
-                                                        -
-                                                    </StepBtn>
-                                                    {hasTickRange &&
-                                                    tickLower === minTickBound &&
-                                                    tickUpper === maxTickBound ? (
-                                                        <PriceInput value="0+" readOnly />
-                                                    ) : isMinScientific ? (
-                                                        <PriceInput
-                                                            value={minPriceInput}
-                                                            onChange={event =>
-                                                                handleMinPriceChange(
-                                                                    event.target.value,
-                                                                )
-                                                            }
-                                                            inputMode="decimal"
-                                                        />
-                                                    ) : (
-                                                        <NumericFormat
-                                                            value={minPriceInput}
-                                                            onChange={({ target }) =>
-                                                                handleMinPriceChange(target.value)
-                                                            }
-                                                            customInput={PriceInput}
-                                                            inputMode="decimal"
-                                                            thousandSeparator=","
-                                                            decimalScale={7}
-                                                            allowNegative={false}
-                                                            allowedDecimalSeparators={[',']}
-                                                        />
-                                                    )}
-                                                    <StepBtn onClick={handleStepLowerUp}>+</StepBtn>
-                                                </PriceControl>
-                                            </div>
-                                            <div>
-                                                <Label>Max Price</Label>
-                                                <PriceControl>
-                                                    <StepBtn onClick={handleStepUpperDown}>
-                                                        -
-                                                    </StepBtn>
-                                                    {hasTickRange &&
-                                                    tickLower === minTickBound &&
-                                                    tickUpper === maxTickBound ? (
-                                                        <PriceInput value="∞" readOnly />
-                                                    ) : isMaxScientific ? (
-                                                        <PriceInput
-                                                            value={maxPriceInput}
-                                                            onChange={event =>
-                                                                handleMaxPriceChange(
-                                                                    event.target.value,
-                                                                )
-                                                            }
-                                                            inputMode="decimal"
-                                                        />
-                                                    ) : (
-                                                        <NumericFormat
-                                                            value={maxPriceInput}
-                                                            onChange={({ target }) =>
-                                                                handleMaxPriceChange(target.value)
-                                                            }
-                                                            customInput={PriceInput}
-                                                            inputMode="decimal"
-                                                            thousandSeparator=","
-                                                            decimalScale={7}
-                                                            allowNegative={false}
-                                                            allowedDecimalSeparators={[',']}
-                                                        />
-                                                    )}
-                                                    <StepBtn onClick={handleStepUpperUp}>+</StepBtn>
-                                                </PriceControl>
-                                            </div>
-                                        </RangeGrid>
-
-                                        <RangeSummary>
-                                            <SummaryMain>
-                                                <span>
-                                                    Selected Range ({pool.tokens[1].code}/
-                                                    {pool.tokens[0].code})
-                                                </span>
-                                                <span>
-                                                    {hasTickRange &&
-                                                    tickLower === minTickBound &&
-                                                    tickUpper === maxTickBound
-                                                        ? 'Full Range'
-                                                        : `${minPriceInput} - ${maxPriceInput}`}
-                                                </span>
-                                            </SummaryMain>
-                                            <SummarySub>
-                                                <span>Ticks</span>
-                                                <span>
-                                                    {tickLower ?? '-'} to {tickUpper ?? '-'}
-                                                </span>
-                                            </SummarySub>
-                                            {depositEstimate && (
-                                                <SummaryRows>
-                                                    <SummaryValueRow>
-                                                        <span>{pool.tokens[0].code}</span>
-                                                        <span>
-                                                            {formatBalance(
-                                                                Number(depositEstimate.amounts[0]),
-                                                                true,
-                                                            )}
-                                                            <AssetLogo
-                                                                asset={pool.tokens[0]}
-                                                                isSmall
-                                                                isCircle
-                                                            />
-                                                        </span>
-                                                    </SummaryValueRow>
-                                                    <SummaryValueRow>
-                                                        <span>{pool.tokens[1].code}</span>
-                                                        <span>
-                                                            {formatBalance(
-                                                                Number(depositEstimate.amounts[1]),
-                                                                true,
-                                                            )}
-                                                            <AssetLogo
-                                                                asset={pool.tokens[1]}
-                                                                isSmall
-                                                                isCircle
-                                                            />
-                                                        </span>
-                                                    </SummaryValueRow>
-                                                    <SummaryValueRow>
-                                                        <span>Liquidity position</span>
-                                                        <span>
-                                                            {depositEstimate.liquidityLoading ? (
-                                                                <DotsLoader />
+                                                <RangeGrid>
+                                                    <div>
+                                                        <Label>Min Price</Label>
+                                                        <PriceControl>
+                                                            <StepBtn
+                                                                onClick={handleStepLowerDown}
+                                                                disabled={!canUseRangeControls}
+                                                            >
+                                                                -
+                                                            </StepBtn>
+                                                            {hasTickRange &&
+                                                            tickLower === minTickBound &&
+                                                            tickUpper === maxTickBound ? (
+                                                                <PriceInput
+                                                                    value="0+"
+                                                                    readOnly
+                                                                    disabled={!canUseRangeControls}
+                                                                />
+                                                            ) : isMinScientific ? (
+                                                                <PriceInput
+                                                                    value={minPriceInput}
+                                                                    onChange={event =>
+                                                                        handleMinPriceChange(
+                                                                            event.target.value,
+                                                                        )
+                                                                    }
+                                                                    inputMode="decimal"
+                                                                    disabled={!canUseRangeControls}
+                                                                />
                                                             ) : (
-                                                                depositEstimate.liquidityDisplay
+                                                                <NumericFormat
+                                                                    value={minPriceInput}
+                                                                    onChange={({ target }) =>
+                                                                        handleMinPriceChange(
+                                                                            target.value,
+                                                                        )
+                                                                    }
+                                                                    customInput={PriceInput}
+                                                                    inputMode="decimal"
+                                                                    thousandSeparator=","
+                                                                    decimalScale={7}
+                                                                    allowNegative={false}
+                                                                    allowedDecimalSeparators={[',']}
+                                                                    disabled={!canUseRangeControls}
+                                                                />
                                                             )}
+                                                            <StepBtn
+                                                                onClick={handleStepLowerUp}
+                                                                disabled={
+                                                                    !canUseRangeControls ||
+                                                                    disableLowerUpByReference
+                                                                }
+                                                            >
+                                                                +
+                                                            </StepBtn>
+                                                        </PriceControl>
+                                                    </div>
+                                                    <div>
+                                                        <Label>Max Price</Label>
+                                                        <PriceControl>
+                                                            <StepBtn
+                                                                onClick={handleStepUpperDown}
+                                                                disabled={
+                                                                    !canUseRangeControls ||
+                                                                    disableUpperDownByReference
+                                                                }
+                                                            >
+                                                                -
+                                                            </StepBtn>
+                                                            {hasTickRange &&
+                                                            tickLower === minTickBound &&
+                                                            tickUpper === maxTickBound ? (
+                                                                <PriceInput
+                                                                    value="∞"
+                                                                    readOnly
+                                                                    disabled={!canUseRangeControls}
+                                                                />
+                                                            ) : isMaxScientific ? (
+                                                                <PriceInput
+                                                                    value={maxPriceInput}
+                                                                    onChange={event =>
+                                                                        handleMaxPriceChange(
+                                                                            event.target.value,
+                                                                        )
+                                                                    }
+                                                                    inputMode="decimal"
+                                                                    disabled={!canUseRangeControls}
+                                                                />
+                                                            ) : (
+                                                                <NumericFormat
+                                                                    value={maxPriceInput}
+                                                                    onChange={({ target }) =>
+                                                                        handleMaxPriceChange(
+                                                                            target.value,
+                                                                        )
+                                                                    }
+                                                                    customInput={PriceInput}
+                                                                    inputMode="decimal"
+                                                                    thousandSeparator=","
+                                                                    decimalScale={7}
+                                                                    allowNegative={false}
+                                                                    allowedDecimalSeparators={[',']}
+                                                                    disabled={!canUseRangeControls}
+                                                                />
+                                                            )}
+                                                            <StepBtn
+                                                                onClick={handleStepUpperUp}
+                                                                disabled={!canUseRangeControls}
+                                                            >
+                                                                +
+                                                            </StepBtn>
+                                                        </PriceControl>
+                                                    </div>
+                                                </RangeGrid>
+
+                                                <RangeSummary>
+                                                    <SummaryMain>
+                                                        <span>
+                                                            Selected Range ({pool.tokens[1].code}/
+                                                            {pool.tokens[0].code})
                                                         </span>
-                                                    </SummaryValueRow>
-                                                </SummaryRows>
-                                            )}
-                                        </RangeSummary>
+                                                        <span>
+                                                            {hasTickRange &&
+                                                            tickLower === minTickBound &&
+                                                            tickUpper === maxTickBound
+                                                                ? 'Full Range'
+                                                                : `${minPriceInput} - ${maxPriceInput}`}
+                                                        </span>
+                                                    </SummaryMain>
+                                                    <SummarySub>
+                                                        <span>Ticks</span>
+                                                        <span>
+                                                            {tickLower ?? '-'} to {tickUpper ?? '-'}
+                                                        </span>
+                                                    </SummarySub>
+                                                    {depositEstimate && (
+                                                        <SummaryRows>
+                                                            <SummaryValueRow>
+                                                                <span>{pool.tokens[0].code}</span>
+                                                                <span>
+                                                                    {formatBalance(
+                                                                        Number(
+                                                                            depositEstimate
+                                                                                .amounts[0],
+                                                                        ),
+                                                                        true,
+                                                                    )}
+                                                                    <AssetLogo
+                                                                        asset={pool.tokens[0]}
+                                                                        isSmall
+                                                                        isCircle
+                                                                    />
+                                                                </span>
+                                                            </SummaryValueRow>
+                                                            <SummaryValueRow>
+                                                                <span>{pool.tokens[1].code}</span>
+                                                                <span>
+                                                                    {formatBalance(
+                                                                        Number(
+                                                                            depositEstimate
+                                                                                .amounts[1],
+                                                                        ),
+                                                                        true,
+                                                                    )}
+                                                                    <AssetLogo
+                                                                        asset={pool.tokens[1]}
+                                                                        isSmall
+                                                                        isCircle
+                                                                    />
+                                                                </span>
+                                                            </SummaryValueRow>
+                                                            <SummaryValueRow>
+                                                                <span>Liquidity position</span>
+                                                                <span>
+                                                                    {depositEstimate.liquidityLoading ? (
+                                                                        <DotsLoader />
+                                                                    ) : (
+                                                                        depositEstimate.liquidityDisplay
+                                                                    )}
+                                                                </span>
+                                                            </SummaryValueRow>
+                                                        </SummaryRows>
+                                                    )}
+                                                </RangeSummary>
+                                            </>
+                                        )}
                                     </RangeBlock>
                                 </>
                             )}
