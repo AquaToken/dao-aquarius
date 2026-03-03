@@ -692,7 +692,8 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                             )}
                         </span>
                     </DescriptionRow>
-                    {(Boolean(Number(pool.reward_tps)) || hasActiveIncentives) &&
+                    {isRewardsEnabled &&
+                        (Boolean(Number(pool.reward_tps)) || hasActiveIncentives) &&
                         Boolean(Number(pool.total_share)) &&
                         Boolean(poolRewards) && (
                             <DescriptionRow>
@@ -736,7 +737,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                         </DescriptionRow>
                     )}
 
-                    {hasActiveIncentives
+                    {hasActiveIncentives && isRewardsEnabled
                         ? incentives
                               .filter(incentive => !!Number(incentive.info.tps))
                               .map(incentive => (
