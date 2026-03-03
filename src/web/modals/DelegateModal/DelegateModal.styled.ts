@@ -19,7 +19,7 @@ export const Amounts = styled.div`
 
 export const FormRow = styled.div`
     display: flex;
-    margin: 8rem 0 4rem;
+    margin: 7rem 0 2rem;
     position: relative;
 `;
 

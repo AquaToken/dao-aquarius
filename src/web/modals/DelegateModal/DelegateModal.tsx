@@ -21,7 +21,7 @@ import IconProfile from 'assets/icons/nav/icon-profile.svg';
 
 import TokenAmountFormField from 'basics/form/TokenAmountFormField';
 import { Input, Select, ToggleGroup } from 'basics/inputs';
-import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
+import { ModalDescription, ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms';
 
 import { GOV_ICE, UP_ICE } from 'pages/vote/components/MainPage/MainPage';
 
@@ -165,7 +165,7 @@ const DelegateModal = ({
     };
 
     return (
-        <ModalWrapper $noScroll>
+        <ModalWrapper>
             <ModalTitle>Delegate my ICE</ModalTitle>
 
             <ModalDescription>
@@ -181,6 +181,7 @@ const DelegateModal = ({
                     isBalanceClickable
                     withPercentButtons
                     disabled={pending}
+                    isEmbedded
                 />
 
                 <TokenAmountFormField
@@ -191,6 +192,7 @@ const DelegateModal = ({
                     isBalanceClickable
                     withPercentButtons
                     disabled={pending}
+                    isEmbedded
                 />
             </Amounts>
 
@@ -218,6 +220,7 @@ const DelegateModal = ({
                 ) : (
                     <Select
                         disabled={pending}
+                        usePortal
                         options={delegatees.map(delegate => ({
                             label: (
                                 <SelectItem>
@@ -250,17 +253,19 @@ const DelegateModal = ({
                 )}
             </FormRow>
 
-            <DelegateButton
-                isBig
-                withGradient
-                isRounded
-                fullWidth
-                onClick={onSubmit}
-                disabled={!destinationValue || !delegations.length}
-                pending={pending}
-            >
-                Delegate
-            </DelegateButton>
+            <StickyButtonWrapper>
+                <DelegateButton
+                    isBig
+                    withGradient
+                    isRounded
+                    fullWidth
+                    onClick={onSubmit}
+                    disabled={!destinationValue || !delegations.length}
+                    pending={pending}
+                >
+                    Delegate
+                </DelegateButton>
+            </StickyButtonWrapper>
         </ModalWrapper>
     );
 };
