@@ -14,7 +14,6 @@ import {
 import {
     clamp,
     formatConcentratedDerivedAmount,
-    formatConcentratedLiquidityValue,
     formatConcentratedPriceInputValue,
     isValidNonNegativeConcentratedAmount,
     parseConcentratedAmount,
@@ -24,6 +23,7 @@ import {
     snapUp,
     tickToPrice,
 } from 'helpers/amm-concentrated';
+import { contractValueToFormattedAmount } from 'helpers/amount';
 import { getAssetString } from 'helpers/assets';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
@@ -760,9 +760,10 @@ export const useConcentratedDepositForm = ({ pool, close }: Params) => {
 
                 setDepositEstimate({
                     amounts: estimatedAmounts,
-                    liquidityDisplay: formatConcentratedLiquidityValue(
+                    liquidityDisplay: contractValueToFormattedAmount(
                         result?.liquidity || '0',
                         pool.share_token_decimals,
+                        true,
                     ),
                     liquidityLoading: false,
                 });

@@ -3,7 +3,7 @@ import { NumericFormat } from 'react-number-format';
 
 import { CONCENTRATED_DEPOSIT_PRESETS } from 'constants/amm';
 
-import { formatConcentratedPrice } from 'helpers/amm-concentrated';
+import { formatBalance } from 'helpers/format-number';
 
 import { DepositEstimate, PoolExtended } from 'types/amm';
 
@@ -90,7 +90,7 @@ const DepositPriceRangeSection = ({
             <RangeTitle>Price Range</RangeTitle>
             <CurrentPrice>
                 {Number.isFinite(referencePriceValue)
-                    ? formatConcentratedPrice(referencePriceValue)
+                    ? formatBalance(referencePriceValue, true)
                     : '-'}{' '}
                 {pool.tokens[1].code} per {pool.tokens[0].code}
             </CurrentPrice>

@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { getPoolMembers } from 'api/amm';
 
-import { contractValueToAmount } from 'helpers/amount';
+import { contractValueToAmount, contractValueToFormattedAmount } from 'helpers/amount';
 import getExplorerLink, { ExplorerSection } from 'helpers/explorer-links';
 import { formatBalance } from 'helpers/format-number';
 
@@ -177,13 +177,9 @@ const PoolMembers = ({
                             {
                                 children: (
                                     <span>
-                                        {formatBalance(
-                                            Number(
-                                                contractValueToAmount(
-                                                    member.balance,
-                                                    shareTokenDecimals,
-                                                ),
-                                            ),
+                                        {contractValueToFormattedAmount(
+                                            member.balance,
+                                            shareTokenDecimals,
                                             true,
                                         )}{' '}
                                         (

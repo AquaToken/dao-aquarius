@@ -12,12 +12,7 @@ import {
     CONCENTRATED_LIQUIDITY_CHART_ZOOM_MIN,
 } from 'constants/amm';
 
-import {
-    clamp,
-    formatConcentratedChartPrice,
-    priceToTick,
-    tickToPrice,
-} from 'helpers/amm-concentrated';
+import { clamp, priceToTick, tickToPrice } from 'helpers/amm-concentrated';
 import {
     hydratePositionsLiquidity,
     keyOfPosition,
@@ -441,15 +436,16 @@ const LiquidityDistributionChart = forwardRef<LiquidityDistributionChartHandle, 
                 .attr('pointer-events', 'none')
                 .text(
                     price =>
-                        `Current price = ${formatConcentratedChartPrice(tickToPrice(Number(price), decimalsDiff))}`,
+                        `Current price = ${formatBalance(
+                            tickToPrice(Number(price), decimalsDiff),
+                            true,
+                        )}`,
                 );
 
             const xAxis = d3
                 .axisBottom(x)
                 .ticks(5)
-                .tickFormat(value =>
-                    formatConcentratedChartPrice(tickToPrice(Number(value), decimalsDiff)),
-                );
+                .tickFormat(value => formatBalance(tickToPrice(Number(value), decimalsDiff), true));
 
             svg.selectAll<SVGGElement, null>('g.axis-x')
                 .data([null])

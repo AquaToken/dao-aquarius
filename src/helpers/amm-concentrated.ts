@@ -2,9 +2,6 @@ import BigNumber from 'bignumber.js';
 
 import { CONCENTRATED_TICK_BASE, CONCENTRATED_TICK_LOG_BASE } from 'constants/amm';
 
-import { contractValueToAmount } from 'helpers/amount';
-import { formatBalance } from 'helpers/format-number';
-
 export const clamp = (value: number, min: number, max: number) =>
     Math.min(max, Math.max(min, value));
 
@@ -17,32 +14,6 @@ export const tickToPrice = (tick: number, decimalsDiff: number) =>
 
 export const priceToTick = (price: number, decimalsDiff: number) =>
     Math.log(price * Math.pow(10, -decimalsDiff)) / CONCENTRATED_TICK_LOG_BASE;
-
-export const formatConcentratedPrice = (value: number) => {
-    if (!Number.isFinite(value) || value <= 0) {
-        return '-';
-    }
-
-    if (value >= 1_000_000_000 || value < 0.000001) {
-        return value.toExponential(4);
-    }
-
-    return value >= 1
-        ? value.toLocaleString(undefined, { maximumFractionDigits: 6 })
-        : value.toLocaleString(undefined, { maximumFractionDigits: 10 });
-};
-
-export const formatConcentratedChartPrice = (value: number) => {
-    if (!Number.isFinite(value) || value <= 0) {
-        return '-';
-    }
-
-    if (value >= 1_000_000_000 || value < 0.000001) {
-        return value.toExponential(2);
-    }
-
-    return formatBalance(value, true);
-};
 
 export const parseConcentratedPriceInput = (value: string) => {
     const normalized = value.replaceAll(',', '').trim();
@@ -98,9 +69,6 @@ export const formatConcentratedDerivedAmount = (value: BigNumber.Value, decimals
     const normalized = fixed.replace(/\.?0+$/, '');
     return normalized === '' ? '0' : normalized;
 };
-
-export const formatConcentratedLiquidityValue = (value: string | number, decimals: number) =>
-    formatBalance(Number(contractValueToAmount(String(value || 0), decimals)), true);
 
 export const parseConcentratedPercent = (value: string) => {
     const normalized = value.trim();

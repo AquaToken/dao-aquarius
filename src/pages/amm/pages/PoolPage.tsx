@@ -10,7 +10,7 @@ import { ChartPeriods } from 'constants/charts';
 import { DAY } from 'constants/intervals';
 import { AppRoutes } from 'constants/routes';
 
-import { contractValueToAmount } from 'helpers/amount';
+import { contractValueToFormattedAmount } from 'helpers/amount';
 import { getAquaAssetData, getAssetString } from 'helpers/assets';
 import getExplorerLink, { ExplorerSection } from 'helpers/explorer-links';
 import { formatBalance } from 'helpers/format-number';
@@ -599,11 +599,9 @@ const PoolPage = () => {
                             <SectionRow key={pool.tokens_addresses[index]}>
                                 <SectionLabel>Total {asset.code}:</SectionLabel>
                                 <span>
-                                    {formatBalance(
-                                        +contractValueToAmount(
-                                            pool.reserves[index],
-                                            (pool.tokens[index] as SorobanToken).decimal,
-                                        ),
+                                    {contractValueToFormattedAmount(
+                                        pool.reserves[index],
+                                        (pool.tokens[index] as SorobanToken).decimal,
                                     )}{' '}
                                     <AssetLogo asset={asset} isSmall isCircle />
                                 </span>
@@ -612,13 +610,9 @@ const PoolPage = () => {
                         <SectionRow>
                             <SectionLabel>Total share:</SectionLabel>
                             <span>
-                                {formatBalance(
-                                    Number(
-                                        contractValueToAmount(
-                                            pool.total_share,
-                                            pool.share_token_decimals,
-                                        ),
-                                    ),
+                                {contractValueToFormattedAmount(
+                                    pool.total_share,
+                                    pool.share_token_decimals,
                                     true,
                                 )}
                             </span>
@@ -630,8 +624,9 @@ const PoolPage = () => {
                         <SectionRow>
                             <SectionLabel>Daily reward: </SectionLabel>
                             <span>
-                                {formatBalance(
-                                    Number(contractValueToAmount(pool.reward_tps)) * 60 * 60 * 24,
+                                {contractValueToFormattedAmount(
+                                    Number(pool.reward_tps) * 60 * 60 * 24,
+                                    7,
                                     true,
                                 )}{' '}
                                 AQUA

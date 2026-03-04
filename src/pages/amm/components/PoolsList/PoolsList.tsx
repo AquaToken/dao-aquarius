@@ -8,7 +8,7 @@ import { getPoolMembersCount, getPoolStats } from 'api/amm';
 import { POOL_TYPE } from 'constants/amm';
 import { ChartPeriods } from 'constants/charts';
 
-import { contractValueToAmount } from 'helpers/amount';
+import { contractValueToFormattedAmount } from 'helpers/amount';
 import { formatBalance } from 'helpers/format-number';
 import { truncateString } from 'helpers/truncate-string';
 
@@ -503,11 +503,9 @@ const PoolsList = ({
                                             <ExpandedDataRow key={asset.code + asset.issuer}>
                                                 <span>Total {asset.code}:</span>
                                                 <span>
-                                                    {formatBalance(
-                                                        +contractValueToAmount(
-                                                            pool.reserves[index] as string,
-                                                            (asset as SorobanToken).decimal,
-                                                        ),
+                                                    {contractValueToFormattedAmount(
+                                                        pool.reserves[index] as string,
+                                                        (asset as SorobanToken).decimal,
                                                         true,
                                                     )}
                                                     <Asset asset={asset} onlyLogoSmall />
@@ -519,14 +517,10 @@ const PoolsList = ({
                                                 <ExpandedDataRow>
                                                     <span>Total share:</span>
                                                     <span>
-                                                        {formatBalance(
-                                                            Number(
-                                                                contractValueToAmount(
-                                                                    String(pool.total_share),
-                                                                    (pool as SorobanPool)
-                                                                        .share_token_decimals,
-                                                                ),
-                                                            ),
+                                                        {contractValueToFormattedAmount(
+                                                            String(pool.total_share),
+                                                            (pool as SorobanPool)
+                                                                .share_token_decimals,
                                                             true,
                                                         )}
                                                     </span>

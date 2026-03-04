@@ -4,19 +4,13 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { CONCENTRATED_MAX_TICK, CONCENTRATED_MIN_TICK, POOL_TYPE } from 'constants/amm';
 
-import {
-    formatConcentratedLiquidityValue,
-    formatConcentratedPrice,
-    parseConcentratedPercent,
-    snapDown,
-    snapUp,
-    tickToPrice,
-} from 'helpers/amm-concentrated';
+import { parseConcentratedPercent, snapDown, snapUp, tickToPrice } from 'helpers/amm-concentrated';
 import {
     hydratePositionsLiquidity,
     keyOfPosition,
     normalizePositions,
 } from 'helpers/amm-concentrated-positions';
+import { contractValueToFormattedAmount } from 'helpers/amount';
 import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
@@ -131,19 +125,22 @@ const ConcentratedWithdrawModal = ({
                                     <span>
                                         {isFullRange
                                             ? 'Full Range'
-                                            : `${formatConcentratedPrice(
+                                            : `${formatBalance(
                                                   tickToPrice(position.tickLower, decimalsDiff),
-                                              )} - ${formatConcentratedPrice(
+                                                  true,
+                                              )} - ${formatBalance(
                                                   tickToPrice(position.tickUpper, decimalsDiff),
+                                                  true,
                                               )}`}
                                     </span>
                                 </PositionInfoRow>
                                 <PositionInfoRow>
                                     <span>Shares</span>
                                     <span>
-                                        {formatConcentratedLiquidityValue(
+                                        {contractValueToFormattedAmount(
                                             position.liquidity,
                                             pool.share_token_decimals,
+                                            true,
                                         )}{' '}
                                         ({formatBalance(sharePercent.toNumber(), true)}%)
                                     </span>
