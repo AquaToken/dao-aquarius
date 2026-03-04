@@ -22,3 +22,14 @@ export const CONCENTRATED_LIQUIDITY_CHART_MARGIN = {
 };
 export const CONCENTRATED_LIQUIDITY_CHART_ZOOM_MIN = 1;
 export const CONCENTRATED_LIQUIDITY_CHART_ZOOM_MAX = 256;
+
+export const CONCENTRATED_DEPOSIT_DEFAULT_PRESET_MULTIPLIER = 1.2;
+export const CONCENTRATED_DEPOSIT_ESTIMATE_DEBOUNCE_MS = 700;
+export const CONCENTRATED_DEPOSIT_PRICE_INPUT_DEBOUNCE_MS = 2000;
+export const CONCENTRATED_DEPOSIT_PRESETS = [
+    { key: '2', multiplier: 2, label: 'x÷2' },
+    { key: '1.2', multiplier: 1.2, label: 'x÷1.2' },
+    { key: '1.01', multiplier: 1.01, label: 'x÷1.01' },
+] as const;
+
+export const CONCENTRATED_DISTRIBUTION_REFRESH_MS = 5000;

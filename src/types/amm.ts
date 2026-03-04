@@ -42,6 +42,11 @@ export type Pool = {
     incentive_apy_per_token: { [key: string]: string };
     incentive_apy: string;
     total_apy: string;
+    tick_spacing?: number;
+    sqrt_price_x96?: string;
+    current_tick?: number;
+    active_liquidity?: string;
+    tick_map?: Record<string, string>;
 };
 
 export type PoolRewards = {
@@ -192,6 +197,24 @@ export type ConcentratedPosition = {
     tickLower: number;
     tickUpper: number;
     liquidity: string;
+};
+
+export type ConcentratedSnapshotRange = {
+    tick_lower: number;
+    tick_upper: number;
+    liquidity?: string | number | bigint | null;
+};
+
+export type ConcentratedUserPositionSnapshot = {
+    ranges: ConcentratedSnapshotRange[];
+    raw_liquidity?: string | number | bigint;
+    weighted_liquidity?: string | number | bigint;
+};
+
+export type DepositEstimate = {
+    amounts: string[];
+    liquidityDisplay: string;
+    liquidityLoading: boolean;
 };
 
 export enum RewardType {

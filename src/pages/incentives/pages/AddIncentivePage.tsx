@@ -13,7 +13,7 @@ import {
 import { DAY } from 'constants/intervals';
 import { AppRoutes } from 'constants/routes';
 
-import { contractValueToAmount } from 'helpers/amount';
+import { contractValueToAmount, contractValueToFormattedAmount } from 'helpers/amount';
 import { getAquaAssetData } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 import { getTokensFromCache } from 'helpers/token';
@@ -258,12 +258,7 @@ const AddIncentivePage = () => {
                     <MarketTVL>
                         <span>TVL:</span>
                         <span>
-                            $
-                            {formatBalance(
-                                +contractValueToAmount(market.liquidity_usd),
-                                true,
-                                true,
-                            )}
+                            ${contractValueToFormattedAmount(market.liquidity_usd, 7, true, true)}
                         </span>
                     </MarketTVL>
                 </OptionsRow>

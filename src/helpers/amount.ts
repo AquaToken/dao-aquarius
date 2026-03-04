@@ -10,6 +10,23 @@ export const amountToContractValue = (amount: string, decimals: number = 7) =>
 export const contractValueToAmount = (value: string, decimals: number = 7) =>
     new BigNumber(value).div(Math.pow(10, decimals)).toFixed(decimals);
 
+export const contractValueToFormattedAmount = (
+    value: string | number | bigint,
+    decimals = 7,
+    withRounding = false,
+    withLetters?: boolean,
+    decimal = 7,
+    absolute = false,
+) =>
+    formatBalance(
+        absolute
+            ? Math.abs(Number(contractValueToAmount(String(value ?? 0), decimals)))
+            : Number(contractValueToAmount(String(value ?? 0), decimals)),
+        withRounding,
+        withLetters,
+        decimal,
+    );
+
 export const apyValueToDisplay = (apy: string) =>
     apy ? `${formatBalance(+(+apy * 100).toFixed(2))}%` : '0%';
 

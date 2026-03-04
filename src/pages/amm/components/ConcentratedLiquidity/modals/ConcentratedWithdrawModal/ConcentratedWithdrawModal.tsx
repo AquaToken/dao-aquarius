@@ -4,15 +4,13 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { CONCENTRATED_MAX_TICK, CONCENTRATED_MIN_TICK, POOL_TYPE } from 'constants/amm';
 
+import { parseConcentratedPercent, snapDown, snapUp, tickToPrice } from 'helpers/amm-concentrated';
 import {
-    formatConcentratedLiquidityValue,
-    formatConcentratedPrice,
-    parseConcentratedPercent,
-    snapDown,
-    snapUp,
-    tickToPrice,
-} from 'helpers/amm-concentrated';
-import { keyOfPosition, normalizePositions } from 'helpers/amm-concentrated-positions';
+    hydratePositionsLiquidity,
+    keyOfPosition,
+    normalizePositions,
+} from 'helpers/amm-concentrated-positions';
+import { contractValueToFormattedAmount } from 'helpers/amount';
 import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
@@ -127,19 +125,22 @@ const ConcentratedWithdrawModal = ({
                                     <span>
                                         {isFullRange
                                             ? 'Full Range'
-                                            : `${formatConcentratedPrice(
+                                            : `${formatBalance(
                                                   tickToPrice(position.tickLower, decimalsDiff),
-                                              )} - ${formatConcentratedPrice(
+                                                  true,
+                                              )} - ${formatBalance(
                                                   tickToPrice(position.tickUpper, decimalsDiff),
+                                                  true,
                                               )}`}
                                     </span>
                                 </PositionInfoRow>
                                 <PositionInfoRow>
                                     <span>Shares</span>
                                     <span>
-                                        {formatConcentratedLiquidityValue(
+                                        {contractValueToFormattedAmount(
                                             position.liquidity,
                                             pool.share_token_decimals,
+                                            true,
                                         )}{' '}
                                         ({formatBalance(sharePercent.toNumber(), true)}%)
                                     </span>
@@ -230,33 +231,6 @@ const ConcentratedWithdrawModal = ({
         [pool.tokens],
     );
 
-    const hydratePositionsLiquidity = async (ranges: ConcentratedPosition[]) => {
-        if (!account || !ranges.length) {
-            return ranges;
-        }
-
-        const resolved = await Promise.all(
-            ranges.map(async range => {
-                try {
-                    const position = await SorobanService.amm.getPosition(
-                        pool.address,
-                        account.accountId(),
-                        range.tickLower,
-                        range.tickUpper,
-                    );
-                    return {
-                        ...range,
-                        liquidity: position?.liquidity ?? range.liquidity ?? '0',
-                    };
-                } catch {
-                    return range;
-                }
-            }),
-        );
-
-        return resolved.filter(item => new BigNumber(item.liquidity || '0').gt(0));
-    };
-
     const hydratePositionTokenEstimates = async (ranges: ConcentratedPosition[]) => {
         if (!account || !ranges.length) {
             return new Map<string, string[]>();
@@ -297,7 +271,18 @@ const ConcentratedWithdrawModal = ({
             .then(async ([spacing, snapshot]) => {
                 setTickSpacing(spacing);
                 const ranges = normalizePositions(snapshot);
-                const nextPositions = await hydratePositionsLiquidity(ranges);
+                const hydrated = await hydratePositionsLiquidity(ranges, async range => {
+                    const position = await SorobanService.amm.getPosition(
+                        pool.address,
+                        account.accountId(),
+                        range.tickLower,
+                        range.tickUpper,
+                    );
+                    return position?.liquidity;
+                });
+                const nextPositions = hydrated.filter(item =>
+                    new BigNumber(item.liquidity || '0').gt(0),
+                );
                 setPositions(nextPositions);
                 setPositionTokenEstimates(new Map());
                 const tokenEstimates = await hydratePositionTokenEstimates(nextPositions);

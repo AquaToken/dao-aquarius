@@ -41,6 +41,7 @@ import {
 import {
     ConcentratedPoolInfo,
     ConcentratedPosition,
+    ConcentratedUserPositionSnapshot,
     ConcentratedSlot0,
     PoolExtended,
     PoolIncentives,
@@ -1201,7 +1202,10 @@ export default class AmmContract {
             .then(({ result }) => Number(scValToNative(result.retval)));
     }
 
-    getUserPositionSnapshot(poolId: string, user: string): Promise<unknown> {
+    getUserPositionSnapshot(
+        poolId: string,
+        user: string,
+    ): Promise<ConcentratedUserPositionSnapshot | null> {
         return this.connection
             .buildSmartContractTx(
                 ACCOUNT_FOR_SIMULATE,
@@ -1210,7 +1214,7 @@ export default class AmmContract {
                 publicKeyToScVal(user),
             )
             .then(tx => this.connection.simulateTx(tx))
-            .then(({ result }) => scValToNative(result.retval));
+            .then(({ result }) => scValToNative(result.retval) as ConcentratedUserPositionSnapshot);
     }
 
     getPosition(

@@ -1,5 +1,4 @@
 import { xdr } from '@stellar/stellar-sdk';
-import BigNumber from 'bignumber.js';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import * as React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -11,8 +10,7 @@ import { ChartPeriods } from 'constants/charts';
 import { DAY } from 'constants/intervals';
 import { AppRoutes } from 'constants/routes';
 
-import { keyOfPosition, normalizePositions } from 'helpers/amm-concentrated-positions';
-import { contractValueToAmount } from 'helpers/amount';
+import { contractValueToFormattedAmount } from 'helpers/amount';
 import { getAquaAssetData, getAssetString } from 'helpers/assets';
 import getExplorerLink, { ExplorerSection } from 'helpers/explorer-links';
 import { formatBalance } from 'helpers/format-number';
@@ -27,7 +25,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 import { ModalService, SorobanService, ToastService } from 'services/globalServices';
 
-import { ConcentratedPosition, PoolExtended, PoolIncentives } from 'types/amm';
+import { PoolExtended, PoolIncentives } from 'types/amm';
 import { ClassicToken, SorobanToken, TokenType } from 'types/token';
 
 import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
@@ -50,7 +48,6 @@ import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 
 import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import LiquidityDistributionChart from 'pages/amm/components/LiquidityDistributionChart/LiquidityDistributionChart';
-import type { LiquidityDistributionChartHandle } from 'pages/amm/components/LiquidityDistributionChart/LiquidityDistributionChart';
 
 import LiquidityChart from '../components/LiquidityChart/LiquidityChart';
 import PoolEvents from '../components/PoolEvents/PoolEvents';
@@ -201,50 +198,8 @@ const DistributionCard = styled.div`
     padding: 2rem;
 `;
 
-const DistributionTitle = styled.h6`
-    margin: 0;
-    font-size: 2.2rem;
-    line-height: 2.8rem;
-    color: ${COLORS.textPrimary};
-`;
-
-const DistributionHeader = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.2rem;
-    margin-bottom: 1.6rem;
-`;
-
-const DistributionControls = styled.div`
-    display: flex;
-    gap: 0.8rem;
-`;
-
-const DistributionControlButton = styled.button`
-    width: 3.2rem;
-    height: 3.2rem;
-    border: none;
-    border-radius: 0.8rem;
-    background: ${COLORS.gray50};
-    color: ${COLORS.textPrimary};
-    font-size: 1.8rem;
-    cursor: pointer;
-`;
-
 const DistributionCanvas = styled.div`
-    position: relative;
-    height: 28rem;
-    border-radius: 1rem;
-    background: ${COLORS.gray50};
-    border: 0.1rem solid ${COLORS.gray100};
-    padding: 1rem 1rem 1rem 1.8rem;
-`;
-
-const DistributionLoader = styled.div`
-    ${flexAllCenter};
     width: 100%;
-    height: 100%;
 `;
 
 const SettingsIconPurple = styled(SettingsIcon)`
@@ -271,12 +226,6 @@ const PoolPage = () => {
     const [claimPending, setClaimPending] = useState(false);
     const [claimIncentivePending, setClaimIncentivePending] = useState(false);
     const [chartWidth, setChartWidth] = useState(0);
-    const [distributionItems, setDistributionItems] = useState<
-        { tickLower: number; tickUpper: number; liquidity: number }[]
-    >([]);
-    const [distributionCurrentTick, setDistributionCurrentTick] = useState<number | null>(null);
-    const [distributionLoading, setDistributionLoading] = useState(false);
-    const [distributionReady, setDistributionReady] = useState(false);
 
     const { account, isLogged } = useAuthStore();
 
@@ -287,7 +236,6 @@ const PoolPage = () => {
     const { aquaStellarAsset } = getAquaAssetData();
 
     const chartRef = useRef<HTMLDivElement>(null);
-    const distributionChartRef = useRef<LiquidityDistributionChartHandle>(null);
 
     useEffect(() => {
         if (!pool) {
@@ -329,134 +277,6 @@ const PoolPage = () => {
             window.removeEventListener('resize', handleResize);
         };
     }, [pool]);
-
-    useEffect(() => {
-        if (!pool || pool.pool_type !== 'concentrated') {
-            return;
-        }
-        setDistributionReady(false);
-        setDistributionItems([]);
-        setDistributionCurrentTick(null);
-    }, [pool?.address]);
-
-    useEffect(() => {
-        if (!pool || pool.pool_type !== 'concentrated') {
-            setDistributionItems([]);
-            setDistributionCurrentTick(null);
-            setDistributionLoading(false);
-            setDistributionReady(false);
-            return;
-        }
-
-        let cancelled = false;
-
-        const hydratePositionsLiquidity = async (ranges: ConcentratedPosition[]) => {
-            if (!account || !ranges.length) {
-                return ranges;
-            }
-
-            const resolved = await Promise.all(
-                ranges.map(async range => {
-                    try {
-                        const position = await SorobanService.amm.getPosition(
-                            pool.address,
-                            account.accountId(),
-                            range.tickLower,
-                            range.tickUpper,
-                        );
-                        return {
-                            ...range,
-                            liquidity: position?.liquidity ?? range.liquidity ?? '0',
-                        };
-                    } catch {
-                        return range;
-                    }
-                }),
-            );
-
-            return resolved.filter(item => Number(item.liquidity || 0) > 0);
-        };
-
-        const loadDistribution = async () => {
-            const shouldShowLoader = !distributionReady;
-            if (shouldShowLoader) {
-                setDistributionLoading(true);
-            }
-
-            try {
-                const [slot0, snapshot] = await Promise.all([
-                    SorobanService.amm.getConcentratedSlot0(pool.address),
-                    account
-                        ? SorobanService.amm.getUserPositionSnapshot(
-                              pool.address,
-                              account.accountId(),
-                          )
-                        : Promise.resolve(null),
-                ]);
-
-                if (cancelled) {
-                    return;
-                }
-
-                setDistributionCurrentTick(Number((slot0 as Record<string, unknown>)?.tick));
-
-                if (!account || !snapshot) {
-                    setDistributionItems([]);
-                    return;
-                }
-
-                const ranges = normalizePositions(snapshot);
-                const hydrated = await hydratePositionsLiquidity(ranges);
-
-                if (cancelled) {
-                    return;
-                }
-
-                const totalLiquidityUsd = new BigNumber(pool.liquidity_usd || 0).dividedBy(1e7);
-                const totalPositionsLiquidity = hydrated.reduce(
-                    (acc, position) => acc.plus(position.liquidity || 0),
-                    new BigNumber(0),
-                );
-                const usdPerLiquidity = totalPositionsLiquidity.gt(0)
-                    ? totalLiquidityUsd.dividedBy(totalPositionsLiquidity)
-                    : new BigNumber(0);
-
-                const unique = new Map(
-                    hydrated.map(position => [
-                        keyOfPosition(position),
-                        {
-                            tickLower: position.tickLower,
-                            tickUpper: position.tickUpper,
-                            liquidity: new BigNumber(position.liquidity || 0)
-                                .multipliedBy(usdPerLiquidity)
-                                .toNumber(),
-                        },
-                    ]),
-                );
-
-                setDistributionItems(
-                    [...unique.values()].filter(position => position.liquidity > 0),
-                );
-            } catch {
-                if (cancelled) {
-                    return;
-                }
-                setDistributionItems([]);
-                setDistributionCurrentTick(null);
-            } finally {
-                if (!cancelled) {
-                    setDistributionLoading(false);
-                    setDistributionReady(true);
-                }
-            }
-        };
-
-        loadDistribution();
-
-        return () => {
-            cancelled = true;
-        };
-    }, [pool, account, updateIndex]);
 
     const claim = () => {
         if (account.authType === LoginTypes.walletConnect) {
@@ -676,59 +496,8 @@ const PoolPage = () => {
                         )}
                         {pool.pool_type === 'concentrated' && (
                             <DistributionCard>
-                                <DistributionHeader>
-                                    <DistributionTitle>Liquidity Distribution</DistributionTitle>
-                                    <DistributionControls>
-                                        <DistributionControlButton
-                                            type="button"
-                                            onClick={() => distributionChartRef.current?.panLeft()}
-                                        >
-                                            ←
-                                        </DistributionControlButton>
-                                        <DistributionControlButton
-                                            type="button"
-                                            onClick={() => distributionChartRef.current?.panRight()}
-                                        >
-                                            →
-                                        </DistributionControlButton>
-                                        <DistributionControlButton
-                                            type="button"
-                                            onClick={() => distributionChartRef.current?.zoomOut()}
-                                        >
-                                            -
-                                        </DistributionControlButton>
-                                        <DistributionControlButton
-                                            type="button"
-                                            onClick={() => distributionChartRef.current?.zoomIn()}
-                                        >
-                                            +
-                                        </DistributionControlButton>
-                                        <DistributionControlButton
-                                            type="button"
-                                            onClick={() =>
-                                                distributionChartRef.current?.resetView()
-                                            }
-                                        >
-                                            ↺
-                                        </DistributionControlButton>
-                                    </DistributionControls>
-                                </DistributionHeader>
                                 <DistributionCanvas>
-                                    {distributionLoading && !distributionReady ? (
-                                        <DistributionLoader>
-                                            <PageLoader />
-                                        </DistributionLoader>
-                                    ) : (
-                                        <LiquidityDistributionChart
-                                            ref={distributionChartRef}
-                                            items={distributionItems}
-                                            currentTick={distributionCurrentTick}
-                                            decimalsDiff={
-                                                pool.tokens[0].decimal - pool.tokens[1].decimal
-                                            }
-                                            showControls={false}
-                                        />
-                                    )}
+                                    <LiquidityDistributionChart pool={pool} />
                                 </DistributionCanvas>
                             </DistributionCard>
                         )}
@@ -751,11 +520,9 @@ const PoolPage = () => {
                             <SectionRow key={pool.tokens_addresses[index]}>
                                 <SectionLabel>Total {asset.code}:</SectionLabel>
                                 <span>
-                                    {formatBalance(
-                                        +contractValueToAmount(
-                                            pool.reserves[index],
-                                            (pool.tokens[index] as SorobanToken).decimal,
-                                        ),
+                                    {contractValueToFormattedAmount(
+                                        pool.reserves[index],
+                                        (pool.tokens[index] as SorobanToken).decimal,
                                     )}{' '}
                                     <AssetLogo asset={asset} isSmall isCircle />
                                 </span>
@@ -764,13 +531,9 @@ const PoolPage = () => {
                         <SectionRow>
                             <SectionLabel>Total share:</SectionLabel>
                             <span>
-                                {formatBalance(
-                                    Number(
-                                        contractValueToAmount(
-                                            pool.total_share,
-                                            pool.share_token_decimals,
-                                        ),
-                                    ),
+                                {contractValueToFormattedAmount(
+                                    pool.total_share,
+                                    pool.share_token_decimals,
                                     true,
                                 )}
                             </span>
@@ -782,8 +545,9 @@ const PoolPage = () => {
                         <SectionRow>
                             <SectionLabel>Daily reward: </SectionLabel>
                             <span>
-                                {formatBalance(
-                                    Number(contractValueToAmount(pool.reward_tps)) * 60 * 60 * 24,
+                                {contractValueToFormattedAmount(
+                                    Number(pool.reward_tps) * 60 * 60 * 24,
+                                    7,
                                     true,
                                 )}{' '}
                                 AQUA
