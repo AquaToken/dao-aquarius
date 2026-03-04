@@ -42,6 +42,11 @@ export type Pool = {
     incentive_apy_per_token: { [key: string]: string };
     incentive_apy: string;
     total_apy: string;
+    tick_spacing?: number;
+    sqrt_price_x96?: string;
+    current_tick?: number;
+    active_liquidity?: string;
+    tick_map?: Record<string, string>;
 };
 
 export type PoolRewards = {

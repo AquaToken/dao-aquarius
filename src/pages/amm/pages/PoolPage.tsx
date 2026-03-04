@@ -48,7 +48,6 @@ import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 
 import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import LiquidityDistributionChart from 'pages/amm/components/LiquidityDistributionChart/LiquidityDistributionChart';
-import type { LiquidityDistributionChartHandle } from 'pages/amm/components/LiquidityDistributionChart/LiquidityDistributionChart';
 
 import LiquidityChart from '../components/LiquidityChart/LiquidityChart';
 import PoolEvents from '../components/PoolEvents/PoolEvents';
@@ -199,44 +198,8 @@ const DistributionCard = styled.div`
     padding: 2rem;
 `;
 
-const DistributionTitle = styled.h6`
-    margin: 0;
-    font-size: 2.2rem;
-    line-height: 2.8rem;
-    color: ${COLORS.textPrimary};
-`;
-
-const DistributionHeader = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.2rem;
-    margin-bottom: 1.6rem;
-`;
-
-const DistributionControls = styled.div`
-    display: flex;
-    gap: 0.8rem;
-`;
-
-const DistributionControlButton = styled.button`
-    width: 3.2rem;
-    height: 3.2rem;
-    border: none;
-    border-radius: 0.8rem;
-    background: ${COLORS.gray50};
-    color: ${COLORS.textPrimary};
-    font-size: 1.8rem;
-    cursor: pointer;
-`;
-
 const DistributionCanvas = styled.div`
-    position: relative;
-    height: 28rem;
-    border-radius: 1rem;
-    background: ${COLORS.gray50};
-    border: 0.1rem solid ${COLORS.gray100};
-    padding: 1rem 1rem 1rem 1.8rem;
+    width: 100%;
 `;
 
 const SettingsIconPurple = styled(SettingsIcon)`
@@ -273,7 +236,6 @@ const PoolPage = () => {
     const { aquaStellarAsset } = getAquaAssetData();
 
     const chartRef = useRef<HTMLDivElement>(null);
-    const distributionChartRef = useRef<LiquidityDistributionChartHandle>(null);
 
     useEffect(() => {
         if (!pool) {
@@ -534,49 +496,8 @@ const PoolPage = () => {
                         )}
                         {pool.pool_type === 'concentrated' && (
                             <DistributionCard>
-                                <DistributionHeader>
-                                    <DistributionTitle>Liquidity Distribution</DistributionTitle>
-                                    <DistributionControls>
-                                        <DistributionControlButton
-                                            type="button"
-                                            onClick={() => distributionChartRef.current?.panLeft()}
-                                        >
-                                            ←
-                                        </DistributionControlButton>
-                                        <DistributionControlButton
-                                            type="button"
-                                            onClick={() => distributionChartRef.current?.panRight()}
-                                        >
-                                            →
-                                        </DistributionControlButton>
-                                        <DistributionControlButton
-                                            type="button"
-                                            onClick={() => distributionChartRef.current?.zoomOut()}
-                                        >
-                                            -
-                                        </DistributionControlButton>
-                                        <DistributionControlButton
-                                            type="button"
-                                            onClick={() => distributionChartRef.current?.zoomIn()}
-                                        >
-                                            +
-                                        </DistributionControlButton>
-                                        <DistributionControlButton
-                                            type="button"
-                                            onClick={() =>
-                                                distributionChartRef.current?.resetView()
-                                            }
-                                        >
-                                            ↺
-                                        </DistributionControlButton>
-                                    </DistributionControls>
-                                </DistributionHeader>
                                 <DistributionCanvas>
-                                    <LiquidityDistributionChart
-                                        ref={distributionChartRef}
-                                        pool={pool}
-                                        showControls={false}
-                                    />
+                                    <LiquidityDistributionChart pool={pool} />
                                 </DistributionCanvas>
                             </DistributionCard>
                         )}

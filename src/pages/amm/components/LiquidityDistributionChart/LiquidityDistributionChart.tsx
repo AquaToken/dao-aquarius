@@ -33,10 +33,13 @@ import PageLoader from 'basics/loaders/PageLoader';
 import { COLORS, hexWithOpacity } from 'styles/style-constants';
 
 import {
+    ChartBody,
     ChartControlButton,
     ChartControls,
+    ChartHeader,
     ChartLoader,
     ChartSurface,
+    ChartTitle,
     EmptyDistribution,
 } from './LiquidityDistributionChart.styled';
 
@@ -55,6 +58,9 @@ type PositionedDistributionItem = DistributionItem & {
 type Props = {
     pool: PoolExtended;
     showControls?: boolean;
+    dataSource?: 'pool' | 'user';
+    compact?: boolean;
+    title?: string;
 };
 
 export type LiquidityDistributionChartHandle = {
@@ -70,27 +76,140 @@ const HEIGHT = CONCENTRATED_LIQUIDITY_CHART_HEIGHT;
 const MARGIN = CONCENTRATED_LIQUIDITY_CHART_MARGIN;
 const ZOOM_MIN = CONCENTRATED_LIQUIDITY_CHART_ZOOM_MIN;
 const ZOOM_MAX = CONCENTRATED_LIQUIDITY_CHART_ZOOM_MAX;
+const COMPACT_WIDTH = 560;
+const COMPACT_HEIGHT = 220;
+const COMPACT_MARGIN = { ...MARGIN, top: 22, right: 14, bottom: 26, left: 52 };
+
+const buildLiquiditySegmentsFromTickMap = (
+    tickMap: Record<string, string>,
+    currentTick: number,
+    activeLiquidity: string,
+) => {
+    const ticks = Object.entries(tickMap)
+        .map(([tick, liquidityNet]) => ({
+            tick: Number(tick),
+            liquidityNet: new BigNumber(liquidityNet || 0),
+        }))
+        .filter(({ tick, liquidityNet }) => Number.isFinite(tick) && liquidityNet.isFinite())
+        .sort((a, b) => a.tick - b.tick);
+
+    if (ticks.length < 2) {
+        return [];
+    }
+
+    const segments: { tickLower: number; tickUpper: number; liquidity: BigNumber }[] = [];
+    const currentIndexByTick = ticks.findIndex(item => item.tick >= currentTick);
+    const currentIndex =
+        currentIndexByTick === -1 ? Math.max(1, ticks.length - 1) : currentIndexByTick;
+
+    let liquidity = new BigNumber(activeLiquidity || 0);
+
+    for (let i = currentIndex - 1; i >= 0; i--) {
+        const tickLower = ticks[i].tick;
+        const tickUpper = ticks[i + 1]?.tick ?? currentTick;
+        if (tickUpper > tickLower && liquidity.gt(0)) {
+            segments.unshift({
+                tickLower,
+                tickUpper,
+                liquidity,
+            });
+        }
+        liquidity = liquidity.minus(ticks[i].liquidityNet);
+    }
+
+    liquidity = new BigNumber(activeLiquidity || 0);
+    for (let i = currentIndex; i < ticks.length - 1; i++) {
+        liquidity = liquidity.plus(ticks[i].liquidityNet);
+        const tickLower = ticks[i].tick;
+        const tickUpper = ticks[i + 1].tick;
+        if (tickUpper > tickLower && liquidity.gt(0)) {
+            segments.push({
+                tickLower,
+                tickUpper,
+                liquidity,
+            });
+        }
+    }
+
+    return segments;
+};
 
 const LiquidityDistributionChart = forwardRef<LiquidityDistributionChartHandle, Props>(
-    ({ pool, showControls = true }, ref) => {
+    ({ pool, showControls = true, dataSource = 'pool', compact = false, title }, ref) => {
         const { account } = useAuthStore();
         const updateIndex = useUpdateIndex(CONCENTRATED_DISTRIBUTION_REFRESH_MS);
+        const isUserSource = dataSource === 'user';
         const svgRef = useRef<SVGSVGElement>(null);
         const dragAreaRef = useRef<SVGRectElement>(null);
-        const [items, setItems] = useState<DistributionItem[]>([]);
-        const [currentTick, setCurrentTick] = useState<number | null>(null);
+        const [userItems, setUserItems] = useState<DistributionItem[]>([]);
+        const [userCurrentTick, setUserCurrentTick] = useState<number | null>(null);
         const [loading, setLoading] = useState(false);
         const [ready, setReady] = useState(false);
+        const currentTick = isUserSource ? userCurrentTick : Number(pool.current_tick);
         const decimalsDiff = pool.tokens[0].decimal - pool.tokens[1].decimal;
+        const chartWidth = compact ? COMPACT_WIDTH : WIDTH;
+        const chartHeight = compact ? COMPACT_HEIGHT : HEIGHT;
+        const chartMargin = compact ? COMPACT_MARGIN : MARGIN;
+
+        const poolItems = useMemo<DistributionItem[]>(() => {
+            const tickMap = pool.tick_map;
+            const poolCurrentTick = Number(pool.current_tick);
+            if (!tickMap || !Object.keys(tickMap).length || !Number.isFinite(poolCurrentTick)) {
+                return [];
+            }
+
+            const segments = buildLiquiditySegmentsFromTickMap(
+                tickMap,
+                poolCurrentTick,
+                pool.active_liquidity || '0',
+            );
+
+            if (!segments.length) {
+                return [];
+            }
+
+            const totalLiquidityUsd = new BigNumber(pool.liquidity_usd || 0).dividedBy(1e7);
+            const totalShareLiquidity = new BigNumber(
+                pool.total_share || pool.active_liquidity || 0,
+            );
+            const usdPerLiquidity = totalShareLiquidity.gt(0)
+                ? totalLiquidityUsd.dividedBy(totalShareLiquidity)
+                : new BigNumber(0);
+
+            return segments
+                .map(segment => ({
+                    tickLower: segment.tickLower,
+                    tickUpper: segment.tickUpper,
+                    liquidity: segment.liquidity.multipliedBy(usdPerLiquidity).toNumber(),
+                }))
+                .filter(segment => segment.liquidity > 0);
+        }, [
+            pool.tick_map,
+            pool.active_liquidity,
+            pool.liquidity_usd,
+            pool.total_share,
+            pool.current_tick,
+        ]);
 
         useEffect(() => {
+            if (!isUserSource) {
+                setLoading(false);
+                setReady(true);
+                return;
+            }
+
             setReady(false);
-            setItems([]);
-            setCurrentTick(null);
-        }, [pool.address]);
+            setUserItems([]);
+            setUserCurrentTick(null);
+        }, [pool.address, isUserSource]);
 
         useEffect(() => {
+            if (!isUserSource) {
+                return;
+            }
+
             let cancelled = false;
+
             const loadDistribution = async () => {
                 const shouldShowLoader = !ready;
                 if (shouldShowLoader) {
@@ -112,10 +231,10 @@ const LiquidityDistributionChart = forwardRef<LiquidityDistributionChartHandle, 
                         return;
                     }
 
-                    setCurrentTick(Number((slot0 as Record<string, unknown>)?.tick));
+                    setUserCurrentTick(Number((slot0 as Record<string, unknown>)?.tick));
 
                     if (!account || !snapshot) {
-                        setItems([]);
+                        setUserItems([]);
                         return;
                     }
 
@@ -129,21 +248,20 @@ const LiquidityDistributionChart = forwardRef<LiquidityDistributionChartHandle, 
                         );
                         return position?.liquidity;
                     });
-                    const nonEmptyHydrated = hydrated.filter(
-                        item => Number(item.liquidity || 0) > 0,
-                    );
 
                     if (cancelled) {
                         return;
                     }
 
-                    const totalLiquidityUsd = new BigNumber(pool.liquidity_usd || 0).dividedBy(1e7);
-                    const totalPositionsLiquidity = nonEmptyHydrated.reduce(
-                        (acc, position) => acc.plus(position.liquidity || 0),
-                        new BigNumber(0),
+                    const nonEmptyHydrated = hydrated.filter(
+                        item => Number(item.liquidity || 0) > 0,
                     );
-                    const usdPerLiquidity = totalPositionsLiquidity.gt(0)
-                        ? totalLiquidityUsd.dividedBy(totalPositionsLiquidity)
+                    const totalLiquidityUsd = new BigNumber(pool.liquidity_usd || 0).dividedBy(1e7);
+                    const totalShareLiquidity = new BigNumber(
+                        pool.total_share || pool.active_liquidity || 0,
+                    );
+                    const usdPerLiquidity = totalShareLiquidity.gt(0)
+                        ? totalLiquidityUsd.dividedBy(totalShareLiquidity)
                         : new BigNumber(0);
 
                     const unique = new Map(
@@ -159,13 +277,12 @@ const LiquidityDistributionChart = forwardRef<LiquidityDistributionChartHandle, 
                         ]),
                     );
 
-                    setItems([...unique.values()].filter(position => position.liquidity > 0));
+                    setUserItems([...unique.values()].filter(position => position.liquidity > 0));
                 } catch {
-                    if (cancelled) {
-                        return;
+                    if (!cancelled) {
+                        setUserItems([]);
+                        setUserCurrentTick(null);
                     }
-                    setItems([]);
-                    setCurrentTick(null);
                 } finally {
                     if (!cancelled) {
                         setLoading(false);
@@ -179,7 +296,17 @@ const LiquidityDistributionChart = forwardRef<LiquidityDistributionChartHandle, 
             return () => {
                 cancelled = true;
             };
-        }, [pool.address, pool.liquidity_usd, account, updateIndex]);
+        }, [
+            isUserSource,
+            pool.address,
+            pool.liquidity_usd,
+            pool.total_share,
+            pool.active_liquidity,
+            account,
+            updateIndex,
+        ]);
+
+        const items = isUserSource ? userItems : poolItems;
 
         const [zoom, setZoom] = useState(1);
         const [viewCenterTick, setViewCenterTick] = useState<number | null>(null);
@@ -193,7 +320,7 @@ const LiquidityDistributionChart = forwardRef<LiquidityDistributionChartHandle, 
             if (!Number.isFinite(currentTick)) {
                 return 200;
             }
-            const currentPrice = tickToPrice(Number(currentTick), decimalsDiff);
+            const currentPrice = tickToPrice(currentTick, decimalsDiff);
             if (!Number.isFinite(currentPrice) || currentPrice <= 0) {
                 return 200;
             }
@@ -206,17 +333,15 @@ const LiquidityDistributionChart = forwardRef<LiquidityDistributionChartHandle, 
             const dataMin = items.length
                 ? Math.min(...items.map(item => item.tickLower))
                 : Number.isFinite(currentTick)
-                  ? Number(currentTick) - targetSpanTicks
+                  ? currentTick - targetSpanTicks
                   : -100;
             const dataMax = items.length
                 ? Math.max(...items.map(item => item.tickUpper))
                 : Number.isFinite(currentTick)
-                  ? Number(currentTick) + targetSpanTicks
+                  ? currentTick + targetSpanTicks
                   : 100;
 
-            const center = Number.isFinite(currentTick)
-                ? Number(currentTick)
-                : (dataMin + dataMax) / 2;
+            const center = Number.isFinite(currentTick) ? currentTick : (dataMin + dataMax) / 2;
             const min = Math.min(dataMin, center - targetSpanTicks);
             const max = Math.max(dataMax, center + targetSpanTicks);
 
@@ -231,7 +356,7 @@ const LiquidityDistributionChart = forwardRef<LiquidityDistributionChartHandle, 
 
         useEffect(() => {
             setZoom(initialZoom);
-            setViewCenterTick(Number.isFinite(currentTick) ? Number(currentTick) : null);
+            setViewCenterTick(Number.isFinite(currentTick) ? currentTick : null);
         }, [initialZoom, currentTick]);
 
         const viewDomain = useMemo(() => {
@@ -240,7 +365,7 @@ const LiquidityDistributionChart = forwardRef<LiquidityDistributionChartHandle, 
             const halfWindow = windowSpan / 2;
             const nextCenter =
                 viewCenterTick ??
-                (Number.isFinite(currentTick) ? Number(currentTick) : domain.min + span / 2);
+                (Number.isFinite(currentTick) ? currentTick : domain.min + span / 2);
             const minCenter = domain.min + halfWindow;
             const maxCenter = domain.max - halfWindow;
             const clampedCenter =
@@ -252,8 +377,8 @@ const LiquidityDistributionChart = forwardRef<LiquidityDistributionChartHandle, 
 
         const hasData = items.length > 0;
         const viewSpan = Math.max(1, viewDomain[1] - viewDomain[0]);
-        const plotWidth = WIDTH - MARGIN.left - MARGIN.right;
-        const getFallbackCenter = () => (Number.isFinite(currentTick) ? Number(currentTick) : 0);
+        const plotWidth = chartWidth - chartMargin.left - chartMargin.right;
+        const getFallbackCenter = () => (Number.isFinite(currentTick) ? currentTick : 0);
 
         const panLeft = () => {
             if (zoom <= ZOOM_MIN) return;
@@ -275,7 +400,7 @@ const LiquidityDistributionChart = forwardRef<LiquidityDistributionChartHandle, 
 
         const resetView = () => {
             setZoom(initialZoom);
-            setViewCenterTick(Number.isFinite(currentTick) ? Number(currentTick) : null);
+            setViewCenterTick(Number.isFinite(currentTick) ? currentTick : null);
         };
 
         useImperativeHandle(
@@ -335,7 +460,7 @@ const LiquidityDistributionChart = forwardRef<LiquidityDistributionChartHandle, 
                 const ticksPerPixel = viewSpan / plotWidth;
                 setViewCenterTick(
                     value =>
-                        (value ?? (Number.isFinite(currentTick) ? Number(currentTick) : 0)) +
+                        (value ?? (Number.isFinite(currentTick) ? currentTick : 0)) +
                         delta * ticksPerPixel * 0.8,
                 );
             };
@@ -357,11 +482,11 @@ const LiquidityDistributionChart = forwardRef<LiquidityDistributionChartHandle, 
             const x = d3
                 .scaleLinear()
                 .domain(viewDomain)
-                .range([MARGIN.left, WIDTH - MARGIN.right]);
+                .range([chartMargin.left, chartWidth - chartMargin.right]);
             const y = d3
                 .scaleLinear()
                 .domain([0, maxLiquidity])
-                .range([HEIGHT - MARGIN.bottom, MARGIN.top]);
+                .range([chartHeight - chartMargin.bottom, chartMargin.top]);
 
             const bars = items
                 .map(item => ({
@@ -369,17 +494,20 @@ const LiquidityDistributionChart = forwardRef<LiquidityDistributionChartHandle, 
                     x0: x(item.tickLower),
                     x1: x(item.tickUpper),
                 }))
-                .filter(item => item.x1 >= MARGIN.left && item.x0 <= WIDTH - MARGIN.right);
+                .filter(
+                    item =>
+                        item.x1 >= chartMargin.left && item.x0 <= chartWidth - chartMargin.right,
+                );
 
             const svg = d3.select(svgRef.current);
             svg.selectAll('rect.background')
                 .data([null])
                 .join('rect')
                 .attr('class', 'background')
-                .attr('x', MARGIN.left)
-                .attr('y', MARGIN.top)
-                .attr('width', WIDTH - MARGIN.left - MARGIN.right)
-                .attr('height', HEIGHT - MARGIN.top - MARGIN.bottom)
+                .attr('x', chartMargin.left)
+                .attr('y', chartMargin.top)
+                .attr('width', chartWidth - chartMargin.left - chartMargin.right)
+                .attr('height', chartHeight - chartMargin.top - chartMargin.bottom)
                 .attr('fill', COLORS.gray50)
                 .attr('rx', 8)
                 .attr('pointer-events', 'none');
@@ -394,15 +522,16 @@ const LiquidityDistributionChart = forwardRef<LiquidityDistributionChartHandle, 
                 .data(bars, item => `${item.tickLower}-${item.tickUpper}-${item.isPreview ? 1 : 0}`)
                 .join('rect')
                 .attr('class', 'bar')
-                .attr('x', item => Math.max(MARGIN.left, item.x0))
+                .attr('x', item => Math.max(chartMargin.left, item.x0))
                 .attr('y', item => y(item.liquidity))
                 .attr('width', item =>
                     Math.max(
                         2,
-                        Math.min(WIDTH - MARGIN.right, item.x1) - Math.max(MARGIN.left, item.x0),
+                        Math.min(chartWidth - chartMargin.right, item.x1) -
+                            Math.max(chartMargin.left, item.x0),
                     ),
                 )
-                .attr('height', item => HEIGHT - MARGIN.bottom - y(item.liquidity))
+                .attr('height', item => chartHeight - chartMargin.bottom - y(item.liquidity))
                 .attr('fill', item =>
                     item.isPreview
                         ? hexWithOpacity(COLORS.purple500, 75)
@@ -417,8 +546,8 @@ const LiquidityDistributionChart = forwardRef<LiquidityDistributionChartHandle, 
                 .attr('class', 'current-price')
                 .attr('x1', tick => x(tick))
                 .attr('x2', tick => x(tick))
-                .attr('y1', MARGIN.top)
-                .attr('y2', HEIGHT - MARGIN.bottom)
+                .attr('y1', chartMargin.top)
+                .attr('y2', chartHeight - chartMargin.bottom)
                 .attr('stroke', COLORS.purple500)
                 .attr('stroke-width', 2)
                 .attr('stroke-dasharray', '4 4')
@@ -429,7 +558,7 @@ const LiquidityDistributionChart = forwardRef<LiquidityDistributionChartHandle, 
                 .join('text')
                 .attr('class', 'current-price-label')
                 .attr('x', tick => x(tick))
-                .attr('y', MARGIN.top - 6)
+                .attr('y', chartMargin.top - 6)
                 .attr('text-anchor', 'middle')
                 .attr('fill', COLORS.purple500)
                 .attr('font-size', 11)
@@ -451,7 +580,7 @@ const LiquidityDistributionChart = forwardRef<LiquidityDistributionChartHandle, 
                 .data([null])
                 .join('g')
                 .attr('class', 'axis-x')
-                .attr('transform', `translate(0, ${HEIGHT - MARGIN.bottom})`)
+                .attr('transform', `translate(0, ${chartHeight - chartMargin.bottom})`)
                 .call(g => g.call(xAxis))
                 .call(g => g.select('.domain').attr('stroke', COLORS.gray100))
                 .call(g => g.selectAll('line').attr('stroke', COLORS.gray100))
@@ -467,26 +596,57 @@ const LiquidityDistributionChart = forwardRef<LiquidityDistributionChartHandle, 
                 .data([null])
                 .join('g')
                 .attr('class', 'axis-y')
-                .attr('transform', `translate(${MARGIN.left}, 0)`)
+                .attr('transform', `translate(${chartMargin.left}, 0)`)
                 .call(g => g.call(yAxis))
                 .call(g => g.select('.domain').attr('stroke', COLORS.gray100))
                 .call(g => g.selectAll('line').attr('stroke', COLORS.gray100))
                 .call(g => g.selectAll('text').attr('fill', COLORS.textGray).attr('font-size', 12))
                 .attr('pointer-events', 'none');
-        }, [items, currentTick, viewDomain, decimalsDiff]);
+        }, [items, currentTick, viewDomain, decimalsDiff, chartWidth, chartHeight, chartMargin]);
+
+        const emptyMessage =
+            isUserSource && !account
+                ? 'Connect wallet to see your liquidity distribution'
+                : 'No liquidity data yet';
+        const chartTitle =
+            title || (isUserSource ? 'My Liquidity Positions' : 'Liquidity Distribution');
+
+        const controls = showControls ? (
+            <ChartControls>
+                <ChartControlButton type="button" onClick={panLeft}>
+                    ←
+                </ChartControlButton>
+                <ChartControlButton type="button" onClick={panRight}>
+                    →
+                </ChartControlButton>
+                <ChartControlButton type="button" onClick={zoomOut}>
+                    -
+                </ChartControlButton>
+                <ChartControlButton type="button" onClick={zoomIn}>
+                    +
+                </ChartControlButton>
+                <ChartControlButton type="button" onClick={resetView}>
+                    ↺
+                </ChartControlButton>
+            </ChartControls>
+        ) : null;
 
         return (
             <ChartSurface>
-                {loading && !ready ? (
-                    <ChartLoader>
-                        <PageLoader />
-                    </ChartLoader>
-                ) : !hasData ? (
-                    <EmptyDistribution>No liquidity data yet</EmptyDistribution>
-                ) : (
-                    <>
+                <ChartHeader>
+                    <ChartTitle $compact={compact}>{chartTitle}</ChartTitle>
+                    {controls}
+                </ChartHeader>
+                <ChartBody $compact={compact}>
+                    {loading && !ready ? (
+                        <ChartLoader>
+                            <PageLoader />
+                        </ChartLoader>
+                    ) : !hasData ? (
+                        <EmptyDistribution>{emptyMessage}</EmptyDistribution>
+                    ) : (
                         <svg
-                            viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+                            viewBox={`0 0 ${chartWidth} ${chartHeight}`}
                             preserveAspectRatio="none"
                             ref={svgRef}
                             tabIndex={0}
@@ -509,10 +669,10 @@ const LiquidityDistributionChart = forwardRef<LiquidityDistributionChartHandle, 
                         >
                             <rect
                                 ref={dragAreaRef}
-                                x={MARGIN.left}
-                                y={MARGIN.top}
+                                x={chartMargin.left}
+                                y={chartMargin.top}
                                 width={plotWidth}
-                                height={HEIGHT - MARGIN.top - MARGIN.bottom}
+                                height={chartHeight - chartMargin.top - chartMargin.bottom}
                                 fill="transparent"
                                 style={{
                                     cursor:
@@ -531,34 +691,13 @@ const LiquidityDistributionChart = forwardRef<LiquidityDistributionChartHandle, 
                                         startX: event.clientX,
                                         startCenter:
                                             viewCenterTick ??
-                                            (Number.isFinite(currentTick)
-                                                ? Number(currentTick)
-                                                : 0),
+                                            (Number.isFinite(currentTick) ? currentTick : 0),
                                     });
                                 }}
                             />
                         </svg>
-                        {showControls && (
-                            <ChartControls>
-                                <ChartControlButton type="button" onClick={panLeft}>
-                                    ←
-                                </ChartControlButton>
-                                <ChartControlButton type="button" onClick={panRight}>
-                                    →
-                                </ChartControlButton>
-                                <ChartControlButton type="button" onClick={zoomOut}>
-                                    -
-                                </ChartControlButton>
-                                <ChartControlButton type="button" onClick={zoomIn}>
-                                    +
-                                </ChartControlButton>
-                                <ChartControlButton type="button" onClick={resetView}>
-                                    ↺
-                                </ChartControlButton>
-                            </ChartControls>
-                        )}
-                    </>
-                )}
+                    )}
+                </ChartBody>
             </ChartSurface>
         );
     },

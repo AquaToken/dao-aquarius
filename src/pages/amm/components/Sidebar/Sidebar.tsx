@@ -37,6 +37,7 @@ import ConcentratedDepositModal from '../ConcentratedLiquidity/modals/Concentrat
 import ConcentratedFeesModal from '../ConcentratedLiquidity/modals/ConcentratedFeesModal/ConcentratedFeesModal';
 import ConcentratedWithdrawModal from '../ConcentratedLiquidity/modals/ConcentratedWithdrawModal/ConcentratedWithdrawModal';
 import DepositToPool from '../DepositToPool/DepositToPool';
+import LiquidityDistributionChart from '../LiquidityDistributionChart/LiquidityDistributionChart';
 import WithdrawFromPool from '../WithdrawFromPool/WithdrawFromPool';
 
 const Container = styled.aside`
@@ -130,6 +131,10 @@ const ManageFeesRow = styled.div`
     Button {
         padding: unset;
     }
+`;
+
+const DistributionCanvas = styled.div`
+    width: 100%;
 `;
 
 const Sidebar = ({ pool }: { pool: PoolExtended }) => {
@@ -326,6 +331,13 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
                     </ManageFeesRow>
                 )}
             </Card>
+            {isConcentrated && (
+                <Card>
+                    <DistributionCanvas>
+                        <LiquidityDistributionChart pool={pool} dataSource="user" compact />
+                    </DistributionCanvas>
+                </Card>
+            )}
             <Card>
                 <SwapForm
                     base={source}
