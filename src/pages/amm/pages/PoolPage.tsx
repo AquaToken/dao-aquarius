@@ -1,5 +1,4 @@
 import { xdr } from '@stellar/stellar-sdk';
-import BigNumber from 'bignumber.js';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import * as React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -11,7 +10,6 @@ import { ChartPeriods } from 'constants/charts';
 import { DAY } from 'constants/intervals';
 import { AppRoutes } from 'constants/routes';
 
-import { keyOfPosition, normalizePositions } from 'helpers/amm-concentrated-positions';
 import { contractValueToAmount } from 'helpers/amount';
 import { getAquaAssetData, getAssetString } from 'helpers/assets';
 import getExplorerLink, { ExplorerSection } from 'helpers/explorer-links';
@@ -27,7 +25,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 import { ModalService, SorobanService, ToastService } from 'services/globalServices';
 
-import { ConcentratedPosition, PoolExtended, PoolIncentives } from 'types/amm';
+import { PoolExtended, PoolIncentives } from 'types/amm';
 import { ClassicToken, SorobanToken, TokenType } from 'types/token';
 
 import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
@@ -241,12 +239,6 @@ const DistributionCanvas = styled.div`
     padding: 1rem 1rem 1rem 1.8rem;
 `;
 
-const DistributionLoader = styled.div`
-    ${flexAllCenter};
-    width: 100%;
-    height: 100%;
-`;
-
 const SettingsIconPurple = styled(SettingsIcon)`
     path {
         stroke: ${COLORS.purple500};
@@ -271,12 +263,6 @@ const PoolPage = () => {
     const [claimPending, setClaimPending] = useState(false);
     const [claimIncentivePending, setClaimIncentivePending] = useState(false);
     const [chartWidth, setChartWidth] = useState(0);
-    const [distributionItems, setDistributionItems] = useState<
-        { tickLower: number; tickUpper: number; liquidity: number }[]
-    >([]);
-    const [distributionCurrentTick, setDistributionCurrentTick] = useState<number | null>(null);
-    const [distributionLoading, setDistributionLoading] = useState(false);
-    const [distributionReady, setDistributionReady] = useState(false);
 
     const { account, isLogged } = useAuthStore();
 
@@ -329,134 +315,6 @@ const PoolPage = () => {
             window.removeEventListener('resize', handleResize);
         };
     }, [pool]);
-
-    useEffect(() => {
-        if (!pool || pool.pool_type !== 'concentrated') {
-            return;
-        }
-        setDistributionReady(false);
-        setDistributionItems([]);
-        setDistributionCurrentTick(null);
-    }, [pool?.address]);
-
-    useEffect(() => {
-        if (!pool || pool.pool_type !== 'concentrated') {
-            setDistributionItems([]);
-            setDistributionCurrentTick(null);
-            setDistributionLoading(false);
-            setDistributionReady(false);
-            return;
-        }
-
-        let cancelled = false;
-
-        const hydratePositionsLiquidity = async (ranges: ConcentratedPosition[]) => {
-            if (!account || !ranges.length) {
-                return ranges;
-            }
-
-            const resolved = await Promise.all(
-                ranges.map(async range => {
-                    try {
-                        const position = await SorobanService.amm.getPosition(
-                            pool.address,
-                            account.accountId(),
-                            range.tickLower,
-                            range.tickUpper,
-                        );
-                        return {
-                            ...range,
-                            liquidity: position?.liquidity ?? range.liquidity ?? '0',
-                        };
-                    } catch {
-                        return range;
-                    }
-                }),
-            );
-
-            return resolved.filter(item => Number(item.liquidity || 0) > 0);
-        };
-
-        const loadDistribution = async () => {
-            const shouldShowLoader = !distributionReady;
-            if (shouldShowLoader) {
-                setDistributionLoading(true);
-            }
-
-            try {
-                const [slot0, snapshot] = await Promise.all([
-                    SorobanService.amm.getConcentratedSlot0(pool.address),
-                    account
-                        ? SorobanService.amm.getUserPositionSnapshot(
-                              pool.address,
-                              account.accountId(),
-                          )
-                        : Promise.resolve(null),
-                ]);
-
-                if (cancelled) {
-                    return;
-                }
-
-                setDistributionCurrentTick(Number((slot0 as Record<string, unknown>)?.tick));
-
-                if (!account || !snapshot) {
-                    setDistributionItems([]);
-                    return;
-                }
-
-                const ranges = normalizePositions(snapshot);
-                const hydrated = await hydratePositionsLiquidity(ranges);
-
-                if (cancelled) {
-                    return;
-                }
-
-                const totalLiquidityUsd = new BigNumber(pool.liquidity_usd || 0).dividedBy(1e7);
-                const totalPositionsLiquidity = hydrated.reduce(
-                    (acc, position) => acc.plus(position.liquidity || 0),
-                    new BigNumber(0),
-                );
-                const usdPerLiquidity = totalPositionsLiquidity.gt(0)
-                    ? totalLiquidityUsd.dividedBy(totalPositionsLiquidity)
-                    : new BigNumber(0);
-
-                const unique = new Map(
-                    hydrated.map(position => [
-                        keyOfPosition(position),
-                        {
-                            tickLower: position.tickLower,
-                            tickUpper: position.tickUpper,
-                            liquidity: new BigNumber(position.liquidity || 0)
-                                .multipliedBy(usdPerLiquidity)
-                                .toNumber(),
-                        },
-                    ]),
-                );
-
-                setDistributionItems(
-                    [...unique.values()].filter(position => position.liquidity > 0),
-                );
-            } catch {
-                if (cancelled) {
-                    return;
-                }
-                setDistributionItems([]);
-                setDistributionCurrentTick(null);
-            } finally {
-                if (!cancelled) {
-                    setDistributionLoading(false);
-                    setDistributionReady(true);
-                }
-            }
-        };
-
-        loadDistribution();
-
-        return () => {
-            cancelled = true;
-        };
-    }, [pool, account, updateIndex]);
 
     const claim = () => {
         if (account.authType === LoginTypes.walletConnect) {
@@ -714,21 +572,11 @@ const PoolPage = () => {
                                     </DistributionControls>
                                 </DistributionHeader>
                                 <DistributionCanvas>
-                                    {distributionLoading && !distributionReady ? (
-                                        <DistributionLoader>
-                                            <PageLoader />
-                                        </DistributionLoader>
-                                    ) : (
-                                        <LiquidityDistributionChart
-                                            ref={distributionChartRef}
-                                            items={distributionItems}
-                                            currentTick={distributionCurrentTick}
-                                            decimalsDiff={
-                                                pool.tokens[0].decimal - pool.tokens[1].decimal
-                                            }
-                                            showControls={false}
-                                        />
-                                    )}
+                                    <LiquidityDistributionChart
+                                        ref={distributionChartRef}
+                                        pool={pool}
+                                        showControls={false}
+                                    />
                                 </DistributionCanvas>
                             </DistributionCard>
                         )}

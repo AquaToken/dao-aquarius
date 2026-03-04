@@ -1,8 +1,10 @@
+import BigNumber from 'bignumber.js';
 import * as d3 from 'd3';
 import * as React from 'react';
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 
 import {
+    CONCENTRATED_DISTRIBUTION_REFRESH_MS,
     CONCENTRATED_LIQUIDITY_CHART_HEIGHT,
     CONCENTRATED_LIQUIDITY_CHART_MARGIN,
     CONCENTRATED_LIQUIDITY_CHART_WIDTH,
@@ -16,11 +18,32 @@ import {
     priceToTick,
     tickToPrice,
 } from 'helpers/amm-concentrated';
+import {
+    hydratePositionsLiquidity,
+    keyOfPosition,
+    normalizePositions,
+} from 'helpers/amm-concentrated-positions';
 import { formatBalance } from 'helpers/format-number';
+
+import { useUpdateIndex } from 'hooks/useUpdateIndex';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { SorobanService } from 'services/globalServices';
+
+import { PoolExtended } from 'types/amm';
+
+import PageLoader from 'basics/loaders/PageLoader';
 
 import { COLORS, hexWithOpacity } from 'styles/style-constants';
 
-import { EmptyDistribution, ZoomButton, ZoomControls } from './LiquidityDistributionChart.styled';
+import {
+    ChartControlButton,
+    ChartControls,
+    ChartLoader,
+    ChartSurface,
+    EmptyDistribution,
+} from './LiquidityDistributionChart.styled';
 
 type DistributionItem = {
     tickLower: number;
@@ -35,9 +58,7 @@ type PositionedDistributionItem = DistributionItem & {
 };
 
 type Props = {
-    items: DistributionItem[];
-    currentTick: number | null;
-    decimalsDiff?: number;
+    pool: PoolExtended;
     showControls?: boolean;
 };
 
@@ -56,9 +77,115 @@ const ZOOM_MIN = CONCENTRATED_LIQUIDITY_CHART_ZOOM_MIN;
 const ZOOM_MAX = CONCENTRATED_LIQUIDITY_CHART_ZOOM_MAX;
 
 const LiquidityDistributionChart = forwardRef<LiquidityDistributionChartHandle, Props>(
-    ({ items, currentTick, decimalsDiff = 0, showControls = true }, ref) => {
+    ({ pool, showControls = true }, ref) => {
+        const { account } = useAuthStore();
+        const updateIndex = useUpdateIndex(CONCENTRATED_DISTRIBUTION_REFRESH_MS);
         const svgRef = useRef<SVGSVGElement>(null);
         const dragAreaRef = useRef<SVGRectElement>(null);
+        const [items, setItems] = useState<DistributionItem[]>([]);
+        const [currentTick, setCurrentTick] = useState<number | null>(null);
+        const [loading, setLoading] = useState(false);
+        const [ready, setReady] = useState(false);
+        const decimalsDiff = pool.tokens[0].decimal - pool.tokens[1].decimal;
+
+        useEffect(() => {
+            setReady(false);
+            setItems([]);
+            setCurrentTick(null);
+        }, [pool.address]);
+
+        useEffect(() => {
+            let cancelled = false;
+            const loadDistribution = async () => {
+                const shouldShowLoader = !ready;
+                if (shouldShowLoader) {
+                    setLoading(true);
+                }
+
+                try {
+                    const [slot0, snapshot] = await Promise.all([
+                        SorobanService.amm.getConcentratedSlot0(pool.address),
+                        account
+                            ? SorobanService.amm.getUserPositionSnapshot(
+                                  pool.address,
+                                  account.accountId(),
+                              )
+                            : Promise.resolve(null),
+                    ]);
+
+                    if (cancelled) {
+                        return;
+                    }
+
+                    setCurrentTick(Number((slot0 as Record<string, unknown>)?.tick));
+
+                    if (!account || !snapshot) {
+                        setItems([]);
+                        return;
+                    }
+
+                    const ranges = normalizePositions(snapshot);
+                    const hydrated = await hydratePositionsLiquidity(ranges, async range => {
+                        const position = await SorobanService.amm.getPosition(
+                            pool.address,
+                            account.accountId(),
+                            range.tickLower,
+                            range.tickUpper,
+                        );
+                        return position?.liquidity;
+                    });
+                    const nonEmptyHydrated = hydrated.filter(
+                        item => Number(item.liquidity || 0) > 0,
+                    );
+
+                    if (cancelled) {
+                        return;
+                    }
+
+                    const totalLiquidityUsd = new BigNumber(pool.liquidity_usd || 0).dividedBy(1e7);
+                    const totalPositionsLiquidity = nonEmptyHydrated.reduce(
+                        (acc, position) => acc.plus(position.liquidity || 0),
+                        new BigNumber(0),
+                    );
+                    const usdPerLiquidity = totalPositionsLiquidity.gt(0)
+                        ? totalLiquidityUsd.dividedBy(totalPositionsLiquidity)
+                        : new BigNumber(0);
+
+                    const unique = new Map(
+                        nonEmptyHydrated.map(position => [
+                            keyOfPosition(position),
+                            {
+                                tickLower: position.tickLower,
+                                tickUpper: position.tickUpper,
+                                liquidity: new BigNumber(position.liquidity || 0)
+                                    .multipliedBy(usdPerLiquidity)
+                                    .toNumber(),
+                            },
+                        ]),
+                    );
+
+                    setItems([...unique.values()].filter(position => position.liquidity > 0));
+                } catch {
+                    if (cancelled) {
+                        return;
+                    }
+                    setItems([]);
+                    setCurrentTick(null);
+                } finally {
+                    if (!cancelled) {
+                        setLoading(false);
+                        setReady(true);
+                    }
+                }
+            };
+
+            loadDistribution();
+
+            return () => {
+                cancelled = true;
+            };
+        }, [pool.address, pool.liquidity_usd, account, updateIndex]);
+
         const [zoom, setZoom] = useState(1);
         const [viewCenterTick, setViewCenterTick] = useState<number | null>(null);
         const [drag, setDrag] = useState<{
@@ -353,75 +480,90 @@ const LiquidityDistributionChart = forwardRef<LiquidityDistributionChartHandle, 
         }, [items, currentTick, viewDomain, decimalsDiff]);
 
         return (
-            <>
-                <svg
-                    viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
-                    preserveAspectRatio="none"
-                    ref={svgRef}
-                    tabIndex={0}
-                    style={{ width: '100%', height: '100%', display: 'block' }}
-                    onKeyDown={event => {
-                        if (zoom <= ZOOM_MIN) {
-                            return;
-                        }
-                        if (event.key === 'ArrowLeft') {
-                            event.preventDefault();
-                            panLeft();
-                        }
-                        if (event.key === 'ArrowRight') {
-                            event.preventDefault();
-                            panRight();
-                        }
-                    }}
-                    onMouseUp={() => setDrag(prev => ({ ...prev, active: false }))}
-                    onMouseLeave={() => setDrag(prev => ({ ...prev, active: false }))}
-                >
-                    <rect
-                        ref={dragAreaRef}
-                        x={MARGIN.left}
-                        y={MARGIN.top}
-                        width={plotWidth}
-                        height={HEIGHT - MARGIN.top - MARGIN.bottom}
-                        fill="transparent"
-                        style={{
-                            cursor:
-                                zoom <= ZOOM_MIN ? 'default' : drag.active ? 'grabbing' : 'grab',
-                        }}
-                        onMouseDown={event => {
-                            if (zoom <= ZOOM_MIN) {
-                                return;
-                            }
-                            setDrag({
-                                active: true,
-                                startX: event.clientX,
-                                startCenter:
-                                    viewCenterTick ??
-                                    (Number.isFinite(currentTick) ? Number(currentTick) : 0),
-                            });
-                        }}
-                    />
-                </svg>
-                {!hasData && <EmptyDistribution>No liquidity data yet</EmptyDistribution>}
-                {showControls && (
-                    <ZoomControls>
-                        <ZoomButton type="button" onClick={panLeft}>
-                            ←
-                        </ZoomButton>
-                        <ZoomButton type="button" onClick={panRight}>
-                            →
-                        </ZoomButton>
-                        <ZoomButton type="button" onClick={zoomOut}>
-                            -
-                        </ZoomButton>
-                        <ZoomButton type="button" onClick={zoomIn}>
-                            +
-                        </ZoomButton>
-                        <ZoomButton type="button" onClick={resetView}>
-                            ↺
-                        </ZoomButton>
-                    </ZoomControls>
+            <ChartSurface>
+                {loading && !ready ? (
+                    <ChartLoader>
+                        <PageLoader />
+                    </ChartLoader>
+                ) : !hasData ? (
+                    <EmptyDistribution>No liquidity data yet</EmptyDistribution>
+                ) : (
+                    <>
+                        <svg
+                            viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+                            preserveAspectRatio="none"
+                            ref={svgRef}
+                            tabIndex={0}
+                            style={{ width: '100%', height: '100%', display: 'block' }}
+                            onKeyDown={event => {
+                                if (zoom <= ZOOM_MIN) {
+                                    return;
+                                }
+                                if (event.key === 'ArrowLeft') {
+                                    event.preventDefault();
+                                    panLeft();
+                                }
+                                if (event.key === 'ArrowRight') {
+                                    event.preventDefault();
+                                    panRight();
+                                }
+                            }}
+                            onMouseUp={() => setDrag(prev => ({ ...prev, active: false }))}
+                            onMouseLeave={() => setDrag(prev => ({ ...prev, active: false }))}
+                        >
+                            <rect
+                                ref={dragAreaRef}
+                                x={MARGIN.left}
+                                y={MARGIN.top}
+                                width={plotWidth}
+                                height={HEIGHT - MARGIN.top - MARGIN.bottom}
+                                fill="transparent"
+                                style={{
+                                    cursor:
+                                        zoom <= ZOOM_MIN
+                                            ? 'default'
+                                            : drag.active
+                                              ? 'grabbing'
+                                              : 'grab',
+                                }}
+                                onMouseDown={event => {
+                                    if (zoom <= ZOOM_MIN) {
+                                        return;
+                                    }
+                                    setDrag({
+                                        active: true,
+                                        startX: event.clientX,
+                                        startCenter:
+                                            viewCenterTick ??
+                                            (Number.isFinite(currentTick)
+                                                ? Number(currentTick)
+                                                : 0),
+                                    });
+                                }}
+                            />
+                        </svg>
+                        {showControls && (
+                            <ChartControls>
+                                <ChartControlButton type="button" onClick={panLeft}>
+                                    ←
+                                </ChartControlButton>
+                                <ChartControlButton type="button" onClick={panRight}>
+                                    →
+                                </ChartControlButton>
+                                <ChartControlButton type="button" onClick={zoomOut}>
+                                    -
+                                </ChartControlButton>
+                                <ChartControlButton type="button" onClick={zoomIn}>
+                                    +
+                                </ChartControlButton>
+                                <ChartControlButton type="button" onClick={resetView}>
+                                    ↺
+                                </ChartControlButton>
+                            </ChartControls>
+                        )}
+                    </>
                 )}
-            </>
+            </ChartSurface>
         );
     },
 );

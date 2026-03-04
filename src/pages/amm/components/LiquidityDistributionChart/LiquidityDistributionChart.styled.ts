@@ -2,16 +2,32 @@ import styled from 'styled-components';
 
 import { COLORS } from 'styles/style-constants';
 
-export const EmptyDistribution = styled.div`
+export const ChartSurface = styled.div`
+    position: relative;
+    width: 100%;
+    height: 100%;
+`;
+
+export const ChartLoader = styled.div`
+    position: absolute;
+    inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100%;
-    color: ${COLORS.textGray};
-    font-size: 1.6rem;
 `;
 
-export const ZoomControls = styled.div`
+export const EmptyDistribution = styled.div`
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: ${COLORS.textGray};
+    font-size: 1.6rem;
+    pointer-events: none;
+`;
+
+export const ChartControls = styled.div`
     position: absolute;
     top: 1rem;
     right: 1rem;
@@ -19,7 +35,7 @@ export const ZoomControls = styled.div`
     gap: 0.8rem;
 `;
 
-export const ZoomButton = styled.button`
+export const ChartControlButton = styled.button`
     width: 3.2rem;
     height: 3.2rem;
     border: none;
