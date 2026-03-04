@@ -194,6 +194,24 @@ export type ConcentratedPosition = {
     liquidity: string;
 };
 
+export type ConcentratedSnapshotRange = {
+    tick_lower: number;
+    tick_upper: number;
+    liquidity?: string | number | bigint | null;
+};
+
+export type ConcentratedUserPositionSnapshot = {
+    ranges: ConcentratedSnapshotRange[];
+    raw_liquidity?: string | number | bigint;
+    weighted_liquidity?: string | number | bigint;
+};
+
+export type DepositEstimate = {
+    amounts: string[];
+    liquidityDisplay: string;
+    liquidityLoading: boolean;
+};
+
 export enum RewardType {
     aquaReward = 'aqua_reward',
     incentive = 'incentive',
