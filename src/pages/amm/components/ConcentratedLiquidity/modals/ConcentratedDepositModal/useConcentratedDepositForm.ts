@@ -217,12 +217,53 @@ export const useConcentratedDepositForm = ({ pool, close }: Params) => {
             decimalsDiff,
         });
 
+    const isInvalidAmountInput = (value: string) =>
+        value !== '' && !isValidNonNegativeConcentratedAmount(value);
+
     const updateLocalDepositPreview = (
         nextAmount0: string,
         nextAmount1: string,
         nextTickLower: number | null,
         nextTickUpper: number | null,
     ) => {
+        const setEstimateIfChanged = (nextValue: DepositEstimate | null) => {
+            setDepositEstimate(prev => {
+                if (prev === nextValue) {
+                    return prev;
+                }
+                if (!prev || !nextValue) {
+                    return nextValue;
+                }
+
+                const isSame =
+                    prev.liquidityDisplay === nextValue.liquidityDisplay &&
+                    prev.liquidityLoading === nextValue.liquidityLoading &&
+                    prev.amounts[0] === nextValue.amounts[0] &&
+                    prev.amounts[1] === nextValue.amounts[1];
+
+                return isSame ? prev : nextValue;
+            });
+        };
+
+        const setEstimateRequestIfChanged = (nextValue: typeof estimateRequest) => {
+            setEstimateRequest(prev => {
+                if (prev === nextValue) {
+                    return prev;
+                }
+                if (!prev || !nextValue) {
+                    return nextValue;
+                }
+
+                const isSame =
+                    prev.tickLower === nextValue.tickLower &&
+                    prev.tickUpper === nextValue.tickUpper &&
+                    prev.amounts[0] === nextValue.amounts[0] &&
+                    prev.amounts[1] === nextValue.amounts[1];
+
+                return isSame ? prev : nextValue;
+            });
+        };
+
         const nextAmount0Value = parseConcentratedAmount(nextAmount0);
         const nextAmount1Value = parseConcentratedAmount(nextAmount1);
 
@@ -232,30 +273,45 @@ export const useConcentratedDepositForm = ({ pool, close }: Params) => {
             nextTickLower >= nextTickUpper ||
             (nextAmount0Value === null && nextAmount1Value === null)
         ) {
-            setDepositEstimate(null);
-            setEstimateRequest(null);
+            setEstimateIfChanged(null);
+            setEstimateRequestIfChanged(null);
             return;
         }
 
         const hasAnyAmount =
             (nextAmount0Value?.gt(0) ?? false) || (nextAmount1Value?.gt(0) ?? false);
         if (!hasAnyAmount) {
-            setDepositEstimate(null);
-            setEstimateRequest(null);
+            setEstimateIfChanged(null);
+            setEstimateRequestIfChanged(null);
             return;
         }
 
         const amounts = [nextAmount0 || '0', nextAmount1 || '0'] as [string, string];
-        setDepositEstimate({
+        setEstimateIfChanged({
             amounts,
             liquidityDisplay: '0',
             liquidityLoading: true,
         });
-        setEstimateRequest({
+        setEstimateRequestIfChanged({
             amounts,
             tickLower: nextTickLower,
             tickUpper: nextTickUpper,
         });
+    };
+
+    const applyAmountsAndPreview = (
+        nextAmount0: string,
+        nextAmount1: string,
+        nextTickLower: number | null = tickLower,
+        nextTickUpper: number | null = tickUpper,
+    ) => {
+        if (nextAmount0 !== amount0) {
+            setAmount0(nextAmount0);
+        }
+        if (nextAmount1 !== amount1) {
+            setAmount1(nextAmount1);
+        }
+        updateLocalDepositPreview(nextAmount0, nextAmount1, nextTickLower, nextTickUpper);
     };
 
     const applyTickRangeAndRecalculate = (nextLower: number, nextUpper: number) => {
@@ -348,125 +404,81 @@ export const useConcentratedDepositForm = ({ pool, close }: Params) => {
         tickUpper,
     ]);
 
-    const handleAmount0Change = (value: string) => {
-        lastUserEditedAmountRef.current = 'token0';
+    const handleAmountChange = (editedToken: 'token0' | 'token1', value: string) => {
+        lastUserEditedAmountRef.current = editedToken;
         const normalized = value.replaceAll(',', '').trim();
 
         if (isEmptyPool) {
-            if (normalized !== '' && !isValidNonNegativeConcentratedAmount(normalized)) {
+            if (isInvalidAmountInput(normalized)) {
                 return;
             }
-            if (normalized !== amount0) {
-                setAmount0(normalized);
+            if (editedToken === 'token0') {
+                applyAmountsAndPreview(normalized, amount1);
+            } else {
+                applyAmountsAndPreview(amount0, normalized);
             }
-            updateLocalDepositPreview(normalized, amount1, tickLower, tickUpper);
             return;
         }
 
-        if (isRangeBelowCurrent) {
+        if (editedToken === 'token0' && isRangeBelowCurrent) {
             if (amount0 !== '0') {
                 setAmount0('0');
             }
             return;
         }
 
-        if (isRangeAboveCurrent) {
-            if (normalized !== '' && !isValidNonNegativeConcentratedAmount(normalized)) {
-                return;
-            }
-            const nextAmount0 = normalized;
-            const nextAmount1 = '0';
-            if (nextAmount0 !== amount0) {
-                setAmount0(nextAmount0);
-            }
-            if (nextAmount1 !== amount1) {
-                setAmount1(nextAmount1);
-            }
-            updateLocalDepositPreview(nextAmount0, nextAmount1, tickLower, tickUpper);
-            return;
-        }
-
-        if (normalized !== '' && !isValidNonNegativeConcentratedAmount(normalized)) {
-            return;
-        }
-        const nextAmount0 = normalized;
-        const inRangeRatio = getRatio(tickLower, tickUpper);
-        const nextAmount0Parsed = parseConcentratedAmount(normalized);
-        const nextAmount1 =
-            normalized === '' || inRangeRatio === null || !nextAmount0Parsed
-                ? ''
-                : formatConcentratedDerivedAmount(
-                      nextAmount0Parsed.multipliedBy(inRangeRatio),
-                      pool.tokens[1].decimal,
-                  );
-        if (nextAmount0 !== amount0) {
-            setAmount0(nextAmount0);
-        }
-        if (nextAmount1 !== amount1) {
-            setAmount1(nextAmount1);
-        }
-        updateLocalDepositPreview(nextAmount0, nextAmount1, tickLower, tickUpper);
-    };
-
-    const handleAmount1Change = (value: string) => {
-        lastUserEditedAmountRef.current = 'token1';
-        const normalized = value.replaceAll(',', '').trim();
-
-        if (isEmptyPool) {
-            if (normalized !== '' && !isValidNonNegativeConcentratedAmount(normalized)) {
-                return;
-            }
-            if (normalized !== amount1) {
-                setAmount1(normalized);
-            }
-            updateLocalDepositPreview(amount0, normalized, tickLower, tickUpper);
-            return;
-        }
-
-        if (isRangeAboveCurrent) {
+        if (editedToken === 'token1' && isRangeAboveCurrent) {
             if (amount1 !== '0') {
                 setAmount1('0');
             }
             return;
         }
 
-        if (isRangeBelowCurrent) {
-            if (normalized !== '' && !isValidNonNegativeConcentratedAmount(normalized)) {
+        if (editedToken === 'token0' && isRangeAboveCurrent) {
+            if (isInvalidAmountInput(normalized)) {
                 return;
             }
-            const nextAmount1 = normalized;
-            const nextAmount0 = '0';
-            if (nextAmount1 !== amount1) {
-                setAmount1(nextAmount1);
-            }
-            if (nextAmount0 !== amount0) {
-                setAmount0(nextAmount0);
-            }
-            updateLocalDepositPreview(nextAmount0, nextAmount1, tickLower, tickUpper);
+            applyAmountsAndPreview(normalized, '0');
             return;
         }
 
-        if (normalized !== '' && !isValidNonNegativeConcentratedAmount(normalized)) {
+        if (editedToken === 'token1' && isRangeBelowCurrent) {
+            if (isInvalidAmountInput(normalized)) {
+                return;
+            }
+            applyAmountsAndPreview('0', normalized);
             return;
         }
-        const nextAmount1 = normalized;
+
+        if (isInvalidAmountInput(normalized)) {
+            return;
+        }
+
         const inRangeRatio = getRatio(tickLower, tickUpper);
-        const nextAmount1Parsed = parseConcentratedAmount(normalized);
-        const nextAmount0 =
-            normalized === '' || inRangeRatio === null || !nextAmount1Parsed
+        const parsedEditedAmount = parseConcentratedAmount(normalized);
+        const derivedAmount =
+            normalized === '' || inRangeRatio === null || !parsedEditedAmount
                 ? ''
-                : formatConcentratedDerivedAmount(
-                      nextAmount1Parsed.dividedBy(inRangeRatio),
-                      pool.tokens[0].decimal,
-                  );
-        if (nextAmount1 !== amount1) {
-            setAmount1(nextAmount1);
+                : editedToken === 'token0'
+                  ? formatConcentratedDerivedAmount(
+                        parsedEditedAmount.multipliedBy(inRangeRatio),
+                        pool.tokens[1].decimal,
+                    )
+                  : formatConcentratedDerivedAmount(
+                        parsedEditedAmount.dividedBy(inRangeRatio),
+                        pool.tokens[0].decimal,
+                    );
+
+        if (editedToken === 'token0') {
+            applyAmountsAndPreview(normalized, derivedAmount);
+            return;
         }
-        if (nextAmount0 !== amount0) {
-            setAmount0(nextAmount0);
-        }
-        updateLocalDepositPreview(nextAmount0, nextAmount1, tickLower, tickUpper);
+
+        applyAmountsAndPreview(derivedAmount, normalized);
     };
+
+    const handleAmount0Change = (value: string) => handleAmountChange('token0', value);
+    const handleAmount1Change = (value: string) => handleAmountChange('token1', value);
 
     const handleMinPriceChange = (value: string) => {
         setMinPriceInput(value);
@@ -677,7 +689,6 @@ export const useConcentratedDepositForm = ({ pool, close }: Params) => {
         tickSpacing !== null &&
         (tickUpper as number) - tickSpacing < referenceTick;
 
-    const isModalLoading = loading;
     const isMinScientific = /e/i.test(minPriceInput);
     const isMaxScientific = /e/i.test(maxPriceInput);
     const isDepositDisabled =
@@ -939,7 +950,7 @@ export const useConcentratedDepositForm = ({ pool, close }: Params) => {
 
     return {
         account,
-        isModalLoading,
+        isModalLoading: loading,
         showRangeUnavailable,
         tokenBalances,
         amount0,
