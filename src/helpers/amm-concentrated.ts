@@ -86,6 +86,19 @@ export const isValidNonNegativeConcentratedAmount = (value: string) => {
     return parsed !== null && parsed.gte(0);
 };
 
+export const formatConcentratedDerivedAmount = (value: BigNumber.Value, decimals: number) => {
+    const bnValue = new BigNumber(value);
+    if (!bnValue.isFinite() || bnValue.lt(0)) {
+        return '';
+    }
+    if (bnValue.isZero()) {
+        return '0';
+    }
+    const fixed = bnValue.toFixed(Math.min(10, decimals));
+    const normalized = fixed.replace(/\.?0+$/, '');
+    return normalized === '' ? '0' : normalized;
+};
+
 export const formatConcentratedLiquidityValue = (value: string | number, decimals: number) =>
     formatBalance(Number(contractValueToAmount(String(value || 0), decimals)), true);
 
