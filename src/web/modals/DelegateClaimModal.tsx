@@ -182,14 +182,14 @@ const DelegateClaimModal = ({ params }: ModalProps<Params>) => {
 
             const tx = await StellarService.tx.buildTx(account, ops);
 
-            let processedTx;
+            let processedTx = tx;
 
             if (hasUpIce) {
                 processedTx = await processIceTx(tx, UP_ICE);
             }
 
             if (hasGovIce) {
-                processedTx = await processIceTx(tx, GOV_ICE);
+                processedTx = await processIceTx(processedTx, GOV_ICE);
             }
 
             const result = await account.signAndSubmitTx(processedTx);

@@ -127,39 +127,40 @@ export default class Transaction {
 
     createDelegateTx(
         account: AccountService,
-        token: ClassicToken,
         delegateDestination: string,
-        amount: string,
+        delegations: Array<{ token: ClassicToken; amount: string }>,
     ) {
         return this.buildTx(
             account,
-            StellarSdk.Operation.createClaimableBalance({
-                source: account.accountId(),
-                amount: amount.toString(),
-                asset: token,
-                claimants: [
-                    new StellarSdk.Claimant(
-                        account.accountId(),
-                        StellarSdk.Claimant.predicateNot(
-                            StellarSdk.Claimant.predicateBeforeAbsoluteTime(
-                                ((Date.now() + 25 * 60 * 60 * 1000) / 1000).toFixed(), // 25 hours
+            delegations.map(({ token, amount }) =>
+                StellarSdk.Operation.createClaimableBalance({
+                    source: account.accountId(),
+                    amount: amount.toString(),
+                    asset: token,
+                    claimants: [
+                        new StellarSdk.Claimant(
+                            account.accountId(),
+                            StellarSdk.Claimant.predicateNot(
+                                StellarSdk.Claimant.predicateBeforeAbsoluteTime(
+                                    ((Date.now() + 25 * 60 * 60 * 1000) / 1000).toFixed(), // 25 hours
+                                ),
                             ),
                         ),
-                    ),
-                    new StellarSdk.Claimant(
-                        delegateDestination,
-                        StellarSdk.Claimant.predicateNot(
-                            StellarSdk.Claimant.predicateUnconditional(),
+                        new StellarSdk.Claimant(
+                            delegateDestination,
+                            StellarSdk.Claimant.predicateNot(
+                                StellarSdk.Claimant.predicateUnconditional(),
+                            ),
                         ),
-                    ),
-                    new StellarSdk.Claimant(
-                        DELEGATE_MARKER_KEY,
-                        StellarSdk.Claimant.predicateNot(
-                            StellarSdk.Claimant.predicateUnconditional(),
+                        new StellarSdk.Claimant(
+                            DELEGATE_MARKER_KEY,
+                            StellarSdk.Claimant.predicateNot(
+                                StellarSdk.Claimant.predicateUnconditional(),
+                            ),
                         ),
-                    ),
-                ],
-            }),
+                    ],
+                }),
+            ),
         );
     }
 

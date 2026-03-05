@@ -2,11 +2,11 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { Option } from 'basics/inputs/Select';
+import { Option } from 'types/option';
 
 import { COLORS } from 'styles/style-constants';
 
-const ToggleBlock = styled.div<{ $isRounded: boolean; $fullWidth: boolean }>`
+const ToggleBlock = styled.div<{ $isRounded: boolean; $fullWidth: boolean; $disabled: boolean }>`
     background-color: ${({ $isRounded }) => ($isRounded ? COLORS.white : COLORS.gray100)};
     border: ${({ $isRounded }) => ($isRounded ? `0.1rem solid ${COLORS.gray100}` : 'none')};
     border-radius: ${({ $isRounded }) => ($isRounded ? '3.2rem' : '0.5rem')};
@@ -15,8 +15,9 @@ const ToggleBlock = styled.div<{ $isRounded: boolean; $fullWidth: boolean }>`
     line-height: 1.6rem;
     color: ${COLORS.textTertiary};
     width: ${({ $fullWidth }) => ($fullWidth ? '100%' : 'fit-content')};
+    pointer-events: ${({ $disabled }) => ($disabled ? 'none' : 'auto')};
+    opacity: ${({ $disabled }) => ($disabled ? '0.7' : '1')};
 `;
-
 const ToggleOption = styled.label<{
     $isChecked: boolean;
     $isRounded: boolean;
@@ -57,6 +58,7 @@ const ToggleGroup = <T,>({
     onChange,
     isRounded,
     fullWidth,
+    disabled,
     ...props
 }: {
     value: T;
@@ -64,6 +66,7 @@ const ToggleGroup = <T,>({
     onChange: (value: T) => void;
     isRounded?: boolean;
     fullWidth?: boolean;
+    disabled?: boolean;
 }): React.ReactNode => {
     const [selectedOption, setSelectedOption] = useState(
         options.find(option => option.value === value),
@@ -74,7 +77,7 @@ const ToggleGroup = <T,>({
     }, [value]);
 
     return (
-        <ToggleBlock {...props} $isRounded={isRounded} $fullWidth={fullWidth}>
+        <ToggleBlock {...props} $isRounded={isRounded} $fullWidth={fullWidth} $disabled={disabled}>
             {options.map(item => {
                 const isSelected = selectedOption?.value === item.value;
                 return (
