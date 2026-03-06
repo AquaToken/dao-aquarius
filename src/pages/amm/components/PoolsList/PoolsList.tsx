@@ -38,6 +38,7 @@ import MigratePoolButton from './MigratePoolButton/MigratePoolButton';
 
 import ConcentratedDepositModal from '../ConcentratedLiquidity/modals/ConcentratedDepositModal/ConcentratedDepositModal';
 import ConcentratedWithdrawModal from '../ConcentratedLiquidity/modals/ConcentratedWithdrawModal/ConcentratedWithdrawModal';
+import DepositFlow from '../DepositToPool/DepositFlow';
 import DepositToPool from '../DepositToPool/DepositToPool';
 import WithdrawFromPool from '../WithdrawFromPool/WithdrawFromPool';
 
@@ -434,22 +435,19 @@ const PoolsList = ({
                                             text="For concentrated pools use Deposit position to add liquidity in a tick range."
                                         />
                                     ) : (
-                                        <DepositToPool
-                                            params={{
-                                                pool: pool as PoolExtended,
-                                                isModal: false,
-                                                baseAmount,
-                                                counterAmount,
-                                                base,
-                                                counter,
-                                                onUpdate,
-                                            }}
-                                            confirm={() => {
+                                        <DepositFlow
+                                            pool={pool as PoolExtended}
+                                            isModal={false}
+                                            baseAmount={baseAmount}
+                                            counterAmount={counterAmount}
+                                            base={base}
+                                            counter={counter}
+                                            onUpdate={onUpdate}
+                                            onClose={() => {
                                                 if (onConfirm) {
                                                     onConfirm();
                                                 }
                                             }}
-                                            close={() => void 0}
                                         />
                                     )
                                 ) : (
