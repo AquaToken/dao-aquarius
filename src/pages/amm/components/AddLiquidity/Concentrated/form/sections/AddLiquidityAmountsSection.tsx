@@ -9,9 +9,14 @@ import { PoolExtended } from 'types/amm';
 import Asset from 'basics/Asset';
 import Input from 'basics/inputs/Input';
 
-import { Balance, BalanceClickable, CardStack, FormRow } from './ConcentratedDepositModal.styled';
+import {
+    Balance,
+    BalanceClickable,
+    CardStack,
+    FormRow,
+} from '../../styled/ConcentratedAddLiquidity.styled';
 
-export type DepositAmountsSectionProps = {
+export type AddLiquidityAmountsSectionProps = {
     pool: PoolExtended;
     tokenBalances: Map<string, number>;
     amount0: string;
@@ -22,7 +27,7 @@ export type DepositAmountsSectionProps = {
     onAmount1Change: (value: string) => void;
 };
 
-const DepositAmountsSection = ({
+const AddLiquidityAmountsSection = ({
     pool,
     tokenBalances,
     amount0,
@@ -31,7 +36,7 @@ const DepositAmountsSection = ({
     disableAmount1Input,
     onAmount0Change,
     onAmount1Change,
-}: DepositAmountsSectionProps): React.ReactNode => {
+}: AddLiquidityAmountsSectionProps): React.ReactNode => {
     const token0Key = getAssetString(pool.tokens[0]);
     const token1Key = getAssetString(pool.tokens[1]);
     const token0Balance = tokenBalances.get(token0Key) || 0;
@@ -116,4 +121,4 @@ const DepositAmountsSection = ({
     );
 };
 
-export default DepositAmountsSection;
+export default AddLiquidityAmountsSection;

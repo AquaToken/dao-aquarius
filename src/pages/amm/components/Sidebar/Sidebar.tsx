@@ -33,10 +33,9 @@ import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import SwapForm from 'pages/swap/components/SwapForm/SwapForm';
 
-import ConcentratedDepositModal from '../ConcentratedLiquidity/modals/ConcentratedDepositModal/ConcentratedDepositModal';
 import ConcentratedFeesModal from '../ConcentratedLiquidity/modals/ConcentratedFeesModal/ConcentratedFeesModal';
 import ConcentratedWithdrawModal from '../ConcentratedLiquidity/modals/ConcentratedWithdrawModal/ConcentratedWithdrawModal';
-import DepositToPool from '../DepositToPool/DepositToPool';
+import AddLiquidityModal from '../AddLiquidity/AddLiquidityModal';
 import LiquidityDistributionChart from '../LiquidityDistributionChart/LiquidityDistributionChart';
 import WithdrawFromPool from '../WithdrawFromPool/WithdrawFromPool';
 
@@ -185,30 +184,13 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
             });
     }, [account, isConcentrated, pool.share_token_address]);
     const openDepositModal = () => {
-        if (isConcentrated) {
-            if (!isLogged) {
-                return ModalService.openModal(ChooseLoginMethodModal, {
-                    callback: () =>
-                        ModalService.openModal(
-                            ConcentratedDepositModal,
-                            { pool },
-                            false,
-                            null,
-                            true,
-                        ),
-                });
-            }
-
-            ModalService.openModal(ConcentratedDepositModal, { pool }, false, null, true);
-            return;
-        }
-
         if (!isLogged) {
             return ModalService.openModal(ChooseLoginMethodModal, {
-                callback: () => ModalService.openModal(DepositToPool, { pool }, false, null, true),
+                callback: () =>
+                    ModalService.openModal(AddLiquidityModal, { pool }, false, null, true),
             });
         }
-        ModalService.openModal(DepositToPool, { pool }, false, null, true);
+        ModalService.openModal(AddLiquidityModal, { pool }, false, null, true);
     };
     const openWithdrawModal = () => {
         if (isConcentrated) {

@@ -24,11 +24,11 @@ import {
     StepBtn,
     SummaryMain,
     SummarySub,
-} from './ConcentratedDepositModal.styled';
-import DepositEstimateSummary from './DepositEstimateSummary';
+} from '../../styled/ConcentratedAddLiquidity.styled';
+import AddLiquidityEstimateSummary from './AddLiquidityEstimateSummary';
 type DepositPresetKey = 'full' | '2' | '1.2' | '1.01';
 
-export type DepositPriceRangeSectionProps = {
+export type AddLiquidityPriceRangeSectionProps = {
     pool: PoolExtended;
     isEmptyPool: boolean;
     hasBothPositiveAmounts: boolean;
@@ -57,7 +57,7 @@ export type DepositPriceRangeSectionProps = {
     onMaxPriceChange: (value: string) => void;
 };
 
-const DepositPriceRangeSection = ({
+const AddLiquidityPriceRangeSection = ({
     pool,
     isEmptyPool,
     hasBothPositiveAmounts,
@@ -84,7 +84,7 @@ const DepositPriceRangeSection = ({
     onStepUpperUp,
     onMinPriceChange,
     onMaxPriceChange,
-}: DepositPriceRangeSectionProps): React.ReactNode => (
+}: AddLiquidityPriceRangeSectionProps): React.ReactNode => (
     <RangeBlock>
         <RangeTitleRow>
             <RangeTitle>Price Range</RangeTitle>
@@ -221,11 +221,11 @@ const DepositPriceRangeSection = ({
                             {tickLower ?? '-'} to {tickUpper ?? '-'}
                         </span>
                     </SummarySub>
-                    <DepositEstimateSummary pool={pool} depositEstimate={depositEstimate} />
+                    <AddLiquidityEstimateSummary pool={pool} depositEstimate={depositEstimate} />
                 </RangeSummary>
             </>
         )}
     </RangeBlock>
 );
 
-export default DepositPriceRangeSection;
+export default AddLiquidityPriceRangeSection;

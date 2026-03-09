@@ -43,9 +43,9 @@ import {
     RevertIcon,
     TooltipInnerBalance,
     TooltipRow,
-} from './DepositToPool.styled';
+} from './AddLiquidity.styled';
 
-export type DepositFormData = {
+export type AddLiquidityFormData = {
     amounts: Map<string, string>;
     balances: Map<string, number> | null;
     hasAllAmounts: boolean;
@@ -53,7 +53,12 @@ export type DepositFormData = {
     isBalancedDeposit: boolean;
 };
 
-type DepositFormProps = {
+type SwapReserve = {
+    label: string;
+    value: number;
+};
+
+type AddLiquidityFormProps = {
     pool: PoolExtended;
     showPoolSummaryRows?: boolean;
     withPoolInfoCardSpacing?: boolean;
@@ -61,10 +66,10 @@ type DepositFormProps = {
     counterAmount?: string;
     base?: Token;
     counter?: Token;
-    onDataChange?: (data: DepositFormData) => void;
+    onDataChange?: (data: AddLiquidityFormData) => void;
 };
 
-const DepositForm = ({
+const AddLiquidityForm = ({
     pool,
     showPoolSummaryRows = true,
     withPoolInfoCardSpacing = true,
@@ -73,11 +78,11 @@ const DepositForm = ({
     base,
     counter,
     onDataChange,
-}: DepositFormProps): React.ReactNode => {
+}: AddLiquidityFormProps): React.ReactNode => {
     const { account } = useAuthStore();
 
     const [accountShare, setAccountShare] = useState<string | null>(null);
-    const [assetsReserves, setAssetsReserves] = useState<any[] | null>(null);
+    const [assetsReserves, setAssetsReserves] = useState<SwapReserve[][] | null>(null);
     const [poolRewards, setPoolRewards] = useState<PoolRewardsInfo>(null);
     const [balances, setBalances] = useState<Map<string, number> | null>(null);
     const [amounts, setAmounts] = useState<Map<string, string>>(
@@ -608,4 +613,4 @@ const DepositForm = ({
     );
 };
 
-export default DepositForm;
+export default AddLiquidityForm;

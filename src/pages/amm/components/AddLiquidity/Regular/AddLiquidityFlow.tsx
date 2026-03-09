@@ -17,12 +17,12 @@ import { SorobanToken, Token, TokenType } from 'types/token';
 import Button from 'basics/buttons/Button';
 import { StickyButtonWrapper } from 'basics/ModalAtoms';
 
-import DepositForm, { DepositFormData } from './DepositForm';
-import { Container } from './DepositToPool.styled';
+import { Container } from './AddLiquidity.styled';
+import AddLiquidityForm, { AddLiquidityFormData } from './AddLiquidityForm';
 
-import SuccessModal from '../SuccessModal/SuccessModal';
+import SuccessModal from '../../SuccessModal/SuccessModal';
 
-type DepositFlowProps = {
+type AddLiquidityFlowProps = {
     pool: PoolExtended;
     isModal?: boolean;
     baseAmount?: string;
@@ -33,7 +33,7 @@ type DepositFlowProps = {
     onClose?: () => void;
 };
 
-const DepositFlow = ({
+const AddLiquidityFlow = ({
     pool,
     isModal = true,
     baseAmount,
@@ -42,10 +42,10 @@ const DepositFlow = ({
     counter,
     onUpdate,
     onClose,
-}: DepositFlowProps): React.ReactNode => {
+}: AddLiquidityFlowProps): React.ReactNode => {
     const { account } = useAuthStore();
     const [pending, setPending] = useState(false);
-    const [formData, setFormData] = useState<DepositFormData | null>(null);
+    const [formData, setFormData] = useState<AddLiquidityFormData | null>(null);
 
     const submit = () => {
         if (!account || !formData) {
@@ -150,7 +150,7 @@ const DepositFlow = ({
 
     return (
         <Container $isModal={isModal}>
-            <DepositForm
+            <AddLiquidityForm
                 pool={pool}
                 showPoolSummaryRows={isModal}
                 withPoolInfoCardSpacing={isModal}
@@ -165,4 +165,4 @@ const DepositFlow = ({
     );
 };
 
-export default DepositFlow;
+export default AddLiquidityFlow;

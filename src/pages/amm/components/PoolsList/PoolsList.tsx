@@ -36,10 +36,9 @@ import VolumeChart from 'pages/amm/components/VolumeChart/VolumeChart';
 
 import MigratePoolButton from './MigratePoolButton/MigratePoolButton';
 
-import ConcentratedDepositModal from '../ConcentratedLiquidity/modals/ConcentratedDepositModal/ConcentratedDepositModal';
 import ConcentratedWithdrawModal from '../ConcentratedLiquidity/modals/ConcentratedWithdrawModal/ConcentratedWithdrawModal';
-import DepositFlow from '../DepositToPool/DepositFlow';
-import DepositToPool from '../DepositToPool/DepositToPool';
+import AddLiquidityFlow from '../AddLiquidity/Regular/AddLiquidityFlow';
+import AddLiquidityModal from '../AddLiquidity/AddLiquidityModal';
 import WithdrawFromPool from '../WithdrawFromPool/WithdrawFromPool';
 
 const PoolBlock = styled.div`
@@ -435,7 +434,7 @@ const PoolsList = ({
                                             text="For concentrated pools use Deposit position to add liquidity in a tick range."
                                         />
                                     ) : (
-                                        <DepositFlow
+                                        <AddLiquidityFlow
                                             pool={pool as PoolExtended}
                                             isModal={false}
                                             baseAmount={baseAmount}
@@ -627,9 +626,10 @@ const PoolsList = ({
                                                         onClick={(e: React.MouseEvent) => {
                                                             e.preventDefault();
                                                             ModalService.openModal(
-                                                                ConcentratedDepositModal,
+                                                                AddLiquidityModal,
                                                                 {
                                                                     pool,
+                                                                    onUpdate,
                                                                 },
                                                                 false,
                                                                 null,
@@ -645,7 +645,7 @@ const PoolsList = ({
                                                         onClick={(e: React.MouseEvent) => {
                                                             e.preventDefault();
                                                             ModalService.openModal(
-                                                                DepositToPool,
+                                                                AddLiquidityModal,
                                                                 {
                                                                     pool,
                                                                     onUpdate,
