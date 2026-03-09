@@ -52,6 +52,7 @@ type AddLiquidityFormProps = {
     pool: PoolExtended;
     showPoolSummaryRows?: boolean;
     withPoolInfoCardSpacing?: boolean;
+    showPoolInfo?: boolean;
     baseAmount?: string;
     counterAmount?: string;
     base?: Token;
@@ -63,6 +64,7 @@ const AddLiquidityForm = ({
     pool,
     showPoolSummaryRows = true,
     withPoolInfoCardSpacing = true,
+    showPoolInfo = true,
     baseAmount,
     counterAmount,
     base,
@@ -335,11 +337,13 @@ const AddLiquidityForm = ({
                     />
                 )}
 
-                <AddLiquidityPoolInfo
-                    pool={pool}
-                    amounts={amounts}
-                    withPoolInfoCardSpacing={withPoolInfoCardSpacing}
-                />
+                {showPoolInfo && (
+                    <AddLiquidityPoolInfo
+                        pool={pool}
+                        amounts={amounts}
+                        withPoolInfoCardSpacing={withPoolInfoCardSpacing}
+                    />
+                )}
             </Form>
         </>
     );

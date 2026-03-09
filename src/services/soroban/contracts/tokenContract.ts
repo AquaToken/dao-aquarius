@@ -128,16 +128,24 @@ export default class TokenContract {
             });
     }
 
-    getTokenDecimals(contactId: string): Promise<number> {
+    getTokenDecimals(contractId: string): Promise<number> {
+        if (this.tokensCache.has(contractId)) {
+            return Promise.resolve(this.tokensCache.get(contractId).decimal);
+        }
         return this.connection
-            .buildSmartContractTx(ACCOUNT_FOR_SIMULATE, contactId, ASSET_CONTRACT_METHOD.DECIMALS)
+            .buildSmartContractTx(ACCOUNT_FOR_SIMULATE, contractId, ASSET_CONTRACT_METHOD.DECIMALS)
             .then(
                 tx =>
                     this.connection.simulateTx(
                         tx,
                     ) as Promise<StellarSdk.rpc.Api.SimulateTransactionSuccessResponse>,
             )
-            .then(({ result }) => Number(result.retval.value()));
+            .then(result => {
+                if (!result) {
+                    throw new Error();
+                }
+                return Number(result.result.retval.value());
+            });
     }
 
     async getTokenBalance(token: Asset | string, where: string) {

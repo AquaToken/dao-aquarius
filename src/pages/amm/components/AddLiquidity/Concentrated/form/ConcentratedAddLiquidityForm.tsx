@@ -27,13 +27,24 @@ export type ConcentratedAddLiquidityFormData = {
 type ConcentratedAddLiquidityFormProps = {
     pool: PoolExtended;
     onDataChange?: (data: ConcentratedAddLiquidityFormData) => void;
+    initialTickSpacing?: number | null;
+    skipPoolDataLoading?: boolean;
+    disableNetworkEstimate?: boolean;
 };
 
 const ConcentratedAddLiquidityForm = ({
     pool,
     onDataChange,
+    initialTickSpacing,
+    skipPoolDataLoading,
+    disableNetworkEstimate,
 }: ConcentratedAddLiquidityFormProps): React.ReactNode => {
-    const form = useConcentratedAddLiquidityForm({ pool });
+    const form = useConcentratedAddLiquidityForm({
+        pool,
+        initialTickSpacing,
+        skipPoolDataLoading,
+        disableNetworkEstimate,
+    });
 
     useEffect(() => {
         if (!onDataChange) {

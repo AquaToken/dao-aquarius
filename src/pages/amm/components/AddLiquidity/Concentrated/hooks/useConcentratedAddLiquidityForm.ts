@@ -45,9 +45,17 @@ type DepositPresetKey = 'full' | '2' | '1.2' | '1.01';
 
 type Params = {
     pool: PoolExtended;
+    initialTickSpacing?: number | null;
+    skipPoolDataLoading?: boolean;
+    disableNetworkEstimate?: boolean;
 };
 
-export const useConcentratedAddLiquidityForm = ({ pool }: Params) => {
+export const useConcentratedAddLiquidityForm = ({
+    pool,
+    initialTickSpacing = null,
+    skipPoolDataLoading = false,
+    disableNetworkEstimate = false,
+}: Params) => {
     const { account } = useAuthStore();
 
     const [slot0, setSlot0] = useState<Record<string, unknown> | null>(null);
@@ -730,6 +738,11 @@ export const useConcentratedAddLiquidityForm = ({ pool }: Params) => {
             return;
         }
 
+        if (disableNetworkEstimate) {
+            setDepositEstimate({ amounts, liquidityDisplay: '-', liquidityLoading: false });
+            return;
+        }
+
         const callId = ++liquidityEstimateCallIdRef.current;
         const desired = new Map([
             [getAssetString(pool.tokens[0]), amounts[0]],
@@ -769,9 +782,23 @@ export const useConcentratedAddLiquidityForm = ({ pool }: Params) => {
                 }
                 setDepositEstimate({ amounts, liquidityDisplay: '0', liquidityLoading: false });
             });
-    }, [debouncedEstimateRequest, account, pool.address, pool.tokens, pool.share_token_decimals]);
+    }, [
+        debouncedEstimateRequest,
+        account,
+        pool.address,
+        pool.tokens,
+        pool.share_token_decimals,
+        disableNetworkEstimate,
+    ]);
 
     const load = () => {
+        if (skipPoolDataLoading) {
+            setTickSpacing(initialTickSpacing);
+            setSlot0(null);
+            setLoading(false);
+            return;
+        }
+
         if (!account || pool.pool_type !== POOL_TYPE.concentrated) {
             return;
         }
@@ -796,7 +823,7 @@ export const useConcentratedAddLiquidityForm = ({ pool }: Params) => {
 
     useEffect(() => {
         load();
-    }, [account, pool.address]);
+    }, [account, pool.address, skipPoolDataLoading, initialTickSpacing]);
 
     const handleStepLowerDown = () => {
         if (tickSpacing === null || !canUseRangeControls) {

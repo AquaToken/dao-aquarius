@@ -32,4 +32,10 @@ export const CONCENTRATED_DEPOSIT_PRESETS = [
     { key: '1.01', multiplier: 1.01, label: 'x÷1.01' },
 ] as const;
 
+export const CONCENTRATED_TICK_SPACING_BY_FEE: Record<number, number> = {
+    10: 20,
+    30: 60,
+    100: 200,
+};
+
 export const CONCENTRATED_DISTRIBUTION_REFRESH_MS = 5000;
