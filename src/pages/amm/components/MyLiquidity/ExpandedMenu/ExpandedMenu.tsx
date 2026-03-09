@@ -24,10 +24,9 @@ import RewardsSettingsModal from 'modals/RewardsSettingsModal';
 import { cardBoxShadow } from 'styles/mixins';
 import { COLORS, FONT_SIZE } from 'styles/style-constants';
 
-import ConcentratedDepositModal from 'pages/amm/components/ConcentratedLiquidity/modals/ConcentratedDepositModal/ConcentratedDepositModal';
 import ConcentratedFeesModal from 'pages/amm/components/ConcentratedLiquidity/modals/ConcentratedFeesModal/ConcentratedFeesModal';
 import ConcentratedWithdrawModal from 'pages/amm/components/ConcentratedLiquidity/modals/ConcentratedWithdrawModal/ConcentratedWithdrawModal';
-import DepositToPool from 'pages/amm/components/DepositToPool/DepositToPool';
+import AddLiquidityModal from 'pages/amm/components/AddLiquidity/AddLiquidityModal';
 import WithdrawFromPool from 'pages/amm/components/WithdrawFromPool/WithdrawFromPool';
 
 const Container = styled.div`
@@ -87,11 +86,7 @@ const ExpandedMenu = ({ pool }: Props) => {
                     {pool.pool_type !== POOL_TYPE.classic && (
                         <MenuRow
                             onClick={() => {
-                                if (pool.pool_type === POOL_TYPE.concentrated) {
-                                    ModalService.openModal(ConcentratedDepositModal, { pool });
-                                } else {
-                                    ModalService.openModal(DepositToPool, { pool });
-                                }
+                                ModalService.openModal(AddLiquidityModal, { pool });
                                 setIsShowMenu(false);
                             }}
                         >

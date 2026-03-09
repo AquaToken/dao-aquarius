@@ -2,7 +2,7 @@ import { POOL_TYPE } from 'constants/amm';
 
 import { PoolClassic, PoolClassicReserves } from 'types/stellar';
 
-import { ClassicToken, Token } from './token';
+import { ClassicToken, SorobanToken, Token } from './token';
 
 export type ListResponse<T> = {
     items: T[];
@@ -215,6 +215,14 @@ export type DepositEstimate = {
     amounts: string[];
     liquidityDisplay: string;
     liquidityLoading: boolean;
+};
+
+export type PoolCreationFeeInfo = {
+    token: SorobanToken;
+    constantFee: string;
+    stableFee: string;
+    concentratedFee: string;
+    destination: string;
 };
 
 export enum RewardType {

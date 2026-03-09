@@ -7,13 +7,13 @@ import { DepositEstimate, PoolExtended } from 'types/amm';
 import AssetLogo from 'basics/AssetLogo';
 import DotsLoader from 'basics/loaders/DotsLoader';
 
-import { SummaryRows, SummaryValueRow } from './ConcentratedDepositModal.styled';
+import { SummaryRows, SummaryValueRow } from '../../styled/ConcentratedAddLiquidity.styled';
 type Props = {
     pool: PoolExtended;
     depositEstimate: DepositEstimate | null;
 };
 
-const DepositEstimateSummary = ({ pool, depositEstimate }: Props): React.ReactNode => {
+const AddLiquidityEstimateSummary = ({ pool, depositEstimate }: Props): React.ReactNode => {
     if (!depositEstimate) {
         return null;
     }
@@ -48,4 +48,4 @@ const DepositEstimateSummary = ({ pool, depositEstimate }: Props): React.ReactNo
     );
 };
 
-export default DepositEstimateSummary;
+export default AddLiquidityEstimateSummary;

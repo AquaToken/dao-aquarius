@@ -25,14 +25,11 @@ import {
 } from 'helpers/amm-concentrated';
 import { contractValueToFormattedAmount } from 'helpers/amount';
 import { getAssetString } from 'helpers/assets';
-import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
 import { useDebounce } from 'hooks/useDebounce';
 
-import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 import { SorobanService, ToastService } from 'services/globalServices';
 
 import { DepositEstimate, PoolExtended } from 'types/amm';
@@ -42,16 +39,23 @@ import {
     getInRangeAmount1PerAmount0,
     normalizeForRange,
     resolvePresetTicks,
-} from './depositRangeUtils';
+} from '../helpers/addLiquidityRangeUtils';
 
 type DepositPresetKey = 'full' | '2' | '1.2' | '1.01';
 
 type Params = {
     pool: PoolExtended;
-    close: () => void;
+    initialTickSpacing?: number | null;
+    skipPoolDataLoading?: boolean;
+    disableNetworkEstimate?: boolean;
 };
 
-export const useConcentratedDepositForm = ({ pool, close }: Params) => {
+export const useConcentratedAddLiquidityForm = ({
+    pool,
+    initialTickSpacing = null,
+    skipPoolDataLoading = false,
+    disableNetworkEstimate = false,
+}: Params) => {
     const { account } = useAuthStore();
 
     const [slot0, setSlot0] = useState<Record<string, unknown> | null>(null);
@@ -75,7 +79,6 @@ export const useConcentratedDepositForm = ({ pool, close }: Params) => {
         tickUpper: number;
     } | null>(null);
     const [tokenBalances, setTokenBalances] = useState<Map<string, number>>(new Map());
-    const [pending, setPending] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const isEmptyPool = new BigNumber(pool.total_share || pool.liquidity || '0').lte(0);
@@ -735,6 +738,11 @@ export const useConcentratedDepositForm = ({ pool, close }: Params) => {
             return;
         }
 
+        if (disableNetworkEstimate) {
+            setDepositEstimate({ amounts, liquidityDisplay: '-', liquidityLoading: false });
+            return;
+        }
+
         const callId = ++liquidityEstimateCallIdRef.current;
         const desired = new Map([
             [getAssetString(pool.tokens[0]), amounts[0]],
@@ -774,9 +782,23 @@ export const useConcentratedDepositForm = ({ pool, close }: Params) => {
                 }
                 setDepositEstimate({ amounts, liquidityDisplay: '0', liquidityLoading: false });
             });
-    }, [debouncedEstimateRequest, account, pool.address, pool.tokens, pool.share_token_decimals]);
+    }, [
+        debouncedEstimateRequest,
+        account,
+        pool.address,
+        pool.tokens,
+        pool.share_token_decimals,
+        disableNetworkEstimate,
+    ]);
 
     const load = () => {
+        if (skipPoolDataLoading) {
+            setTickSpacing(initialTickSpacing);
+            setSlot0(null);
+            setLoading(false);
+            return;
+        }
+
         if (!account || pool.pool_type !== POOL_TYPE.concentrated) {
             return;
         }
@@ -801,70 +823,7 @@ export const useConcentratedDepositForm = ({ pool, close }: Params) => {
 
     useEffect(() => {
         load();
-    }, [account, pool.address]);
-
-    const deposit = () => {
-        if (!account || pending || !hasTickRange || rangeError) return;
-        if (account.authType === LoginTypes.walletConnect) {
-            openCurrentWalletIfExist();
-        }
-        if (!areAmountsFilled) {
-            ToastService.showErrorToast('Enter amount for at least one token');
-            return;
-        }
-        if (isFirstDepositAmountsInvalid) {
-            ToastService.showErrorToast(
-                'For the first deposit both token amounts must be greater than zero',
-            );
-            return;
-        }
-        if (!depositEstimate || depositEstimate.liquidityLoading) {
-            ToastService.showErrorToast('Waiting for estimate');
-            return;
-        }
-
-        const desiredAmountsFromInputs = new Map([
-            [getAssetString(pool.tokens[0]), amount0 || '0'],
-            [getAssetString(pool.tokens[1]), amount1 || '0'],
-        ]);
-
-        setPending(true);
-
-        SorobanService.amm
-            .getDepositPositionTx(
-                account.accountId(),
-                pool.address,
-                pool.tokens,
-                tickLower,
-                tickUpper,
-                desiredAmountsFromInputs,
-                '1',
-            )
-            .then(tx => account.signAndSubmitTx(tx, true))
-            .then((res: { status?: BuildSignAndSubmitStatuses }) => {
-                if (!res) {
-                    return;
-                }
-
-                if (res.status === BuildSignAndSubmitStatuses.pending) {
-                    ToastService.showSuccessToast('More signatures required to complete');
-                    return;
-                }
-
-                ToastService.showSuccessToast('Concentrated position deposited');
-                setAmount0('');
-                setAmount1('');
-                setDepositEstimate(null);
-                load();
-                close();
-            })
-            .catch(e => {
-                ToastService.showErrorToast(e?.message || 'Deposit failed');
-            })
-            .finally(() => {
-                setPending(false);
-            });
-    };
+    }, [account, pool.address, skipPoolDataLoading, initialTickSpacing]);
 
     const handleStepLowerDown = () => {
         if (tickSpacing === null || !canUseRangeControls) {
@@ -956,6 +915,8 @@ export const useConcentratedDepositForm = ({ pool, close }: Params) => {
         tokenBalances,
         amount0,
         amount1,
+        areAmountsFilled,
+        isFirstDepositAmountsInvalid,
         disableAmount0Input,
         disableAmount1Input,
         handleAmount0Change,
@@ -986,8 +947,6 @@ export const useConcentratedDepositForm = ({ pool, close }: Params) => {
         handleMinPriceChange,
         handleMaxPriceChange,
         rangeError,
-        deposit,
-        pending,
         isDepositDisabled,
     };
 };
