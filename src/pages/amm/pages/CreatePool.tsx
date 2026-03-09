@@ -426,6 +426,14 @@ const CreatePool = () => {
         [firstAsset, secondAsset, thirdAsset, fourthAsset],
     );
 
+    const orderedConcentratedAssets = useMemo(
+        () =>
+            selectedAssets.length === 2
+                ? SorobanService.token.orderTokens([...selectedAssets])
+                : selectedAssets,
+        [selectedAssets],
+    );
+
     const createPoolPreview = useMemo(() => {
         if (!selectedAssets.length) {
             return null;
@@ -433,7 +441,7 @@ const CreatePool = () => {
 
         if (type === POOL_TYPE.concentrated) {
             return buildCreatePoolPreview(
-                selectedAssets,
+                orderedConcentratedAssets,
                 type,
                 String(constantFee / 10000),
                 CONCENTRATED_TICK_SPACING_BY_FEE[constantFee],
@@ -445,7 +453,7 @@ const CreatePool = () => {
             type,
             String((type === POOL_TYPE.stable ? Number(stableFee) : constantFee / 100) / 100),
         );
-    }, [selectedAssets, type, constantFee, stableFee]);
+    }, [selectedAssets, orderedConcentratedAssets, type, constantFee, stableFee]);
 
     const hasAllSelectedAssets =
         !!firstAsset &&
@@ -581,6 +589,9 @@ const CreatePool = () => {
             );
             return;
         }
+
+        const [baseToken, counterToken] = orderedConcentratedAssets;
+
         if (account.authType === LoginTypes.walletConnect) {
             openCurrentWalletIfExist();
         }
@@ -588,15 +599,15 @@ const CreatePool = () => {
         SorobanService.amm
             .getCreateAndDepositConcentratedPoolTx(
                 account.accountId(),
-                firstAsset,
-                secondAsset,
+                baseToken,
+                counterToken,
                 constantFee,
                 createInfo,
                 concentratedDepositFormData.tickLower,
                 concentratedDepositFormData.tickUpper,
                 new Map([
-                    [firstAsset.contract, concentratedDepositFormData.amount0 || '0'],
-                    [secondAsset.contract, concentratedDepositFormData.amount1 || '0'],
+                    [baseToken.contract, concentratedDepositFormData.amount0 || '0'],
+                    [counterToken.contract, concentratedDepositFormData.amount1 || '0'],
                 ]),
             )
             .then(tx => signAndSubmitCreation(tx))
