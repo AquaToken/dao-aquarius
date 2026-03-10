@@ -237,6 +237,7 @@ const normalizeNote = (item: PoolEvent | CombinedSwapEvent) => {
     if (
         [
             PoolEventType.claim,
+            PoolEventType.claimFees,
             PoolEventType.claimIncentives,
             PoolEventType.deposit,
             PoolEventType.withdraw,
@@ -264,6 +265,7 @@ const normalizeNote = (item: PoolEvent | CombinedSwapEvent) => {
 
 const TYPE_LABELS: Record<string, string> = {
     [PoolEventType.claim]: 'Claim Rewards',
+    [PoolEventType.claimFees]: 'Claim Fees',
     [PoolEventType.claimIncentives]: 'Claim Incentives',
     [PoolEventType.deposit]: 'Deposit',
     [PoolEventType.withdraw]: 'Withdraw',
