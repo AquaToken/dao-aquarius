@@ -620,10 +620,12 @@ export const useConcentratedAddLiquidityForm = ({
         if (tickLower < minTickBound || tickUpper > maxTickBound) {
             return `Range is out of bounds (${minTickBound}..${maxTickBound})`;
         }
-        if (referenceTick !== null && (tickLower > referenceTick || tickUpper < referenceTick)) {
-            return isEmptyPool
-                ? 'Price range does not match entered amounts'
-                : 'Price range must include current pool price';
+        if (
+            isEmptyPool &&
+            referenceTick !== null &&
+            (tickLower > referenceTick || tickUpper < referenceTick)
+        ) {
+            return 'Price range does not match entered amounts';
         }
 
         return null;
