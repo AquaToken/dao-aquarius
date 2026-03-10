@@ -93,6 +93,7 @@ export enum PoolEventType {
     withdraw = 'withdraw',
     swap = 'swap',
     claim = 'claim',
+    claimFees = 'claim_fees',
     claimIncentives = 'claim_incentives',
 }
 

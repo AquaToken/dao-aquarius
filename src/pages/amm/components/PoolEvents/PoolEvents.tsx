@@ -54,6 +54,8 @@ const getEventTitle = (event: PoolEvent, pool: PoolExtended) => {
         }
         case PoolEventType.claim:
             return 'Claim rewards';
+        case PoolEventType.claimFees:
+            return 'Claim fees';
         case PoolEventType.deposit:
             return 'Add liquidity';
         case PoolEventType.withdraw:
@@ -121,13 +123,19 @@ const getEventAmounts = (event: PoolEvent, pool: PoolExtended) => {
             );
         }
 
-        case PoolEventType.claimIncentives: {
+        case PoolEventType.claimIncentives:
+        case PoolEventType.claimFees: {
             return (
                 <Amounts>
                     {event.amounts.map((amount, index) => {
                         if (!Number(amount)) return null;
 
-                        const token = getAssetFromString(event.tokens[index]);
+                        const tokenId = event.tokens?.[index];
+                        if (!tokenId) {
+                            return null;
+                        }
+
+                        const token = getAssetFromString(tokenId);
                         return (
                             <span key={token.contract}>
                                 {contractValueToFormattedAmount(amount, token.decimal, true)}{' '}
