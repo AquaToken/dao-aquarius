@@ -202,15 +202,7 @@ export const useConcentratedAddLiquidityForm = ({
         if (maxPriceInput !== nextMaxPriceInput) {
             setMaxPriceInput(nextMaxPriceInput);
         }
-    }, [
-        tickLower,
-        tickUpper,
-        minTickBound,
-        maxTickBound,
-        decimalsDiff,
-        minPriceInput,
-        maxPriceInput,
-    ]);
+    }, [tickLower, tickUpper, minTickBound, maxTickBound, decimalsDiff]);
 
     const getRatio = (lower: number | null, upper: number | null) =>
         getInRangeAmount1PerAmount0({
