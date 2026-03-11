@@ -1,13 +1,15 @@
 import axios from 'axios';
 
 import { BRIBES_API_URL, MARKET_KEY_API_URL, VOTING_TRACKER_API_URL } from 'constants/api';
+import { BribeSortFields, BribesTypes, BribesWeeksFilters } from 'constants/bribes';
 
 import { getAssetString } from 'helpers/assets';
+import { getNextWeekStartFromString } from 'helpers/date';
 
 import type { UpcomingBribe } from 'types/bribes';
 import type { ClassicToken } from 'types/token';
 
-import type { MarketBribes, MarketKey, ListResponse, MarketVotes } from 'pages/vote/api/types';
+import type { ListResponse, MarketBribes, MarketKey, MarketVotes } from 'pages/vote/api/types';
 
 /**
  * Fetches the market key data for a specific pair of tokens.
@@ -26,16 +28,6 @@ export const getMarketPair = async (
         return null;
     }
 };
-
-/**
- * Sorting options for fetching bribes.
- */
-export enum BribeSortFields {
-    aquaAmountUp = '-aqua_total_reward_amount_equivalent',
-    aquaAmountDown = 'aqua_total_reward_amount_equivalent',
-    startAtUp = '-start_at',
-    startAtDown = 'start_at',
-}
 
 const processBribes = async (
     results: UpcomingBribe[] | MarketBribes[],
@@ -74,23 +66,44 @@ const processBribes = async (
     return { count, bribes };
 };
 
+type UpcomingRequestParams = {
+    limit: number;
+    page: number;
+    ordering: BribeSortFields;
+    start_at__gte?: string;
+    start_at__lt?: string;
+    aqua_total_reward_amount_equivalent__gte: string;
+    is_amm_protocol?: boolean;
+};
+
 export const getUpcomingBribes = async (
     pageSize: number,
     page: number,
     sort: BribeSortFields,
-    filterByAmount: boolean,
+    minBribeAmount: string,
+    weekFilter: BribesWeeksFilters | string,
+    type: BribesTypes,
 ): Promise<{
     count: number;
     bribes: (UpcomingBribe & Partial<MarketKey> & Partial<MarketVotes>)[];
 }> => {
     try {
         // Build query parameters
-        const params = {
+        const params: UpcomingRequestParams = {
             limit: pageSize,
             page,
             ordering: sort,
-            aqua_total_reward_amount_equivalent__gte: filterByAmount ? '100000' : '-1',
+            aqua_total_reward_amount_equivalent__gte: minBribeAmount,
         };
+
+        if (weekFilter !== BribesWeeksFilters.all) {
+            params.start_at__gte = weekFilter;
+            params.start_at__lt = getNextWeekStartFromString(weekFilter);
+        }
+
+        if (type !== BribesTypes.all) {
+            params.is_amm_protocol = type === BribesTypes.protocol;
+        }
 
         // Fetch pending bribes
         const { data } = await axios.get<ListResponse<UpcomingBribe>>(

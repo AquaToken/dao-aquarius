@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { processIceTx } from 'api/ice';
 
 import { GD_ICE_CODE, GOV_ICE_CODE, ICE_ISSUER } from 'constants/assets';
+import { ChoiceOption } from 'constants/dao';
 
 import { getDateString } from 'helpers/date';
 import ErrorHandler from 'helpers/error-handler';
@@ -19,12 +20,14 @@ import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-
 import { StellarService, ToastService } from 'services/globalServices';
 import { StellarEvents } from 'services/stellar/events/events';
 
-import IconFail from 'assets/icons/status/fail-red.svg';
-import IconSuccess from 'assets/icons/status/success.svg';
+import { LogVote, ProposalSimple } from 'types/governance';
+
+import Aqua from 'assets/aqua/aqua-logo.svg';
 import GDIce from 'assets/tokens/dice-logo.svg';
 import Ice from 'assets/tokens/ice-logo.svg';
 
 import Button from 'basics/buttons/Button';
+import { VoteIcon } from 'basics/icons';
 import Checkbox from 'basics/inputs/Checkbox';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import Table, { CellAlign } from 'basics/Table';
@@ -32,35 +35,27 @@ import Table, { CellAlign } from 'basics/Table';
 import { respondDown } from 'styles/mixins';
 import { Breakpoints, COLORS } from 'styles/style-constants';
 
-import { LogVote, ProposalSimple } from '../../../../api/types';
-
-const GDIceLogo = styled(GDIce)`
+const iconStyles = css`
     height: 1.6rem;
     width: 1.6rem;
-    margin-left: 0.5rem;
+`;
+
+const AquaLogo = styled(Aqua)`
+    ${iconStyles};
+`;
+
+const GDIceLogo = styled(GDIce)`
+    ${iconStyles};
 `;
 
 const IceLogo = styled(Ice)`
-    height: 1.6rem;
-    width: 1.6rem;
-    margin-left: 0.5rem;
+    ${iconStyles};
 `;
 
 const Cell = styled.span`
     display: flex;
     align-items: center;
-`;
-
-const IconAgainst = styled(IconFail)`
-    height: 1.6rem;
-    width: 1.6rem;
-    margin-right: 0.5rem;
-`;
-
-const IconFor = styled(IconSuccess)`
-    height: 1.6rem;
-    width: 1.6rem;
-    margin-right: 0.5rem;
+    gap: 0.5rem;
 `;
 
 const StyledButton = styled(Button)`
@@ -322,8 +317,8 @@ const YourVotes = ({ proposal }: YourVotesProps): React.ReactNode => {
                         {
                             children: (
                                 <Cell>
-                                    {log.vote_choice === 'vote_for' ? <IconFor /> : <IconAgainst />}
-                                    {log.vote_choice === 'vote_for' ? 'Vote For' : 'Vote Against'}
+                                    <VoteIcon option={ChoiceOption[log.vote_choice]} />
+                                    <span>Vote {ChoiceOption[log.vote_choice]}</span>
                                 </Cell>
                             ),
                             label: 'Vote:',
@@ -332,7 +327,13 @@ const YourVotes = ({ proposal }: YourVotesProps): React.ReactNode => {
                             children: (
                                 <Cell>
                                     {formatBalance(Number(log.amount))}
-                                    {log.asset_code === GOV_ICE_CODE ? <IceLogo /> : <GDIceLogo />}
+                                    {log.asset_code === 'AQUA' ? (
+                                        <AquaLogo />
+                                    ) : log.asset_code === GOV_ICE_CODE ? (
+                                        <IceLogo />
+                                    ) : (
+                                        <GDIceLogo />
+                                    )}
                                 </Cell>
                             ),
                             label: 'Voted:',

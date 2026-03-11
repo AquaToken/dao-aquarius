@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 
 import useOnClickOutside from 'hooks/useOutsideClick';
@@ -9,7 +10,7 @@ import { Option } from 'types/option';
 import ArrowDown from 'assets/icons/arrows/arrow-down-16.svg';
 
 import { cardBoxShadow, customScroll, noSelect, respondDown } from 'styles/mixins';
-import { Breakpoints, COLORS } from 'styles/style-constants';
+import { Breakpoints, COLORS, Z_INDEX } from 'styles/style-constants';
 
 const DropDown = styled.div<{ $isOpen: boolean; $disabled: boolean }>`
     width: 100%;
@@ -87,10 +88,8 @@ const DropdownArrow = styled(ArrowDown)<{ $isOpen: boolean }>`
 
 const DropdownList = styled.div`
     position: absolute;
-    left: -0.2rem;
-    top: calc(100% + 0.2rem);
     background-color: ${COLORS.white};
-    width: calc(100% + 0.4rem);
+    width: 100%;
     box-sizing: border-box;
     border-radius: 0 0 0.5rem 0.5rem;
     animation: openDropdown ease-in-out 0.2s;
@@ -114,12 +113,28 @@ const DropdownList = styled.div`
     }
 `;
 
+const DropdownInlineList = styled(DropdownList)`
+    left: -0.2rem;
+    top: calc(100% + 0.2rem);
+    width: calc(100% + 0.4rem);
+    z-index: 10;
+`;
+
+const DropdownPortalList = styled(DropdownList)<{ $top: number; $left: number; $width: number }>`
+    position: fixed;
+    top: ${({ $top }) => `${$top}px`};
+    left: ${({ $left }) => `${$left}px`};
+    width: ${({ $width }) => `${$width}px`};
+    z-index: ${Z_INDEX.modal + 1};
+`;
+
 type SelectProps<T> = {
     options: Option<T>[];
     value: T;
     onChange: (value: T) => void;
     disabled?: boolean;
     placeholder?: string;
+    usePortal?: boolean;
 };
 
 const Select = <T,>({
@@ -128,14 +143,20 @@ const Select = <T,>({
     onChange,
     disabled,
     placeholder,
+    usePortal = false,
     ...props
 }: SelectProps<T>): React.ReactNode => {
     const [isOpen, setIsOpen] = useState(false);
+    const [dropdownPosition, setDropdownPosition] = useState<{
+        top: number;
+        left: number;
+        width: number;
+    } | null>(null);
     const [selectedOption, setSelectedOption] = useState(
         options.find(option => option.value === value),
     );
 
-    const selectRef = useRef(null);
+    const selectRef = useRef<HTMLDivElement>(null);
 
     useOnClickOutside(selectRef, () => setIsOpen(false));
 
@@ -143,13 +164,88 @@ const Select = <T,>({
         setIsOpen(prev => !prev);
     };
 
-    const onSelect = (item: Option<T>) => {
+    const onSelect = (item: Option<T>, event: React.MouseEvent<HTMLDivElement>) => {
+        event.stopPropagation();
         onChange(item.value);
+        setIsOpen(false);
     };
 
     useEffect(() => {
         setSelectedOption(options.find(option => option.value === value));
-    }, [value]);
+    }, [options, value]);
+
+    useEffect(() => {
+        if (!isOpen || !usePortal) {
+            return;
+        }
+
+        const updateDropdownPosition = () => {
+            if (!selectRef.current) {
+                return;
+            }
+
+            const { bottom, left, width } = selectRef.current.getBoundingClientRect();
+            setDropdownPosition({
+                top: bottom + 2,
+                left,
+                width: width + 4,
+            });
+        };
+
+        updateDropdownPosition();
+
+        window.addEventListener('resize', updateDropdownPosition);
+        window.addEventListener('scroll', updateDropdownPosition, true);
+
+        return () => {
+            window.removeEventListener('resize', updateDropdownPosition);
+            window.removeEventListener('scroll', updateDropdownPosition, true);
+        };
+    }, [isOpen, usePortal]);
+
+    const dropdownContent = (
+        <>
+            {options.map(option => (
+                <DropdownItem
+                    key={option.value.toString()}
+                    onClick={event => onSelect(option, event)}
+                >
+                    {Boolean(option.icon) && option.icon}
+                    {option.label}
+                </DropdownItem>
+            ))}
+        </>
+    );
+
+    const renderDropdown = () => {
+        if (!isOpen) {
+            return null;
+        }
+
+        if (usePortal && dropdownPosition && typeof document !== 'undefined') {
+            return createPortal(
+                <DropdownPortalList
+                    $top={dropdownPosition.top}
+                    $left={dropdownPosition.left - 2}
+                    $width={dropdownPosition.width}
+                    onMouseDown={event => event.stopPropagation()}
+                    onTouchStart={event => event.stopPropagation()}
+                >
+                    {dropdownContent}
+                </DropdownPortalList>,
+                document.body,
+            );
+        }
+
+        return (
+            <DropdownInlineList
+                onMouseDown={event => event.stopPropagation()}
+                onTouchStart={event => event.stopPropagation()}
+            >
+                {dropdownContent}
+            </DropdownInlineList>
+        );
+    };
 
     return (
         <DropDown
@@ -168,20 +264,7 @@ const Select = <T,>({
             ) : (
                 <Placeholder>{placeholder || 'Select'}</Placeholder>
             )}
-
-            {isOpen && (
-                <DropdownList>
-                    {options.map(option => (
-                        <DropdownItem
-                            key={option.value.toString()}
-                            onClick={() => onSelect(option)}
-                        >
-                            {Boolean(option.icon) && option.icon}
-                            {option.label}
-                        </DropdownItem>
-                    ))}
-                </DropdownList>
-            )}
+            {renderDropdown()}
         </DropDown>
     );
 };

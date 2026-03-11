@@ -2,15 +2,14 @@ import * as React from 'react';
 import { ReactElement } from 'react';
 import styled, { css } from 'styled-components';
 
+import { VoteOptions } from 'constants/dao';
+
 import { formatBalance } from 'helpers/format-number';
 
-import Fail from 'assets/icons/status/fail-red.svg';
-import Success from 'assets/icons/status/success.svg';
+import { VoteIcon } from 'basics/icons';
 
 import { flexAllCenter } from 'styles/mixins';
 import { COLORS } from 'styles/style-constants';
-
-import { SimpleProposalResultsLabels } from '../../../../pages/GovernanceVoteProposalPage';
 
 const ProgressLine = styled.div`
     width: 100%;
@@ -28,22 +27,9 @@ const Label = styled.div`
     margin-bottom: 0.7rem;
 `;
 
-const IconStyles = css`
-    height: 1.6rem;
-    width: 1.6rem;
-    margin-right: 0.8rem;
-`;
-
-const SuccessIcon = styled(Success)`
-    ${IconStyles}
-`;
-
-const FailIcon = styled(Fail)`
-    ${IconStyles}
-`;
-
 const Vote = styled.div`
     ${flexAllCenter};
+    gap: 0.5rem;
 `;
 
 const progressLineStyles = css`
@@ -57,37 +43,42 @@ const Outer = styled.div`
     background-color: ${COLORS.gray100};
 `;
 
-const Inner = styled.div<{ $width: string; $isAgainst: boolean }>`
+const Inner = styled.div<{ $width: string; $isAgainst: boolean; $isAbstain: boolean }>`
     ${progressLineStyles};
     width: ${({ $width }) => $width};
-    background-color: ${({ $isAgainst }) => ($isAgainst ? COLORS.red500 : COLORS.purple500)};
+    background-color: ${({ $isAgainst, $isAbstain }) =>
+        $isAgainst ? COLORS.red500 : $isAbstain ? COLORS.gray200 : COLORS.purple500};
 `;
 
 const ResultProgressLine = ({
     result,
 }: {
-    result: { label: string; percentage: string; amount: string; isIceSupported: boolean };
+    result: {
+        percentage: string;
+        amount: string;
+        votingTokens: string;
+        vote: VoteOptions;
+    };
 }): ReactElement => {
-    const { label, percentage, amount, isIceSupported } = result;
+    const { percentage, amount, votingTokens, vote } = result;
     const resultDescription = `${percentage ? `${percentage} - ` : ''}${formatBalance(
         Number(amount),
-    )} ${isIceSupported ? 'AQUA + ICE' : 'AQUA'}`;
-
-    const isFor = SimpleProposalResultsLabels.votesFor === label;
+    )} ${votingTokens}`;
 
     return (
         <ProgressLine>
             <Label>
                 <Vote>
-                    {isFor ? <SuccessIcon /> : <FailIcon />}
-                    {label}
+                    <VoteIcon option={vote} />
+                    {vote}
                 </Vote>
                 <span>{resultDescription}</span>
             </Label>
             <Outer>
                 <Inner
                     $width={percentage || '0'}
-                    $isAgainst={label === SimpleProposalResultsLabels.votesAgainst}
+                    $isAgainst={vote === VoteOptions.against}
+                    $isAbstain={vote === VoteOptions.abstain}
                 />
             </Outer>
         </ProgressLine>

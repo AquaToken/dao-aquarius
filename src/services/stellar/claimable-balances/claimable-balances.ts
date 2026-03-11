@@ -17,9 +17,9 @@ import EventService from 'services/event.service';
 import { StellarEvents, StellarPayload } from 'services/stellar/events/events';
 import Horizon from 'services/stellar/horizon/horizon';
 
+import { ProposalSimple } from 'types/governance';
 import { ClaimableBalance } from 'types/stellar';
 
-import { ProposalSimple } from 'pages/governance/api/types';
 import { PairStats } from 'pages/vote/api/types';
 
 export default class ClaimableBalances {
@@ -124,13 +124,17 @@ export default class ClaimableBalances {
             const hasAgainstMarker = claim.claimants.some(
                 claimant => claimant.destination === proposal.vote_against_issuer,
             );
+
+            const hasAbstainMarker = claim.claimants.some(
+                claimant => claimant.destination === proposal.abstain_issuer,
+            );
             const selfClaim = claim.claimants.find(claimant => claimant.destination === accountId);
             const isAqua = claim.asset === aquaAssetString;
             const isGovIce = claim.asset === `${GOV_ICE_CODE}:${ICE_ISSUER}`;
             const isGDIce = claim.asset === `${GD_ICE_CODE}:${ICE_ISSUER}`;
 
             if (
-                (hasForMarker || hasAgainstMarker) &&
+                (hasForMarker || hasAgainstMarker || hasAbstainMarker) &&
                 Boolean(selfClaim) &&
                 (isAqua || isGovIce || isGDIce)
             ) {

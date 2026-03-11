@@ -1,6 +1,7 @@
 import {
     addWeeks,
     endOfWeek,
+    format,
     isBefore,
     isSunday,
     nextMonday,
@@ -203,3 +204,19 @@ export const getBribePeriodRange = (date: number | Date, duration: number) => {
         end: convertUTCToLocalDateIgnoringTimezone(fullPeriodEnd),
     };
 };
+
+export const getWeekStart = (weeksFromNow: number) =>
+    format(
+        startOfWeek(addWeeks(new Date(), weeksFromNow), {
+            weekStartsOn: 1,
+        }),
+        'yyyy-MM-dd',
+    );
+
+export const getNextWeekStartFromString = (dateStr: string): string =>
+    format(
+        startOfWeek(addWeeks(new Date(dateStr), 1), {
+            weekStartsOn: 1,
+        }),
+        'yyyy-MM-dd',
+    );

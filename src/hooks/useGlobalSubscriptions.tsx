@@ -183,7 +183,9 @@ export default function useGlobalSubscriptions(): void {
     useEffect(() => {
         if (loginErrorText) {
             ToastService.showErrorToast(
-                UnfundedErrors.includes(loginErrorText) ? 'Activate your account' : loginErrorText,
+                UnfundedErrors.includes(loginErrorText)
+                    ? 'Deposit at least 1 XLM to activate account first?'
+                    : loginErrorText,
             );
             clearLoginError();
         }

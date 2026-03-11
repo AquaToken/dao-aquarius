@@ -3,7 +3,12 @@ import { ReactElement, useEffect, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { getProposalRequest } from 'api/governance';
+
+import { DAO_UPDATE_INTERVAL } from 'constants/dao';
 import { AppRoutes } from 'constants/routes';
+
+import { Proposal } from 'types/governance';
 
 import PageLoader from 'basics/loaders/PageLoader';
 
@@ -12,8 +17,6 @@ import NotFoundPage from 'components/NotFoundPage';
 import { respondDown } from 'styles/mixins';
 import { Breakpoints, COLORS } from 'styles/style-constants';
 
-import { getProposalRequest, UPDATE_INTERVAL } from '../api/api';
-import { Proposal } from '../api/types';
 import ProposalScreen from '../components/GovernanceVoteProposalPage/Proposal/ProposalScreen';
 
 const Main = styled.main`
@@ -21,16 +24,6 @@ const Main = styled.main`
          background: ${COLORS.gray50};
     `}
 `;
-
-export enum SimpleProposalOptions {
-    voteFor = 'For',
-    voteAgainst = 'Against',
-}
-
-export enum SimpleProposalResultsLabels {
-    votesFor = 'For',
-    votesAgainst = 'Against',
-}
 
 const GovernanceVoteProposalPage = (): ReactElement => {
     const { id, version } = useParams<{ id?: string; version?: string }>();
@@ -42,7 +35,7 @@ const GovernanceVoteProposalPage = (): ReactElement => {
     useEffect(() => {
         getProposalRequest(id)
             .then(response => {
-                setProposal(response.data);
+                setProposal(response);
             })
             .catch(() => {
                 setError(true);
@@ -52,7 +45,7 @@ const GovernanceVoteProposalPage = (): ReactElement => {
     useEffect(() => {
         const interval = setInterval(() => {
             setUpdateIndex(prev => prev + 1);
-        }, UPDATE_INTERVAL);
+        }, DAO_UPDATE_INTERVAL);
 
         return () => clearInterval(interval);
     }, []);

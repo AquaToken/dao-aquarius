@@ -1,3 +1,13 @@
+type ProposalStatus = 'DISCUSSION' | 'VOTING' | 'VOTED' | 'EXPIRED';
+type PaymentStatus =
+    | 'HORIZON_ERROR'
+    | 'BAD_MEMO'
+    | 'INVALID_PAYMENT'
+    | 'FINE'
+    | 'FAILED_TRANSACTION';
+
+export type VoteChoiceSimple = 'vote_for' | 'vote_against' | 'vote_abstain';
+
 export type ProposalSimple = {
     id: number;
     proposed_by: string;
@@ -7,6 +17,7 @@ export type ProposalSimple = {
     end_at: string;
     vote_for_result: string;
     vote_against_result: string;
+    vote_abstain_result?: string;
     is_simple_proposal: boolean;
     aqua_circulating_supply: string;
     proposal_status: ProposalStatus;
@@ -20,6 +31,7 @@ export type ProposalSimple = {
     logvote_set: LogVote[];
     vote_for_issuer: string;
     vote_against_issuer: string;
+    abstain_issuer?: string;
 };
 
 export type LogVote = {
@@ -29,16 +41,8 @@ export type LogVote = {
     claimable_balance_id: string;
     created_at: string;
     transaction_link: string;
-    vote_choice: string;
+    vote_choice: VoteChoiceSimple;
 };
-
-type ProposalStatus = 'DISCUSSION' | 'VOTING' | 'VOTED' | 'EXPIRED';
-type PaymentStatus =
-    | 'HORIZON_ERROR'
-    | 'BAD_MEMO'
-    | 'INVALID_PAYMENT'
-    | 'FINE'
-    | 'FAILED_TRANSACTION';
 
 type ProposalHistory = {
     created_at: string;
@@ -57,6 +61,8 @@ export type Proposal = {
     title: string;
     vote_against_issuer: string;
     vote_against_result: string;
+    abstain_issuer?: string;
+    vote_abstain_result?: string;
     vote_for_issuer: string;
     vote_for_result: string;
     aqua_circulating_supply: string;
@@ -72,8 +78,6 @@ export type Proposal = {
     percent_for_quorum?: number;
     ice_circulating_supply?: string;
 };
-
-export type VoteChoiceSimple = 'vote_for' | 'vote_against';
 
 export type Vote = {
     account_issuer: string;

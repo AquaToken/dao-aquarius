@@ -5,6 +5,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { checkProposalStatus, createProposal, editProposal } from 'api/governance';
+
 import { CREATE_DISCUSSION_COST } from 'constants/dao';
 
 import ErrorHandler from 'helpers/error-handler';
@@ -18,6 +20,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { StellarService, ToastService } from 'services/globalServices';
 
+import { Proposal } from 'types/governance';
 import { ModalProps } from 'types/modal';
 
 import Alert from 'basics/Alert';
@@ -26,9 +29,6 @@ import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import { flexRowSpaceBetween } from 'styles/mixins';
 import { COLORS } from 'styles/style-constants';
-
-import { checkProposalStatus, createProposal, editProposal } from '../../../api/api';
-import { Proposal } from '../../../api/types';
 
 const ProposalCost = styled.div`
     ${flexRowSpaceBetween};

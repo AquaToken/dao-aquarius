@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { getAmmAquaBalance } from 'api/amm';
 
 import { useUpdateIndex } from 'hooks/useUpdateIndex';
+import { useUrlParam } from 'hooks/useUrlParam';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
@@ -106,33 +107,15 @@ const OPTIONS = [
 ];
 
 const Profile = () => {
-    const [selectedTab, setSelectedTab] = useState(ProfileTabs.balances);
     const [ammAquaBalance, setAmmAquaBalance] = useState(null);
     const [aquaUsdPrice, setAquaUsdPrice] = useState(null);
 
     const { account } = useAuthStore();
 
-    const location = useLocation();
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        const params = new URLSearchParams(location.search);
-        const tabParams = params.get(ProfileUrlParams.tab);
-
-        if (tabParams) {
-            setSelectedTab(tabParams as ProfileTabs);
-        } else {
-            params.append(ProfileUrlParams.tab, ProfileTabs.balances);
-            setSelectedTab(ProfileTabs.balances);
-            navigate(`${location.pathname}?${params.toString()}`, { replace: true });
-        }
-    }, [location]);
-
-    const setTab = (tab: ProfileTabs) => {
-        const params = new URLSearchParams('');
-        params.set(ProfileUrlParams.tab, tab);
-        navigate({ search: params.toString() });
-    };
+    const { value: selectedTab, setValue: setSelectedTab } = useUrlParam<ProfileTabs>(
+        ProfileUrlParams.tab,
+        ProfileTabs.balances,
+    );
 
     const updateIndex = useUpdateIndex(10000);
 
@@ -151,8 +134,12 @@ const Profile = () => {
             <AccountInfo />
             <Balances ammAquaBalance={ammAquaBalance} />
             <ControlsWrapper>
-                <ToggleGroupStyled value={selectedTab} options={OPTIONS} onChange={setTab} />
-                <SelectStyled value={selectedTab} options={OPTIONS} onChange={setTab} />
+                <ToggleGroupStyled
+                    value={selectedTab}
+                    options={OPTIONS}
+                    onChange={setSelectedTab}
+                />
+                <SelectStyled value={selectedTab} options={OPTIONS} onChange={setSelectedTab} />
             </ControlsWrapper>
 
             <ContentWrap>

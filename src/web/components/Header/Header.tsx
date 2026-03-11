@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
+import { getActiveProposalsCount } from 'api/governance';
+
 import { AppRoutes } from 'constants/routes';
 
 import { getAquaAssetData, getAssetString } from 'helpers/assets';
@@ -22,8 +24,6 @@ import ExpandedMenu from 'components/Header/ExpandedMenu/ExpandedMenu';
 
 import { commonMaxWidth, respondDown } from 'styles/mixins';
 import { Breakpoints, COLORS, HEADER_HEIGHT, Z_INDEX } from 'styles/style-constants';
-
-import { getActiveProposalsCount } from 'pages/governance/api/api';
 
 import AccountBlock from './AccountBlock';
 

@@ -347,7 +347,7 @@ const RangeInput = ({
     value: number;
     disabled?: boolean;
     marks?: number[] | number;
-    labels?: boolean | string; // false/undefined: no labels; true: % labels; string: index + suffix (e.g. "y")
+    labels?: boolean | string | ((ind: number) => string); // false/undefined: no labels; true: % labels; string: index + suffix (e.g. "y")
     size?: Size;
     highlight?: { range: [number, number]; color?: string; label?: string };
     withoutCurrentValue?: boolean;
@@ -444,7 +444,11 @@ const RangeInput = ({
                     />
                     {labels && (
                         <Label $percent={p} $size={size}>
-                            {typeof labels === 'string' ? `${i}${labels}` : `${p}%`}
+                            {typeof labels === 'function'
+                                ? labels(i)
+                                : typeof labels === 'string'
+                                  ? `${i}${labels}`
+                                  : `${p}%`}
                         </Label>
                     )}
                 </React.Fragment>

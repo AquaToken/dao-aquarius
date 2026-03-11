@@ -81,4 +81,15 @@ export const governanceQuestions: QuestionType[] = [
             </span>
         ),
     },
+    {
+        question: 'When should I vote Abstain?',
+        answer: (
+            <span>
+                You can vote Abstain if you are not sure whether you support the proposal or not.
+                This is highly encouraged compared to just ignoring the proposal. Abstain votes are
+                calculated in the quorum but don’t influence on the outcome of the voting. The
+                latter is still decided according to the simple majority of “For” or “Against”.
+            </span>
+        ),
+    },
 ];

@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import { processIceTx } from 'api/ice';
 
 import { GD_ICE_CODE, GOV_ICE_CODE, ICE_ISSUER } from 'constants/assets';
+import { VoteOptions } from 'constants/dao';
 import { AppRoutes } from 'constants/routes';
 
 import { getDateString } from 'helpers/date';
@@ -23,12 +24,11 @@ import { StellarService, ToastService } from 'services/globalServices';
 
 import { ModalProps } from 'types/modal';
 
-import Fail from 'assets/icons/status/fail-red.svg';
-import Success from 'assets/icons/status/success.svg';
 import DIce from 'assets/tokens/dice-logo.svg';
 import Ice from 'assets/tokens/ice-logo.svg';
 
 import Button from 'basics/buttons/Button';
+import { VoteIcon } from 'basics/icons';
 import Input from 'basics/inputs/Input';
 import RangeInput from 'basics/inputs/RangeInput';
 import Select from 'basics/inputs/Select';
@@ -37,8 +37,6 @@ import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import { flexAllCenter, flexRowSpaceBetween } from 'styles/mixins';
 import { COLORS } from 'styles/style-constants';
-
-import { SimpleProposalOptions } from '../../../pages/GovernanceVoteProposalPage';
 
 const MINIMUM_ICE_AMOUNT = 10;
 
@@ -56,20 +54,7 @@ const Label = styled.span`
     line-height: 1.8rem;
     color: ${COLORS.textTertiary};
     ${flexAllCenter};
-`;
-
-const iconStyles = css`
-    height: 1.6rem;
-    width: 1.6rem;
-    margin-right: 0.5rem;
-`;
-
-const FailIcon = styled(Fail)`
-    ${iconStyles};
-`;
-
-const SuccessIcon = styled(Success)`
-    ${iconStyles};
+    gap: 0.5rem;
 `;
 
 const BalanceBlock = styled.span`
@@ -144,7 +129,7 @@ const EXTENDED_OPTIONS = [...OPTIONS, { label: GD_ICE_CODE, value: GD_ICE, icon:
 const ConfirmVoteModal = ({
     params,
     close,
-}: ModalProps<{ option: string; key: string; endDate: string; startDate: string }>) => {
+}: ModalProps<{ option: VoteOptions; key: string; endDate: string; startDate: string }>) => {
     const { account } = useAuthStore();
     const { option, key, endDate } = params;
 
@@ -252,7 +237,7 @@ const ConfirmVoteModal = ({
             <ContentRow>
                 <Label>Your vote:</Label>
                 <Label>
-                    {option === SimpleProposalOptions.voteAgainst ? <FailIcon /> : <SuccessIcon />}
+                    <VoteIcon option={option} />
                     <span>{option}</span>
                 </Label>
             </ContentRow>

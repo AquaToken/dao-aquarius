@@ -5,6 +5,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { checkProposalStatus, publishProposal } from 'api/governance';
+
 import { APPROVED_PROPOSAL_REWARD, CREATE_PROPOSAL_COST } from 'constants/dao';
 
 import { getDateString } from 'helpers/date';
@@ -19,20 +21,19 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { StellarService, ToastService } from 'services/globalServices';
 
+import { ProposalSimple } from 'types/governance';
 import { ModalProps } from 'types/modal';
+import { Option } from 'types/option';
 
 import Alert from 'basics/Alert';
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
-import Select, { Option } from 'basics/inputs/Select';
+import Select from 'basics/inputs/Select';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import { flexRowSpaceBetween, respondDown } from 'styles/mixins';
 import { Breakpoints, COLORS } from 'styles/style-constants';
 
-import { ProposalSimple } from 'pages/governance/api/types';
-
-import { checkProposalStatus, publishProposal } from '../../../api/api';
 import { DAY } from '../ProposalCreation/ProposalCreation';
 
 const Description = styled(ModalDescription)`

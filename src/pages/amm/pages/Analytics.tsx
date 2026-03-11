@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { getTotalStats, getVolume24h } from 'api/amm';
@@ -9,7 +9,9 @@ import { AppRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';
 
+import { useScopedSearchParams } from 'hooks/useScopedSearchParams';
 import { useSkipFirstRender } from 'hooks/useSkipFirstRender';
+import { useUrlParam } from 'hooks/useUrlParam';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
@@ -27,9 +29,9 @@ import SectionPicker from 'basics/SectionPicker';
 import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'styles/mixins';
 import { Breakpoints, COLORS } from 'styles/style-constants';
 
-import AllPools from '../components/AllPools/AllPools';
+import AllPools, { AllPoolsUrlParams } from '../components/AllPools/AllPools';
 import LiquidityChart from '../components/LiquidityChart/LiquidityChart';
-import MyLiquidity from '../components/MyLiquidity/MyLiquidity';
+import MyLiquidity, { MyLiquidityUrlParams } from '../components/MyLiquidity/MyLiquidity';
 import VolumeChart from '../components/VolumeChart/VolumeChart';
 
 const Container = styled.main`
@@ -140,14 +142,14 @@ const OPTIONS: Option<AnalyticsTabs>[] = [
 ];
 
 const Analytics = () => {
-    const [activeTab, setActiveTab] = useState(null);
     const [totalStats, setTotalStats] = useState(null);
     const [volume24h, setVolume24h] = useState(null);
     const [myTotal, setMyTotal] = useState(null);
     const [chartWidth, setChartWidth] = useState(0);
 
     const navigate = useNavigate();
-    const location = useLocation();
+
+    const { isLogged } = useAuthStore();
 
     const mainContent = useRef(null);
 
@@ -162,37 +164,23 @@ const Analytics = () => {
         }
     }, [totalStats, volume24h]);
 
-    useEffect(() => {
-        const params = new URLSearchParams(location.search);
+    const { value: activeTab, setValue: setTab } = useUrlParam<AnalyticsTabs>(
+        AnalyticsUrlParams.tab,
+        AnalyticsTabs.top,
+        { authRequiredValues: [AnalyticsTabs.my] },
+    );
 
-        const tabParam = params.get(AnalyticsUrlParams.tab);
+    const allowedParams =
+        activeTab === AnalyticsTabs.my
+            ? [AnalyticsUrlParams.tab, MyLiquidityUrlParams.filter]
+            : [
+                  AnalyticsUrlParams.tab,
+                  AllPoolsUrlParams.filter,
+                  AllPoolsUrlParams.search,
+                  AllPoolsUrlParams.sort,
+              ];
 
-        if (tabParam) {
-            setActiveTab(tabParam as AnalyticsTabs);
-        } else {
-            params.append(AnalyticsUrlParams.tab, AnalyticsTabs.top);
-            setActiveTab(AnalyticsTabs.top);
-
-            navigate(`${location.pathname}?${params.toString()}`, { replace: true });
-        }
-    }, [location]);
-
-    const { isLogged } = useAuthStore();
-
-    const setTab = (tab: AnalyticsTabs) => {
-        if (tab === AnalyticsTabs.my && !isLogged) {
-            return ModalService.openModal(ChooseLoginMethodModal, {
-                callback: () => {
-                    const params = new URLSearchParams('');
-                    params.set(AnalyticsUrlParams.tab, AnalyticsTabs.my);
-                    navigate(`${location.pathname}?${params.toString()}`, { replace: true });
-                },
-            });
-        }
-        const params = new URLSearchParams('');
-        params.set(AnalyticsUrlParams.tab, tab);
-        navigate({ search: params.toString() });
-    };
+    useScopedSearchParams(allowedParams);
 
     useEffect(() => {
         getTotalStats().then(res => {
