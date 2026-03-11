@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { API_GOVERNANCE } from 'constants/api';
+import { getGovernanceUrl } from 'helpers/url';
 
 import { ListResponse } from 'store/assetsStore/types';
 
@@ -33,6 +33,7 @@ export const getProposalsRequest = async ({
     filter: PROPOSAL_FILTER;
     total: number;
 }> => {
+    const API_GOVERNANCE = getGovernanceUrl();
     const params = new URLSearchParams();
     params.append('limit', pageSize.toString());
     params.append('page', page.toString());
@@ -71,7 +72,7 @@ export const getActiveProposalsCount = (): Promise<{ active: number; discussion:
     }));
 
 export const getProposalRequest = (id: string): Promise<Proposal> =>
-    axios.get<Proposal>(`${API_GOVERNANCE}/proposal/${id}/`).then(res => res.data);
+    axios.get<Proposal>(`${getGovernanceUrl()}/proposal/${id}/`).then(res => res.data);
 
 export enum VoteFields {
     account = 'account',
@@ -97,7 +98,7 @@ export const getVotes = (
     axios
         .get<
             ListResponse<Vote>
-        >(`${API_GOVERNANCE}/votes-for-proposal/?proposal_id=${id}&limit=${pageSize}&page=${page}&ordering=${isReverse ? '' : '-'}${VotesOrdering[ordering]}`)
+        >(`${getGovernanceUrl()}/votes-for-proposal/?proposal_id=${id}&limit=${pageSize}&page=${page}&ordering=${isReverse ? '' : '-'}${VotesOrdering[ordering]}`)
         .then(res => res.data);
 
 export const getVoteTxHash = (url: string): Promise<string> =>
@@ -106,7 +107,7 @@ export const getVoteTxHash = (url: string): Promise<string> =>
         .then(result => result?.data?._embedded?.records?.[0]?.hash);
 
 export const createProposal = (proposal: ProposalCreateOptions): Promise<Proposal> =>
-    axios.post<Proposal>(`${API_GOVERNANCE}/proposal/`, proposal).then(({ data }) => data);
+    axios.post<Proposal>(`${getGovernanceUrl()}/proposal/`, proposal).then(({ data }) => data);
 
 export const editProposal = (
     proposal: {
@@ -117,7 +118,9 @@ export const editProposal = (
     },
     id: number,
 ): Promise<Proposal> =>
-    axios.patch<Proposal>(`${API_GOVERNANCE}/proposal/${id}/`, proposal).then(({ data }) => data);
+    axios
+        .patch<Proposal>(`${getGovernanceUrl()}/proposal/${id}/`, proposal)
+        .then(({ data }) => data);
 
 export const publishProposal = (
     proposal: {
@@ -129,10 +132,10 @@ export const publishProposal = (
     id: number,
 ): Promise<Proposal> =>
     axios
-        .post<Proposal>(`${API_GOVERNANCE}/proposal/${id}/submit/`, proposal)
+        .post<Proposal>(`${getGovernanceUrl()}/proposal/${id}/submit/`, proposal)
         .then(({ data }) => data);
 
 export const checkProposalStatus = (hash: number): Promise<Proposal> =>
     axios
-        .post<Proposal>(`${API_GOVERNANCE}/proposal/${hash}/check_payment/`)
+        .post<Proposal>(`${getGovernanceUrl()}/proposal/${hash}/check_payment/`)
         .then(({ data }) => data);
