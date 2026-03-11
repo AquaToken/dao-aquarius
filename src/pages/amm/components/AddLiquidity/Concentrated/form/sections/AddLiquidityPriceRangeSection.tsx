@@ -144,7 +144,11 @@ const AddLiquidityPriceRangeSection = ({
                             ) : (
                                 <NumericFormat
                                     value={minPriceInput}
-                                    onChange={({ target }) => onMinPriceChange(target.value)}
+                                    onValueChange={(values, sourceInfo) => {
+                                        if (sourceInfo.source === 'event') {
+                                            onMinPriceChange(values.value);
+                                        }
+                                    }}
                                     customInput={PriceInput}
                                     inputMode="decimal"
                                     thousandSeparator=","
@@ -185,7 +189,11 @@ const AddLiquidityPriceRangeSection = ({
                             ) : (
                                 <NumericFormat
                                     value={maxPriceInput}
-                                    onChange={({ target }) => onMaxPriceChange(target.value)}
+                                    onValueChange={(values, sourceInfo) => {
+                                        if (sourceInfo.source === 'event') {
+                                            onMaxPriceChange(values.value);
+                                        }
+                                    }}
                                     customInput={PriceInput}
                                     inputMode="decimal"
                                     thousandSeparator=","
