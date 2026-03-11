@@ -132,21 +132,21 @@ export const useConcentratedAddLiquidityForm = ({
         ];
     }, [tickSpacing]);
 
-    const referenceTick = useMemo(() => {
-        if (
-            tickSpacing === null ||
-            !Number.isFinite(referencePriceValue) ||
-            referencePriceValue <= 0
-        ) {
+    const referenceExactTick = useMemo(() => {
+        if (!Number.isFinite(referencePriceValue) || referencePriceValue <= 0) {
             return null;
         }
 
-        return clamp(
-            snapDown(priceToTick(referencePriceValue, decimalsDiff), tickSpacing),
-            minTickBound,
-            maxTickBound,
-        );
-    }, [tickSpacing, referencePriceValue, decimalsDiff, minTickBound, maxTickBound]);
+        return priceToTick(referencePriceValue, decimalsDiff);
+    }, [referencePriceValue, decimalsDiff]);
+
+    const referenceTick = useMemo(() => {
+        if (tickSpacing === null || referenceExactTick === null) {
+            return null;
+        }
+
+        return clamp(snapDown(referenceExactTick, tickSpacing), minTickBound, maxTickBound);
+    }, [tickSpacing, referenceExactTick, minTickBound, maxTickBound]);
 
     useEffect(() => {
         if (
@@ -614,8 +614,8 @@ export const useConcentratedAddLiquidityForm = ({
         }
         if (
             isEmptyPool &&
-            referenceTick !== null &&
-            (tickLower > referenceTick || tickUpper < referenceTick)
+            referenceExactTick !== null &&
+            (tickLower > referenceExactTick || tickUpper < referenceExactTick)
         ) {
             return 'Price range does not match entered amounts';
         }
@@ -628,7 +628,7 @@ export const useConcentratedAddLiquidityForm = ({
         tickSpacing,
         minTickBound,
         maxTickBound,
-        referenceTick,
+        referenceExactTick,
         isEmptyPool,
         canUseRangeControls,
     ]);
@@ -675,16 +675,16 @@ export const useConcentratedAddLiquidityForm = ({
     const disableAmount1Input = !isEmptyPool && isRangeAboveCurrent;
     const disableLowerUpByReference =
         isEmptyPool &&
-        referenceTick !== null &&
+        referenceExactTick !== null &&
         hasTickRange &&
         tickSpacing !== null &&
-        (tickLower as number) + tickSpacing > referenceTick;
+        (tickLower as number) + tickSpacing > referenceExactTick;
     const disableUpperDownByReference =
         isEmptyPool &&
-        referenceTick !== null &&
+        referenceExactTick !== null &&
         hasTickRange &&
         tickSpacing !== null &&
-        (tickUpper as number) - tickSpacing < referenceTick;
+        (tickUpper as number) - tickSpacing < referenceExactTick;
 
     const isMinScientific = /e/i.test(minPriceInput);
     const isMaxScientific = /e/i.test(maxPriceInput);
