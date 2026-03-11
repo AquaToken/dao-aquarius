@@ -534,11 +534,13 @@ export default class AmmContract {
             amounts,
         );
 
-        return this.buildBatchTx(
+        const tx = await this.buildBatchTx(
             accountId,
             [init.batchCall, deposit.batchCall],
             [init.authInvocation, deposit.authInvocation],
         );
+
+        return { tx, poolAddress };
     }
 
     async getCreateAndDepositStablePoolTx(
@@ -570,11 +572,13 @@ export default class AmmContract {
         );
         const deposit = this.buildDepositInvocation(accountId, poolAddress, assets, amounts);
 
-        return this.buildBatchTx(
+        const tx = await this.buildBatchTx(
             accountId,
             [init.batchCall, deposit.batchCall],
             [init.authInvocation, deposit.authInvocation],
         );
+
+        return { tx, poolAddress };
     }
 
     async getCreateAndDepositConcentratedPoolTx(
@@ -621,11 +625,13 @@ export default class AmmContract {
             minLiquidity,
         );
 
-        return this.buildBatchTx(
+        const tx = await this.buildBatchTx(
             accountId,
             [init.batchCall, depositPosition.batchCall],
             [init.authInvocation, depositPosition.authInvocation],
         );
+
+        return { tx, poolAddress };
     }
 
     parsePoolRewards(value, decimals = 7): PoolRewardsInfo {

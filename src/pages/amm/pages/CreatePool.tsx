@@ -1,4 +1,3 @@
-import { xdr } from '@stellar/stellar-sdk';
 import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -373,29 +372,10 @@ const CreatePool = () => {
         });
     }, [fourthAsset]);
 
-    const extractCreatedPoolAddress = (value: () => xdr.ScVal[]): string => {
-        const results = value();
-        const batchInitResult = results[0] ? SorobanService.scVal.scValToNative(results[0]) : null;
-
-        if (Array.isArray(batchInitResult) && typeof batchInitResult[1] === 'string') {
-            return batchInitResult[1];
-        }
-
-        if (results[1]) {
-            const directPoolAddress = SorobanService.scVal.scValToNative(results[1] as xdr.ScVal);
-
-            if (typeof directPoolAddress === 'string') {
-                return directPoolAddress;
-            }
-        }
-
-        throw new Error('Failed to resolve created pool address');
-    };
-
-    const signAndSubmitCreation = (tx: Transaction) =>
+    const signAndSubmitCreation = (tx: Transaction, poolAddress: string) =>
         account
             .signAndSubmitTx(tx, true)
-            .then((res: { status?: BuildSignAndSubmitStatuses; value: () => xdr.ScVal[] }) => {
+            .then((res: { status?: BuildSignAndSubmitStatuses }) => {
                 setPending(false);
                 if (!res) {
                     return;
@@ -408,7 +388,6 @@ const CreatePool = () => {
                     ToastService.showSuccessToast('More signatures required to complete');
                     return;
                 }
-                const poolAddress = extractCreatedPoolAddress(res.value);
                 ToastService.showSuccessToast('Pool successfully created');
                 navigate(AppRoutes.section.amm.to.pool({ poolAddress }));
             })
@@ -526,7 +505,7 @@ const CreatePool = () => {
                 createInfo,
                 regularDepositFormData.amounts,
             )
-            .then(tx => signAndSubmitCreation(tx))
+            .then(({ tx, poolAddress }) => signAndSubmitCreation(tx, poolAddress))
             .catch(e => {
                 ToastService.showErrorToast(e.message ?? e.toString());
                 setPending(false);
@@ -560,7 +539,7 @@ const CreatePool = () => {
                 createInfo,
                 regularDepositFormData.amounts,
             )
-            .then(tx => signAndSubmitCreation(tx))
+            .then(({ tx, poolAddress }) => signAndSubmitCreation(tx, poolAddress))
             .catch(e => {
                 ToastService.showErrorToast(e.message ?? e.toString());
                 setPending(false);
@@ -610,7 +589,7 @@ const CreatePool = () => {
                     [counterToken.contract, concentratedDepositFormData.amount1 || '0'],
                 ]),
             )
-            .then(tx => signAndSubmitCreation(tx))
+            .then(({ tx, poolAddress }) => signAndSubmitCreation(tx, poolAddress))
             .catch(e => {
                 ToastService.showErrorToast(e.message ?? e.toString());
                 setPending(false);
