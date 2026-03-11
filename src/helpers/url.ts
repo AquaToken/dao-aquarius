@@ -6,6 +6,7 @@ import { getEnv } from './env';
 export const getHorizonUrl = () => API_URLS[getEnv()].horizon;
 export const getSorobanUrl = () => API_URLS[getEnv()].soroban;
 export const getAmmAquaUrl = () => API_URLS[getEnv()].ammAqua;
+export const getGovernanceUrl = () => API_URLS[getEnv()].governance;
 
 export const getOnRampWidgetUrl = (params): string => {
     const urlParams = new URLSearchParams(params).toString();
