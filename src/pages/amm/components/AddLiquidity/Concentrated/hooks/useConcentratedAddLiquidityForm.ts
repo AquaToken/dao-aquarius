@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import {
-    CONCENTRATED_DEPOSIT_DEFAULT_PRESET_MULTIPLIER,
+    CONCENTRATED_DEPOSIT_DEFAULT_PRESET_KEY,
     CONCENTRATED_DEPOSIT_ESTIMATE_DEBOUNCE_MS,
     CONCENTRATED_DEPOSIT_PRESETS,
     CONCENTRATED_DEPOSIT_PRICE_INPUT_DEBOUNCE_MS,
@@ -41,7 +41,7 @@ import {
     resolvePresetTicks,
 } from '../helpers/addLiquidityRangeUtils';
 
-type DepositPresetKey = 'full' | '2' | '1.2' | '1.01';
+type DepositPresetKey = 'full' | 'tight' | 'wide' | 'up' | 'down';
 
 type Params = {
     pool: PoolExtended;
@@ -160,13 +160,21 @@ export const useConcentratedAddLiquidityForm = ({
             return;
         }
 
+        const defaultPreset = CONCENTRATED_DEPOSIT_PRESETS.find(
+            ({ key }) => key === CONCENTRATED_DEPOSIT_DEFAULT_PRESET_KEY,
+        );
+        if (!defaultPreset) {
+            return;
+        }
+
         const preset = resolvePresetTicks({
             tickSpacing,
             referencePriceValue,
             decimalsDiff,
             minTickBound,
             maxTickBound,
-            multiplier: CONCENTRATED_DEPOSIT_DEFAULT_PRESET_MULTIPLIER,
+            lowerFactor: defaultPreset.lowerFactor,
+            upperFactor: defaultPreset.upperFactor,
         });
         if (!preset) {
             return;
@@ -175,9 +183,7 @@ export const useConcentratedAddLiquidityForm = ({
 
         setTickLower(presetLower);
         setTickUpper(presetUpper);
-        setSelectedPreset(
-            String(CONCENTRATED_DEPOSIT_DEFAULT_PRESET_MULTIPLIER) as DepositPresetKey,
-        );
+        setSelectedPreset(CONCENTRATED_DEPOSIT_DEFAULT_PRESET_KEY as DepositPresetKey);
     }, [
         tickSpacing,
         tickLower,
@@ -366,13 +372,21 @@ export const useConcentratedAddLiquidityForm = ({
             return;
         }
 
+        const selectedPresetConfig = CONCENTRATED_DEPOSIT_PRESETS.find(
+            ({ key }) => key === selectedPreset,
+        );
+        if (!selectedPresetConfig) {
+            return;
+        }
+
         const preset = resolvePresetTicks({
             tickSpacing,
             referencePriceValue,
             decimalsDiff,
             minTickBound,
             maxTickBound,
-            multiplier: Number(selectedPreset),
+            lowerFactor: selectedPresetConfig.lowerFactor,
+            upperFactor: selectedPresetConfig.upperFactor,
         });
 
         if (!preset) {
@@ -649,7 +663,8 @@ export const useConcentratedAddLiquidityForm = ({
                 decimalsDiff,
                 minTickBound,
                 maxTickBound,
-                multiplier: item.multiplier,
+                lowerFactor: item.lowerFactor,
+                upperFactor: item.upperFactor,
             });
             if (!expected) {
                 return false;
@@ -879,8 +894,12 @@ export const useConcentratedAddLiquidityForm = ({
         applyTickRangeAndRecalculate(minTickBound, maxTickBound);
     };
 
-    const handlePreset = (multiplier: number) => {
+    const handlePreset = (presetKey: Exclude<DepositPresetKey, 'full'>) => {
         if (tickSpacing === null || !canUseRangeControls || !Number.isFinite(referencePriceValue)) {
+            return;
+        }
+        const presetConfig = CONCENTRATED_DEPOSIT_PRESETS.find(({ key }) => key === presetKey);
+        if (!presetConfig) {
             return;
         }
         const preset = resolvePresetTicks({
@@ -889,13 +908,14 @@ export const useConcentratedAddLiquidityForm = ({
             decimalsDiff,
             minTickBound,
             maxTickBound,
-            multiplier,
+            lowerFactor: presetConfig.lowerFactor,
+            upperFactor: presetConfig.upperFactor,
         });
         if (!preset) {
             return;
         }
         const [nextLower, nextUpper] = preset;
-        setSelectedPreset(String(multiplier) as Exclude<DepositPresetKey, 'full'>);
+        setSelectedPreset(presetKey);
         applyTickRangeAndRecalculate(nextLower, nextUpper);
     };
 

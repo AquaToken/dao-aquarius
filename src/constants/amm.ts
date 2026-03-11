@@ -23,13 +23,42 @@ export const CONCENTRATED_LIQUIDITY_CHART_MARGIN = {
 export const CONCENTRATED_LIQUIDITY_CHART_ZOOM_MIN = 1;
 export const CONCENTRATED_LIQUIDITY_CHART_ZOOM_MAX = 256;
 
-export const CONCENTRATED_DEPOSIT_DEFAULT_PRESET_MULTIPLIER = 1.2;
+export const CONCENTRATED_DEPOSIT_DEFAULT_PRESET_KEY = 'wide';
 export const CONCENTRATED_DEPOSIT_ESTIMATE_DEBOUNCE_MS = 700;
 export const CONCENTRATED_DEPOSIT_PRICE_INPUT_DEBOUNCE_MS = 2000;
 export const CONCENTRATED_DEPOSIT_PRESETS = [
-    { key: '2', multiplier: 2, label: 'x÷2' },
-    { key: '1.2', multiplier: 1.2, label: 'x÷1.2' },
-    { key: '1.01', multiplier: 1.01, label: 'x÷1.01' },
+    {
+        key: 'tight',
+        label: 'Tight',
+        rangeLabel: '-0.3% — +0.3%',
+        lowerFactor: 0.997,
+        upperFactor: 1.003,
+        description: 'Works for stable and low-volatile pairs',
+    },
+    {
+        key: 'wide',
+        label: 'Wide',
+        rangeLabel: '-50% — +100%',
+        lowerFactor: 0.5,
+        upperFactor: 2,
+        description: 'Works for volatile pairs.',
+    },
+    {
+        key: 'up',
+        label: 'One-sided up',
+        rangeLabel: '0 — +50%',
+        lowerFactor: 1,
+        upperFactor: 1.5,
+        description: 'Works if you believe that the price will go up.',
+    },
+    {
+        key: 'down',
+        label: 'One-sided lower',
+        rangeLabel: '-50% — 0',
+        lowerFactor: 0.5,
+        upperFactor: 1,
+        description: 'Works if you believe that the price will go down.',
+    },
 ] as const;
 
 export const CONCENTRATED_TICK_SPACING_BY_FEE: Record<number, number> = {

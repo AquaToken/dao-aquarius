@@ -68,12 +68,12 @@ export const CurrentPrice = styled.div`
 
 export const Presets = styled.div`
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1rem;
     margin-bottom: 2rem;
 
     ${respondDown(Breakpoints.sm)`
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
     `}
 `;
 
@@ -81,11 +81,52 @@ export const PresetButton = styled.button<{ $active?: boolean }>`
     border: none;
     background: ${({ $active }) => ($active ? COLORS.purple100 : COLORS.gray50)};
     border-radius: 1rem;
-    height: 4.4rem;
+    min-height: 12rem;
+    padding: 1.8rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    text-align: left;
+    gap: 1rem;
     font-size: 1.6rem;
     color: ${({ $active }) => ($active ? COLORS.purple500 : COLORS.textPrimary)};
     cursor: pointer;
     font-weight: ${({ $active }) => ($active ? 700 : 400)};
+`;
+
+export const FullRangePresetRow = styled.div`
+    display: flex;
+    margin-top: -0.8rem;
+    margin-bottom: 2rem;
+
+    ${respondDown(Breakpoints.sm)`
+        margin-top: 0;
+    `}
+`;
+
+export const FullRangePresetButton = styled(PresetButton)`
+    min-height: 7.2rem;
+    width: 100%;
+    justify-content: center;
+`;
+
+export const PresetTitle = styled.span`
+    font-size: 1.6rem;
+    line-height: 2rem;
+    font-weight: 700;
+`;
+
+export const PresetRange = styled.span`
+    font-size: 1.4rem;
+    line-height: 1.8rem;
+    color: ${COLORS.textPrimary};
+`;
+
+export const PresetDescription = styled.span`
+    font-size: 1.3rem;
+    line-height: 1.7rem;
+    color: ${COLORS.textGray};
 `;
 
 export const RangeGrid = styled.div`

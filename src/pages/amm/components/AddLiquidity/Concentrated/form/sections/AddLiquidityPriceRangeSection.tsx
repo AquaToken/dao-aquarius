@@ -11,8 +11,13 @@ import Alert from 'basics/Alert';
 
 import {
     CurrentPrice,
+    FullRangePresetButton,
+    FullRangePresetRow,
     Label,
     PresetButton,
+    PresetDescription,
+    PresetRange,
+    PresetTitle,
     Presets,
     PriceControl,
     PriceInput,
@@ -26,7 +31,8 @@ import {
     SummarySub,
 } from '../../styled/ConcentratedAddLiquidity.styled';
 import AddLiquidityEstimateSummary from './AddLiquidityEstimateSummary';
-type DepositPresetKey = 'full' | '2' | '1.2' | '1.01';
+
+type DepositPresetKey = 'full' | 'tight' | 'wide' | 'up' | 'down';
 
 export type AddLiquidityPriceRangeSectionProps = {
     pool: PoolExtended;
@@ -48,7 +54,7 @@ export type AddLiquidityPriceRangeSectionProps = {
     disableUpperDownByReference: boolean;
     depositEstimate: DepositEstimate | null;
     onFullRange: () => void;
-    onPreset: (multiplier: number) => void;
+    onPreset: (presetKey: Exclude<DepositPresetKey, 'full'>) => void;
     onStepLowerDown: () => void;
     onStepLowerUp: () => void;
     onStepUpperDown: () => void;
@@ -104,24 +110,33 @@ const AddLiquidityPriceRangeSection = ({
         ) : (
             <>
                 <Presets>
-                    <PresetButton
+                    {CONCENTRATED_DEPOSIT_PRESETS.map(preset => (
+                        <PresetButton
+                            type="button"
+                            key={preset.key}
+                            $active={activeDepositPreset === preset.key}
+                            onClick={() => onPreset(preset.key)}
+                            disabled={!canUseRangeControls}
+                        >
+                            <PresetTitle>{preset.label}</PresetTitle>
+                            <PresetRange>{preset.rangeLabel}</PresetRange>
+                            <PresetDescription>{preset.description}</PresetDescription>
+                        </PresetButton>
+                    ))}
+                </Presets>
+                <FullRangePresetRow>
+                    <FullRangePresetButton
+                        type="button"
                         $active={activeDepositPreset === 'full'}
                         onClick={onFullRange}
                         disabled={!canUseRangeControls}
                     >
-                        Full Range
-                    </PresetButton>
-                    {CONCENTRATED_DEPOSIT_PRESETS.map(preset => (
-                        <PresetButton
-                            key={preset.key}
-                            $active={activeDepositPreset === preset.key}
-                            onClick={() => onPreset(preset.multiplier)}
-                            disabled={!canUseRangeControls}
-                        >
-                            {preset.label}
-                        </PresetButton>
-                    ))}
-                </Presets>
+                        <PresetTitle>Full Range</PresetTitle>
+                        <PresetDescription>
+                            Works like a regular volatile pool across the entire price range
+                        </PresetDescription>
+                    </FullRangePresetButton>
+                </FullRangePresetRow>
 
                 <RangeGrid>
                     <div>

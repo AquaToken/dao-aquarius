@@ -8,7 +8,8 @@ type ResolvePresetTicksParams = {
     decimalsDiff: number;
     minTickBound: number;
     maxTickBound: number;
-    multiplier: number;
+    lowerFactor: number;
+    upperFactor: number;
 };
 
 export const resolvePresetTicks = ({
@@ -17,20 +18,23 @@ export const resolvePresetTicks = ({
     decimalsDiff,
     minTickBound,
     maxTickBound,
-    multiplier,
+    lowerFactor,
+    upperFactor,
 }: ResolvePresetTicksParams) => {
     if (
         tickSpacing === null ||
         !Number.isFinite(referencePriceValue) ||
         referencePriceValue <= 0 ||
-        !Number.isFinite(multiplier) ||
-        multiplier <= 0
+        !Number.isFinite(lowerFactor) ||
+        !Number.isFinite(upperFactor) ||
+        lowerFactor <= 0 ||
+        upperFactor <= 0
     ) {
         return null;
     }
 
-    const lowerPrice = referencePriceValue / multiplier;
-    const upperPrice = referencePriceValue * multiplier;
+    const lowerPrice = referencePriceValue * lowerFactor;
+    const upperPrice = referencePriceValue * upperFactor;
     const nextLower = clamp(
         snapDown(priceToTick(lowerPrice, decimalsDiff), tickSpacing),
         minTickBound,
