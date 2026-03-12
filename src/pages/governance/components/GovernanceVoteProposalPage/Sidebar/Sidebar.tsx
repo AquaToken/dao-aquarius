@@ -6,8 +6,11 @@ import {
     CREATE_DISCUSSION_COST,
     CREATE_PROPOSAL_COST,
     PROPOSAL_STATUS,
+    TIME_TO_DISCUSSION,
+    TIME_TO_EXPIRE,
     VoteOptions,
 } from 'constants/dao';
+import { DAY } from 'constants/intervals';
 import { AppRoutes } from 'constants/routes';
 
 import {
@@ -390,15 +393,16 @@ const Sidebar = forwardRef(
                 );
             }
             const lastUpdateTimestamp = new Date(proposal.last_updated_at).getTime();
-            const day = 24 * 60 * 60 * 1000;
-            const daysToDiscussion = 30 * day;
+
             const daysToExpired = Math.floor(
-                (lastUpdateTimestamp + daysToDiscussion - Date.now()) / day,
+                (lastUpdateTimestamp + TIME_TO_EXPIRE - Date.now()) / DAY,
             );
 
-            const isPublishAvailable = (Date.now() - lastUpdateTimestamp) / day >= 7;
+            const isPublishAvailable = lastUpdateTimestamp + TIME_TO_DISCUSSION < Date.now();
 
-            const publishDate = getDateString(lastUpdateTimestamp + 7 * day, { withTime: true });
+            const publishDate = getDateString(lastUpdateTimestamp + TIME_TO_DISCUSSION, {
+                withTime: true,
+            });
 
             return (
                 <SidebarBlock ref={ref} {...props}>
@@ -435,7 +439,8 @@ const Sidebar = forwardRef(
                             <>
                                 <DiscussionDescription>
                                     <span>
-                                        Before the voting starts, there will be <b>7 days</b> for
+                                        Before the voting starts, there will be{' '}
+                                        <b>{Math.floor(TIME_TO_DISCUSSION / DAY)} days</b> for
                                         discussion in the specified discord channel
                                     </span>
                                 </DiscussionDescription>
