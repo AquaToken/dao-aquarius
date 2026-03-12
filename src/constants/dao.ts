@@ -1,7 +1,21 @@
+import { ENV_PRODUCTION, ENV_TESTNET } from 'constants/env';
+
+import { getEnv } from 'helpers/env';
+
 import { VoteChoiceSimple } from 'types/governance';
 
-export const CREATE_DISCUSSION_COST = 100000;
-export const CREATE_PROPOSAL_COST = 900000;
+const CREATE_DISCUSSION_COST_BY_ENV = {
+    [ENV_PRODUCTION]: 100000,
+    [ENV_TESTNET]: 1,
+};
+
+const CREATE_PROPOSAL_COST_BY_ENV = {
+    [ENV_PRODUCTION]: 900000,
+    [ENV_TESTNET]: 9,
+};
+
+export const CREATE_DISCUSSION_COST = CREATE_DISCUSSION_COST_BY_ENV[getEnv()];
+export const CREATE_PROPOSAL_COST = CREATE_PROPOSAL_COST_BY_ENV[getEnv()];
 export const APPROVED_PROPOSAL_REWARD = 1500000;
 
 export enum VoteOptions {
