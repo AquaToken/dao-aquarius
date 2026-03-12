@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 
 import { AppRoutes } from 'constants/routes';
 
-import { getAquaAssetData } from 'helpers/assets';
+import { getEnvClassicAssetData } from 'helpers/assets';
 import { getOnRampWidgetUrl } from 'helpers/url';
 
 import useAuthStore from 'store/authStore/useAuthStore';
@@ -16,7 +16,7 @@ import { CenteredWrapper, Container } from './BuyAqua.styled';
 
 const BuyAqua = (): React.ReactElement => {
     const { account, isLogged } = useAuthStore();
-    const { aquaStellarAsset } = getAquaAssetData();
+    const { asset: aquaStellarAsset } = getEnvClassicAssetData('aqua');
 
     const hasTrustline = account?.getAssetBalance(aquaStellarAsset) !== null;
 

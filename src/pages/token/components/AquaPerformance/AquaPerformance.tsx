@@ -6,7 +6,7 @@ import { getAquaInPoolsSum, getAquaPoolsMembers, getAquaXlmRate } from 'api/amm'
 
 import { AppRoutes } from 'constants/routes';
 
-import { getAquaAssetData, getUsdcAssetData } from 'helpers/assets';
+import { getEnvClassicAssetData } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 import { createLumen } from 'helpers/token';
 
@@ -168,8 +168,8 @@ const AquaPerformance = () => {
     const [isRevertedSdex, setIsRevertedSdex] = useState(true);
     const [sdexStats, setSdexStats] = useState(null);
 
-    const { aquaStellarAsset } = getAquaAssetData();
-    const { usdcStellarAsset } = getUsdcAssetData();
+    const { asset: aquaStellarAsset } = getEnvClassicAssetData('aqua');
+    const { asset: usdcStellarAsset } = getEnvClassicAssetData('usdc');
     const lumen = createLumen();
 
     const counter = useMemo(() => {

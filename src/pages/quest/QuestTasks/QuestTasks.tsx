@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { AppRoutes } from 'constants/routes';
 
-import { getAquaAssetData, getAssetString } from 'helpers/assets';
+import { getAssetString, getEnvClassicAssetData } from 'helpers/assets';
 import { createLumen } from 'helpers/token';
 
 import { QuestTaskStatus, TaskName, TaskStatus as TaskStatusType } from 'types/quest';
@@ -110,7 +110,7 @@ const QuestTasks = ({ statuses }: Props) => {
                                 <Link
                                     to={AppRoutes.section.swap.to.index({
                                         source: getAssetString(createLumen()),
-                                        destination: getAquaAssetData().aquaAssetString,
+                                        destination: getEnvClassicAssetData('aqua').assetString,
                                     })}
                                 >
                                     https://aqua.network/swap

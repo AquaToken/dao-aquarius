@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 
 import { apyValueToDisplay } from 'helpers/amount';
-import { getAquaAssetData, getAssetFromString } from 'helpers/assets';
+import { getAssetFromString, getEnvClassicAssetData } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 
 import { PoolIncentives, PoolProcessed } from 'types/amm';
@@ -110,7 +110,7 @@ interface Props {
 }
 
 const RewardsTokens = ({ pool, myRewards, myIncentives }: Props) => {
-    const { aquaStellarAsset } = getAquaAssetData();
+    const { asset: aquaStellarAsset } = getEnvClassicAssetData('aqua');
     const hasRewards = Boolean(Number(pool.rewards_apy)) || !!myRewards;
 
     const hasIncentives =

@@ -6,7 +6,8 @@ import { getNativePrices } from 'api/amm';
 import { sentToVault } from 'api/vault';
 
 import { POOL_TYPE } from 'constants/amm';
-import { ASSETS_ENV_DATA, DEFAULT_ICE_ASSETS, TESTNET_ASSETS } from 'constants/assets';
+import { DEFAULT_ICE_ASSETS } from 'constants/assets';
+import { ASSETS_ENV_DATA, TESTNET_DISTRIBUTION_AMOUNTS } from 'constants/assets-env';
 import { ENV_TESTNET } from 'constants/env';
 
 import { getAssetFromString } from 'helpers/assets';
@@ -529,19 +530,21 @@ export default class AccountService extends Horizon.AccountResponse {
         ];
     }
 
-    hasMissingTestnetTokenTrustlines(): boolean {
-        return (
-            // Only applicable for testnet
-            getEnv() === ENV_TESTNET &&
-            // Check if there is at least one asset without a trustline
-            [...TESTNET_ASSETS.keys()].some(assetString => {
-                const [code, issuer] = assetString.split(':');
-                // Create ClassicToken instance
-                const asset = createAsset(code, issuer);
+    getMissingTestnetDistributionAssets(): Array<[string, string]> {
+        if (getEnv() !== ENV_TESTNET) {
+            return [];
+        }
 
-                // getAssetBalance returns null when trustline does not exist
-                return this.getAssetBalance(asset) === null;
-            })
-        );
+        return TESTNET_DISTRIBUTION_AMOUNTS.filter(([assetString]) => {
+            const [code, issuer] = assetString.split(':');
+            const asset = createAsset(code, issuer);
+            const balance = this.getAssetBalance(asset);
+
+            return balance === null || balance === 0;
+        });
+    }
+
+    hasMissingTestnetTokens(): boolean {
+        return this.getMissingTestnetDistributionAssets().length > 0;
     }
 }

@@ -10,7 +10,7 @@ import {
     GOV_ICE_CODE,
     ICE_ISSUER,
     UP_ICE_CODE,
-} from 'constants/assets';
+} from 'constants/assets-env';
 import { AppRoutes } from 'constants/routes';
 
 import { getAssetString } from 'helpers/assets';

@@ -7,7 +7,7 @@ import { getActiveProposalsCount } from 'api/governance';
 
 import { AppRoutes } from 'constants/routes';
 
-import { getAquaAssetData, getAssetString } from 'helpers/assets';
+import { getAssetString, getEnvClassicAssetData } from 'helpers/assets';
 import { createLumen } from 'helpers/token';
 
 import useAuthStore from 'store/authStore/useAuthStore';
@@ -239,7 +239,7 @@ const Links = () => {
             <NavLinkStyled
                 to={AppRoutes.section.swap.to.index({
                     source: getAssetString(createLumen()),
-                    destination: getAquaAssetData().aquaAssetString,
+                    destination: getEnvClassicAssetData('aqua').assetString,
                 })}
                 style={({ isActive }) => (isActive ? { fontWeight: 700 } : undefined)}
                 title="Swap"

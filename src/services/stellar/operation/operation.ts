@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js';
 import { BRIBES_COLLECTOR_KEY } from 'constants/stellar-accounts';
 import { MARKET_KEY_SIGNER_WEIGHT, MARKET_KEY_THRESHOLD } from 'constants/voting';
 
-import { getAquaAssetData } from 'helpers/assets';
+import { getEnvClassicAssetData } from 'helpers/assets';
 import { createAsset } from 'helpers/token';
 
 import { ClassicToken } from 'types/token';
@@ -17,7 +17,7 @@ export default class Operation {
         timestamp: number,
         asset?: ClassicToken,
     ) {
-        const { aquaStellarAsset } = getAquaAssetData();
+        const { asset: aquaStellarAsset } = getEnvClassicAssetData('aqua');
         const time = Math.ceil(timestamp / 1000);
         return StellarSdk.Operation.createClaimableBalance({
             source: publicKey,
@@ -39,7 +39,7 @@ export default class Operation {
     }
 
     createLockOperation(publicKey: string, amount: string, timestamp: number) {
-        const { aquaStellarAsset } = getAquaAssetData();
+        const { asset: aquaStellarAsset } = getEnvClassicAssetData('aqua');
         const time = Math.ceil(timestamp / 1000);
 
         return StellarSdk.Operation.createClaimableBalance({
@@ -58,7 +58,7 @@ export default class Operation {
     }
 
     createBurnAquaOperation(amount: string) {
-        const { aquaStellarAsset, aquaIssuer } = getAquaAssetData();
+        const { asset: aquaStellarAsset, issuer: aquaIssuer } = getEnvClassicAssetData('aqua');
 
         return StellarSdk.Operation.payment({
             amount,
@@ -116,7 +116,7 @@ export default class Operation {
     }
 
     createClaimOperations(claimId: string, withTrust?: boolean) {
-        const { aquaStellarAsset } = getAquaAssetData();
+        const { asset: aquaStellarAsset } = getEnvClassicAssetData('aqua');
 
         const ops = [];
 

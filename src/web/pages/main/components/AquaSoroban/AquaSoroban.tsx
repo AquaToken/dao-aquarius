@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { AppRoutes } from 'constants/routes';
 
-import { getAquaAssetData, getAssetString } from 'helpers/assets';
+import { getAssetString, getEnvClassicAssetData } from 'helpers/assets';
 import { createLumen } from 'helpers/token';
 
 import { useScrollAnimation } from 'hooks/useScrollAnimation';
@@ -50,7 +50,7 @@ const AquaSoroban: React.FC = () => {
                     <BlankRouterLink
                         to={AppRoutes.section.swap.to.index({
                             source: getAssetString(createLumen()),
-                            destination: getAquaAssetData().aquaAssetString,
+                            destination: getEnvClassicAssetData('aqua').assetString,
                         })}
                     >
                         <SorobanButton withGradient secondary isBig isRounded>

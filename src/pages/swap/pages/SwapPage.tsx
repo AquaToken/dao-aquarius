@@ -6,7 +6,7 @@ import { getAssetsList } from 'api/amm';
 
 import { AppRoutes } from 'constants/routes';
 
-import { getAquaAssetData, getAssetFromString, getAssetString } from 'helpers/assets';
+import { getAssetFromString, getAssetString, getEnvClassicAssetData } from 'helpers/assets';
 import { createLumen, getTokensFromCache } from 'helpers/token';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
@@ -34,7 +34,7 @@ const SwapPage = () => {
 
     const params = useParams<{ source: string; destination: string }>();
     const navigate = useNavigate();
-    const { aquaAssetString } = getAquaAssetData();
+    const { assetString: aquaAssetString } = getEnvClassicAssetData('aqua');
 
     const { processNewAssets } = useAssetsStore();
 

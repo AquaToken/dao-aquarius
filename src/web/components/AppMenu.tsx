@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { ICE_CODE, ICE_ISSUER } from 'constants/assets';
+import { ICE_CODE, ICE_ISSUER } from 'constants/assets-env';
 import { AppRoutes } from 'constants/routes';
 
 import { getIsTestnetEnv } from 'helpers/env';

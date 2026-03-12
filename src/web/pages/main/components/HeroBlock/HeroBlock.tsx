@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { AppRoutes } from 'constants/routes';
 
-import { getAquaAssetData, getAssetString } from 'helpers/assets';
+import { getAssetString, getEnvClassicAssetData } from 'helpers/assets';
 import { getIsDarkTheme } from 'helpers/theme';
 import { createLumen } from 'helpers/token';
 
@@ -73,7 +73,7 @@ const HeroBlock: React.FC<Props> = ({ isLoading, monthlyDistributed, volumeInUsd
                 <BlankRouterLink
                     to={AppRoutes.section.swap.to.index({
                         source: getAssetString(createLumen()),
-                        destination: getAquaAssetData().aquaAssetString,
+                        destination: getEnvClassicAssetData('aqua').assetString,
                     })}
                 >
                     <ProvideLiqButton withGradient isBig isRounded>
