@@ -3,13 +3,13 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { AppRoutes } from 'constants/routes';
 
-import { getAquaAssetData, getAssetString } from 'helpers/assets';
+import { getAssetString, getEnvClassicAssetData } from 'helpers/assets';
 import { createLumen } from 'helpers/token';
 
 const SwapPageLazy = lazy(() => import('./pages/SwapPage'));
 
 const Swap = () => {
-    const { aquaAssetString } = getAquaAssetData();
+    const { assetString: aquaAssetString } = getEnvClassicAssetData('aqua');
 
     return (
         <Routes>

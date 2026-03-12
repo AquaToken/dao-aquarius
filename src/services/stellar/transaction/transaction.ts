@@ -1,7 +1,6 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
 import { FeeBumpTransaction, Memo, MemoType } from '@stellar/stellar-sdk';
 
-import { TESTNET_DISTRIBUTION_AMOUNTS } from 'constants/assets';
 import { ENV_TESTNET } from 'constants/env';
 import { BASE_FEE } from 'constants/stellar';
 import {
@@ -179,18 +178,24 @@ export default class Transaction {
         const issuerPub = issuerKp.publicKey();
 
         const operations: StellarSdk.xdr.Operation[] = [];
+        const missingAssets = account.getMissingTestnetDistributionAssets();
 
-        TESTNET_DISTRIBUTION_AMOUNTS.forEach(([assetString, amount]) => {
+        if (!missingAssets.length) {
+            throw new Error('All configured testnet assets are already available');
+        }
+
+        missingAssets.forEach(([assetString, amount]) => {
             const asset = getAssetFromString(assetString) as ClassicToken;
+            const hasTrustline = account.getAssetBalance(asset) !== null;
 
-            // Add trustline (safe even if already exists)
-            operations.push(
-                StellarSdk.Operation.changeTrust({
-                    asset,
-                }),
-            );
+            if (!hasTrustline) {
+                operations.push(
+                    StellarSdk.Operation.changeTrust({
+                        asset,
+                    }),
+                );
+            }
 
-            // Send configured amount from issuer
             operations.push(
                 StellarSdk.Operation.payment({
                     source: issuerPub,

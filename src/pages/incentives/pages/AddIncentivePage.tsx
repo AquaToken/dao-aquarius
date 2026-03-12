@@ -14,7 +14,7 @@ import { DAY } from 'constants/intervals';
 import { AppRoutes } from 'constants/routes';
 
 import { contractValueToAmount, contractValueToFormattedAmount } from 'helpers/amount';
-import { getAquaAssetData } from 'helpers/assets';
+import { getEnvClassicAssetData } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 import { getTokensFromCache } from 'helpers/token';
 
@@ -160,7 +160,7 @@ const AddIncentivePage = () => {
     const [firstStepPending, setFirstStepPending] = useState(false);
     const [poolConfig, setPoolConfig] = useState(null);
 
-    const { aquaContract, aquaStellarAsset } = getAquaAssetData();
+    const { contract: aquaContract, asset: aquaStellarAsset } = getEnvClassicAssetData('aqua');
 
     const [rewardToken, setRewardToken] = useState<Token>(aquaStellarAsset);
     const [assetsList, setAssetsList] = useState(getTokensFromCache());

@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { getAssetDetails } from 'api/stellar-expert';
 
-import { getAquaAssetData } from 'helpers/assets';
+import { getEnvClassicAssetData } from 'helpers/assets';
 
 import { StellarService } from 'services/globalServices';
 
@@ -77,7 +77,7 @@ const AquaPrice = ({ ...props }) => {
         StellarService.price.getAquaUsdPrice().then(res => {
             setPrice(res.toFixed(7));
         });
-        getAssetDetails(getAquaAssetData().aquaStellarAsset).then(res => {
+        getAssetDetails(getEnvClassicAssetData('aqua').asset).then(res => {
             setExpertData(res);
         });
     }, []);

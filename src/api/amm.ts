@@ -2,7 +2,7 @@ import { Asset } from '@stellar/stellar-sdk';
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
 
-import { getAquaAssetData, getUsdcAssetData } from 'helpers/assets';
+import { getEnvClassicAssetData } from 'helpers/assets';
 import chunkFunction from 'helpers/chunk-function';
 import { getNetworkPassphrase } from 'helpers/env';
 import { createAsset, createLumen } from 'helpers/token';
@@ -223,7 +223,7 @@ export const getNextUserHistory = async (link: string): Promise<ListResponse<Poo
 
 export const getAmmAquaBalance = async (accountId: string): Promise<number> => {
     const baseUrl = getAmmAquaUrl();
-    const { aquaContract, aquaAssetString } = getAquaAssetData();
+    const { contract: aquaContract, assetString: aquaAssetString } = getEnvClassicAssetData('aqua');
 
     const { data } = await axios.get<ListResponse<PoolUser>>(
         `${baseUrl}/pools/user/${accountId}/?size=1000&tokens__in=${aquaContract}`,
@@ -385,7 +385,7 @@ export const getAmmRewards = async (): Promise<number> => {
 export const getAquaInPoolsSum = async (): Promise<{ sum: number; sum_usd: number }> => {
     const baseUrl = getAmmAquaUrl();
 
-    const { aquaContract, aquaAssetString } = getAquaAssetData();
+    const { contract: aquaContract, assetString: aquaAssetString } = getEnvClassicAssetData('aqua');
 
     const { data } = await axios.get<ListResponse<Pool>>(
         `${baseUrl}/pools/?&search=${aquaContract}&size=500`,
@@ -408,7 +408,7 @@ export const getAquaInPoolsSum = async (): Promise<{ sum: number; sum_usd: numbe
 export const getAquaPoolsMembers = async (): Promise<number> => {
     const baseUrl = getAmmAquaUrl();
 
-    const { aquaContract } = getAquaAssetData();
+    const { contract: aquaContract } = getEnvClassicAssetData('aqua');
 
     const { data } = await axios.get<ListResponse<Pool>>(
         `${baseUrl}/pools/?&search=${aquaContract}&size=500`,
@@ -424,7 +424,7 @@ export const getAquaPoolsMembers = async (): Promise<number> => {
 export const getAquaXlmRate = async (): Promise<number[]> => {
     const baseUrl = getAmmAquaUrl();
 
-    const { aquaContract } = getAquaAssetData();
+    const { contract: aquaContract } = getEnvClassicAssetData('aqua');
 
     const XLM_CONTRACT = Asset.native().contractId(getNetworkPassphrase());
 
@@ -446,8 +446,8 @@ export const getAssetsList = async (): Promise<Token[]> => {
     );
 
     // tokens in the top of the list - AQUA, XLM, USDC
-    const { aquaStellarAsset } = getAquaAssetData();
-    const { usdcStellarAsset } = getUsdcAssetData();
+    const { asset: aquaStellarAsset } = getEnvClassicAssetData('aqua');
+    const { asset: usdcStellarAsset } = getEnvClassicAssetData('usdc');
     const lumen = createLumen();
 
     const otherTokens = data.items

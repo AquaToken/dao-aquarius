@@ -3,7 +3,7 @@ import { OperationOptions } from '@stellar/stellar-sdk';
 
 import { OP_THRESHOLDS, THRESHOLD_ORDER, THRESHOLDS } from 'constants/stellar';
 
-import { getAquaAssetData } from 'helpers/assets';
+import { getEnvClassicAssetData } from 'helpers/assets';
 
 import EventService from 'services/event.service';
 import { StellarEvents, StellarPayload } from 'services/stellar/events/events';
@@ -150,7 +150,7 @@ export default class Account {
     // TODO: remove this after locker renew
     async getAccountLocks(publicKey: string) {
         const LOCKS_LIMIT = 200;
-        const { aquaAssetString } = getAquaAssetData();
+        const { assetString: aquaAssetString } = getEnvClassicAssetData('aqua');
 
         const { records, next } = await this.horizon.server
             .claimableBalances()

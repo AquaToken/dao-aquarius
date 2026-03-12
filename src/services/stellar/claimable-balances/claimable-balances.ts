@@ -1,17 +1,17 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
 
+import { ICE_TO_DELEGATE } from 'constants/assets';
 import {
     D_ICE_CODE,
     DOWN_ICE_CODE,
     GD_ICE_CODE,
     GOV_ICE_CODE,
     ICE_ISSUER,
-    ICE_TO_DELEGATE,
     UP_ICE_CODE,
-} from 'constants/assets';
+} from 'constants/assets-env';
 import { DELEGATE_MARKER_KEY } from 'constants/stellar-accounts';
 
-import { getAquaAssetData } from 'helpers/assets';
+import { getEnvClassicAssetData } from 'helpers/assets';
 
 import EventService from 'services/event.service';
 import { StellarEvents, StellarPayload } from 'services/stellar/events/events';
@@ -75,7 +75,7 @@ export default class ClaimableBalances {
             return null;
         }
 
-        const { aquaAssetString } = getAquaAssetData();
+        const { assetString: aquaAssetString } = getEnvClassicAssetData('aqua');
 
         return this.claimableBalances.filter(
             claim =>
@@ -112,7 +112,9 @@ export default class ClaimableBalances {
             return null;
         }
 
-        const { aquaAssetString } = getAquaAssetData();
+        const { assetString: aquaAssetString } = getEnvClassicAssetData('aqua');
+        const { assetString: governIceAssetString } = getEnvClassicAssetData('governIce');
+        const { assetString: gdIceAssetString } = getEnvClassicAssetData('gdIce');
 
         return this.claimableBalances.reduce((acc, claim) => {
             if (claim.claimants.length !== 2) {
@@ -130,8 +132,8 @@ export default class ClaimableBalances {
             );
             const selfClaim = claim.claimants.find(claimant => claimant.destination === accountId);
             const isAqua = claim.asset === aquaAssetString;
-            const isGovIce = claim.asset === `${GOV_ICE_CODE}:${ICE_ISSUER}`;
-            const isGDIce = claim.asset === `${GD_ICE_CODE}:${ICE_ISSUER}`;
+            const isGovIce = claim.asset === governIceAssetString;
+            const isGDIce = claim.asset === gdIceAssetString;
 
             if (
                 (hasForMarker || hasAgainstMarker || hasAbstainMarker) &&
@@ -155,7 +157,7 @@ export default class ClaimableBalances {
         if (!this.claimableBalances) {
             return null;
         }
-        const { aquaAssetString } = getAquaAssetData();
+        const { assetString: aquaAssetString } = getEnvClassicAssetData('aqua');
 
         return this.claimableBalances.reduce((acc, claim) => {
             if (claim.claimants.length !== 2) {
@@ -196,7 +198,7 @@ export default class ClaimableBalances {
             return null;
         }
 
-        const { aquaAssetString } = getAquaAssetData();
+        const { assetString: aquaAssetString } = getEnvClassicAssetData('aqua');
 
         return this.claimableBalances.reduce((acc, claim) => {
             if (claim.claimants.length !== 2) {

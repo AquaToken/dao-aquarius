@@ -9,11 +9,14 @@ import { getIceApproveEndpoint } from 'helpers/ice';
 
 import { ClassicToken } from 'types/token';
 
+export const isIceApprovalRequired = (asset: ClassicToken): boolean =>
+    ALL_ICE_ASSETS.includes(getAssetString(asset));
+
 export const processIceTx = async (
     tx: StellarSdk.Transaction,
     asset: ClassicToken,
 ): Promise<StellarSdk.Transaction> => {
-    if (!ALL_ICE_ASSETS.includes(getAssetString(asset))) {
+    if (!isIceApprovalRequired(asset)) {
         return tx;
     }
 

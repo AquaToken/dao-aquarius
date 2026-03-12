@@ -7,7 +7,7 @@ import { getIceStatistics } from 'api/ice-locker';
 import { getTotalRewards } from 'api/rewards';
 import { getAssetDetails } from 'api/stellar-expert';
 
-import { getAquaAssetData } from 'helpers/assets';
+import { getEnvClassicAssetData } from 'helpers/assets';
 import { getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 import { getPercentValue } from 'helpers/number';
@@ -142,7 +142,7 @@ const AquaStatistics = () => {
     const [totalRewards, setTotalRewards] = useState<number>(null);
     const [aquaCirculatingSupply, setAquaCirculatingSupply] = useState<number>(null);
 
-    const { aquaStellarAsset } = getAquaAssetData();
+    const { asset: aquaStellarAsset } = getEnvClassicAssetData('aqua');
 
     const { ref, visible } = useScrollAnimation(0.3, true);
 

@@ -4,7 +4,13 @@ import { createGlobalStyle } from 'styled-components';
 
 import { getAssetsList } from 'api/amm';
 
-import { D_ICE_CODE, GD_ICE_CODE, GOV_ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'constants/assets';
+import {
+    D_ICE_CODE,
+    GD_ICE_CODE,
+    GOV_ICE_CODE,
+    ICE_ISSUER,
+    UP_ICE_CODE,
+} from 'constants/assets-env';
 
 import { getEnv, setProductionEnv } from 'helpers/env';
 import { cacheTokens, createAsset } from 'helpers/token';

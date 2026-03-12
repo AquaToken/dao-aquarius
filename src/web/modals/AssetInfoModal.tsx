@@ -7,7 +7,7 @@ import { getAssetDetails } from 'api/stellar-expert';
 
 import { AppRoutes } from 'constants/routes';
 
-import { getAquaAssetData, getAssetString } from 'helpers/assets';
+import { getAssetString, getEnvClassicAssetData } from 'helpers/assets';
 import { getDateString } from 'helpers/date';
 import { getIsTestnetEnv } from 'helpers/env';
 import { formatBalance } from 'helpers/format-number';
@@ -148,7 +148,11 @@ const AssetInfoModal = ({ params }: ModalProps<AssetInfoModalParams>): React.Rea
     const { assetsInfo } = useAssetsStore();
 
     const { desc, home_domain } = assetsInfo.get(getAssetString(asset)) || {};
-    const { aquaCode, aquaIssuer, aquaStellarAsset } = getAquaAssetData();
+    const {
+        code: aquaCode,
+        issuer: aquaIssuer,
+        asset: aquaStellarAsset,
+    } = getEnvClassicAssetData('aqua');
 
     const isNative = asset.isNative();
     const assetInfo: Partial<AssetInfo> = isNative

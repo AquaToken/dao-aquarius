@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { PYUSD_CODE, PYUSD_ISSUER } from 'constants/assets';
 
-import { getAquaAssetData, getAssetString, getUsdcAssetData } from 'helpers/assets';
+import { getAssetString, getEnvClassicAssetData } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 import { createAsset, createLumen } from 'helpers/token';
 
@@ -150,8 +150,8 @@ const EmptyState = styled.span`
 
 const DEFAULT_ASSETS = [
     createLumen(),
-    getAquaAssetData().aquaStellarAsset,
-    getUsdcAssetData().usdcStellarAsset,
+    getEnvClassicAssetData('aqua').asset,
+    getEnvClassicAssetData('usdc').asset,
     createAsset(PYUSD_CODE, PYUSD_ISSUER),
 ] as ClassicToken[];
 
