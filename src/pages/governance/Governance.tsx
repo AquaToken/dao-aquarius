@@ -1,6 +1,6 @@
 import reactQuillCSS from 'quill/dist/quill.snow.css';
 import { lazy } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
 import { AppRoutes } from 'constants/routes';
 
@@ -16,6 +16,7 @@ const ProposalCreationPage = lazy(() => import('./pages/GovernanceProposalCreati
 
 const Governance = () => {
     const { isLogged } = useAuthStore();
+    const location = useLocation();
 
     return (
         <Routes>
@@ -33,7 +34,7 @@ const Governance = () => {
                         <ProposalCreationPage />
                     ) : (
                         <Navigate
-                            to={AppRoutes.section.governance.child.index}
+                            to={AppRoutes.section.governance.base}
                             replace
                             state={{ from: location }}
                         />
@@ -48,7 +49,7 @@ const Governance = () => {
                         <ProposalCreationPage isEdit />
                     ) : (
                         <Navigate
-                            to={AppRoutes.section.governance.child.index}
+                            to={AppRoutes.section.governance.base}
                             replace
                             state={{ from: location }}
                         />
