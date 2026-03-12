@@ -2,14 +2,10 @@ import { Dispatch } from 'react';
 
 import { getAssetsInfo, getAssetsRequest } from 'api/assets';
 
-import { ALL_ICE_ASSETS, TESTNET_ASSETS } from 'constants/assets';
+import { ALL_ICE_ASSETS } from 'constants/assets';
+import { TESTNET_ASSETS } from 'constants/assets-env';
 
-import {
-    getAquaAssetData,
-    getAssetFromString,
-    getAssetString,
-    getUsdcAssetData,
-} from 'helpers/assets';
+import { getEnvClassicAssetData, getAssetFromString, getAssetString } from 'helpers/assets';
 import { getIsTestnetEnv } from 'helpers/env';
 import { createAsset, createLumen } from 'helpers/token';
 
@@ -29,8 +25,16 @@ export function getAssets() {
     return (dispatch: Dispatch<ActionResult>): void => {
         dispatch({ type: ASSETS_ACTIONS.GET_ASSETS_START });
 
-        const { aquaStellarAsset, aquaCode, aquaIssuer } = getAquaAssetData();
-        const { usdcStellarAsset, usdcCode, usdcIssuer } = getUsdcAssetData();
+        const {
+            asset: aquaStellarAsset,
+            code: aquaCode,
+            issuer: aquaIssuer,
+        } = getEnvClassicAssetData('aqua');
+        const {
+            asset: usdcStellarAsset,
+            code: usdcCode,
+            issuer: usdcIssuer,
+        } = getEnvClassicAssetData('usdc');
 
         getAssetsRequest()
             .then(assets => {

@@ -1,4 +1,8 @@
-import { ASSETS_ENV_DATA } from 'constants/assets';
+import {
+    BaseClassicAssetData,
+    ENV_CLASSIC_ASSETS_CONFIG,
+    EnvClassicAssetName,
+} from 'constants/assets-env';
 
 import { createAsset, createLumen, getTokensFromCache } from 'helpers/token';
 
@@ -73,28 +77,15 @@ export const getAssetFromString = (str: string, onUpdateCB?: (token: Token) => v
     }
     return asset;
 };
-
-// TODO: refactor getassetData to one function
-export const getAquaAssetData = () => {
-    const env = getEnv();
-    const data = ASSETS_ENV_DATA[env].aqua;
-    const asset = createAsset(data.aquaCode, data.aquaIssuer);
+export const getEnvClassicAssetData = (name: EnvClassicAssetName): BaseClassicAssetData => {
+    const { code, issuer } = ENV_CLASSIC_ASSETS_CONFIG[name][getEnv()];
+    const asset = createAsset(code, issuer) as ClassicToken;
 
     return {
-        ...data,
-        aquaStellarAsset: asset,
-        aquaContract: asset.contractId(getNetworkPassphrase()),
-    };
-};
-
-export const getUsdcAssetData = () => {
-    const env = getEnv();
-    const data = ASSETS_ENV_DATA[env].usdc;
-    const asset = createAsset(data.usdcCode, data.usdcIssuer);
-
-    return {
-        ...data,
-        usdcStellarAsset: asset,
-        usdcContract: asset.contractId(getNetworkPassphrase()),
+        code,
+        issuer,
+        assetString: `${code}:${issuer}`,
+        asset,
+        contract: asset.contractId(getNetworkPassphrase()),
     };
 };

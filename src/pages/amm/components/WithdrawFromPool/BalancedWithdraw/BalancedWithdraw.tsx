@@ -4,7 +4,7 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { getAquaAssetData, getAssetString } from 'helpers/assets';
+import { getAssetString, getEnvClassicAssetData } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
@@ -120,7 +120,7 @@ const BalancedWithdraw = ({
 
     const { account } = useAuthStore();
 
-    const { aquaStellarAsset } = getAquaAssetData();
+    const { asset: aquaStellarAsset } = getEnvClassicAssetData('aqua');
 
     useEffect(() => {
         if (rewards) {

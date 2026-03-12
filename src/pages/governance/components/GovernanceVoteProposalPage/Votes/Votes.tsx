@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { getVotes, getVoteTxHash, VoteFields } from 'api/governance';
 
-import { GD_ICE_CODE } from 'constants/assets';
+import { GD_ICE_CODE } from 'constants/assets-env';
 import { DAO_UPDATE_INTERVAL } from 'constants/dao';
 
 import { getDateString } from 'helpers/date';

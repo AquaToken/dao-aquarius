@@ -15,7 +15,7 @@ import {
 } from 'constants/bribes';
 import { AppRoutes } from 'constants/routes';
 
-import { getAquaAssetData, getAssetString } from 'helpers/assets';
+import { getAssetString, getEnvClassicAssetData } from 'helpers/assets';
 import { convertDateStrToTimestamp, getDateString, getWeekStart } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 import { getIceMaxApy } from 'helpers/ice';
@@ -73,7 +73,7 @@ const UpcomingBribes = () => {
     const [count, setCount] = useState(null);
     const [page, setPage] = useState(1);
 
-    const { aquaAssetString } = getAquaAssetData();
+    const { assetString: aquaAssetString } = getEnvClassicAssetData('aqua');
 
     const { value: sort, setValue: setSort } = useUrlParam<BribeSortFields>(
         UpcomingBribesParams.sort,

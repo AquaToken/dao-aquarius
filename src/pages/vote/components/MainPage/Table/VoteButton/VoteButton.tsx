@@ -1,7 +1,7 @@
 import { ReactElement, useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 
-import { getAquaAssetData } from 'helpers/assets';
+import { getEnvClassicAssetData } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
@@ -77,7 +77,7 @@ const VoteButton = ({
         downvote_immunity: downvoteImmunity,
     } = pair;
     const { account, isLogged } = useAuthStore();
-    const { aquaStellarAsset } = getAquaAssetData();
+    const { asset: aquaStellarAsset } = getEnvClassicAssetData('aqua');
 
     const getUpVotesValue = () =>
         +StellarService.cb.getMarketVotesValue(

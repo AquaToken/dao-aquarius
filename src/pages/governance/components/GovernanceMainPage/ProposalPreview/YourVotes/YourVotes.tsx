@@ -2,15 +2,15 @@ import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
-import { processIceTx } from 'api/ice';
+import { isIceApprovalRequired, processIceTx } from 'api/ice';
 
-import { GD_ICE_CODE, GOV_ICE_CODE, ICE_ISSUER } from 'constants/assets';
+import { GD_ICE_CODE, GOV_ICE_CODE } from 'constants/assets-env';
 import { ChoiceOption } from 'constants/dao';
 
+import { getEnvClassicAssetData } from 'helpers/assets';
 import { getDateString } from 'helpers/date';
 import ErrorHandler from 'helpers/error-handler';
 import { formatBalance } from 'helpers/format-number';
-import { createAsset } from 'helpers/token';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
 import { LoginTypes } from 'store/authStore/types';
@@ -86,6 +86,8 @@ const YourVotes = ({ proposal }: YourVotesProps): React.ReactNode => {
     const { account } = useAuthStore();
 
     const isLedgerAuth = useMemo(() => account?.authType === LoginTypes.ledger, [account]);
+    const { asset: governIceStellarAsset } = useMemo(() => getEnvClassicAssetData('governIce'), []);
+    const { asset: gdIceStellarAsset } = useMemo(() => getEnvClassicAssetData('gdIce'), []);
 
     useEffect(() => {
         const unsub = StellarService.event.sub(({ type }) => {
@@ -155,12 +157,12 @@ const YourVotes = ({ proposal }: YourVotesProps): React.ReactNode => {
 
             let tx = await StellarService.tx.buildTx(account, ops);
 
-            if (hasIce) {
-                tx = await processIceTx(tx, createAsset(GOV_ICE_CODE, ICE_ISSUER));
+            if (hasIce && isIceApprovalRequired(governIceStellarAsset)) {
+                tx = await processIceTx(tx, governIceStellarAsset);
             }
 
-            if (hasGdIce) {
-                tx = await processIceTx(tx, createAsset(GD_ICE_CODE, ICE_ISSUER));
+            if (hasGdIce && isIceApprovalRequired(gdIceStellarAsset)) {
+                tx = await processIceTx(tx, gdIceStellarAsset);
             }
 
             const result = await account.signAndSubmitTx(tx);

@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { getAquaAssetData } from 'helpers/assets';
+import { getEnvClassicAssetData } from 'helpers/assets';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
@@ -16,7 +16,7 @@ import LockDurationFormField from '../LockDurationFormField/LockDurationFormFiel
 const LockAquaForm = () => {
     const { isLogged, account } = useAuthStore();
     const aquaBalance = account?.getAquaBalance() ?? 0;
-    const { aquaStellarAsset } = getAquaAssetData();
+    const { asset: aquaStellarAsset } = getEnvClassicAssetData('aqua');
 
     const {
         lockAmount,

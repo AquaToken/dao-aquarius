@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components';
 
 import { AppRoutes } from 'constants/routes';
 
-import { getAquaAssetData, getAssetString } from 'helpers/assets';
+import { getAssetString, getEnvClassicAssetData } from 'helpers/assets';
 import { createLumen } from 'helpers/token';
 
 import { useScrollAnimation } from 'hooks/useScrollAnimation';
@@ -220,7 +220,7 @@ const MainBlock = () => {
                     <Link
                         to={AppRoutes.section.swap.to.index({
                             source: getAssetString(createLumen()),
-                            destination: getAquaAssetData().aquaAssetString,
+                            destination: getEnvClassicAssetData('aqua').assetString,
                         })}
                     >
                         <ButtonStyled isRounded withGradient isBig>
