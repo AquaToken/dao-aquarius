@@ -16,7 +16,7 @@ const CREATE_PROPOSAL_COST_BY_ENV = {
 };
 
 const TIME_TO_DISCUSSION_BY_ENV = {
-    [ENV_PRODUCTION]: 7 * DAY,
+    [ENV_PRODUCTION]: 1, // staging
     [ENV_TESTNET]: 1,
 };
 
