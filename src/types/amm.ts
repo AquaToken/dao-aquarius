@@ -218,6 +218,8 @@ export type DepositEstimate = {
     liquidityLoading: boolean;
 };
 
+export type DepositPresetKey = 'full' | 'tight' | 'medium' | 'wide' | 'up' | 'down';
+
 export type PoolCreationFeeInfo = {
     token: SorobanToken;
     constantFee: string;

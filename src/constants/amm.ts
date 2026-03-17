@@ -36,6 +36,14 @@ export const CONCENTRATED_DEPOSIT_PRESETS = [
         description: 'Works for stable and low-volatile pairs',
     },
     {
+        key: 'medium',
+        label: 'Medium',
+        rangeLabel: '-20% — +20%',
+        lowerFactor: 0.8,
+        upperFactor: 1.2,
+        description: 'Balanced range for moderately volatile pairs.',
+    },
+    {
         key: 'wide',
         label: 'Wide',
         rangeLabel: '-50% — +100%',
@@ -43,6 +51,7 @@ export const CONCENTRATED_DEPOSIT_PRESETS = [
         upperFactor: 2,
         description: 'Works for volatile pairs.',
     },
+
     {
         key: 'up',
         label: 'One-sided up',
@@ -58,6 +67,14 @@ export const CONCENTRATED_DEPOSIT_PRESETS = [
         lowerFactor: 0.5,
         upperFactor: 1,
         description: 'Works if you believe that the price will go down.',
+    },
+    {
+        key: 'full',
+        label: 'Full Range',
+        rangeLabel: '',
+        lowerFactor: null,
+        upperFactor: null,
+        description: 'Works like a regular volatile pool across the entire price range.',
     },
 ] as const;
 

@@ -1,49 +1,53 @@
 import * as React from 'react';
-import { NumericFormat } from 'react-number-format';
 
 import { CONCENTRATED_DEPOSIT_PRESETS } from 'constants/amm';
 
 import { formatBalance } from 'helpers/format-number';
 
-import { DepositEstimate, PoolExtended } from 'types/amm';
+import { DepositEstimate, DepositPresetKey, PoolExtended } from 'types/amm';
 
 import Alert from 'basics/Alert';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { COLORS } from 'styles/style-constants';
+
+import LiquidityDistributionChart, {
+    type LiquidityDistributionChartHandle,
+} from 'pages/amm/components/LiquidityDistributionChart/LiquidityDistributionChart';
+
+import AddLiquidityEstimateSummary from './AddLiquidityEstimateSummary';
+import RangePriceInput from './RangePriceInput';
 
 import {
     CurrentPrice,
-    FullRangePresetButton,
-    FullRangePresetRow,
-    Label,
     PresetButton,
-    PresetDescription,
     PresetRange,
     PresetTitle,
     Presets,
-    PriceControl,
-    PriceInput,
+    PresetTooltipText,
+    RangeChartWrap,
     RangeBlock,
     RangeGrid,
     RangeSummary,
     RangeTitle,
     RangeTitleRow,
-    StepBtn,
     SummaryMain,
     SummarySub,
 } from '../../styled/ConcentratedAddLiquidity.styled';
-import AddLiquidityEstimateSummary from './AddLiquidityEstimateSummary';
-
-type DepositPresetKey = 'full' | 'tight' | 'wide' | 'up' | 'down';
 
 export type AddLiquidityPriceRangeSectionProps = {
     pool: PoolExtended;
     isEmptyPool: boolean;
     hasBothPositiveAmounts: boolean;
     referencePriceValue: number;
+    currentTick: number | null;
+    referenceExactTick: number | null;
     activeDepositPreset: DepositPresetKey | null;
     canUseRangeControls: boolean;
     hasTickRange: boolean;
     tickLower: number | null;
     tickUpper: number | null;
+    tickSpacing: number | null;
     minTickBound: number;
     maxTickBound: number;
     isMinScientific: boolean;
@@ -53,8 +57,8 @@ export type AddLiquidityPriceRangeSectionProps = {
     disableLowerUpByReference: boolean;
     disableUpperDownByReference: boolean;
     depositEstimate: DepositEstimate | null;
-    onFullRange: () => void;
-    onPreset: (presetKey: Exclude<DepositPresetKey, 'full'>) => void;
+    onPreset: (presetKey: DepositPresetKey) => void;
+    onChartRangeChange: (tickLower: number, tickUpper: number) => void;
     onStepLowerDown: () => void;
     onStepLowerUp: () => void;
     onStepUpperDown: () => void;
@@ -68,11 +72,14 @@ const AddLiquidityPriceRangeSection = ({
     isEmptyPool,
     hasBothPositiveAmounts,
     referencePriceValue,
+    currentTick,
+    referenceExactTick,
     activeDepositPreset,
     canUseRangeControls,
     hasTickRange,
     tickLower,
     tickUpper,
+    tickSpacing,
     minTickBound,
     maxTickBound,
     isMinScientific,
@@ -82,173 +89,153 @@ const AddLiquidityPriceRangeSection = ({
     disableLowerUpByReference,
     disableUpperDownByReference,
     depositEstimate,
-    onFullRange,
     onPreset,
+    onChartRangeChange,
     onStepLowerDown,
     onStepLowerUp,
     onStepUpperDown,
     onStepUpperUp,
     onMinPriceChange,
     onMaxPriceChange,
-}: AddLiquidityPriceRangeSectionProps): React.ReactNode => (
-    <RangeBlock>
-        <RangeTitleRow>
-            <RangeTitle>Price Range</RangeTitle>
-            <CurrentPrice>
-                {Number.isFinite(referencePriceValue)
-                    ? formatBalance(referencePriceValue, true)
-                    : '-'}{' '}
-                {pool.tokens[1].code} per {pool.tokens[0].code}
-            </CurrentPrice>
-        </RangeTitleRow>
+}: AddLiquidityPriceRangeSectionProps): React.ReactNode => {
+    const chartRef = React.useRef<LiquidityDistributionChartHandle>(null);
 
-        {isEmptyPool && !hasBothPositiveAmounts ? (
-            <Alert
-                title="Set initial price"
-                text="Enter both token amounts to initialize price and range controls."
-            />
-        ) : (
-            <>
-                <Presets>
-                    {CONCENTRATED_DEPOSIT_PRESETS.map(preset => (
-                        <PresetButton
-                            type="button"
-                            key={preset.key}
-                            $active={activeDepositPreset === preset.key}
-                            onClick={() => onPreset(preset.key)}
+    const handlePresetClick = (presetKey: DepositPresetKey) => {
+        onPreset(presetKey);
+        window.requestAnimationFrame(() => {
+            chartRef.current?.resetView();
+        });
+    };
+
+    return (
+        <RangeBlock>
+            <RangeTitleRow>
+                <RangeTitle>Price Range</RangeTitle>
+                <CurrentPrice>
+                    {Number.isFinite(referencePriceValue)
+                        ? formatBalance(referencePriceValue, true)
+                        : '-'}{' '}
+                    {pool.tokens[1].code} per {pool.tokens[0].code}
+                </CurrentPrice>
+            </RangeTitleRow>
+
+            {isEmptyPool && !hasBothPositiveAmounts ? (
+                <Alert
+                    title="Set initial price"
+                    text="Enter both token amounts to initialize price and range controls."
+                />
+            ) : (
+                <>
+                    <Presets>
+                        {CONCENTRATED_DEPOSIT_PRESETS.map(preset => (
+                            <Tooltip
+                                key={preset.key}
+                                showOnHover
+                                fullWidth
+                                matchTriggerWidth
+                                position={TOOLTIP_POSITION.top}
+                                background={COLORS.textPrimary}
+                                content={
+                                    <PresetTooltipText>{preset.description}</PresetTooltipText>
+                                }
+                            >
+                                <PresetButton
+                                    type="button"
+                                    $active={activeDepositPreset === preset.key}
+                                    onClick={() => handlePresetClick(preset.key)}
+                                    disabled={!canUseRangeControls}
+                                >
+                                    <PresetTitle>{preset.label}</PresetTitle>
+                                    {preset.rangeLabel ? (
+                                        <PresetRange>{preset.rangeLabel}</PresetRange>
+                                    ) : null}
+                                </PresetButton>
+                            </Tooltip>
+                        ))}
+                    </Presets>
+
+                    <RangeGrid>
+                        <RangePriceInput
+                            label="Min Price"
+                            value={minPriceInput}
                             disabled={!canUseRangeControls}
-                        >
-                            <PresetTitle>{preset.label}</PresetTitle>
-                            <PresetRange>{preset.rangeLabel}</PresetRange>
-                            <PresetDescription>{preset.description}</PresetDescription>
-                        </PresetButton>
-                    ))}
-                </Presets>
-                <FullRangePresetRow>
-                    <FullRangePresetButton
-                        type="button"
-                        $active={activeDepositPreset === 'full'}
-                        onClick={onFullRange}
-                        disabled={!canUseRangeControls}
-                    >
-                        <PresetTitle>Full Range</PresetTitle>
-                        <PresetDescription>
-                            Works like a regular volatile pool across the entire price range
-                        </PresetDescription>
-                    </FullRangePresetButton>
-                </FullRangePresetRow>
+                            isScientific={isMinScientific}
+                            isFullRange={
+                                hasTickRange &&
+                                tickLower === minTickBound &&
+                                tickUpper === maxTickBound
+                            }
+                            fullRangeValue="0+"
+                            incrementDisabled={disableLowerUpByReference}
+                            onChange={onMinPriceChange}
+                            onStepDown={onStepLowerDown}
+                            onStepUp={onStepLowerUp}
+                        />
 
-                <RangeGrid>
-                    <div>
-                        <Label>Min Price</Label>
-                        <PriceControl>
-                            <StepBtn onClick={onStepLowerDown} disabled={!canUseRangeControls}>
-                                -
-                            </StepBtn>
-                            {hasTickRange &&
-                            tickLower === minTickBound &&
-                            tickUpper === maxTickBound ? (
-                                <PriceInput value="0+" readOnly disabled={!canUseRangeControls} />
-                            ) : isMinScientific ? (
-                                <PriceInput
-                                    value={minPriceInput}
-                                    onChange={event => onMinPriceChange(event.target.value)}
-                                    inputMode="decimal"
-                                    disabled={!canUseRangeControls}
-                                />
-                            ) : (
-                                <NumericFormat
-                                    value={minPriceInput}
-                                    onValueChange={(values, sourceInfo) => {
-                                        if (sourceInfo.source === 'event') {
-                                            onMinPriceChange(values.value);
-                                        }
-                                    }}
-                                    customInput={PriceInput}
-                                    inputMode="decimal"
-                                    thousandSeparator=","
-                                    decimalScale={7}
-                                    allowNegative={false}
-                                    allowedDecimalSeparators={[',']}
-                                    disabled={!canUseRangeControls}
-                                />
-                            )}
-                            <StepBtn
-                                onClick={onStepLowerUp}
-                                disabled={!canUseRangeControls || disableLowerUpByReference}
-                            >
-                                +
-                            </StepBtn>
-                        </PriceControl>
-                    </div>
-                    <div>
-                        <Label>Max Price</Label>
-                        <PriceControl>
-                            <StepBtn
-                                onClick={onStepUpperDown}
-                                disabled={!canUseRangeControls || disableUpperDownByReference}
-                            >
-                                -
-                            </StepBtn>
-                            {hasTickRange &&
-                            tickLower === minTickBound &&
-                            tickUpper === maxTickBound ? (
-                                <PriceInput value="∞" readOnly disabled={!canUseRangeControls} />
-                            ) : isMaxScientific ? (
-                                <PriceInput
-                                    value={maxPriceInput}
-                                    onChange={event => onMaxPriceChange(event.target.value)}
-                                    inputMode="decimal"
-                                    disabled={!canUseRangeControls}
-                                />
-                            ) : (
-                                <NumericFormat
-                                    value={maxPriceInput}
-                                    onValueChange={(values, sourceInfo) => {
-                                        if (sourceInfo.source === 'event') {
-                                            onMaxPriceChange(values.value);
-                                        }
-                                    }}
-                                    customInput={PriceInput}
-                                    inputMode="decimal"
-                                    thousandSeparator=","
-                                    decimalScale={7}
-                                    allowNegative={false}
-                                    allowedDecimalSeparators={[',']}
-                                    disabled={!canUseRangeControls}
-                                />
-                            )}
-                            <StepBtn onClick={onStepUpperUp} disabled={!canUseRangeControls}>
-                                +
-                            </StepBtn>
-                        </PriceControl>
-                    </div>
-                </RangeGrid>
+                        <RangePriceInput
+                            label="Max Price"
+                            value={maxPriceInput}
+                            disabled={!canUseRangeControls}
+                            isScientific={isMaxScientific}
+                            isFullRange={
+                                hasTickRange &&
+                                tickLower === minTickBound &&
+                                tickUpper === maxTickBound
+                            }
+                            fullRangeValue="∞"
+                            decrementDisabled={disableUpperDownByReference}
+                            onChange={onMaxPriceChange}
+                            onStepDown={onStepUpperDown}
+                            onStepUp={onStepUpperUp}
+                        />
+                    </RangeGrid>
 
-                <RangeSummary>
-                    <SummaryMain>
-                        <span>
-                            Selected Range ({pool.tokens[1].code}/{pool.tokens[0].code})
-                        </span>
-                        <span>
-                            {hasTickRange &&
-                            tickLower === minTickBound &&
-                            tickUpper === maxTickBound
-                                ? 'Full Range'
-                                : `${minPriceInput} - ${maxPriceInput}`}
-                        </span>
-                    </SummaryMain>
-                    <SummarySub>
-                        <span>Ticks</span>
-                        <span>
-                            {tickLower ?? '-'} to {tickUpper ?? '-'}
-                        </span>
-                    </SummarySub>
-                    <AddLiquidityEstimateSummary pool={pool} depositEstimate={depositEstimate} />
-                </RangeSummary>
-            </>
-        )}
-    </RangeBlock>
-);
+                    <RangeChartWrap>
+                        <LiquidityDistributionChart
+                            ref={chartRef}
+                            pool={pool}
+                            title="Liquidity Distribution"
+                            currentTickOverride={isEmptyPool ? referenceExactTick : currentTick}
+                            selectableRange={{
+                                tickLower,
+                                tickUpper,
+                                tickSpacing,
+                                minTickBound,
+                                maxTickBound,
+                                disabled: !canUseRangeControls,
+                                onChange: onChartRangeChange,
+                            }}
+                        />
+                    </RangeChartWrap>
+
+                    <RangeSummary>
+                        <SummaryMain>
+                            <span>
+                                Selected Range ({pool.tokens[1].code}/{pool.tokens[0].code})
+                            </span>
+                            <span>
+                                {hasTickRange &&
+                                tickLower === minTickBound &&
+                                tickUpper === maxTickBound
+                                    ? 'Full Range'
+                                    : `${minPriceInput} - ${maxPriceInput}`}
+                            </span>
+                        </SummaryMain>
+                        <SummarySub>
+                            <span>Ticks</span>
+                            <span>
+                                {tickLower ?? '-'} to {tickUpper ?? '-'}
+                            </span>
+                        </SummarySub>
+                        <AddLiquidityEstimateSummary
+                            pool={pool}
+                            depositEstimate={depositEstimate}
+                        />
+                    </RangeSummary>
+                </>
+            )}
+        </RangeBlock>
+    );
+};
 
 export default AddLiquidityPriceRangeSection;

@@ -68,7 +68,7 @@ export const CurrentPrice = styled.div`
 
 export const Presets = styled.div`
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1rem;
     margin-bottom: 2rem;
 
@@ -78,97 +78,90 @@ export const Presets = styled.div`
 `;
 
 export const PresetButton = styled.button<{ $active?: boolean }>`
-    border: none;
-    background: ${({ $active }) => ($active ? COLORS.purple100 : COLORS.gray50)};
+    width: 100%;
+    border: 0.2rem solid ${({ $active }) => ($active ? COLORS.purple500 : COLORS.transparent)};
+    background: ${({ $active }) => ($active ? COLORS.white : COLORS.gray50)};
     border-radius: 1rem;
-    min-height: 12rem;
+    min-height: 9.2rem;
     padding: 1.8rem;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    justify-content: space-between;
-    text-align: left;
-    gap: 1rem;
-    font-size: 1.6rem;
-    color: ${({ $active }) => ($active ? COLORS.purple500 : COLORS.textPrimary)};
-    cursor: pointer;
-    font-weight: ${({ $active }) => ($active ? 700 : 400)};
-`;
-
-export const FullRangePresetRow = styled.div`
-    display: flex;
-    margin-top: -0.8rem;
-    margin-bottom: 2rem;
-
-    ${respondDown(Breakpoints.sm)`
-        margin-top: 0;
-    `}
-`;
-
-export const FullRangePresetButton = styled(PresetButton)`
-    min-height: 7.2rem;
-    width: 100%;
+    align-items: center;
     justify-content: center;
+    text-align: center;
+    gap: 0.8rem;
+    font-size: 1.6rem;
+    color: ${COLORS.textPrimary};
+    cursor: pointer;
+    transition:
+        border-color 0.2s ease,
+        background-color 0.2s ease;
+
+    &:hover:not(:disabled) {
+        background: ${COLORS.gray100};
+        border-color: ${({ $active }) => ($active ? COLORS.purple500 : COLORS.gray100)};
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+`;
+
+export const RangeChartWrap = styled.div`
+    margin: 4rem 0 2rem;
 `;
 
 export const PresetTitle = styled.span`
     font-size: 1.6rem;
     line-height: 2rem;
     font-weight: 700;
+    white-space: nowrap;
 `;
 
 export const PresetRange = styled.span`
     font-size: 1.4rem;
     line-height: 1.8rem;
-    color: ${COLORS.textPrimary};
+    color: ${COLORS.textGray};
 `;
 
-export const PresetDescription = styled.span`
+export const PresetTooltipText = styled.div`
+    width: 100%;
+    white-space: normal;
+    text-align: center;
     font-size: 1.3rem;
-    line-height: 1.7rem;
-    color: ${COLORS.textGray};
+    line-height: 1.6rem;
 `;
 
 export const RangeGrid = styled.div`
+    margin-top: 6rem;
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 2rem;
-`;
 
-export const PriceControl = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-`;
-
-export const Label = styled.div`
-    font-size: 1.4rem;
-    color: ${COLORS.textGray};
-    margin-bottom: 1rem;
+    ${respondDown(Breakpoints.sm)`
+        grid-template-columns: 1fr;
+    `}
 `;
 
 export const StepBtn = styled.button`
-    width: 4.4rem;
-    min-width: 4.4rem;
-    height: 4.4rem;
+    width: 3.2rem;
+    min-width: 3.2rem;
+    height: 3.2rem;
     border: none;
-    border-radius: 1rem;
+    border-radius: 0.8rem;
     background: ${COLORS.gray50};
     color: ${COLORS.textPrimary};
-    font-size: 2rem;
+    font-size: 1.8rem;
+    line-height: 1;
     cursor: pointer;
 `;
 
-export const PriceInput = styled.input`
-    flex: 1;
-    height: 4.4rem;
-    border: none;
-    border-radius: 1rem;
-    background: ${COLORS.gray50};
-    padding: 0 1.2rem;
-    font-size: 2.4rem;
-    color: ${COLORS.textPrimary};
-    text-align: center;
+export const PriceControlButtons = styled.div`
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-left: auto;
 `;
 
 export const RangeSummary = styled.div`

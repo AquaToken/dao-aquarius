@@ -28,15 +28,6 @@ type Segment = {
     liquidity: BigNumber;
 };
 
-const getUsdPerLiquidity = (pool: PoolExtended) => {
-    const totalLiquidityUsd = new BigNumber(pool.liquidity_usd || 0).dividedBy(1e7);
-    const totalShareLiquidity = new BigNumber(pool.total_share || pool.active_liquidity || 0);
-
-    return totalShareLiquidity.gt(0)
-        ? totalLiquidityUsd.dividedBy(totalShareLiquidity)
-        : new BigNumber(0);
-};
-
 const buildLiquiditySegmentsFromTickMap = (
     tickMap: Record<string, string>,
     currentTick: number,
@@ -83,21 +74,17 @@ const buildLiquiditySegmentsFromTickMap = (
     return segments;
 };
 
-const mapSegmentsToDistributionItems = (
-    segments: Segment[],
-    usdPerLiquidity: BigNumber,
-): DistributionItem[] =>
+const mapSegmentsToDistributionItems = (segments: Segment[]): DistributionItem[] =>
     segments
         .map(segment => ({
             tickLower: segment.tickLower,
             tickUpper: segment.tickUpper,
-            liquidity: segment.liquidity.multipliedBy(usdPerLiquidity).toNumber(),
+            liquidity: segment.liquidity.toNumber(),
         }))
         .filter(segment => segment.liquidity > 0);
 
 const mapHydratedPositionsToDistributionItems = (
     hydrated: ConcentratedPosition[],
-    usdPerLiquidity: BigNumber,
 ): DistributionItem[] => {
     const nonEmptyHydrated = hydrated.filter(item => Number(item.liquidity || 0) > 0);
     const unique = new Map(
@@ -106,9 +93,7 @@ const mapHydratedPositionsToDistributionItems = (
             {
                 tickLower: position.tickLower,
                 tickUpper: position.tickUpper,
-                liquidity: new BigNumber(position.liquidity || 0)
-                    .multipliedBy(usdPerLiquidity)
-                    .toNumber(),
+                liquidity: new BigNumber(position.liquidity || 0).toNumber(),
             },
         ]),
     );
@@ -132,10 +117,9 @@ export const buildPoolLiquidityDistributionData = (pool: PoolExtended): Distribu
         currentTick,
         pool.active_liquidity || '0',
     );
-    const usdPerLiquidity = getUsdPerLiquidity(pool);
 
     return {
-        items: mapSegmentsToDistributionItems(segments, usdPerLiquidity),
+        items: mapSegmentsToDistributionItems(segments),
         currentTick,
     };
 };
@@ -169,10 +153,8 @@ export const fetchUserLiquidityDistributionData = async (
         return position?.liquidity;
     });
 
-    const usdPerLiquidity = getUsdPerLiquidity(pool);
-
     return {
-        items: mapHydratedPositionsToDistributionItems(hydrated, usdPerLiquidity),
+        items: mapHydratedPositionsToDistributionItems(hydrated),
         currentTick,
     };
 };
