@@ -19,8 +19,8 @@ export const ChartHeader = styled.div`
 
 export const ChartTitle = styled.h6<{ $compact?: boolean }>`
     margin: 0;
-    font-size: ${({ $compact }) => ($compact ? '1.8rem' : '2.2rem')};
-    line-height: ${({ $compact }) => ($compact ? '2.4rem' : '2.8rem')};
+    font-size: ${({ $compact }) => ($compact ? '1.4rem' : '2rem')};
+    line-height: ${({ $compact }) => ($compact ? '2rem' : '2.8rem')};
     color: ${COLORS.textPrimary};
 `;
 

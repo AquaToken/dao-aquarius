@@ -71,7 +71,7 @@ export const CONCENTRATED_DEPOSIT_PRESETS = [
     {
         key: 'full',
         label: 'Full Range',
-        rangeLabel: '',
+        rangeLabel: 'All ticks',
         lowerFactor: null,
         upperFactor: null,
         description: 'Works like a regular volatile pool across the entire price range.',

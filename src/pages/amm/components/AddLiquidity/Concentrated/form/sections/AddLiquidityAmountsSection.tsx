@@ -42,25 +42,41 @@ const AddLiquidityAmountsSection = ({
     const token0Balance = tokenBalances.get(token0Key) || 0;
     const token1Balance = tokenBalances.get(token1Key) || 0;
 
+    const token0RightLabel = tokenBalances.has(token0Key) ? (
+        <Balance>
+            <BalanceClickable
+                onClick={() => {
+                    if (disableAmount0Input) {
+                        return;
+                    }
+                    onAmount0Change(String(token0Balance));
+                }}
+            >
+                {formatBalance(token0Balance)} {pool.tokens[0].code}
+            </BalanceClickable>{' '}
+            available
+        </Balance>
+    ) : null;
+
+    const token1RightLabel = tokenBalances.has(token1Key) ? (
+        <Balance>
+            <BalanceClickable
+                onClick={() => {
+                    if (disableAmount1Input) {
+                        return;
+                    }
+                    onAmount1Change(String(token1Balance));
+                }}
+            >
+                {formatBalance(token1Balance)} {pool.tokens[1].code}
+            </BalanceClickable>{' '}
+            available
+        </Balance>
+    ) : null;
+
     return (
         <CardStack>
             <FormRow>
-                {tokenBalances.has(token0Key) && (
-                    <Balance>
-                        Available:
-                        <BalanceClickable
-                            onClick={() => {
-                                if (disableAmount0Input) {
-                                    return;
-                                }
-                                onAmount0Change(String(token0Balance));
-                            }}
-                        >
-                            {' '}
-                            {formatBalance(token0Balance)}
-                        </BalanceClickable>
-                    </Balance>
-                )}
                 <NumericFormat
                     value={amount0}
                     onValueChange={(values, sourceInfo) => {
@@ -71,6 +87,7 @@ const AddLiquidityAmountsSection = ({
                     placeholder={`Enter ${pool.tokens[0].code} amount`}
                     customInput={Input}
                     label={`${pool.tokens[0].code} Amount`}
+                    rightLabel={token0RightLabel}
                     postfix={<Asset asset={pool.tokens[0]} logoAndCode />}
                     inputMode="decimal"
                     allowedDecimalSeparators={[',']}
@@ -82,22 +99,6 @@ const AddLiquidityAmountsSection = ({
             </FormRow>
 
             <FormRow>
-                {tokenBalances.has(token1Key) && (
-                    <Balance>
-                        Available:
-                        <BalanceClickable
-                            onClick={() => {
-                                if (disableAmount1Input) {
-                                    return;
-                                }
-                                onAmount1Change(String(token1Balance));
-                            }}
-                        >
-                            {' '}
-                            {formatBalance(token1Balance)}
-                        </BalanceClickable>
-                    </Balance>
-                )}
                 <NumericFormat
                     value={amount1}
                     onValueChange={(values, sourceInfo) => {
@@ -108,6 +109,7 @@ const AddLiquidityAmountsSection = ({
                     placeholder={`Enter ${pool.tokens[1].code} amount`}
                     customInput={Input}
                     label={`${pool.tokens[1].code} Amount`}
+                    rightLabel={token1RightLabel}
                     postfix={<Asset asset={pool.tokens[1]} logoAndCode />}
                     inputMode="decimal"
                     allowedDecimalSeparators={[',']}

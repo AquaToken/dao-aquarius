@@ -21,6 +21,7 @@ import RangePriceInput from './RangePriceInput';
 import {
     CurrentPrice,
     PresetButton,
+    PresetButtonInner,
     PresetRange,
     PresetTitle,
     Presets,
@@ -28,11 +29,8 @@ import {
     RangeChartWrap,
     RangeBlock,
     RangeGrid,
-    RangeSummary,
     RangeTitle,
     RangeTitleRow,
-    SummaryMain,
-    SummarySub,
 } from '../../styled/ConcentratedAddLiquidity.styled';
 
 export type AddLiquidityPriceRangeSectionProps = {
@@ -99,6 +97,13 @@ const AddLiquidityPriceRangeSection = ({
     onMaxPriceChange,
 }: AddLiquidityPriceRangeSectionProps): React.ReactNode => {
     const chartRef = React.useRef<LiquidityDistributionChartHandle>(null);
+    const displayPrice = React.useMemo(() => {
+        if (!Number.isFinite(referencePriceValue) || referencePriceValue <= 0) {
+            return null;
+        }
+
+        return 1 / referencePriceValue;
+    }, [referencePriceValue]);
 
     const handlePresetClick = (presetKey: DepositPresetKey) => {
         onPreset(presetKey);
@@ -112,10 +117,8 @@ const AddLiquidityPriceRangeSection = ({
             <RangeTitleRow>
                 <RangeTitle>Price Range</RangeTitle>
                 <CurrentPrice>
-                    {Number.isFinite(referencePriceValue)
-                        ? formatBalance(referencePriceValue, true)
-                        : '-'}{' '}
-                    {pool.tokens[1].code} per {pool.tokens[0].code}
+                    1 {pool.tokens[1].code} ={' '}
+                    {displayPrice ? formatBalance(displayPrice, true) : '-'} {pool.tokens[0].code}
                 </CurrentPrice>
             </RangeTitleRow>
 
@@ -145,10 +148,12 @@ const AddLiquidityPriceRangeSection = ({
                                     onClick={() => handlePresetClick(preset.key)}
                                     disabled={!canUseRangeControls}
                                 >
-                                    <PresetTitle>{preset.label}</PresetTitle>
-                                    {preset.rangeLabel ? (
-                                        <PresetRange>{preset.rangeLabel}</PresetRange>
-                                    ) : null}
+                                    <PresetButtonInner $active={activeDepositPreset === preset.key}>
+                                        <PresetTitle>{preset.label}</PresetTitle>
+                                        {preset.rangeLabel ? (
+                                            <PresetRange>{preset.rangeLabel}</PresetRange>
+                                        ) : null}
+                                    </PresetButtonInner>
                                 </PresetButton>
                             </Tooltip>
                         ))}
@@ -194,7 +199,7 @@ const AddLiquidityPriceRangeSection = ({
                         <LiquidityDistributionChart
                             ref={chartRef}
                             pool={pool}
-                            title="Liquidity Distribution"
+                            title="Range Preview"
                             currentTickOverride={isEmptyPool ? referenceExactTick : currentTick}
                             selectableRange={{
                                 tickLower,
@@ -208,30 +213,17 @@ const AddLiquidityPriceRangeSection = ({
                         />
                     </RangeChartWrap>
 
-                    <RangeSummary>
-                        <SummaryMain>
-                            <span>
-                                Selected Range ({pool.tokens[1].code}/{pool.tokens[0].code})
-                            </span>
-                            <span>
-                                {hasTickRange &&
-                                tickLower === minTickBound &&
-                                tickUpper === maxTickBound
-                                    ? 'Full Range'
-                                    : `${minPriceInput} - ${maxPriceInput}`}
-                            </span>
-                        </SummaryMain>
-                        <SummarySub>
-                            <span>Ticks</span>
-                            <span>
-                                {tickLower ?? '-'} to {tickUpper ?? '-'}
-                            </span>
-                        </SummarySub>
-                        <AddLiquidityEstimateSummary
-                            pool={pool}
-                            depositEstimate={depositEstimate}
-                        />
-                    </RangeSummary>
+                    <AddLiquidityEstimateSummary
+                        pool={pool}
+                        hasTickRange={hasTickRange}
+                        tickLower={tickLower}
+                        tickUpper={tickUpper}
+                        minTickBound={minTickBound}
+                        maxTickBound={maxTickBound}
+                        minPriceInput={minPriceInput}
+                        maxPriceInput={maxPriceInput}
+                        depositEstimate={depositEstimate}
+                    />
                 </>
             )}
         </RangeBlock>
