@@ -1,197 +1,228 @@
 import styled from 'styled-components';
 
-import { respondDown } from 'styles/mixins';
-import { Breakpoints, COLORS } from 'styles/style-constants';
+import Button from 'basics/buttons/Button';
+
+import {
+    flexAllCenter,
+    flexColumn,
+    flexColumnCenter,
+    flexRowSpaceBetween,
+    respondDown,
+} from 'styles/mixins';
+import { Breakpoints, COLORS, FONT_SIZE, hexWithOpacity } from 'styles/style-constants';
 
 export const Container = styled.div`
     padding-top: 2.4rem;
 `;
 
 export const Section = styled.div`
-    &:not(:last-child) {
-        margin-bottom: 3.2rem;
-        padding-bottom: 3.2rem;
-        border-bottom: 0.1rem solid ${COLORS.gray100};
-    }
+    ${flexColumn};
+    gap: 2.4rem;
 `;
 
 export const CardStack = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+    ${flexColumn};
+    gap: 2.4rem;
 `;
 
 export const FormRow = styled.div`
-    display: flex;
-    margin: 3rem 0;
-    position: relative;
+    width: 100%;
+    margin-top: 5rem;
 `;
 
 export const Balance = styled.div`
-    position: absolute;
-    bottom: calc(100% + 1.2rem);
-    right: 0;
-    font-size: 1.6rem;
-    line-height: 1.8rem;
-    color: ${COLORS.textTertiary};
-    display: flex;
-    align-items: center;
+    ${FONT_SIZE.sm};
+    color: ${COLORS.textGray};
+    white-space: nowrap;
 `;
 
 export const BalanceClickable = styled.span`
     color: ${COLORS.purple500};
     cursor: pointer;
-    margin-left: 0.4rem;
 `;
 
-export const RangeBlock = styled.div``;
+export const RangeBlock = styled.div`
+    ${flexColumn};
+    gap: 2.4rem;
+`;
 
 export const RangeTitleRow = styled.div`
-    display: flex;
+    ${flexRowSpaceBetween};
     align-items: baseline;
-    justify-content: space-between;
     gap: 1.2rem;
-    margin-bottom: 2rem;
 `;
 
 export const RangeTitle = styled.h6`
     margin: 0;
-    font-size: 2.4rem;
-    line-height: 2.8rem;
+    ${FONT_SIZE.lg};
     color: ${COLORS.textPrimary};
+    font-weight: 700;
 `;
 
 export const CurrentPrice = styled.div`
-    font-size: 1.4rem;
+    ${FONT_SIZE.sm};
     color: ${COLORS.textGray};
+    text-align: right;
+    white-space: nowrap;
 `;
 
 export const Presets = styled.div`
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 1rem;
-    margin-bottom: 2rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.8rem;
 
     ${respondDown(Breakpoints.sm)`
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
     `}
 `;
 
 export const PresetButton = styled.button<{ $active?: boolean }>`
-    border: none;
-    background: ${({ $active }) => ($active ? COLORS.purple100 : COLORS.gray50)};
-    border-radius: 1rem;
-    height: 4.4rem;
-    font-size: 1.6rem;
-    color: ${({ $active }) => ($active ? COLORS.purple500 : COLORS.textPrimary)};
+    width: 100%;
+    background: ${({ $active }) => ($active ? COLORS.white : COLORS.gray50)};
+    border: 0.4rem solid ${({ $active }) => ($active ? COLORS.purple500 : COLORS.transparent)};
+    border-radius: 0.5rem;
+    min-height: 6.8rem;
+    color: ${COLORS.textPrimary};
     cursor: pointer;
-    font-weight: ${({ $active }) => ($active ? 700 : 400)};
+    transition:
+        background-color 0.2s ease,
+        box-shadow 0.2s ease;
+
+    &:hover:not(:disabled) {
+        background: ${({ $active }) => ($active ? COLORS.white : COLORS.gray100)};
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+`;
+
+export const PresetButtonInner = styled.div<{ $active?: boolean }>`
+    ${flexColumnCenter};
+    min-height: 6rem;
+    height: 100%;
+    width: 100%;
+    padding: 1.6rem;
+    gap: 0.4rem;
+    text-align: center;
+`;
+
+export const RangeChartWrap = styled.div`
+    margin: 4rem 0 2rem;
+`;
+
+export const PresetTitle = styled.span`
+    ${FONT_SIZE.sm};
+    font-weight: 700;
+    white-space: nowrap;
+`;
+
+export const PresetRange = styled.span`
+    ${FONT_SIZE.sm};
+    color: ${COLORS.textGray};
+`;
+
+export const PresetTooltipText = styled.div`
+    width: 100%;
+    white-space: normal;
+    text-align: center;
+    ${FONT_SIZE.xs};
 `;
 
 export const RangeGrid = styled.div`
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 2rem;
-`;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.4rem;
+    margin-top: 5rem;
 
-export const PriceControl = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-`;
-
-export const Label = styled.div`
-    font-size: 1.4rem;
-    color: ${COLORS.textGray};
-    margin-bottom: 1rem;
+    ${respondDown(Breakpoints.sm)`
+        grid-template-columns: 1fr;
+    `}
 `;
 
 export const StepBtn = styled.button`
-    width: 4.4rem;
-    min-width: 4.4rem;
-    height: 4.4rem;
+    width: 2.4rem;
+    min-width: 2.4rem;
+    height: 2.4rem;
     border: none;
-    border-radius: 1rem;
+    border-radius: 0.7rem;
     background: ${COLORS.gray50};
     color: ${COLORS.textPrimary};
-    font-size: 2rem;
+    ${FONT_SIZE.md};
+    ${flexAllCenter};
     cursor: pointer;
+
+    &:hover {
+        background: ${COLORS.gray100};
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
 `;
 
-export const PriceInput = styled.input`
-    flex: 1;
-    height: 4.4rem;
-    border: none;
-    border-radius: 1rem;
-    background: ${COLORS.gray50};
-    padding: 0 1.2rem;
-    font-size: 2.4rem;
-    color: ${COLORS.textPrimary};
-    text-align: center;
+export const PriceControlButtons = styled.div`
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-left: auto;
 `;
 
 export const RangeSummary = styled.div`
-    margin-top: 2rem;
     background: ${COLORS.gray50};
-    border: 0.1rem solid ${COLORS.gray100};
-    border-radius: 1.2rem;
-    padding: 1.6rem;
+    border-radius: 1rem;
+    padding: 2.4rem;
 `;
 
-export const SummaryMain = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 1rem;
-    font-size: 1.4rem;
-    color: ${COLORS.textGray};
-
-    span:first-child {
-        color: ${COLORS.textGray};
-    }
-
-    span:last-child {
-        text-align: right;
-        color: ${COLORS.textTertiary};
-    }
+export const SummaryRow = styled.div`
+    ${flexRowSpaceBetween};
+    gap: 2.4rem;
+    min-height: 2rem;
 `;
 
-export const SummarySub = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 1rem;
-    margin-top: 1rem;
-    font-size: 1.4rem;
-    color: ${COLORS.textGray};
+export const SummaryLabel = styled.span`
+    ${FONT_SIZE.sm};
+    color: ${hexWithOpacity(COLORS.textSecondary, 70)};
+`;
 
-    span:last-child {
-        text-align: right;
-        color: ${COLORS.textTertiary};
-    }
+export const SummaryValue = styled.div`
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    text-align: right;
+    ${FONT_SIZE.md};
+    color: ${COLORS.textPrimary};
 `;
 
 export const SummaryRows = styled.div`
-    margin-top: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+    ${flexColumn};
+    gap: 1.6rem;
 `;
 
-export const SummaryValueRow = styled.div`
-    display: flex;
-    justify-content: space-between;
-    font-size: 1.4rem;
-    color: ${COLORS.textGray};
+export const SummaryAmounts = styled.div`
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.8rem 1.2rem;
+    flex-wrap: wrap;
+    ${FONT_SIZE.md};
+    color: ${COLORS.textPrimary};
+`;
 
-    span:first-child {
-        color: ${COLORS.textGray};
-    }
+export const SummaryAmountItem = styled.div`
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+`;
 
-    span:last-child {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.6rem;
-        color: ${COLORS.textTertiary};
-    }
+export const DepositFooter = styled.div`
+    position: sticky;
+    bottom: 0;
+    background: ${COLORS.white};
+    padding: 4.8rem 0 0;
+    z-index: 10;
 `;

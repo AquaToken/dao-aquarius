@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import {
-    CONCENTRATED_DEPOSIT_DEFAULT_PRESET_MULTIPLIER,
+    CONCENTRATED_DEPOSIT_DEFAULT_PRESET_KEY,
     CONCENTRATED_DEPOSIT_ESTIMATE_DEBOUNCE_MS,
     CONCENTRATED_DEPOSIT_PRESETS,
     CONCENTRATED_DEPOSIT_PRICE_INPUT_DEBOUNCE_MS,
@@ -32,7 +32,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { SorobanService, ToastService } from 'services/globalServices';
 
-import { DepositEstimate, PoolExtended } from 'types/amm';
+import { DepositEstimate, DepositPresetKey, PoolExtended } from 'types/amm';
 import { TokenType } from 'types/token';
 
 import {
@@ -40,8 +40,6 @@ import {
     normalizeForRange,
     resolvePresetTicks,
 } from '../helpers/addLiquidityRangeUtils';
-
-type DepositPresetKey = 'full' | '2' | '1.2' | '1.01';
 
 type Params = {
     pool: PoolExtended;
@@ -140,14 +138,6 @@ export const useConcentratedAddLiquidityForm = ({
         return priceToTick(referencePriceValue, decimalsDiff);
     }, [referencePriceValue, decimalsDiff]);
 
-    const referenceTick = useMemo(() => {
-        if (tickSpacing === null || referenceExactTick === null) {
-            return null;
-        }
-
-        return clamp(snapDown(referenceExactTick, tickSpacing), minTickBound, maxTickBound);
-    }, [tickSpacing, referenceExactTick, minTickBound, maxTickBound]);
-
     useEffect(() => {
         if (
             tickSpacing === null ||
@@ -160,13 +150,25 @@ export const useConcentratedAddLiquidityForm = ({
             return;
         }
 
+        const defaultPreset = CONCENTRATED_DEPOSIT_PRESETS.find(
+            ({ key }) => key === CONCENTRATED_DEPOSIT_DEFAULT_PRESET_KEY,
+        );
+        if (
+            !defaultPreset ||
+            defaultPreset.lowerFactor === null ||
+            defaultPreset.upperFactor === null
+        ) {
+            return;
+        }
+
         const preset = resolvePresetTicks({
             tickSpacing,
             referencePriceValue,
             decimalsDiff,
             minTickBound,
             maxTickBound,
-            multiplier: CONCENTRATED_DEPOSIT_DEFAULT_PRESET_MULTIPLIER,
+            lowerFactor: defaultPreset.lowerFactor,
+            upperFactor: defaultPreset.upperFactor,
         });
         if (!preset) {
             return;
@@ -175,9 +177,7 @@ export const useConcentratedAddLiquidityForm = ({
 
         setTickLower(presetLower);
         setTickUpper(presetUpper);
-        setSelectedPreset(
-            String(CONCENTRATED_DEPOSIT_DEFAULT_PRESET_MULTIPLIER) as DepositPresetKey,
-        );
+        setSelectedPreset(CONCENTRATED_DEPOSIT_DEFAULT_PRESET_KEY as DepositPresetKey);
     }, [
         tickSpacing,
         tickLower,
@@ -366,13 +366,25 @@ export const useConcentratedAddLiquidityForm = ({
             return;
         }
 
+        const selectedPresetConfig = CONCENTRATED_DEPOSIT_PRESETS.find(
+            ({ key }) => key === selectedPreset,
+        );
+        if (
+            !selectedPresetConfig ||
+            selectedPresetConfig.lowerFactor === null ||
+            selectedPresetConfig.upperFactor === null
+        ) {
+            return;
+        }
+
         const preset = resolvePresetTicks({
             tickSpacing,
             referencePriceValue,
             decimalsDiff,
             minTickBound,
             maxTickBound,
-            multiplier: Number(selectedPreset),
+            lowerFactor: selectedPresetConfig.lowerFactor,
+            upperFactor: selectedPresetConfig.upperFactor,
         });
 
         if (!preset) {
@@ -643,13 +655,18 @@ export const useConcentratedAddLiquidityForm = ({
         }
 
         const matched = CONCENTRATED_DEPOSIT_PRESETS.find(item => {
+            if (item.key === 'full' || item.lowerFactor === null || item.upperFactor === null) {
+                return false;
+            }
+
             const expected = resolvePresetTicks({
                 tickSpacing,
                 referencePriceValue,
                 decimalsDiff,
                 minTickBound,
                 maxTickBound,
-                multiplier: item.multiplier,
+                lowerFactor: item.lowerFactor,
+                upperFactor: item.upperFactor,
             });
             if (!expected) {
                 return false;
@@ -879,8 +896,21 @@ export const useConcentratedAddLiquidityForm = ({
         applyTickRangeAndRecalculate(minTickBound, maxTickBound);
     };
 
-    const handlePreset = (multiplier: number) => {
+    const handlePreset = (presetKey: DepositPresetKey) => {
+        if (presetKey === 'full') {
+            handleFullRange();
+            return;
+        }
+
         if (tickSpacing === null || !canUseRangeControls || !Number.isFinite(referencePriceValue)) {
+            return;
+        }
+        const presetConfig = CONCENTRATED_DEPOSIT_PRESETS.find(({ key }) => key === presetKey);
+        if (
+            !presetConfig ||
+            presetConfig.lowerFactor === null ||
+            presetConfig.upperFactor === null
+        ) {
             return;
         }
         const preset = resolvePresetTicks({
@@ -889,14 +919,35 @@ export const useConcentratedAddLiquidityForm = ({
             decimalsDiff,
             minTickBound,
             maxTickBound,
-            multiplier,
+            lowerFactor: presetConfig.lowerFactor,
+            upperFactor: presetConfig.upperFactor,
         });
         if (!preset) {
             return;
         }
         const [nextLower, nextUpper] = preset;
-        setSelectedPreset(String(multiplier) as Exclude<DepositPresetKey, 'full'>);
+        setSelectedPreset(presetKey);
         applyTickRangeAndRecalculate(nextLower, nextUpper);
+    };
+
+    const handleChartRangeChange = (nextLower: number, nextUpper: number) => {
+        if (tickSpacing === null || !canUseRangeControls) {
+            return;
+        }
+
+        const clampedLower = clamp(
+            snapDown(nextLower, tickSpacing),
+            minTickBound,
+            maxTickBound - tickSpacing,
+        );
+        const clampedUpper = clamp(
+            snapUp(nextUpper, tickSpacing),
+            clampedLower + tickSpacing,
+            maxTickBound,
+        );
+
+        setSelectedPreset(null);
+        applyTickRangeAndRecalculate(clampedLower, clampedUpper);
     };
 
     const showRangeUnavailable =
@@ -918,11 +969,14 @@ export const useConcentratedAddLiquidityForm = ({
         isEmptyPool,
         hasBothPositiveAmounts,
         referencePriceValue,
+        currentTick: Number.isFinite(currentTick) ? currentTick : null,
+        referenceExactTick,
         activeDepositPreset,
         canUseRangeControls,
         hasTickRange,
         tickLower,
         tickUpper,
+        tickSpacing,
         minTickBound,
         maxTickBound,
         isMinScientific,
@@ -932,8 +986,8 @@ export const useConcentratedAddLiquidityForm = ({
         disableLowerUpByReference,
         disableUpperDownByReference,
         depositEstimate,
-        handleFullRange,
         handlePreset,
+        handleChartRangeChange,
         handleStepLowerDown,
         handleStepLowerUp,
         handleStepUpperDown,

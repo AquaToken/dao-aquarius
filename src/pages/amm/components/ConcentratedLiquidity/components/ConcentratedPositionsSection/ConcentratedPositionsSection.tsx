@@ -1,8 +1,15 @@
 import * as React from 'react';
+import styled from 'styled-components';
 
 import Select from 'basics/inputs/Select';
 
 import { PositionsList, Section, SectionTitle } from './ConcentratedPositionsSection.styled';
+
+const PositionsSelectWrap = styled.div`
+    > div > div:nth-child(2) > [data-withdraw-position-card='true'] {
+        padding: 2.4rem 0;
+    }
+`;
 
 type Option = {
     value: string;
@@ -26,12 +33,14 @@ const ConcentratedPositionsSection = ({
         <SectionTitle>Select position</SectionTitle>
         <PositionsList>
             {positionsCount > 0 && selectedPositionKey ? (
-                <Select
-                    options={positionSelectOptions}
-                    value={selectedPositionKey}
-                    onChange={onSelectPosition}
-                    placeholder="Select position"
-                />
+                <PositionsSelectWrap>
+                    <Select
+                        options={positionSelectOptions}
+                        value={selectedPositionKey}
+                        onChange={onSelectPosition}
+                        placeholder="Select position"
+                    />
+                </PositionsSelectWrap>
             ) : null}
             {!positionsCount && <span>No positions found</span>}
         </PositionsList>

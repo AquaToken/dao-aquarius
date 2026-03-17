@@ -19,7 +19,7 @@ const AddLiquidityModal = ({ params, close }: ModalProps<AddLiquidityModalParams
     const { pool, onUpdate } = params;
 
     return (
-        <ModalWrapper>
+        <ModalWrapper $width={pool.pool_type === POOL_TYPE.concentrated ? '64rem' : undefined}>
             <ModalTitle>Add liquidity</ModalTitle>
             {pool.pool_type === POOL_TYPE.concentrated ? (
                 <ConcentratedAddLiquidityFlow pool={pool} onUpdate={onUpdate} onClose={close} />

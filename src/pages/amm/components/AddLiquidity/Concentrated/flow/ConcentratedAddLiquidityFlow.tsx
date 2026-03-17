@@ -12,12 +12,12 @@ import { SorobanService, ToastService } from 'services/globalServices';
 
 import { PoolExtended } from 'types/amm';
 
-import Button from 'basics/buttons/Button';
-import { StickyButtonWrapper } from 'basics/ModalAtoms';
+import { Button } from 'basics/buttons';
 
 import ConcentratedAddLiquidityForm, {
     ConcentratedAddLiquidityFormData,
 } from '../form/ConcentratedAddLiquidityForm';
+import { DepositFooter } from '../styled/ConcentratedAddLiquidity.styled';
 
 type ConcentratedAddLiquidityFlowProps = {
     pool: PoolExtended;
@@ -107,7 +107,7 @@ const ConcentratedAddLiquidityFlow = ({
     return (
         <>
             <ConcentratedAddLiquidityForm pool={pool} onDataChange={setFormData} />
-            <StickyButtonWrapper>
+            <DepositFooter>
                 <Button
                     fullWidth
                     isBig
@@ -117,7 +117,7 @@ const ConcentratedAddLiquidityFlow = ({
                 >
                     Deposit
                 </Button>
-            </StickyButtonWrapper>
+            </DepositFooter>
         </>
     );
 };

@@ -1,11 +1,13 @@
+import BigNumber from 'bignumber.js';
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { getAssetsList } from 'api/amm';
 
 import { POOL_TYPE } from 'constants/amm';
 
+import { hydratePositionsLiquidity, normalizePositions } from 'helpers/amm-concentrated-positions';
 import { contractValueToAmount } from 'helpers/amount';
 import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
@@ -33,9 +35,8 @@ import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import SwapForm from 'pages/swap/components/SwapForm/SwapForm';
 
-import ConcentratedFeesModal from '../ConcentratedLiquidity/modals/ConcentratedFeesModal/ConcentratedFeesModal';
-import ConcentratedWithdrawModal from '../ConcentratedLiquidity/modals/ConcentratedWithdrawModal/ConcentratedWithdrawModal';
 import AddLiquidityModal from '../AddLiquidity/AddLiquidityModal';
+import ConcentratedWithdrawModal from '../ConcentratedLiquidity/modals/ConcentratedWithdrawModal/ConcentratedWithdrawModal';
 import LiquidityDistributionChart from '../LiquidityDistributionChart/LiquidityDistributionChart';
 import WithdrawFromPool from '../WithdrawFromPool/WithdrawFromPool';
 
@@ -97,7 +98,7 @@ const WithdrawIconStyled = styled(WithdrawIcon)`
     margin-right: 0.8rem;
 
     path {
-        stroke: ${COLORS.textGray};
+        stroke: ${COLORS.white};
     }
 `;
 const DepositIconStyled = styled(DepositIcon)`
@@ -124,14 +125,6 @@ const Buttons = styled.div`
     }
 `;
 
-const ManageFeesRow = styled.div`
-    margin-top: 1.6rem;
-
-    Button {
-        padding: unset;
-    }
-`;
-
 const DistributionCanvas = styled.div`
     width: 100%;
 `;
@@ -139,6 +132,7 @@ const DistributionCanvas = styled.div`
 const Sidebar = ({ pool }: { pool: PoolExtended }) => {
     const { isLogged, account } = useAuthStore();
     const [accountShare, setAccountShare] = useState(null);
+    const [accountPooledAmounts, setAccountPooledAmounts] = useState<string[] | null>(null);
     const [source, setSource] = useState(pool.tokens[0]);
     const [destination, setDestination] = useState(pool.tokens[1]);
     const [assetsList, setAssetsList] = useState(getTokensFromCache());
@@ -168,21 +162,133 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
     }, []);
 
     useEffect(() => {
-        if (isConcentrated) {
+        if (!account) {
             setAccountShare(null);
+            setAccountPooledAmounts(null);
             return;
         }
 
-        if (!account) {
-            setAccountShare(null);
+        if (isConcentrated) {
+            SorobanService.amm
+                .getUserPositionSnapshot(pool.address, account.accountId())
+                .then(async snapshot => {
+                    const ranges = normalizePositions(snapshot);
+
+                    if (!ranges.length) {
+                        setAccountShare(0);
+                        setAccountPooledAmounts(pool.tokens.map(() => '0'));
+                        return;
+                    }
+
+                    const hydrated = await hydratePositionsLiquidity(ranges, async range => {
+                        const position = await SorobanService.amm.getPosition(
+                            pool.address,
+                            account.accountId(),
+                            range.tickLower,
+                            range.tickUpper,
+                        );
+                        return position?.liquidity;
+                    });
+
+                    const nonZeroPositions = hydrated.filter(item =>
+                        new BigNumber(item.liquidity || '0').gt(0),
+                    );
+
+                    if (!nonZeroPositions.length) {
+                        setAccountShare(0);
+                        setAccountPooledAmounts(pool.tokens.map(() => '0'));
+                        return;
+                    }
+
+                    const estimatedAmounts = await Promise.all(
+                        nonZeroPositions.map(position =>
+                            SorobanService.amm
+                                .estimateWithdrawPosition(
+                                    account.accountId(),
+                                    pool.address,
+                                    pool.tokens,
+                                    position.tickLower,
+                                    position.tickUpper,
+                                    String(position.liquidity || '0'),
+                                )
+                                .catch(() => pool.tokens.map(() => '0')),
+                        ),
+                    );
+
+                    const pooledTotals = pool.tokens.map((_, index) =>
+                        estimatedAmounts
+                            .reduce(
+                                (acc, amounts) => acc.plus(amounts[index] || '0'),
+                                new BigNumber(0),
+                            )
+                            .toFixed(),
+                    );
+
+                    setAccountShare(
+                        Number(
+                            contractValueToAmount(
+                                String(snapshot?.raw_liquidity ?? '0'),
+                                pool.share_token_decimals,
+                            ),
+                        ),
+                    );
+                    setAccountPooledAmounts(pooledTotals);
+                })
+                .catch(() => {
+                    setAccountShare(0);
+                    setAccountPooledAmounts(pool.tokens.map(() => '0'));
+                });
             return;
         }
+
         SorobanService.token
             .getTokenBalance(pool.share_token_address, account.accountId())
             .then(res => {
                 setAccountShare(res);
+                setAccountPooledAmounts(null);
             });
-    }, [account, isConcentrated, pool.share_token_address]);
+    }, [
+        account,
+        isConcentrated,
+        pool.address,
+        pool.share_token_address,
+        pool.share_token_decimals,
+        pool.tokens,
+    ]);
+
+    const pooledAmounts = useMemo(
+        () =>
+            pool.tokens.map((asset, index) => {
+                if (isConcentrated) {
+                    return Number(accountPooledAmounts?.[index] || '0');
+                }
+
+                if (!Number(pool.total_share)) {
+                    return 0;
+                }
+
+                return +(
+                    (Number(
+                        contractValueToAmount(
+                            pool.reserves[index],
+                            (asset as SorobanToken).decimal,
+                        ),
+                    ) *
+                        Number(accountShare || 0)) /
+                    Number(contractValueToAmount(pool.total_share, pool.share_token_decimals))
+                ).toFixed((asset as SorobanToken).decimal ?? 7);
+            }),
+        [
+            accountPooledAmounts,
+            accountShare,
+            isConcentrated,
+            pool.reserves,
+            pool.share_token_decimals,
+            pool.tokens,
+            pool.total_share,
+        ],
+    );
+
     const openDepositModal = () => {
         if (!isLogged) {
             return ModalService.openModal(ChooseLoginMethodModal, {
@@ -208,27 +314,18 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
         }
         ModalService.openModal(WithdrawFromPool, { pool });
     };
-    const openManageFeesModal = () => {
-        if (!isConcentrated) {
-            return;
-        }
-        if (!isLogged) {
-            return ModalService.openModal(ChooseLoginMethodModal, {
-                callback: () => ModalService.openModal(ConcentratedFeesModal, { pool }),
-            });
-        }
 
-        ModalService.openModal(ConcentratedFeesModal, { pool });
-    };
     return (
         <Container>
             <Card>
-                {!isConcentrated && isLogged && accountShare === null ? (
+                {isLogged && accountShare === null ? (
                     <PageLoader />
                 ) : (
-                    isLogged &&
-                    !isConcentrated && (
+                    isLogged && (
                         <UserShares>
+                            <DistributionCanvas>
+                                <LiquidityDistributionChart pool={pool} dataSource="user" compact />
+                            </DistributionCanvas>
                             <SidebarRow>
                                 <span>Pool shares:</span>
                                 <span>
@@ -252,29 +349,7 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
                                 <SidebarRow key={getAssetString(asset)}>
                                     <span>Pooled {asset.code}:</span>
                                     <span>
-                                        {Number(pool.total_share)
-                                            ? formatBalance(
-                                                  +(
-                                                      (Number(
-                                                          contractValueToAmount(
-                                                              pool.reserves[index],
-                                                              (pool.tokens[index] as SorobanToken)
-                                                                  .decimal,
-                                                          ),
-                                                      ) *
-                                                          accountShare) /
-                                                      Number(
-                                                          contractValueToAmount(
-                                                              pool.total_share,
-                                                              pool.share_token_decimals,
-                                                          ),
-                                                      )
-                                                  ).toFixed(
-                                                      (pool.tokens[index] as SorobanToken)
-                                                          .decimal ?? 7,
-                                                  ),
-                                              )
-                                            : '0'}{' '}
+                                        {formatBalance(pooledAmounts[index] || 0)}{' '}
                                         <Asset asset={asset} onlyLogoSmall />
                                     </span>
                                 </SidebarRow>
@@ -296,7 +371,6 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
                     <Button
                         fullWidth
                         isBig
-                        secondary
                         onClick={() => openWithdrawModal()}
                         disabled={!isConcentrated && isLogged && Number(accountShare) === 0}
                     >
@@ -304,22 +378,7 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
                         Withdraw
                     </Button>
                 </Buttons>
-                {isConcentrated && (
-                    <ManageFeesRow>
-                        <Button fullWidth isBig secondary onClick={() => openManageFeesModal()}>
-                            <WithdrawIconStyled />
-                            Manage fees
-                        </Button>
-                    </ManageFeesRow>
-                )}
             </Card>
-            {isConcentrated && (
-                <Card>
-                    <DistributionCanvas>
-                        <LiquidityDistributionChart pool={pool} dataSource="user" compact />
-                    </DistributionCanvas>
-                </Card>
-            )}
             <Card>
                 <SwapForm
                     base={source}
