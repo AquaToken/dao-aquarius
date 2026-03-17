@@ -2,6 +2,8 @@ import BigNumber from 'bignumber.js';
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 
+import { getNativePrices } from 'api/amm';
+
 import { CONCENTRATED_MAX_TICK, CONCENTRATED_MIN_TICK, POOL_TYPE } from 'constants/amm';
 
 import { parseConcentratedPercent, snapDown, snapUp, tickToPrice } from 'helpers/amm-concentrated';
@@ -19,7 +21,7 @@ import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
-import { SorobanService, ToastService } from 'services/globalServices';
+import { SorobanService, StellarService, ToastService } from 'services/globalServices';
 
 import { ConcentratedPosition, PoolExtended } from 'types/amm';
 import { ModalProps } from 'types/modal';
@@ -32,6 +34,15 @@ import PageLoader from 'basics/loaders/PageLoader';
 import { ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms';
 
 import {
+    WithdrawPositionCard,
+    WithdrawPositionInfoLabel,
+    WithdrawPositionInfoRow,
+    WithdrawPositionInfoRows,
+    WithdrawPositionInfoValue,
+    WithdrawPositionLogoWrap,
+    WithdrawPositionTokenItem,
+    WithdrawPositionTokenRow,
+    WithdrawPositionTokenValue,
     WithdrawEstimateDetails,
     WithdrawEstimateRow,
     WithdrawEstimateValue,
@@ -44,14 +55,7 @@ import {
 } from './ConcentratedWithdrawModal.styled';
 
 import ConcentratedPositionsSection from '../../components/ConcentratedPositionsSection/ConcentratedPositionsSection';
-import {
-    Container,
-    PositionInfoRow,
-    PositionInfoRows,
-    PositionOptionCard,
-    PositionTokenRow,
-    PositionTokenRows,
-} from '../../components/ConcentratedPositionsSection/ConcentratedPositionsSection.styled';
+import { Container } from '../../components/ConcentratedPositionsSection/ConcentratedPositionsSection.styled';
 
 type ConcentratedWithdrawModalParams = {
     pool: PoolExtended;
@@ -68,6 +72,7 @@ const ConcentratedWithdrawModal = ({
     const [positionTokenEstimates, setPositionTokenEstimates] = useState<Map<string, string[]>>(
         new Map(),
     );
+    const [tokenPrices, setTokenPrices] = useState<Map<string, string>>(new Map());
 
     const [withdrawPercent, setWithdrawPercent] = useState('100');
     const [selectedPositionKey, setSelectedPositionKey] = useState<string | null>(null);
@@ -108,21 +113,44 @@ const ConcentratedWithdrawModal = ({
                 const sharePercent = totalShare.gt(0)
                     ? positionShare.dividedBy(totalShare).multipliedBy(100)
                     : new BigNumber(0);
-                const totalLiquidityUsd = new BigNumber(pool.liquidity_usd || '0').dividedBy(1e7);
-                const positionLiquidityUsd = totalShare.gt(0)
-                    ? totalLiquidityUsd.multipliedBy(positionShare).dividedBy(totalShare)
+                const positionLiquidityUsd = estimate
+                    ? estimate.reduce((acc, amount, index) => {
+                          const tokenPriceXlm = new BigNumber(
+                              tokenPrices.get(pool.tokens[index].contract) || '0',
+                          );
+                          const tokenUsdPrice = tokenPriceXlm.multipliedBy(
+                              StellarService.price.priceLumenUsd || 0,
+                          );
+
+                          return acc.plus(new BigNumber(amount || '0').multipliedBy(tokenUsdPrice));
+                      }, new BigNumber(0))
                     : new BigNumber(0);
 
                 return {
                     value: keyOfPosition(position),
                     label: (
-                        <PositionOptionCard>
-                            <PositionInfoRows>
-                                <PositionInfoRow>
-                                    <span>
-                                        Price range ({pool.tokens[1].code}/{pool.tokens[0].code})
-                                    </span>
-                                    <span>
+                        <WithdrawPositionCard>
+                            <WithdrawPositionTokenRow>
+                                {pool.tokens.map((asset, index) => (
+                                    <WithdrawPositionTokenItem key={getAssetString(asset)}>
+                                        <WithdrawPositionLogoWrap>
+                                            <AssetLogo asset={asset} size={1.6} isCircle />
+                                        </WithdrawPositionLogoWrap>
+                                        <WithdrawPositionTokenValue>
+                                            {estimate
+                                                ? formatBalance(Number(estimate[index] || 0), true)
+                                                : '-'}{' '}
+                                            {asset.code}
+                                        </WithdrawPositionTokenValue>
+                                    </WithdrawPositionTokenItem>
+                                ))}
+                            </WithdrawPositionTokenRow>
+                            <WithdrawPositionInfoRows>
+                                <WithdrawPositionInfoRow>
+                                    <WithdrawPositionInfoLabel>
+                                        Price range ({pool.tokens[0].code}/{pool.tokens[1].code})
+                                    </WithdrawPositionInfoLabel>
+                                    <WithdrawPositionInfoValue>
                                         {isFullRange
                                             ? 'Full Range'
                                             : `${formatBalance(
@@ -132,40 +160,30 @@ const ConcentratedWithdrawModal = ({
                                                   tickToPrice(position.tickUpper, decimalsDiff),
                                                   true,
                                               )}`}
-                                    </span>
-                                </PositionInfoRow>
-                                <PositionInfoRow>
-                                    <span>Shares</span>
-                                    <span>
+                                    </WithdrawPositionInfoValue>
+                                </WithdrawPositionInfoRow>
+                                <WithdrawPositionInfoRow>
+                                    <WithdrawPositionInfoLabel>Shares</WithdrawPositionInfoLabel>
+                                    <WithdrawPositionInfoValue>
                                         {contractValueToFormattedAmount(
                                             position.liquidity,
                                             pool.share_token_decimals,
                                             true,
+                                            true,
                                         )}{' '}
                                         ({formatBalance(sharePercent.toNumber(), true)}%)
-                                    </span>
-                                </PositionInfoRow>
-                                <PositionInfoRow>
-                                    <span>Liquidity (USD)</span>
-                                    <span>
+                                    </WithdrawPositionInfoValue>
+                                </WithdrawPositionInfoRow>
+                                <WithdrawPositionInfoRow>
+                                    <WithdrawPositionInfoLabel>
+                                        Liquidity (USD)
+                                    </WithdrawPositionInfoLabel>
+                                    <WithdrawPositionInfoValue>
                                         ${formatBalance(positionLiquidityUsd.toNumber(), true)}
-                                    </span>
-                                </PositionInfoRow>
-                            </PositionInfoRows>
-                            <PositionTokenRows>
-                                {pool.tokens.map((asset, index) => (
-                                    <PositionTokenRow key={getAssetString(asset)}>
-                                        <span>{asset.code}</span>
-                                        <span>
-                                            {estimate
-                                                ? formatBalance(Number(estimate[index] || 0), true)
-                                                : '-'}
-                                            <AssetLogo asset={asset} isSmall isCircle />
-                                        </span>
-                                    </PositionTokenRow>
-                                ))}
-                            </PositionTokenRows>
-                        </PositionOptionCard>
+                                    </WithdrawPositionInfoValue>
+                                </WithdrawPositionInfoRow>
+                            </WithdrawPositionInfoRows>
+                        </WithdrawPositionCard>
                     ),
                 };
             }),
@@ -177,8 +195,35 @@ const ConcentratedWithdrawModal = ({
             pool.tokens,
             pool.share_token_decimals,
             positionTokenEstimates,
+            tokenPrices,
         ],
     );
+
+    useEffect(() => {
+        let mounted = true;
+
+        getNativePrices()
+            .then(prices => {
+                if (!mounted) {
+                    return;
+                }
+
+                setTokenPrices(
+                    new Map([...prices.entries()].map(([key, value]) => [key, value.price])),
+                );
+            })
+            .catch(() => {
+                if (!mounted) {
+                    return;
+                }
+
+                setTokenPrices(new Map());
+            });
+
+        return () => {
+            mounted = false;
+        };
+    }, []);
 
     const normalizedWithdrawLiquidity = useMemo(() => {
         if (!selectedPosition) {
