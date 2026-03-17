@@ -121,7 +121,7 @@ export const ConcentratedPoolLabel = () => (
         labelText="CONCENTRATED"
         tooltipText="Concentrated liquidity pool with range positions."
         background={COLORS.white}
-        color={COLORS.blue500}
+        color={COLORS.blue400}
         tooltipColor={COLORS.textPrimary}
     />
 );
