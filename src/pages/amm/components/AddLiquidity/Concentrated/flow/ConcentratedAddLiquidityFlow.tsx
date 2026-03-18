@@ -11,6 +11,7 @@ import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-
 import { SorobanService, ToastService } from 'services/globalServices';
 
 import { PoolExtended } from 'types/amm';
+import { TokenType } from 'types/token';
 
 import { Button } from 'basics/buttons';
 
@@ -51,6 +52,23 @@ const ConcentratedAddLiquidityFlow = ({
         if (formData.isFirstDepositAmountsInvalid) {
             ToastService.showErrorToast(
                 'For the first deposit both token amounts must be greater than zero',
+            );
+            return;
+        }
+
+        const insufficientBalanceTokens = pool.tokens.filter(
+            (asset, index) =>
+                (asset.type === TokenType.soroban
+                    ? formData.tokenBalances.get(getAssetString(asset))
+                    : account.getAssetBalance(asset)) <
+                +(index === 0 ? formData.amount0 : formData.amount1),
+        );
+
+        if (insufficientBalanceTokens.length) {
+            ToastService.showErrorToast(
+                `Insufficient balance ${insufficientBalanceTokens
+                    .map(({ code }) => code)
+                    .join(' ')}`,
             );
             return;
         }

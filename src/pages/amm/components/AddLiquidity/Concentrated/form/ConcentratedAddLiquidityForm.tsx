@@ -14,6 +14,7 @@ import AddLiquidityPriceRangeSection from './sections/AddLiquidityPriceRangeSect
 export type ConcentratedAddLiquidityFormData = {
     amount0: string;
     amount1: string;
+    tokenBalances: Map<string, number>;
     tickLower: number | null;
     tickUpper: number | null;
     rangeError: string | null;
@@ -54,6 +55,7 @@ const ConcentratedAddLiquidityForm = ({
         onDataChange({
             amount0: form.amount0,
             amount1: form.amount1,
+            tokenBalances: form.tokenBalances,
             tickLower: form.tickLower,
             tickUpper: form.tickUpper,
             rangeError: form.rangeError,
@@ -67,6 +69,7 @@ const ConcentratedAddLiquidityForm = ({
         onDataChange,
         form.amount0,
         form.amount1,
+        form.tokenBalances,
         form.tickLower,
         form.tickUpper,
         form.rangeError,
