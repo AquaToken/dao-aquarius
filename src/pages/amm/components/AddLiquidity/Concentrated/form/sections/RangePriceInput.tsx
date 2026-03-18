@@ -32,10 +32,6 @@ const RangePriceInput = ({
     onStepDown,
     onStepUp,
 }: RangePriceInputProps): React.ReactNode => {
-    if (isFullRange) {
-        return <Input value={fullRangeValue} readOnly disabled={disabled} label={label} />;
-    }
-
     const postfix = (
         <PriceControlButtons>
             <StepBtn onClick={onStepDown} disabled={disabled || decrementDisabled}>
@@ -46,6 +42,18 @@ const RangePriceInput = ({
             </StepBtn>
         </PriceControlButtons>
     );
+
+    if (isFullRange) {
+        return (
+            <Input
+                value={fullRangeValue}
+                readOnly
+                disabled={disabled}
+                label={label}
+                postfix={postfix}
+            />
+        );
+    }
 
     if (isScientific) {
         return (

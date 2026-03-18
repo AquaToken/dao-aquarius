@@ -6,7 +6,13 @@ import { getNativePrices } from 'api/amm';
 
 import { CONCENTRATED_MAX_TICK, CONCENTRATED_MIN_TICK, POOL_TYPE } from 'constants/amm';
 
-import { parseConcentratedPercent, snapDown, snapUp, tickToPrice } from 'helpers/amm-concentrated';
+import {
+    formatConcentratedPriceInputValue,
+    parseConcentratedPercent,
+    snapDown,
+    snapUp,
+    tickToPrice,
+} from 'helpers/amm-concentrated';
 import {
     hydratePositionsLiquidity,
     keyOfPosition,
@@ -153,12 +159,10 @@ const ConcentratedWithdrawModal = ({
                                     <WithdrawPositionInfoValue>
                                         {isFullRange
                                             ? 'Full Range'
-                                            : `${formatBalance(
+                                            : `${formatConcentratedPriceInputValue(
                                                   tickToPrice(position.tickLower, decimalsDiff),
-                                                  true,
-                                              )} - ${formatBalance(
+                                              )} - ${formatConcentratedPriceInputValue(
                                                   tickToPrice(position.tickUpper, decimalsDiff),
-                                                  true,
                                               )}`}
                                     </WithdrawPositionInfoValue>
                                 </WithdrawPositionInfoRow>
@@ -325,9 +329,11 @@ const ConcentratedWithdrawModal = ({
                     );
                     return position?.liquidity;
                 });
-                const nextPositions = hydrated.filter(item =>
-                    new BigNumber(item.liquidity || '0').gt(0),
-                );
+                const nextPositions = hydrated
+                    .filter(item => new BigNumber(item.liquidity || '0').gt(0))
+                    .sort((a, b) =>
+                        new BigNumber(b.liquidity || '0').minus(a.liquidity || '0').toNumber(),
+                    );
                 setPositions(nextPositions);
                 setPositionTokenEstimates(new Map());
                 const tokenEstimates = await hydratePositionTokenEstimates(nextPositions);

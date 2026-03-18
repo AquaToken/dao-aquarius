@@ -721,6 +721,13 @@ const LiquidityDistributionChart = React.forwardRef<LiquidityDistributionChartHa
             const currentPriceValue = Number.isFinite(currentTick)
                 ? tickToPrice(Number(currentTick), decimalsDiff)
                 : null;
+            const formatRangeChangeLabel = (percentChange: number) => {
+                if (percentChange >= 1000) {
+                    return `>1,000%`;
+                }
+
+                return `${percentChange >= 0 ? '+' : ''}${percentChange.toFixed(1)}%`;
+            };
             const rangeChangeBadges =
                 currentPriceValue && Number.isFinite(currentPriceValue) && currentPriceValue > 0
                     ? rangeBoundaries.map(item => {
@@ -730,7 +737,7 @@ const LiquidityDistributionChart = React.forwardRef<LiquidityDistributionChartHa
 
                           return {
                               ...item,
-                              label: `${percentChange >= 0 ? '+' : ''}${percentChange.toFixed(1)}%`,
+                              label: formatRangeChangeLabel(percentChange),
                           };
                       })
                     : [];
