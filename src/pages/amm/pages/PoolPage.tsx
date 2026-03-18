@@ -6,6 +6,7 @@ import styled from 'styled-components';
 
 import { getPool } from 'api/amm';
 
+import { POOL_TYPE } from 'constants/amm';
 import { ChartPeriods } from 'constants/charts';
 import { DAY } from 'constants/intervals';
 import { AppRoutes } from 'constants/routes';
@@ -49,6 +50,7 @@ import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import LiquidityDistributionChart from 'pages/amm/components/LiquidityDistributionChart/LiquidityDistributionChart';
 
+import ConcentratedFeesBanner from '../components/ConcentratedLiquidity/components/ConcentratedFeesBanner/ConcentratedFeesBanner';
 import LiquidityChart from '../components/LiquidityChart/LiquidityChart';
 import PoolEvents from '../components/PoolEvents/PoolEvents';
 import PoolMembers from '../components/PoolMembers/PoolMembers';
@@ -404,6 +406,10 @@ const PoolPage = () => {
                     </Links>
                 </Section>
                 <Sidebar pool={pool} />
+
+                {pool.pool_type === POOL_TYPE.concentrated && (
+                    <ConcentratedFeesBanner pool={pool} />
+                )}
 
                 {pool.tokens.length === 2 &&
                     pool.tokens.every(({ type }) => type === TokenType.classic) && (
