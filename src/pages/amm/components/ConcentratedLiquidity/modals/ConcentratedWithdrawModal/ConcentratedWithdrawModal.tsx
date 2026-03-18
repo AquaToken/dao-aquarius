@@ -329,9 +329,11 @@ const ConcentratedWithdrawModal = ({
                     );
                     return position?.liquidity;
                 });
-                const nextPositions = hydrated.filter(item =>
-                    new BigNumber(item.liquidity || '0').gt(0),
-                );
+                const nextPositions = hydrated
+                    .filter(item => new BigNumber(item.liquidity || '0').gt(0))
+                    .sort((a, b) =>
+                        new BigNumber(b.liquidity || '0').minus(a.liquidity || '0').toNumber(),
+                    );
                 setPositions(nextPositions);
                 setPositionTokenEstimates(new Map());
                 const tokenEstimates = await hydratePositionTokenEstimates(nextPositions);
