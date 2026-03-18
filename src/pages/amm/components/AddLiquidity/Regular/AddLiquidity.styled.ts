@@ -9,15 +9,15 @@ import { Breakpoints, COLORS } from 'styles/style-constants';
 
 export const Container = styled.div<{ $isModal: boolean }>`
     width: 100%;
-    max-height: 82vh;
-    overflow: auto;
+    max-height: ${({ $isModal }) => ($isModal ? 'none' : '82vh')};
+    overflow: ${({ $isModal }) => ($isModal ? 'visible' : 'auto')};
     padding-top: 4rem;
 
-    ${customScroll};
+    ${({ $isModal }) => !$isModal && customScroll};
 
     ${respondDown(Breakpoints.md)`
         width: 100%;
-        max-height: 100vh;
+        max-height: ${({ $isModal }) => ($isModal ? 'none' : '100vh')};
     `}
 
     Button {

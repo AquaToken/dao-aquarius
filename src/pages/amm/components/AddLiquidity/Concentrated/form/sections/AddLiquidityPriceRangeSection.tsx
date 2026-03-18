@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { CONCENTRATED_DEPOSIT_PRESETS } from 'constants/amm';
 
-import { formatBalance } from 'helpers/format-number';
+import { formatConcentratedPriceInputValue } from 'helpers/amm-concentrated';
 
 import { DepositEstimate, DepositPresetKey, PoolExtended } from 'types/amm';
 
@@ -102,7 +102,7 @@ const AddLiquidityPriceRangeSection = ({
             return null;
         }
 
-        return 1 / referencePriceValue;
+        return formatConcentratedPriceInputValue(referencePriceValue);
     }, [referencePriceValue]);
 
     const handlePresetClick = (presetKey: DepositPresetKey) => {
@@ -117,8 +117,7 @@ const AddLiquidityPriceRangeSection = ({
             <RangeTitleRow>
                 <RangeTitle>Price Range</RangeTitle>
                 <CurrentPrice>
-                    1 {pool.tokens[1].code} ={' '}
-                    {displayPrice ? formatBalance(displayPrice, true) : '-'} {pool.tokens[0].code}
+                    1 {pool.tokens[0].code} = {displayPrice || '-'} {pool.tokens[1].code}
                 </CurrentPrice>
             </RangeTitleRow>
 
