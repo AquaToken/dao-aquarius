@@ -33,7 +33,8 @@ export const CONCENTRATED_DEPOSIT_PRESETS = [
         rangeLabel: '-0.3% — +0.3%',
         lowerFactor: 0.997,
         upperFactor: 1.003,
-        description: 'Works for stable and low-volatile pairs',
+        description:
+            'Works for stable and low-volatility pairs. Your liquidity will be concentrated from 0.3% below the current price to 0.3% above it.',
     },
     {
         key: 'medium',
@@ -41,7 +42,8 @@ export const CONCENTRATED_DEPOSIT_PRESETS = [
         rangeLabel: '-20% — +20%',
         lowerFactor: 0.8,
         upperFactor: 1.2,
-        description: 'Balanced range for moderately volatile pairs.',
+        description:
+            'Works for moderately volatile pairs. Your liquidity will be concentrated from 20% below the current price to 20% above it.',
     },
     {
         key: 'wide',
@@ -49,24 +51,27 @@ export const CONCENTRATED_DEPOSIT_PRESETS = [
         rangeLabel: '-50% — +100%',
         lowerFactor: 0.5,
         upperFactor: 2,
-        description: 'Works for volatile pairs.',
+        description:
+            'Works for volatile pairs. Your liquidity will be concentrated from 50% of the current price to double the current price.',
     },
 
     {
         key: 'up',
         label: 'One-sided up',
-        rangeLabel: '0 — +50%',
+        rangeLabel: '0% — +50%',
         lowerFactor: 1,
         upperFactor: 1.5,
-        description: 'Works if you believe that the price will go up.',
+        description:
+            'Works if you believe the price will go up. Your liquidity will be concentrated from the current price to 50% above it.',
     },
     {
         key: 'down',
         label: 'One-sided lower',
-        rangeLabel: '-50% — 0',
+        rangeLabel: '-50% — 0%',
         lowerFactor: 0.5,
         upperFactor: 1,
-        description: 'Works if you believe that the price will go down.',
+        description:
+            'Works if you believe the price will go down. Your liquidity will be concentrated from 50% below the current price to the current price.',
     },
     {
         key: 'full',
@@ -74,7 +79,8 @@ export const CONCENTRATED_DEPOSIT_PRESETS = [
         rangeLabel: 'All ticks',
         lowerFactor: null,
         upperFactor: null,
-        description: 'Works like a regular volatile pool across the entire price range.',
+        description:
+            'Works like a regular volatile pool. Your liquidity will be spread across the entire available price range.',
     },
 ] as const;
 
