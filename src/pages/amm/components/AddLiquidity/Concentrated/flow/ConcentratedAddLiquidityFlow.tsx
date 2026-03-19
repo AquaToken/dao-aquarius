@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
+import BigNumber from 'bignumber.js';
 
 import { getAssetString } from 'helpers/assets';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
@@ -56,13 +57,15 @@ const ConcentratedAddLiquidityFlow = ({
             return;
         }
 
-        const insufficientBalanceTokens = pool.tokens.filter(
-            (asset, index) =>
-                (asset.type === TokenType.soroban
-                    ? formData.tokenBalances.get(getAssetString(asset))
-                    : account.getAssetBalance(asset)) <
-                +(index === 0 ? formData.amount0 : formData.amount1),
-        );
+        const insufficientBalanceTokens = pool.tokens.filter((asset, index) => {
+            const availableBalance =
+                asset.type === TokenType.soroban
+                    ? formData.tokenBalances.get(getAssetString(asset)) || '0'
+                    : String(account.getAssetBalance(asset) || '0');
+            const requestedAmount = index === 0 ? formData.amount0 : formData.amount1;
+
+            return new BigNumber(availableBalance).lt(requestedAmount || '0');
+        });
 
         if (insufficientBalanceTokens.length) {
             ToastService.showErrorToast(

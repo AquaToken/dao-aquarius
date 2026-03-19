@@ -14,7 +14,7 @@ import AddLiquidityPriceRangeSection from './sections/AddLiquidityPriceRangeSect
 export type ConcentratedAddLiquidityFormData = {
     amount0: string;
     amount1: string;
-    tokenBalances: Map<string, number>;
+    tokenBalances: Map<string, string>;
     tickLower: number | null;
     tickUpper: number | null;
     rangeError: string | null;

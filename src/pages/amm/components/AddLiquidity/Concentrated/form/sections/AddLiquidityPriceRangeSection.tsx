@@ -97,6 +97,7 @@ const AddLiquidityPriceRangeSection = ({
     onMaxPriceChange,
 }: AddLiquidityPriceRangeSectionProps): React.ReactNode => {
     const chartRef = React.useRef<LiquidityDistributionChartHandle>(null);
+    const priceDecimalScale = Math.max(pool.tokens[0].decimal, pool.tokens[1].decimal);
     const displayPrice = React.useMemo(() => {
         if (!Number.isFinite(referencePriceValue) || referencePriceValue <= 0) {
             return null;
@@ -162,6 +163,7 @@ const AddLiquidityPriceRangeSection = ({
                         <RangePriceInput
                             label="Min Price"
                             value={minPriceInput}
+                            decimalScale={priceDecimalScale}
                             disabled={!canUseRangeControls}
                             isScientific={isMinScientific}
                             isFullRange={
@@ -179,6 +181,7 @@ const AddLiquidityPriceRangeSection = ({
                         <RangePriceInput
                             label="Max Price"
                             value={maxPriceInput}
+                            decimalScale={priceDecimalScale}
                             disabled={!canUseRangeControls}
                             isScientific={isMaxScientific}
                             isFullRange={

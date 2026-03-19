@@ -8,6 +8,7 @@ import { PriceControlButtons, StepBtn } from '../../styled/ConcentratedAddLiquid
 type RangePriceInputProps = {
     label: string;
     value: string;
+    decimalScale: number;
     disabled: boolean;
     isScientific: boolean;
     isFullRange: boolean;
@@ -22,6 +23,7 @@ type RangePriceInputProps = {
 const RangePriceInput = ({
     label,
     value,
+    decimalScale,
     disabled,
     isScientific,
     isFullRange,
@@ -79,7 +81,7 @@ const RangePriceInput = ({
             customInput={Input}
             inputMode="decimal"
             thousandSeparator=","
-            decimalScale={7}
+            decimalScale={decimalScale}
             allowNegative={false}
             allowedDecimalSeparators={[',']}
             disabled={disabled}

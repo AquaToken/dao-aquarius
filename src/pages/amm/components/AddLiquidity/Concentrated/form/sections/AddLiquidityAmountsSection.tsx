@@ -1,4 +1,5 @@
 import * as React from 'react';
+import BigNumber from 'bignumber.js';
 import { NumericFormat } from 'react-number-format';
 
 import { getAssetString } from 'helpers/assets';
@@ -18,7 +19,7 @@ import {
 
 export type AddLiquidityAmountsSectionProps = {
     pool: PoolExtended;
-    tokenBalances: Map<string, number>;
+    tokenBalances: Map<string, string>;
     amount0: string;
     amount1: string;
     disableAmount0Input: boolean;
@@ -39,8 +40,17 @@ const AddLiquidityAmountsSection = ({
 }: AddLiquidityAmountsSectionProps): React.ReactNode => {
     const token0Key = getAssetString(pool.tokens[0]);
     const token1Key = getAssetString(pool.tokens[1]);
-    const token0Balance = tokenBalances.get(token0Key) || 0;
-    const token1Balance = tokenBalances.get(token1Key) || 0;
+    const token0Balance = tokenBalances.get(token0Key) || '0';
+    const token1Balance = tokenBalances.get(token1Key) || '0';
+    const token0Decimals = pool.tokens[0].decimal;
+    const token1Decimals = pool.tokens[1].decimal;
+    const normalizeBalanceInputValue = (value: string, decimals: number) => {
+        const fixed = new BigNumber(value || '0').toFixed(decimals);
+        const normalized = fixed.replace(/\.?0+$/, '');
+        return normalized === '' ? '0' : normalized;
+    };
+    const token0BalanceValue = normalizeBalanceInputValue(token0Balance, token0Decimals);
+    const token1BalanceValue = normalizeBalanceInputValue(token1Balance, token1Decimals);
 
     const token0RightLabel = tokenBalances.has(token0Key) ? (
         <Balance>
@@ -49,10 +59,11 @@ const AddLiquidityAmountsSection = ({
                     if (disableAmount0Input) {
                         return;
                     }
-                    onAmount0Change(String(token0Balance));
+                    onAmount0Change(token0BalanceValue);
                 }}
             >
-                {formatBalance(token0Balance)} {pool.tokens[0].code}
+                {formatBalance(Number(token0Balance), false, false, token0Decimals)}{' '}
+                {pool.tokens[0].code}
             </BalanceClickable>{' '}
             available
         </Balance>
@@ -65,10 +76,11 @@ const AddLiquidityAmountsSection = ({
                     if (disableAmount1Input) {
                         return;
                     }
-                    onAmount1Change(String(token1Balance));
+                    onAmount1Change(token1BalanceValue);
                 }}
             >
-                {formatBalance(token1Balance)} {pool.tokens[1].code}
+                {formatBalance(Number(token1Balance), false, false, token1Decimals)}{' '}
+                {pool.tokens[1].code}
             </BalanceClickable>{' '}
             available
         </Balance>
@@ -92,7 +104,7 @@ const AddLiquidityAmountsSection = ({
                     inputMode="decimal"
                     allowedDecimalSeparators={[',']}
                     thousandSeparator=","
-                    decimalScale={(pool.tokens[0] as { decimal?: number }).decimal ?? 7}
+                    decimalScale={token0Decimals}
                     allowNegative={false}
                     disabled={disableAmount0Input}
                 />
@@ -114,7 +126,7 @@ const AddLiquidityAmountsSection = ({
                     inputMode="decimal"
                     allowedDecimalSeparators={[',']}
                     thousandSeparator=","
-                    decimalScale={(pool.tokens[1] as { decimal?: number }).decimal ?? 7}
+                    decimalScale={token1Decimals}
                     allowNegative={false}
                     disabled={disableAmount1Input}
                 />

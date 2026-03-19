@@ -66,13 +66,23 @@ const AddLiquidityEstimateSummary = ({
                             <SummaryAmounts>
                                 <SummaryAmountItem>
                                     <span>
-                                        {formatBalance(Number(depositEstimate.amounts[0]), true)}
+                                        {formatBalance(
+                                            Number(depositEstimate.amounts[0]),
+                                            true,
+                                            false,
+                                            pool.tokens[0].decimal,
+                                        )}
                                     </span>
                                     <AssetLogo asset={pool.tokens[0]} isSmall isCircle />
                                 </SummaryAmountItem>
                                 <SummaryAmountItem>
                                     <span>
-                                        {formatBalance(Number(depositEstimate.amounts[1]), true)}
+                                        {formatBalance(
+                                            Number(depositEstimate.amounts[1]),
+                                            true,
+                                            false,
+                                            pool.tokens[1].decimal,
+                                        )}
                                     </span>
                                     <AssetLogo asset={pool.tokens[1]} isSmall isCircle />
                                 </SummaryAmountItem>
