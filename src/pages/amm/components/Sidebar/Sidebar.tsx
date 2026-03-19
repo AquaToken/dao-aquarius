@@ -323,9 +323,15 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
                 ) : (
                     isLogged && (
                         <UserShares>
-                            <DistributionCanvas>
-                                <LiquidityDistributionChart pool={pool} dataSource="user" compact />
-                            </DistributionCanvas>
+                            {isConcentrated && (
+                                <DistributionCanvas>
+                                    <LiquidityDistributionChart
+                                        pool={pool}
+                                        dataSource="user"
+                                        compact
+                                    />
+                                </DistributionCanvas>
+                            )}
                             <SidebarRow>
                                 <span>Pool shares:</span>
                                 <span>

@@ -118,8 +118,12 @@ const LogoLoaderContainer = styled.div<{
     $isSmall?: boolean;
     $isBig?: boolean;
     $isCircle?: boolean;
+    $size?: number;
 }>`
-    ${({ $isSmall, $isBig, $isCircle }) => {
+    ${({ $isSmall, $isBig, $isCircle, $size }) => {
+        if ($size) {
+            return customLogoSize($size);
+        }
         if ($isSmall) {
             return smallLogoStyles($isCircle);
         }
@@ -187,14 +191,28 @@ const AssetLogo = ({
 
     if (logoUrl === undefined) {
         return (
-            <LogoLoaderContainer $isSmall={isSmall} $isBig={isBig} $isCircle={isCircle} {...props}>
+            <LogoLoaderContainer
+                $isSmall={isSmall}
+                $isBig={isBig}
+                $isCircle={isCircle}
+                $size={size}
+                {...props}
+            >
                 <LogoLoader size="small" />
             </LogoLoaderContainer>
         );
     }
 
     if (logoUrl === null || isErrorLoad) {
-        return <Unknown $isSmall={isSmall} $isBig={isBig} $isCircle={isCircle} {...props} />;
+        return (
+            <Unknown
+                $isSmall={isSmall}
+                $isBig={isBig}
+                $isCircle={isCircle}
+                $size={size}
+                {...props}
+            />
+        );
     }
 
     return (
