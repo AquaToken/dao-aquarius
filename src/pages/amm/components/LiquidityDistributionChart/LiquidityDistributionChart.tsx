@@ -756,7 +756,7 @@ const LiquidityDistributionChart = React.forwardRef<LiquidityDistributionChartHa
 
             const handleWidth = 10;
             const handleHeight = 26;
-            const handleY = Math.max(4, chartMargin.top - handleHeight + 4);
+            const handleY = chartMargin.top;
             const handleGripHeight = 12;
             const handleGripTop = handleY + (handleHeight - handleGripHeight) / 2;
             const handleGripBottom = handleGripTop + handleGripHeight;
