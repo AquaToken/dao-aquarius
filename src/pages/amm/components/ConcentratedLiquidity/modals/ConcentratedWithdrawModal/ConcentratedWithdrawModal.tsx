@@ -144,7 +144,12 @@ const ConcentratedWithdrawModal = ({
                                         </WithdrawPositionLogoWrap>
                                         <WithdrawPositionTokenValue>
                                             {estimate
-                                                ? formatBalance(Number(estimate[index] || 0), true)
+                                                ? formatBalance(
+                                                      Number(estimate[index] || 0),
+                                                      false,
+                                                      false,
+                                                      asset.decimal,
+                                                  )
                                                 : '-'}{' '}
                                             {asset.code}
                                         </WithdrawPositionTokenValue>
@@ -527,7 +532,9 @@ const ConcentratedWithdrawModal = ({
                                                 ) : withdrawEstimate ? (
                                                     formatBalance(
                                                         Number(withdrawEstimate[index]),
-                                                        true,
+                                                        false,
+                                                        false,
+                                                        asset.decimal,
                                                     )
                                                 ) : (
                                                     '-'

@@ -76,7 +76,7 @@ export const useConcentratedAddLiquidityForm = ({
         tickLower: number;
         tickUpper: number;
     } | null>(null);
-    const [tokenBalances, setTokenBalances] = useState<Map<string, number>>(new Map());
+    const [tokenBalances, setTokenBalances] = useState<Map<string, string>>(new Map());
     const [loading, setLoading] = useState(false);
 
     const isEmptyPool = new BigNumber(pool.total_share || pool.liquidity || '0').lte(0);
@@ -726,7 +726,7 @@ export const useConcentratedAddLiquidityForm = ({
                     token.type === TokenType.soroban
                         ? await account.getAssetBalance(token)
                         : account.getAssetBalance(token);
-                return [getAssetString(token), Number(raw || 0)] as [string, number];
+                return [getAssetString(token), String(raw || '0')] as [string, string];
             }),
         ).then(next => {
             setTokenBalances(new Map(next));

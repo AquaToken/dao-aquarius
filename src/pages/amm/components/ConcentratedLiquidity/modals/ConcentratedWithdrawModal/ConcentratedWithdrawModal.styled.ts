@@ -80,6 +80,7 @@ export const WithdrawPositionCard = styled.div.attrs({
 export const WithdrawPositionTokenRow = styled.div`
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 2.4rem;
     width: 100%;
 `;
@@ -87,6 +88,8 @@ export const WithdrawPositionTokenRow = styled.div`
 export const WithdrawPositionTokenItem = styled.div`
     display: inline-flex;
     align-items: center;
+    flex: 0 0 auto;
+    max-width: 100%;
     gap: 0.4rem;
     min-width: 0;
 `;

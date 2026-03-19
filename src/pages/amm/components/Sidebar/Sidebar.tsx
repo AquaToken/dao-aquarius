@@ -276,7 +276,7 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
                     ) *
                         Number(accountShare || 0)) /
                     Number(contractValueToAmount(pool.total_share, pool.share_token_decimals))
-                ).toFixed((asset as SorobanToken).decimal ?? 7);
+                ).toFixed((asset as SorobanToken).decimal);
             }),
         [
             accountPooledAmounts,
@@ -335,7 +335,13 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
                             <SidebarRow>
                                 <span>Pool shares:</span>
                                 <span>
-                                    {formatBalance(accountShare, true)} (
+                                    {formatBalance(
+                                        accountShare,
+                                        true,
+                                        false,
+                                        pool.share_token_decimals,
+                                    )}{' '}
+                                    (
                                     {Number(pool.total_share)
                                         ? formatBalance(
                                               (100 * accountShare) /
@@ -355,7 +361,12 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
                                 <SidebarRow key={getAssetString(asset)}>
                                     <span>Pooled {asset.code}:</span>
                                     <span>
-                                        {formatBalance(pooledAmounts[index] || 0)}{' '}
+                                        {formatBalance(
+                                            pooledAmounts[index] || 0,
+                                            false,
+                                            false,
+                                            asset.decimal,
+                                        )}{' '}
                                         <Asset asset={asset} onlyLogoSmall />
                                     </span>
                                 </SidebarRow>

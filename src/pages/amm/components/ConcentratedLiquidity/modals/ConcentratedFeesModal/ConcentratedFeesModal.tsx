@@ -53,7 +53,12 @@ const ConcentratedFeesModal = ({
                                         <PositionTokenRow key={asset.contract}>
                                             <span>{asset.code}</span>
                                             <span>
-                                                {formatBalance(Number(allFees[index] || 0), true)}
+                                                {formatBalance(
+                                                    Number(allFees[index] || 0),
+                                                    true,
+                                                    false,
+                                                    asset.decimal,
+                                                )}
                                                 <AssetLogo asset={asset} isSmall isCircle />
                                             </span>
                                         </PositionTokenRow>

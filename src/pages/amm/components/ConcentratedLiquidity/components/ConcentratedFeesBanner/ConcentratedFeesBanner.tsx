@@ -112,7 +112,13 @@ const ConcentratedFeesBanner = ({ pool }: { pool: PoolExtended }) => {
                             <FeeItem key={asset.contract}>
                                 <AssetLogo asset={asset} isSmall isCircle />
                                 <FeeValue>
-                                    {formatBalance(Number(allFees[index] || 0), true)} {asset.code}
+                                    {formatBalance(
+                                        Number(allFees[index] || 0),
+                                        true,
+                                        false,
+                                        asset.decimal,
+                                    )}{' '}
+                                    {asset.code}
                                 </FeeValue>
                             </FeeItem>
                         ))}
