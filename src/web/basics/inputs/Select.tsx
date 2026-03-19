@@ -47,13 +47,15 @@ const DropdownItem = styled.div`
     cursor: pointer;
     font-size: 1.6rem;
 
-    svg {
-        margin-right: 0.8rem;
-    }
-
     &:hover {
         background-color: ${COLORS.gray50};
     }
+`;
+
+const DropdownItemIcon = styled.span`
+    display: inline-flex;
+    align-items: center;
+    margin-right: 0.8rem;
 `;
 
 const DropdownItemHead = styled(DropdownItem)`
@@ -210,7 +212,7 @@ const Select = <T,>({
                     key={option.value.toString()}
                     onClick={event => onSelect(option, event)}
                 >
-                    {Boolean(option.icon) && option.icon}
+                    {Boolean(option.icon) && <DropdownItemIcon>{option.icon}</DropdownItemIcon>}
                     {option.label}
                 </DropdownItem>
             ))}
@@ -258,7 +260,9 @@ const Select = <T,>({
             <DropdownArrow $isOpen={isOpen} />
             {selectedOption && !isOpen ? (
                 <DropdownItemHead>
-                    {Boolean(selectedOption.icon) && selectedOption.icon}
+                    {Boolean(selectedOption.icon) && (
+                        <DropdownItemIcon>{selectedOption.icon}</DropdownItemIcon>
+                    )}
                     {selectedOption?.label}
                 </DropdownItemHead>
             ) : (
