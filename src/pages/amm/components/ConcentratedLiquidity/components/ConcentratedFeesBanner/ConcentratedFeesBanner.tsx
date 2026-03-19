@@ -3,6 +3,8 @@ import styled from 'styled-components';
 
 import { formatBalance } from 'helpers/format-number';
 
+import { useUpdateIndex } from 'hooks/useUpdateIndex';
+
 import { PoolExtended } from 'types/amm';
 
 import AssetLogo from 'basics/AssetLogo';
@@ -87,8 +89,14 @@ const ClaimButton = styled(Button)`
 `;
 
 const ConcentratedFeesBanner = ({ pool }: { pool: PoolExtended }) => {
-    const { account, allFees, hasAnyFees, claimAllFees, pending } =
-        useConcentratedFeesSummary(pool);
+    const updateIndex = useUpdateIndex(5000);
+    const { account, allFees, hasAnyFees, claimAllFees, pending } = useConcentratedFeesSummary(
+        pool,
+        {
+            reloadKey: updateIndex,
+            showErrors: false,
+        },
+    );
 
     if (!account || !hasAnyFees) {
         return null;

@@ -20,7 +20,15 @@ type ClaimAllFeesOptions = {
     onSuccess?: () => void;
 };
 
-export const useConcentratedFeesSummary = (pool: PoolExtended) => {
+type UseConcentratedFeesSummaryOptions = {
+    reloadKey?: number;
+    showErrors?: boolean;
+};
+
+export const useConcentratedFeesSummary = (
+    pool: PoolExtended,
+    { reloadKey, showErrors = true }: UseConcentratedFeesSummaryOptions = {},
+) => {
     const { account } = useAuthStore();
     const tokenContractsKey = useMemo(
         () => pool.tokens.map(token => token.contract).join(':'),
@@ -90,7 +98,9 @@ export const useConcentratedFeesSummary = (pool: PoolExtended) => {
                 );
             })
             .catch(error => {
-                ToastService.showErrorToast(error?.message || 'Failed to load fees');
+                if (showErrors) {
+                    ToastService.showErrorToast(error?.message || 'Failed to load fees');
+                }
                 setAllFees(emptyFees);
                 setPositionsCount(0);
             })
@@ -101,7 +111,7 @@ export const useConcentratedFeesSummary = (pool: PoolExtended) => {
 
     useEffect(() => {
         load();
-    }, [load]);
+    }, [load, reloadKey]);
 
     const claimAllFees = useCallback(
         ({ onSuccess }: ClaimAllFeesOptions = {}) => {
