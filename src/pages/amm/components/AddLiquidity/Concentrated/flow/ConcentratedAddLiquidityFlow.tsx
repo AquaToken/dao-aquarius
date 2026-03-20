@@ -1,8 +1,9 @@
+import BigNumber from 'bignumber.js';
 import * as React from 'react';
 import { useState } from 'react';
-import BigNumber from 'bignumber.js';
 
 import { getAssetString } from 'helpers/assets';
+import ErrorHandler from 'helpers/error-handler';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
 import { LoginTypes } from 'store/authStore/types';
@@ -118,7 +119,8 @@ const ConcentratedAddLiquidityFlow = ({
                 onClose?.();
             })
             .catch(e => {
-                ToastService.showErrorToast(e?.message || 'Deposit failed');
+                const errorText = ErrorHandler(e);
+                ToastService.showErrorToast(errorText || e?.message || 'Deposit failed');
             })
             .finally(() => {
                 setPending(false);
