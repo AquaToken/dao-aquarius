@@ -1,4 +1,5 @@
 import * as React from 'react';
+import BigNumber from 'bignumber.js';
 import { useState } from 'react';
 
 import { getAssetString } from 'helpers/assets';
@@ -52,13 +53,16 @@ const AddLiquidityFlow = ({
             return;
         }
 
-        const insufficientBalanceTokens = pool.tokens.filter(
-            asset =>
-                (asset.type === TokenType.soroban
-                    ? formData.balances?.get(getAssetString(asset))
-                    : account.getAssetBalance(asset)) <
-                +formData.amounts.get(getAssetString(asset)),
-        );
+        const insufficientBalanceTokens = pool.tokens.filter(asset => {
+            const availableBalance =
+                asset.type === TokenType.soroban
+                    ? formData.balances?.get(getAssetString(asset)) || '0'
+                    : String(account.getAssetBalance(asset) || '0');
+
+            return new BigNumber(availableBalance).lt(
+                formData.amounts.get(getAssetString(asset)) || '0',
+            );
+        });
 
         if (insufficientBalanceTokens.length) {
             ToastService.showErrorToast(
