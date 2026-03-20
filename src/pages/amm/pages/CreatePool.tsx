@@ -694,6 +694,12 @@ const CreatePool = () => {
 
                         <StyledFormSection>
                             <FormSectionTitle>Select tokens for pool</FormSectionTitle>
+                            {type === POOL_TYPE.concentrated && (
+                                <Alert
+                                    title="Rebasing yield is not supported"
+                                    text="You can create a concentrated pool with rebasing tokens, but any balance growth or yield accrual will not be reflected inside concentrated positions."
+                                />
+                            )}
                             <StyledAssetDropdown
                                 label="First asset"
                                 asset={firstAsset}
