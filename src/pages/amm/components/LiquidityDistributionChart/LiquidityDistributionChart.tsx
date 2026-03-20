@@ -966,17 +966,20 @@ const LiquidityDistributionChart = React.forwardRef<LiquidityDistributionChartHa
         const emptyMessage =
             isUserSource && !account
                 ? 'Connect wallet to see your liquidity distribution'
-                : 'No liquidity data yet';
+                : isUserSource
+                  ? 'No liquidity positions yet'
+                  : 'No liquidity data yet';
         const chartTitle =
             title || (isUserSource ? 'My Liquidity Positions' : 'Liquidity Distribution');
-        const hasRenderableChart =
-            hasData ||
-            Number.isFinite(currentTick) ||
-            !!(
-                selectableRange &&
-                selectableRange.tickLower !== null &&
-                selectableRange.tickUpper !== null
-            );
+        const hasRenderableChart = isUserSource
+            ? hasData
+            : hasData ||
+              Number.isFinite(currentTick) ||
+              !!(
+                  selectableRange &&
+                  selectableRange.tickLower !== null &&
+                  selectableRange.tickUpper !== null
+              );
 
         const controls = showControls ? (
             <ChartControls>
