@@ -706,7 +706,7 @@ const LiquidityDistributionChart = React.forwardRef<LiquidityDistributionChartHa
                         `Current price = ${formatBalance(
                             tickToPrice(Number(price), decimalsDiff),
                             true,
-                        )}`,
+                        )} ${pool.tokens[0].code}/${pool.tokens[1].code}`,
                 );
 
             const rangeBoundaries =
