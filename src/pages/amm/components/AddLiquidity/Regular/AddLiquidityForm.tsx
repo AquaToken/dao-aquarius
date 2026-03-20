@@ -1,4 +1,5 @@
 import * as React from 'react';
+import BigNumber from 'bignumber.js';
 import { useEffect, useMemo, useState } from 'react';
 import { NumericFormat } from 'react-number-format';
 
@@ -37,7 +38,7 @@ import AddLiquidityPoolSummary from './AddLiquidityPoolSummary';
 
 export type AddLiquidityFormData = {
     amounts: Map<string, string>;
-    balances: Map<string, number> | null;
+    balances: Map<string, string> | null;
     hasAllAmounts: boolean;
     hasAnyAmount: boolean;
     isBalancedDeposit: boolean;
@@ -74,7 +75,7 @@ const AddLiquidityForm = ({
     const { account } = useAuthStore();
 
     const [assetsReserves, setAssetsReserves] = useState<SwapReserve[][] | null>(null);
-    const [balances, setBalances] = useState<Map<string, number> | null>(null);
+    const [balances, setBalances] = useState<Map<string, string> | null>(null);
     const [amounts, setAmounts] = useState<Map<string, string>>(
         new Map<string, string>(pool.tokens.map(asset => [getAssetString(asset), ''])),
     );
@@ -102,9 +103,9 @@ const AddLiquidityForm = ({
         Promise.all(
             sorobanTokens.map((asset: SorobanToken) => account.getAssetBalance(asset)),
         ).then(res => {
-            const result = new Map<string, number>();
+            const result = new Map<string, string>();
             sorobanTokens.forEach((token, index) => {
-                result.set(getAssetString(token), Number(res[index] ?? 0));
+                result.set(getAssetString(token), String(res[index] ?? '0'));
             });
 
             setBalances(result);
@@ -196,7 +197,7 @@ const AddLiquidityForm = ({
                 const newAmount = (
                     (Number(value) * +reserves.get(getAssetString(token))) /
                     +reserves.get(getAssetString(asset))
-                ).toFixed((token as SorobanToken).decimal ?? 7);
+                ).toFixed((token as SorobanToken).decimal);
                 setAmounts(new Map(amounts.set(getAssetString(token), newAmount)));
             });
     };
@@ -215,7 +216,7 @@ const AddLiquidityForm = ({
         const newCounterAmount = (
             (Number(baseAmount) * +reserves.get(getAssetString(counter))) /
             +reserves.get(getAssetString(base))
-        ).toFixed((counter as SorobanToken).decimal ?? 7);
+        ).toFixed((counter as SorobanToken).decimal);
 
         if (+newCounterAmount >= +counterAmount) {
             onChangeInput(counter, counterAmount);
@@ -247,33 +248,46 @@ const AddLiquidityForm = ({
                 />
             )}
             <Form>
-                {pool.tokens.map((asset, index) => (
-                    <FormRow key={getAssetString(asset)}>
-                        {account &&
-                            (asset.type === TokenType.soroban
-                                ? balances?.get(getAssetString(asset))
-                                : account.getAssetBalance(asset)) !== null && (
+                {pool.tokens.map((asset, index) => {
+                    const sorobanBalance = balances?.get(getAssetString(asset)) || '0';
+                    const availableBalance =
+                        asset.type === TokenType.soroban
+                            ? sorobanBalance
+                            : String(account?.getAvailableForSwapBalance(asset) || '0');
+                    const availableBalanceInput = new BigNumber(availableBalance || '0')
+                        .toFixed(asset.decimal)
+                        .replace(/\.?0+$/, '');
+                    const availableBalanceDisplay =
+                        asset.type === TokenType.soroban
+                            ? Number(sorobanBalance)
+                            : account?.getAvailableForSwapBalance(asset);
+                    const hasAvailableBalance =
+                        account &&
+                        (asset.type === TokenType.soroban
+                            ? balances?.get(getAssetString(asset))
+                            : account.getAssetBalance(asset)) !== null;
+
+                    return (
+                        <FormRow key={getAssetString(asset)}>
+                            {hasAvailableBalance && (
                                 <Balance>
                                     Available:
                                     <BalanceClickable
                                         onClick={() =>
                                             onChangeInput(
                                                 asset,
-                                                asset.type === TokenType.soroban
-                                                    ? String(
-                                                          balances?.get(getAssetString(asset)) || 0,
-                                                      )
-                                                    : account
-                                                          .getAvailableForSwapBalance(asset)
-                                                          .toFixed(7),
+                                                availableBalanceInput === ''
+                                                    ? '0'
+                                                    : availableBalanceInput,
                                             )
                                         }
                                     >
                                         {' '}
                                         {formatBalance(
-                                            asset.type === TokenType.soroban
-                                                ? balances?.get(getAssetString(asset))
-                                                : account.getAvailableForSwapBalance(asset),
+                                            availableBalanceDisplay,
+                                            false,
+                                            false,
+                                            asset.decimal,
                                         )}
                                     </BalanceClickable>
                                     <Tooltip
@@ -303,21 +317,22 @@ const AddLiquidityForm = ({
                                     </Tooltip>
                                 </Balance>
                             )}
-                        <NumericFormat
-                            value={amounts.get(getAssetString(asset))}
-                            onChange={({ target }) => onChangeInput(asset, target.value)}
-                            placeholder={`Enter ${asset.code} amount`}
-                            customInput={Input}
-                            label={`${asset.code} Amount`}
-                            postfix={<Asset asset={asset} logoAndCode />}
-                            inputMode="decimal"
-                            allowedDecimalSeparators={[',']}
-                            thousandSeparator=","
-                            decimalScale={(asset as SorobanToken).decimal ?? 7}
-                            allowNegative={false}
-                        />
-                    </FormRow>
-                ))}
+                            <NumericFormat
+                                value={amounts.get(getAssetString(asset))}
+                                onChange={({ target }) => onChangeInput(asset, target.value)}
+                                placeholder={`Enter ${asset.code} amount`}
+                                customInput={Input}
+                                label={`${asset.code} Amount`}
+                                postfix={<Asset asset={asset} logoAndCode />}
+                                inputMode="decimal"
+                                allowedDecimalSeparators={[',']}
+                                thousandSeparator=","
+                                decimalScale={(asset as SorobanToken).decimal}
+                                allowNegative={false}
+                            />
+                        </FormRow>
+                    );
+                })}
 
                 {pool.pool_type === 'stable' && !!Number(pool.total_share) && (
                     <CheckboxStyled
