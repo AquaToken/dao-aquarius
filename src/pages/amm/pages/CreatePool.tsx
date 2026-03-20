@@ -1,4 +1,5 @@
 import * as React from 'react';
+import BigNumber from 'bignumber.js';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
@@ -10,6 +11,7 @@ import { AppRoutes } from 'constants/routes';
 import { CONTRACT_STATUS } from 'constants/soroban';
 
 import ErrorHandler from 'helpers/error-handler';
+import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
@@ -21,7 +23,7 @@ import { SorobanService, ToastService } from 'services/globalServices';
 
 import { PoolCreationFeeInfo, PoolExtended, PoolProcessed } from 'types/amm';
 import { Transaction } from 'types/stellar';
-import { Token } from 'types/token';
+import { Token, TokenType } from 'types/token';
 
 import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
 import Tick from 'assets/icons/small-icons/check/check-11x9.svg';
@@ -476,6 +478,22 @@ const CreatePool = () => {
         stableFee,
     ]);
 
+    const getInsufficientBalanceTokens = (
+        assets: Token[],
+        balances: Map<string, string> | null,
+        amounts: Map<string, string>,
+    ) =>
+        assets.filter(asset => {
+            const requestedAmount =
+                amounts.get(getAssetString(asset)) || amounts.get(asset.contract) || '0';
+            const availableBalance =
+                asset.type === TokenType.soroban
+                    ? balances?.get(getAssetString(asset)) || '0'
+                    : String(account?.getAssetBalance(asset) || '0');
+
+            return new BigNumber(availableBalance).lt(requestedAmount);
+        });
+
     const createStablePool = () => {
         if (!account || !createInfo || !regularDepositFormData) {
             return;
@@ -487,6 +505,21 @@ const CreatePool = () => {
         ) {
             ToastService.showErrorToast(
                 `You need at least ${createInfo.stableFee} ${createInfo.token.code} to create pool`,
+            );
+            return;
+        }
+
+        const insufficientBalanceTokens = getInsufficientBalanceTokens(
+            selectedAssets,
+            regularDepositFormData.balances,
+            regularDepositFormData.amounts,
+        );
+
+        if (insufficientBalanceTokens.length) {
+            ToastService.showErrorToast(
+                `Insufficient balance ${insufficientBalanceTokens
+                    .map(({ code }) => code)
+                    .join(' ')}`,
             );
             return;
         }
@@ -526,6 +559,22 @@ const CreatePool = () => {
             );
             return;
         }
+
+        const insufficientBalanceTokens = getInsufficientBalanceTokens(
+            [firstAsset, secondAsset],
+            regularDepositFormData.balances,
+            regularDepositFormData.amounts,
+        );
+
+        if (insufficientBalanceTokens.length) {
+            ToastService.showErrorToast(
+                `Insufficient balance ${insufficientBalanceTokens
+                    .map(({ code }) => code)
+                    .join(' ')}`,
+            );
+            return;
+        }
+
         if (account.authType === LoginTypes.walletConnect) {
             openCurrentWalletIfExist();
         }
@@ -570,6 +619,24 @@ const CreatePool = () => {
         }
 
         const [baseToken, counterToken] = orderedConcentratedAssets;
+        const desiredAmounts = new Map([
+            [baseToken.contract, concentratedDepositFormData.amount0 || '0'],
+            [counterToken.contract, concentratedDepositFormData.amount1 || '0'],
+        ]);
+        const insufficientBalanceTokens = getInsufficientBalanceTokens(
+            [baseToken, counterToken],
+            concentratedDepositFormData.tokenBalances,
+            desiredAmounts,
+        );
+
+        if (insufficientBalanceTokens.length) {
+            ToastService.showErrorToast(
+                `Insufficient balance ${insufficientBalanceTokens
+                    .map(({ code }) => code)
+                    .join(' ')}`,
+            );
+            return;
+        }
 
         if (account.authType === LoginTypes.walletConnect) {
             openCurrentWalletIfExist();
@@ -584,10 +651,7 @@ const CreatePool = () => {
                 createInfo,
                 concentratedDepositFormData.tickLower,
                 concentratedDepositFormData.tickUpper,
-                new Map([
-                    [baseToken.contract, concentratedDepositFormData.amount0 || '0'],
-                    [counterToken.contract, concentratedDepositFormData.amount1 || '0'],
-                ]),
+                desiredAmounts,
             )
             .then(({ tx, poolAddress }) => signAndSubmitCreation(tx, poolAddress))
             .catch(e => {
