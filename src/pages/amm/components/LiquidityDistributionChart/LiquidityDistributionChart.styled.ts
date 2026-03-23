@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { COLORS } from 'styles/style-constants';
+import { COLORS, hexWithOpacity } from 'styles/style-constants';
 
 export const ChartSurface = styled.div`
     display: flex;
@@ -68,4 +68,23 @@ export const ChartControlButton = styled.button`
     color: ${COLORS.textPrimary};
     font-size: 1.8rem;
     cursor: pointer;
+`;
+
+export const ChartTooltip = styled.div`
+    position: absolute;
+    z-index: 2;
+    min-width: 24rem;
+    max-width: 30rem;
+    padding: 1.2rem;
+    border-radius: 1rem;
+    border: 0.1rem solid ${COLORS.gray100};
+    background: ${COLORS.white};
+    box-shadow: 0 0.8rem 3.2rem ${hexWithOpacity(COLORS.textPrimary, 14)};
+    pointer-events: none;
+`;
+
+export const ChartTooltipStack = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
 `;

@@ -6,19 +6,12 @@ import { getNativePrices } from 'api/amm';
 
 import { CONCENTRATED_MAX_TICK, CONCENTRATED_MIN_TICK, POOL_TYPE } from 'constants/amm';
 
-import {
-    formatConcentratedPriceInputValue,
-    parseConcentratedPercent,
-    snapDown,
-    snapUp,
-    tickToPrice,
-} from 'helpers/amm-concentrated';
+import { parseConcentratedPercent, snapDown, snapUp } from 'helpers/amm-concentrated';
 import {
     hydratePositionsLiquidity,
     keyOfPosition,
     normalizePositions,
 } from 'helpers/amm-concentrated-positions';
-import { contractValueToFormattedAmount } from 'helpers/amount';
 import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
@@ -40,15 +33,6 @@ import PageLoader from 'basics/loaders/PageLoader';
 import { ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms';
 
 import {
-    WithdrawPositionCard,
-    WithdrawPositionInfoLabel,
-    WithdrawPositionInfoRow,
-    WithdrawPositionInfoRows,
-    WithdrawPositionInfoValue,
-    WithdrawPositionLogoWrap,
-    WithdrawPositionTokenItem,
-    WithdrawPositionTokenRow,
-    WithdrawPositionTokenValue,
     WithdrawEstimateDetails,
     WithdrawEstimateRow,
     WithdrawEstimateValue,
@@ -60,6 +44,7 @@ import {
     WithdrawSectionTitle,
 } from './ConcentratedWithdrawModal.styled';
 
+import ConcentratedPositionCard from '../../components/ConcentratedPositionCard/ConcentratedPositionCard';
 import ConcentratedPositionsSection from '../../components/ConcentratedPositionsSection/ConcentratedPositionsSection';
 import { Container } from '../../components/ConcentratedPositionsSection/ConcentratedPositionsSection.styled';
 
@@ -90,7 +75,6 @@ const ConcentratedWithdrawModal = ({
 
     const title = 'Concentrated Withdraw';
 
-    const decimalsDiff = pool.tokens[0].decimal - pool.tokens[1].decimal;
     const [minTickBound, maxTickBound] = useMemo(() => {
         if (tickSpacing === null) {
             return [CONCENTRATED_MIN_TICK, CONCENTRATED_MAX_TICK];
@@ -111,14 +95,7 @@ const ConcentratedWithdrawModal = ({
     const positionSelectOptions = useMemo(
         () =>
             positions.map(position => {
-                const isFullRange =
-                    position.tickLower === minTickBound && position.tickUpper === maxTickBound;
                 const estimate = positionTokenEstimates.get(keyOfPosition(position));
-                const totalShare = new BigNumber(pool.total_share || '0');
-                const positionShare = new BigNumber(position.liquidity || '0');
-                const sharePercent = totalShare.gt(0)
-                    ? positionShare.dividedBy(totalShare).multipliedBy(100)
-                    : new BigNumber(0);
                 const positionLiquidityUsd = estimate
                     ? estimate.reduce((acc, amount, index) => {
                           const tokenPriceXlm = new BigNumber(
@@ -135,64 +112,19 @@ const ConcentratedWithdrawModal = ({
                 return {
                     value: keyOfPosition(position),
                     label: (
-                        <WithdrawPositionCard>
-                            <WithdrawPositionTokenRow>
-                                {pool.tokens.map((asset, index) => (
-                                    <WithdrawPositionTokenItem key={getAssetString(asset)}>
-                                        <WithdrawPositionLogoWrap>
-                                            <AssetLogo asset={asset} size={1.6} isCircle />
-                                        </WithdrawPositionLogoWrap>
-                                        <WithdrawPositionTokenValue>
-                                            {estimate
-                                                ? formatBalance(
-                                                      Number(estimate[index] || 0),
-                                                      false,
-                                                      false,
-                                                      asset.decimal,
-                                                  )
-                                                : '-'}{' '}
-                                            {asset.code}
-                                        </WithdrawPositionTokenValue>
-                                    </WithdrawPositionTokenItem>
-                                ))}
-                            </WithdrawPositionTokenRow>
-                            <WithdrawPositionInfoRows>
-                                <WithdrawPositionInfoRow>
-                                    <WithdrawPositionInfoLabel>
-                                        Price range ({pool.tokens[0].code}/{pool.tokens[1].code})
-                                    </WithdrawPositionInfoLabel>
-                                    <WithdrawPositionInfoValue>
-                                        {isFullRange
-                                            ? 'Full Range'
-                                            : `${formatConcentratedPriceInputValue(
-                                                  tickToPrice(position.tickLower, decimalsDiff),
-                                              )} - ${formatConcentratedPriceInputValue(
-                                                  tickToPrice(position.tickUpper, decimalsDiff),
-                                              )}`}
-                                    </WithdrawPositionInfoValue>
-                                </WithdrawPositionInfoRow>
-                                <WithdrawPositionInfoRow>
-                                    <WithdrawPositionInfoLabel>Shares</WithdrawPositionInfoLabel>
-                                    <WithdrawPositionInfoValue>
-                                        {contractValueToFormattedAmount(
-                                            position.liquidity,
-                                            pool.share_token_decimals,
-                                            true,
-                                            true,
-                                        )}{' '}
-                                        ({formatBalance(sharePercent.toNumber(), true)}%)
-                                    </WithdrawPositionInfoValue>
-                                </WithdrawPositionInfoRow>
-                                <WithdrawPositionInfoRow>
-                                    <WithdrawPositionInfoLabel>
-                                        Liquidity (USD)
-                                    </WithdrawPositionInfoLabel>
-                                    <WithdrawPositionInfoValue>
-                                        ${formatBalance(positionLiquidityUsd.toNumber(), true)}
-                                    </WithdrawPositionInfoValue>
-                                </WithdrawPositionInfoRow>
-                            </WithdrawPositionInfoRows>
-                        </WithdrawPositionCard>
+                        <ConcentratedPositionCard
+                            className="withdraw-position-card"
+                            pool={pool}
+                            position={{
+                                tickLower: position.tickLower,
+                                tickUpper: position.tickUpper,
+                                liquidity: position.liquidity,
+                                tokenEstimates: estimate || pool.tokens.map(() => '0'),
+                                liquidityUsd: positionLiquidityUsd.toNumber(),
+                            }}
+                            minTickBound={minTickBound}
+                            maxTickBound={maxTickBound}
+                        />
                     ),
                 };
             }),
@@ -200,9 +132,8 @@ const ConcentratedWithdrawModal = ({
             positions,
             minTickBound,
             maxTickBound,
-            decimalsDiff,
             pool.tokens,
-            pool.share_token_decimals,
+            pool,
             positionTokenEstimates,
             tokenPrices,
         ],

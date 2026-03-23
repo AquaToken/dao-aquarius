@@ -16,6 +16,7 @@ import {
     buildPoolLiquidityDistributionData,
     fetchUserLiquidityDistributionData,
     type DistributionItem,
+    type UserDistributionPositionDetail,
 } from 'helpers/amm-concentrated-liquidity-chart';
 import { formatBalance } from 'helpers/format-number';
 
@@ -36,13 +37,18 @@ import {
     ChartHeader,
     ChartLoader,
     ChartSurface,
+    ChartTooltip,
+    ChartTooltipStack,
     ChartTitle,
     EmptyDistribution,
 } from './LiquidityDistributionChart.styled';
+import ConcentratedPositionCard from '../ConcentratedLiquidity/components/ConcentratedPositionCard/ConcentratedPositionCard';
 
 type PositionedDistributionItem = DistributionItem & {
     x0: number;
     x1: number;
+    y0: number;
+    y1: number;
 };
 
 type Props = {
@@ -96,10 +102,17 @@ const LiquidityDistributionChart = React.forwardRef<LiquidityDistributionChartHa
         const chartBodyRef = useRef<HTMLDivElement>(null);
         const svgRef = useRef<SVGSVGElement>(null);
         const [userItems, setUserItems] = useState<DistributionItem[]>([]);
+        const [userPositionDetails, setUserPositionDetails] = useState<
+            UserDistributionPositionDetail[]
+        >([]);
         const [userCurrentTick, setUserCurrentTick] = useState<number | null>(null);
         const [loading, setLoading] = useState(false);
         const [ready, setReady] = useState(false);
         const [rangeDragHandle, setRangeDragHandle] = useState<'lower' | 'upper' | null>(null);
+        const [hoveredPositionKeys, setHoveredPositionKeys] = useState<string[]>([]);
+        const [tooltipPosition, setTooltipPosition] = useState<{ x: number; y: number } | null>(
+            null,
+        );
         const decimalsDiff = pool.tokens[0].decimal - pool.tokens[1].decimal;
         const [chartSize, setChartSize] = useState({
             width: compact ? COMPACT_WIDTH : WIDTH,
@@ -129,6 +142,7 @@ const LiquidityDistributionChart = React.forwardRef<LiquidityDistributionChartHa
 
             setReady(false);
             setUserItems([]);
+            setUserPositionDetails([]);
             setUserCurrentTick(null);
         }, [isUserSource, pool.address]);
 
@@ -156,10 +170,12 @@ const LiquidityDistributionChart = React.forwardRef<LiquidityDistributionChartHa
                     }
 
                     setUserItems(distribution.items);
+                    setUserPositionDetails(distribution.positionDetails || []);
                     setUserCurrentTick(distribution.currentTick);
                 } catch {
                     if (!cancelled) {
                         setUserItems([]);
+                        setUserPositionDetails([]);
                         setUserCurrentTick(null);
                     }
                 } finally {
@@ -410,8 +426,62 @@ const LiquidityDistributionChart = React.forwardRef<LiquidityDistributionChartHa
         const hasData = items.length > 0;
         const viewSpan = Math.max(1, viewDomain[1] - viewDomain[0]);
         const plotWidth = chartWidth - chartMargin.left - chartMargin.right;
+        const maxLiquidity = d3.max(items, item => item.liquidity) || 1;
+        const x = useMemo(
+            () =>
+                d3
+                    .scaleLinear()
+                    .domain(viewDomain)
+                    .range([chartMargin.left, chartWidth - chartMargin.right]),
+            [viewDomain, chartMargin.left, chartMargin.right, chartWidth],
+        );
+        const y = useMemo(
+            () =>
+                d3
+                    .scaleLinear()
+                    .domain([0, maxLiquidity])
+                    .range([chartHeight - chartMargin.bottom, chartMargin.top]),
+            [maxLiquidity, chartHeight, chartMargin.bottom, chartMargin.top],
+        );
+        const bars = useMemo(
+            () =>
+                items
+                    .map(item => ({
+                        ...item,
+                        x0: x(item.tickLower),
+                        x1: x(item.tickUpper),
+                        y0: y(item.liquidity),
+                        y1: chartHeight - chartMargin.bottom,
+                    }))
+                    .filter(
+                        item =>
+                            item.x1 >= chartMargin.left &&
+                            item.x0 <= chartWidth - chartMargin.right,
+                    ),
+            [
+                items,
+                x,
+                y,
+                chartHeight,
+                chartMargin.bottom,
+                chartMargin.left,
+                chartWidth,
+                chartMargin.right,
+            ],
+        );
         const getFallbackCenter = () => (Number.isFinite(currentTick) ? currentTick : 0);
         const canPanByDrag = !selectableRange && zoom > ZOOM_MIN;
+        const hoveredPositionDetails = useMemo(() => {
+            if (!hoveredPositionKeys.length) {
+                return [];
+            }
+
+            const detailsMap = new Map(userPositionDetails.map(item => [item.key, item]));
+
+            return hoveredPositionKeys
+                .map(key => detailsMap.get(key))
+                .filter(Boolean) as UserDistributionPositionDetail[];
+        }, [hoveredPositionKeys, userPositionDetails]);
         const getPlotClientBounds = () => {
             const svgRect = svgRef.current?.getBoundingClientRect();
             if (!svgRect) {
@@ -587,28 +657,6 @@ const LiquidityDistributionChart = React.forwardRef<LiquidityDistributionChartHa
                 return;
             }
 
-            const maxLiquidity = d3.max(items, item => item.liquidity) || 1;
-
-            const x = d3
-                .scaleLinear()
-                .domain(viewDomain)
-                .range([chartMargin.left, chartWidth - chartMargin.right]);
-            const y = d3
-                .scaleLinear()
-                .domain([0, maxLiquidity])
-                .range([chartHeight - chartMargin.bottom, chartMargin.top]);
-
-            const bars = items
-                .map(item => ({
-                    ...item,
-                    x0: x(item.tickLower),
-                    x1: x(item.tickUpper),
-                }))
-                .filter(
-                    item =>
-                        item.x1 >= chartMargin.left && item.x0 <= chartWidth - chartMargin.right,
-                );
-
             const svg = d3.select(svgRef.current);
             svg.selectAll('rect.background')
                 .data([null])
@@ -661,7 +709,7 @@ const LiquidityDistributionChart = React.forwardRef<LiquidityDistributionChartHa
                 .join('rect')
                 .attr('class', 'bar')
                 .attr('x', item => Math.max(chartMargin.left, item.x0))
-                .attr('y', item => y(item.liquidity))
+                .attr('y', item => item.y0)
                 .attr('width', item =>
                     Math.max(
                         2,
@@ -669,7 +717,7 @@ const LiquidityDistributionChart = React.forwardRef<LiquidityDistributionChartHa
                             Math.max(chartMargin.left, item.x0),
                     ),
                 )
-                .attr('height', item => chartHeight - chartMargin.bottom - y(item.liquidity))
+                .attr('height', item => item.y1 - item.y0)
                 .attr('fill', item =>
                     item.isPreview
                         ? hexWithOpacity(COLORS.purple500, 75)
@@ -951,16 +999,18 @@ const LiquidityDistributionChart = React.forwardRef<LiquidityDistributionChartHa
 
             svg.selectAll<SVGGElement, null>('g.axis-y').remove();
         }, [
-            items,
-            currentTick,
-            viewDomain,
-            decimalsDiff,
+            bars,
             chartWidth,
             chartHeight,
             chartMargin,
+            currentTick,
+            decimalsDiff,
             selectableRange,
             rangeDragHandle,
             displayedXAxisTickValues,
+            viewDomain,
+            x,
+            y,
         ]);
 
         const emptyMessage =
@@ -1000,6 +1050,24 @@ const LiquidityDistributionChart = React.forwardRef<LiquidityDistributionChartHa
                 </ChartControlButton>
             </ChartControls>
         ) : null;
+        const tooltipLeft = useMemo(() => {
+            if (!tooltipPosition || !chartBodyRef.current) {
+                return 0;
+            }
+
+            return clamp(tooltipPosition.x, 8, Math.max(8, chartBodyRef.current.clientWidth - 308));
+        }, [tooltipPosition]);
+        const tooltipTop = useMemo(() => {
+            if (!tooltipPosition || !chartBodyRef.current) {
+                return 0;
+            }
+
+            return clamp(
+                tooltipPosition.y,
+                8,
+                Math.max(8, chartBodyRef.current.clientHeight - 220),
+            );
+        }, [tooltipPosition]);
 
         return (
             <ChartSurface>
@@ -1021,7 +1089,15 @@ const LiquidityDistributionChart = React.forwardRef<LiquidityDistributionChartHa
                             height={chartHeight}
                             viewBox={`0 0 ${chartWidth} ${chartHeight}`}
                             tabIndex={0}
-                            style={{ width: '100%', height: '100%', display: 'block' }}
+                            style={{
+                                width: '100%',
+                                height: '100%',
+                                display: 'block',
+                                cursor:
+                                    isUserSource && hoveredPositionKeys.length > 0
+                                        ? 'help'
+                                        : undefined,
+                            }}
                             onKeyDown={event => {
                                 if (zoom <= ZOOM_MIN) {
                                     return;
@@ -1039,6 +1115,52 @@ const LiquidityDistributionChart = React.forwardRef<LiquidityDistributionChartHa
                             onMouseLeave={() => {
                                 setDrag(prev => ({ ...prev, active: false }));
                                 setRangeDragHandle(null);
+                                setHoveredPositionKeys([]);
+                                setTooltipPosition(null);
+                            }}
+                            onMouseMove={event => {
+                                if (!isUserSource || !bars.length || !chartBodyRef.current) {
+                                    return;
+                                }
+
+                                const svgRect = svgRef.current?.getBoundingClientRect();
+                                const bodyRect = chartBodyRef.current.getBoundingClientRect();
+                                if (!svgRect) {
+                                    return;
+                                }
+
+                                const scaleX = chartWidth / svgRect.width;
+                                const scaleY = chartHeight / svgRect.height;
+                                const localX = (event.clientX - svgRect.left) * scaleX;
+                                const localY = (event.clientY - svgRect.top) * scaleY;
+
+                                const hoveredBars = bars
+                                    .filter(
+                                        item =>
+                                            !!item.positionKey &&
+                                            localX >= Math.max(chartMargin.left, item.x0) &&
+                                            localX <=
+                                                Math.min(chartWidth - chartMargin.right, item.x1) &&
+                                            localY >= item.y0 &&
+                                            localY <= item.y1,
+                                    )
+                                    .sort((a, b) => b.liquidity - a.liquidity);
+
+                                const hoveredKeys = hoveredBars
+                                    .map(item => item.positionKey)
+                                    .filter(Boolean) as string[];
+
+                                setHoveredPositionKeys(hoveredKeys);
+
+                                if (!hoveredKeys.length) {
+                                    setTooltipPosition(null);
+                                    return;
+                                }
+
+                                setTooltipPosition({
+                                    x: event.clientX - bodyRect.left + 14,
+                                    y: event.clientY - bodyRect.top + 14,
+                                });
                             }}
                         >
                             {canPanByDrag && (
@@ -1049,13 +1171,16 @@ const LiquidityDistributionChart = React.forwardRef<LiquidityDistributionChartHa
                                     height={chartHeight - chartMargin.top - chartMargin.bottom}
                                     fill="transparent"
                                     style={{
-                                        cursor: rangeDragHandle
-                                            ? 'ew-resize'
-                                            : zoom <= ZOOM_MIN
-                                              ? 'default'
-                                              : drag.active
-                                                ? 'grabbing'
-                                                : 'grab',
+                                        cursor:
+                                            isUserSource && hoveredPositionKeys.length > 0
+                                                ? 'help'
+                                                : rangeDragHandle
+                                                  ? 'ew-resize'
+                                                  : zoom <= ZOOM_MIN
+                                                    ? 'default'
+                                                    : drag.active
+                                                      ? 'grabbing'
+                                                      : 'grab',
                                     }}
                                     onMouseDown={event => {
                                         if (rangeDragHandle) {
@@ -1073,6 +1198,20 @@ const LiquidityDistributionChart = React.forwardRef<LiquidityDistributionChartHa
                                 />
                             )}
                         </svg>
+                    )}
+                    {isUserSource && hoveredPositionDetails.length > 0 && tooltipPosition && (
+                        <ChartTooltip style={{ left: tooltipLeft, top: tooltipTop }}>
+                            <ChartTooltipStack>
+                                {hoveredPositionDetails.map(position => (
+                                    <ConcentratedPositionCard
+                                        key={position.key}
+                                        pool={pool}
+                                        position={position}
+                                        compact
+                                    />
+                                ))}
+                            </ChartTooltipStack>
+                        </ChartTooltip>
                     )}
                 </ChartBody>
             </ChartSurface>
