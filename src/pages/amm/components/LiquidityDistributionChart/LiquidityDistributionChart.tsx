@@ -267,6 +267,32 @@ const LiquidityDistributionChart = React.forwardRef<LiquidityDistributionChartHa
             return (selectableRange.tickLower + selectableRange.tickUpper) / 2;
         }, [selectableRange]);
 
+        const userPositionsSpanTicks = useMemo(() => {
+            if (!isUserSource || !items.length) {
+                return null;
+            }
+
+            const minTick = Math.min(...items.map(item => item.tickLower));
+            const maxTick = Math.max(...items.map(item => item.tickUpper));
+
+            return Math.max(1, maxTick - minTick);
+        }, [isUserSource, items]);
+
+        const defaultCenterTick = useMemo(() => {
+            if (Number.isFinite(selectedRangeCenterTick)) {
+                return selectedRangeCenterTick;
+            }
+
+            if (isUserSource && items.length) {
+                const minTick = Math.min(...items.map(item => item.tickLower));
+                const maxTick = Math.max(...items.map(item => item.tickUpper));
+
+                return (minTick + maxTick) / 2;
+            }
+
+            return Number.isFinite(currentTick) ? currentTick : null;
+        }, [currentTick, isUserSource, items, selectedRangeCenterTick]);
+
         const targetSpanTicks = useMemo(() => {
             if (
                 selectableRange &&
@@ -280,6 +306,10 @@ const LiquidityDistributionChart = React.forwardRef<LiquidityDistributionChartHa
                 return Math.max(1, Math.ceil(selectedSpan * (compact ? 1.12 : 1.18)));
             }
 
+            if (isUserSource && userPositionsSpanTicks !== null) {
+                return Math.max(1, Math.ceil(userPositionsSpanTicks * (compact ? 1.12 : 1.18)));
+            }
+
             if (!Number.isFinite(currentTick)) {
                 return 200;
             }
@@ -290,7 +320,14 @@ const LiquidityDistributionChart = React.forwardRef<LiquidityDistributionChartHa
             const minTick = priceToTick(currentPrice * 0.8, decimalsDiff);
             const maxTick = priceToTick(currentPrice * 1.2, decimalsDiff);
             return Math.max(1, Math.abs(maxTick - minTick));
-        }, [selectableRange, currentTick, decimalsDiff, compact]);
+        }, [
+            selectableRange,
+            isUserSource,
+            userPositionsSpanTicks,
+            currentTick,
+            decimalsDiff,
+            compact,
+        ]);
 
         const domain = useMemo(() => {
             if (selectableRange) {
@@ -319,23 +356,30 @@ const LiquidityDistributionChart = React.forwardRef<LiquidityDistributionChartHa
                 : Number.isFinite(currentTick)
                   ? currentTick + targetSpanTicks
                   : 100;
+            const referenceMin = Number.isFinite(currentTick)
+                ? Math.min(dataMin, currentTick)
+                : dataMin;
+            const referenceMax = Number.isFinite(currentTick)
+                ? Math.max(dataMax, currentTick)
+                : dataMax;
 
-            const center = Number.isFinite(selectedRangeCenterTick)
-                ? selectedRangeCenterTick
-                : Number.isFinite(currentTick)
-                  ? currentTick
-                  : (dataMin + dataMax) / 2;
-            const min = Math.min(dataMin, center - targetSpanTicks);
-            const max = Math.max(dataMax, center + targetSpanTicks);
+            const center =
+                defaultCenterTick !== null ? defaultCenterTick : (referenceMin + referenceMax) / 2;
+            const min = Math.min(referenceMin, center - targetSpanTicks);
+            const max = Math.max(referenceMax, center + targetSpanTicks);
 
             return { min, max: max === min ? max + 1 : max };
-        }, [items, currentTick, targetSpanTicks, selectedRangeCenterTick, selectableRange]);
+        }, [items, currentTick, targetSpanTicks, defaultCenterTick, selectableRange]);
 
         const initialZoom = useMemo(() => {
+            if (isUserSource && !selectableRange) {
+                return ZOOM_MIN;
+            }
+
             const domainSpan = Math.max(1, domain.max - domain.min);
             const desiredSpan = Math.max(1, targetSpanTicks);
             return clamp(domainSpan / desiredSpan, ZOOM_MIN, ZOOM_MAX);
-        }, [domain, targetSpanTicks]);
+        }, [domain, isUserSource, selectableRange, targetSpanTicks]);
 
         useEffect(() => {
             if (rangeDragHandle || hasManualViewport) {
@@ -343,14 +387,8 @@ const LiquidityDistributionChart = React.forwardRef<LiquidityDistributionChartHa
             }
 
             setZoom(initialZoom);
-            setViewCenterTick(
-                Number.isFinite(selectedRangeCenterTick)
-                    ? selectedRangeCenterTick
-                    : Number.isFinite(currentTick)
-                      ? currentTick
-                      : null,
-            );
-        }, [initialZoom, currentTick, selectedRangeCenterTick, rangeDragHandle, hasManualViewport]);
+            setViewCenterTick(defaultCenterTick);
+        }, [initialZoom, defaultCenterTick, rangeDragHandle, hasManualViewport]);
 
         useEffect(() => {
             setHasManualViewport(false);
@@ -523,14 +561,8 @@ const LiquidityDistributionChart = React.forwardRef<LiquidityDistributionChartHa
         const resetView = useCallback(() => {
             setHasManualViewport(false);
             setZoom(initialZoom);
-            setViewCenterTick(
-                Number.isFinite(selectedRangeCenterTick)
-                    ? selectedRangeCenterTick
-                    : Number.isFinite(currentTick)
-                      ? currentTick
-                      : null,
-            );
-        }, [currentTick, initialZoom, selectedRangeCenterTick]);
+            setViewCenterTick(defaultCenterTick);
+        }, [defaultCenterTick, initialZoom]);
 
         useImperativeHandle(
             ref,
