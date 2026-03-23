@@ -1,6 +1,6 @@
 import { xdr } from '@stellar/stellar-sdk';
-import { useEffect, useMemo, useRef, useState } from 'react';
 import * as React from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -542,6 +542,7 @@ const PoolPage = () => {
                                     pool.total_share,
                                     pool.share_token_decimals,
                                     true,
+                                    pool.pool_type === 'concentrated',
                                 )}
                             </span>
                         </SectionRow>
@@ -604,6 +605,7 @@ const PoolPage = () => {
                             poolId={pool.address}
                             totalShare={pool.total_share}
                             shareTokenDecimals={pool.share_token_decimals}
+                            isConcentrated={pool.pool_type === POOL_TYPE.concentrated}
                         />
                     </SectionWrap>
                 </Section>

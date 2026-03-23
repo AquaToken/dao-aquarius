@@ -1,4 +1,3 @@
-import BigNumber from 'bignumber.js';
 import * as React from 'react';
 
 import { formatConcentratedPriceInputValue, tickToPrice } from 'helpers/amm-concentrated';
@@ -53,9 +52,6 @@ const ConcentratedPositionCard = ({
         maxTickBound !== undefined &&
         position.tickLower === minTickBound &&
         position.tickUpper === maxTickBound;
-    const sharePercent = new BigNumber(pool.total_share || '0').gt(0)
-        ? new BigNumber(position.liquidity || '0').dividedBy(pool.total_share).multipliedBy(100)
-        : new BigNumber(0);
 
     return (
         <PositionCard className={className} $compact={compact}>
@@ -100,8 +96,7 @@ const ConcentratedPositionCard = ({
                             pool.share_token_decimals,
                             true,
                             true,
-                        )}{' '}
-                        ({formatBalance(sharePercent.toNumber(), true)}%)
+                        )}
                     </PositionInfoValue>
                 </PositionInfoRow>
                 <PositionInfoRow $compact={compact}>
