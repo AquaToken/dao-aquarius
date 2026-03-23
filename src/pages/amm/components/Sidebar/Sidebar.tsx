@@ -338,23 +338,9 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
                                     {formatBalance(
                                         accountShare,
                                         true,
-                                        false,
+                                        isConcentrated,
                                         pool.share_token_decimals,
-                                    )}{' '}
-                                    (
-                                    {Number(pool.total_share)
-                                        ? formatBalance(
-                                              (100 * accountShare) /
-                                                  Number(
-                                                      contractValueToAmount(
-                                                          pool.total_share,
-                                                          pool.share_token_decimals,
-                                                      ),
-                                                  ),
-                                              true,
-                                          )
-                                        : '0'}
-                                    %)
+                                    )}
                                 </span>
                             </SidebarRow>
                             {pool.tokens.map((asset, index) => (
