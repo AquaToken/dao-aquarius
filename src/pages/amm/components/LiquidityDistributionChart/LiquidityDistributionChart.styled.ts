@@ -87,4 +87,9 @@ export const ChartTooltipStack = styled.div`
     display: flex;
     flex-direction: column;
     gap: 1.2rem;
+
+    > * + * {
+        padding-top: 1.2rem;
+        border-top: 0.1rem solid ${COLORS.gray100};
+    }
 `;
