@@ -15,6 +15,7 @@ import { contractValueToFormattedAmount } from 'helpers/amount';
 import { getAssetString, getEnvClassicAssetData } from 'helpers/assets';
 import getExplorerLink, { ExplorerSection } from 'helpers/explorer-links';
 import { formatBalance } from 'helpers/format-number';
+import { navigateBackWithFallback } from 'helpers/navigation';
 import { truncateString } from 'helpers/truncate-string';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
@@ -360,9 +361,9 @@ const PoolPage = () => {
                     <PageHeader>
                         <CircleButton
                             label="Pools"
-                            onClick={() => {
-                                navigate(AppRoutes.section.amm.link.index);
-                            }}
+                            onClick={() =>
+                                navigateBackWithFallback(navigate, AppRoutes.section.amm.link.index)
+                            }
                         >
                             <ArrowLeft />
                         </CircleButton>

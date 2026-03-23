@@ -13,6 +13,7 @@ import { CONTRACT_STATUS } from 'constants/soroban';
 import ErrorHandler from 'helpers/error-handler';
 import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
+import { navigateBackWithFallback } from 'helpers/navigation';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
 import { LoginTypes } from 'store/authStore/types';
@@ -692,7 +693,12 @@ const CreatePool = () => {
         <PageContainer>
             <FormPageHeaderWrap>
                 <FormPageContentWrap>
-                    <FormBackButton label="Pools" to={AppRoutes.section.amm.link.index}>
+                    <FormBackButton
+                        label="Pools"
+                        onClick={() =>
+                            navigateBackWithFallback(navigate, AppRoutes.section.amm.link.index)
+                        }
+                    >
                         <ArrowLeft />
                     </FormBackButton>
 

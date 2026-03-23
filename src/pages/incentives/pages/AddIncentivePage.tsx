@@ -1,6 +1,7 @@
 import { addDays } from 'date-fns';
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { findSwapPath, getAssetsList, getPoolsForIncentives } from 'api/amm';
@@ -16,6 +17,7 @@ import { AppRoutes } from 'constants/routes';
 import { contractValueToAmount, contractValueToFormattedAmount } from 'helpers/amount';
 import { getEnvClassicAssetData } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
+import { navigateBackWithFallback } from 'helpers/navigation';
 import { getTokensFromCache } from 'helpers/token';
 
 import { useDebounce } from 'hooks/useDebounce';
@@ -153,6 +155,7 @@ enum Step {
 }
 
 const AddIncentivePage = () => {
+    const navigate = useNavigate();
     const [markets, setMarkets] = useState<PoolProcessed[] | null>(null);
     const [selectedMarket, setSelectedMarket] = useState<string | null>(null);
     const [step, setStep] = useState(Step.market);
@@ -381,7 +384,12 @@ const AddIncentivePage = () => {
                 <FormPageContentWrap>
                     <FormBackButton
                         label="Pool Incentives"
-                        to={AppRoutes.section.incentive.link.index}
+                        onClick={() =>
+                            navigateBackWithFallback(
+                                navigate,
+                                AppRoutes.section.incentive.link.index,
+                            )
+                        }
                     >
                         <ArrowLeft />
                     </FormBackButton>

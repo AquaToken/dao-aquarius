@@ -6,7 +6,7 @@ import Select from 'basics/inputs/Select';
 import { PositionsList, Section, SectionTitle } from './ConcentratedPositionsSection.styled';
 
 const PositionsSelectWrap = styled.div`
-    > div > div:nth-child(2) > [data-withdraw-position-card='true'] {
+    > div > div:nth-child(2) > .withdraw-position-card {
         padding: 2.4rem 0;
     }
 `;
