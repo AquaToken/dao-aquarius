@@ -57,8 +57,9 @@ export const PositionInfoRows = styled.div<{ $compact?: boolean }>`
     width: 100%;
 `;
 
-export const PositionInfoRow = styled.div<{ $compact?: boolean }>`
+export const PositionInfoRow = styled.div<{ $compact?: boolean; $alignTop?: boolean }>`
     ${flexRowSpaceBetween};
+    align-items: ${({ $alignTop }) => ($alignTop ? 'flex-start' : 'center')};
     gap: ${({ $compact }) => ($compact ? '1.6rem' : '2.4rem')};
     min-height: ${({ $compact }) => ($compact ? '1.6rem' : '2rem')};
 `;
@@ -69,10 +70,12 @@ export const PositionInfoLabel = styled.span<{ $compact?: boolean }>`
     line-height: ${({ $compact }) => ($compact ? '1.6rem' : '2rem')};
 `;
 
-export const PositionInfoValue = styled.div<{ $compact?: boolean }>`
+export const PositionInfoValue = styled.div<{ $compact?: boolean; $allowWrap?: boolean }>`
     ${({ $compact }) => ($compact ? FONT_SIZE.sm : FONT_SIZE.md)};
     color: ${COLORS.textTertiary};
     line-height: ${({ $compact }) => ($compact ? '1.6rem' : '1.8rem')};
     text-align: right;
-    white-space: nowrap;
+    white-space: ${({ $allowWrap }) => ($allowWrap ? 'normal' : 'nowrap')};
+    overflow-wrap: ${({ $allowWrap }) => ($allowWrap ? 'anywhere' : 'normal')};
+    max-width: ${({ $allowWrap }) => ($allowWrap ? '20rem' : 'none')};
 `;

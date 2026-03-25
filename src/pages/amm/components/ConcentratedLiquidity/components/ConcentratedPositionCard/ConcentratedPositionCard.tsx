@@ -74,11 +74,11 @@ const ConcentratedPositionCard = ({
                 ))}
             </PositionTokenRow>
             <PositionInfoRows $compact={compact}>
-                <PositionInfoRow $compact={compact}>
+                <PositionInfoRow $compact={compact} $alignTop>
                     <PositionInfoLabel $compact={compact}>
                         Price range ({pool.tokens[0].code}/{pool.tokens[1].code})
                     </PositionInfoLabel>
-                    <PositionInfoValue $compact={compact}>
+                    <PositionInfoValue $compact={compact} $allowWrap>
                         {isFullRange
                             ? 'Full Range'
                             : `${formatConcentratedPriceInputValue(
