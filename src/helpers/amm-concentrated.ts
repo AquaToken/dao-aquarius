@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js';
 
 import { CONCENTRATED_TICK_BASE, CONCENTRATED_TICK_LOG_BASE } from 'constants/amm';
+import { formatBalance } from 'helpers/format-number';
 
 export const clamp = (value: number, min: number, max: number) =>
     Math.min(max, Math.max(min, value));
@@ -38,8 +39,7 @@ export const formatConcentratedPriceInputValue = (value: number) => {
         return value.toExponential(6);
     }
 
-    const decimals = value >= 1 ? 6 : 10;
-    return value.toFixed(decimals).replace(/\.?0+$/, '');
+    return formatBalance(value, false, false, value >= 1 ? 6 : 10);
 };
 
 export const parseConcentratedAmount = (value: string) => {
