@@ -12,7 +12,7 @@ import { DAY } from 'constants/intervals';
 import { AppRoutes } from 'constants/routes';
 
 import { contractValueToFormattedAmount } from 'helpers/amount';
-import { getEnvClassicAssetData, getAssetString } from 'helpers/assets';
+import { getEnvClassicAssetData, getAssetString, getAssetFromString } from 'helpers/assets';
 import getExplorerLink, { ExplorerSection } from 'helpers/explorer-links';
 import { formatBalance } from 'helpers/format-number';
 import { navigateBackWithFallback } from 'helpers/navigation';
