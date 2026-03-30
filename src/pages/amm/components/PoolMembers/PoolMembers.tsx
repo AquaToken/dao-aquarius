@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import { getPoolMembers } from 'api/amm';
 
+import { contractValueToAmount, contractValueToFormattedAmount } from 'helpers/amount';
 import getExplorerLink, { ExplorerSection } from 'helpers/explorer-links';
 import { formatBalance } from 'helpers/format-number';
 
@@ -63,7 +64,17 @@ const LabelInner = styled.div`
     ${FONT_SIZE.sm};
 `;
 
-const PoolMembers = ({ poolId, totalShare }: { poolId: string; totalShare: string }) => {
+const PoolMembers = ({
+    poolId,
+    totalShare,
+    shareTokenDecimals,
+    isConcentrated = false,
+}: {
+    poolId: string;
+    totalShare: string;
+    shareTokenDecimals: number;
+    isConcentrated?: boolean;
+}) => {
     const [members, setMembers] = useState<PoolBalance[]>(null);
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(null);
@@ -168,16 +179,37 @@ const PoolMembers = ({ poolId, totalShare }: { poolId: string; totalShare: strin
                             {
                                 children: (
                                     <span>
-                                        {formatBalance(Number(member.balance) / 1e7, true)} (
-                                        {Number(totalShare)
-                                            ? formatBalance(
-                                                  (100 * Number(member.balance)) /
-                                                      1e7 /
-                                                      (Number(totalShare) / 1e7),
-                                                  true,
-                                              )
-                                            : '0'}
-                                        %)
+                                        {contractValueToFormattedAmount(
+                                            member.balance,
+                                            shareTokenDecimals,
+                                            true,
+                                            isConcentrated,
+                                        )}
+                                        {!isConcentrated && (
+                                            <>
+                                                {' '}
+                                                (
+                                                {Number(totalShare)
+                                                    ? formatBalance(
+                                                          (100 *
+                                                              Number(
+                                                                  contractValueToAmount(
+                                                                      member.balance,
+                                                                      shareTokenDecimals,
+                                                                  ),
+                                                              )) /
+                                                              Number(
+                                                                  contractValueToAmount(
+                                                                      totalShare,
+                                                                      shareTokenDecimals,
+                                                                  ),
+                                                              ),
+                                                          true,
+                                                      )
+                                                    : '0'}
+                                                %)
+                                            </>
+                                        )}
                                     </span>
                                 ),
                                 flexSize: 0.4,

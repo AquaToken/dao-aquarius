@@ -29,6 +29,7 @@ import {
     AuthRequiredLabel,
     BoostLabel,
     ClassicPoolLabel,
+    ConcentratedPoolLabel,
     ConstantPoolLabel,
     FeeLabel,
     MaxRewardsLabel,
@@ -297,6 +298,7 @@ const Market = ({
             {poolType === POOL_TYPE.classic && <ClassicPoolLabel />}
             {poolType === POOL_TYPE.stable && <StablePoolLabel />}
             {poolType === POOL_TYPE.constant && <ConstantPoolLabel />}
+            {poolType === POOL_TYPE.concentrated && <ConcentratedPoolLabel />}
             {boosted && <BoostLabel />}
             {isRewardsOn && <RewardLabel />}
             {isMaxRewards && <MaxRewardsLabel />}

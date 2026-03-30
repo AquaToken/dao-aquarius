@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { getPoolEvents } from 'api/amm';
 
-import { contractValueToAmount } from 'helpers/amount';
+import { contractValueToFormattedAmount } from 'helpers/amount';
 import { getAssetFromString } from 'helpers/assets';
 import { getDateString } from 'helpers/date';
 import { getIsTestnetEnv } from 'helpers/env';
@@ -54,6 +54,8 @@ const getEventTitle = (event: PoolEvent, pool: PoolExtended) => {
         }
         case PoolEventType.claim:
             return 'Claim rewards';
+        case PoolEventType.claimFees:
+            return 'Claim fees';
         case PoolEventType.deposit:
             return 'Add liquidity';
         case PoolEventType.withdraw:
@@ -75,22 +77,20 @@ const getEventAmounts = (event: PoolEvent, pool: PoolExtended) => {
             return (
                 <Amounts>
                     <span>
-                        {formatBalance(
-                            +contractValueToAmount(
-                                event.amounts[fromIndex],
-                                (pool.tokens[fromIndex] as SorobanToken).decimal,
-                            ),
+                        {contractValueToFormattedAmount(
+                            event.amounts[fromIndex],
+                            (pool.tokens[fromIndex] as SorobanToken).decimal,
                         )}{' '}
                         {pool.tokens[fromIndex]?.code}
                     </span>
                     <span>
-                        {formatBalance(
-                            Math.abs(
-                                +contractValueToAmount(
-                                    event.amounts[toIndex],
-                                    (pool.tokens[toIndex] as SorobanToken).decimal,
-                                ),
-                            ),
+                        {contractValueToFormattedAmount(
+                            event.amounts[toIndex],
+                            (pool.tokens[toIndex] as SorobanToken).decimal,
+                            false,
+                            false,
+                            7,
+                            true,
                         )}{' '}
                         {pool.tokens[toIndex]?.code}
                     </span>
@@ -104,11 +104,9 @@ const getEventAmounts = (event: PoolEvent, pool: PoolExtended) => {
                 <Amounts>
                     {event.amounts.map((amount, index) => (
                         <span key={pool.tokens_str[index]}>
-                            {formatBalance(
-                                +contractValueToAmount(
-                                    amount,
-                                    (pool.tokens[index] as SorobanToken).decimal,
-                                ),
+                            {contractValueToFormattedAmount(
+                                amount,
+                                (pool.tokens[index] as SorobanToken).decimal,
                             )}{' '}
                             {pool.tokens[index]?.code}
                         </span>
@@ -125,16 +123,22 @@ const getEventAmounts = (event: PoolEvent, pool: PoolExtended) => {
             );
         }
 
-        case PoolEventType.claimIncentives: {
+        case PoolEventType.claimIncentives:
+        case PoolEventType.claimFees: {
             return (
                 <Amounts>
                     {event.amounts.map((amount, index) => {
                         if (!Number(amount)) return null;
 
-                        const token = getAssetFromString(event.tokens[index]);
+                        const tokenId = event.tokens?.[index];
+                        if (!tokenId) {
+                            return null;
+                        }
+
+                        const token = getAssetFromString(tokenId);
                         return (
                             <span key={token.contract}>
-                                {formatBalance(+contractValueToAmount(amount, token.decimal), true)}{' '}
+                                {contractValueToFormattedAmount(amount, token.decimal, true)}{' '}
                                 {token.code}
                             </span>
                         );

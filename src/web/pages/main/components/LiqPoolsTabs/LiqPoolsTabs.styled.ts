@@ -11,7 +11,7 @@ import {
 import { fullWidthSectionStyles, respondDown } from 'styles/mixins';
 import { Breakpoints, COLORS, MAX_WIDTHS, PAGE_PADDINGS } from 'styles/style-constants';
 
-export type TabKey = 'stable' | 'volatile';
+export type TabKey = 'stable' | 'volatile' | 'concentrated';
 
 export const Wrapper = styled.section<{ $visible: boolean }>`
     ${fullWidthSectionStyles};
@@ -136,6 +136,7 @@ export const TabBtn = styled.button<{ active?: boolean }>`
     appearance: none;
     background: transparent;
     border: 0;
+    padding: 0;
     font-size: 1.8rem;
     line-height: 180%;
     font-weight: 600;
@@ -151,15 +152,20 @@ export const TabBtn = styled.button<{ active?: boolean }>`
     ${respondDown(Breakpoints.xs)`font-size: 1.4rem;`};
 `;
 
-export const Underline = styled.div<{ active: TabKey }>`
+export const TabBtnLabel = styled.span`
+    display: inline-block;
+`;
+
+export const Underline = styled.div<{ $left: number; $width: number }>`
     position: absolute;
-    left: ${({ active }) => (active === 'stable' ? 0 : 'inherit')};
-    right: ${({ active }) => (active === 'volatile' ? 0 : 'inherit')};
+    left: ${({ $left }) => `${$left}px`};
     bottom: 0;
     height: 0.4rem;
-    width: calc(50% - 2rem);
+    width: ${({ $width }) => `${$width}px`};
     background: ${COLORS.purple200};
-    transition: all 0.3s ease;
+    transition:
+        left 0.3s ease,
+        width 0.3s ease;
 `;
 
 export const UnderlineBack = styled.div`
@@ -171,7 +177,13 @@ export const UnderlineBack = styled.div`
     opacity: 0.2;
 `;
 
-export const Badge = styled.span<{ tone?: 'stable' | 'volatile' }>`
+const TAB_COLORS: Record<TabKey, string> = {
+    stable: COLORS.blue300,
+    volatile: COLORS.orange300,
+    concentrated: COLORS.blue400,
+};
+
+export const Badge = styled.span<{ tone: TabKey }>`
     text-transform: uppercase;
     display: inline-block;
     margin-top: 4.6rem;
@@ -180,8 +192,8 @@ export const Badge = styled.span<{ tone?: 'stable' | 'volatile' }>`
     font-size: 1.2rem;
     border-radius: 0.7rem;
     font-weight: 700;
-    color: ${({ tone }) => (tone === 'stable' ? COLORS.blue300 : COLORS.orange300)};
-    border: 0.2rem solid ${({ tone }) => (tone === 'stable' ? COLORS.blue300 : COLORS.orange300)};
+    color: ${({ tone }) => TAB_COLORS[tone]};
+    border: 0.2rem solid ${({ tone }) => TAB_COLORS[tone]};
 
     ${respondDown(Breakpoints.sm)`margin-top: 3.2rem;`};
 `;

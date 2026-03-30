@@ -40,6 +40,7 @@ export const COLORS = {
 
     // Blue scale
     blue300: '#2AA3B0',
+    blue400: '#3B82F6',
     blue500: '#2E30F0',
     blue550: '#3918AC',
     blue600: '#5865F2',

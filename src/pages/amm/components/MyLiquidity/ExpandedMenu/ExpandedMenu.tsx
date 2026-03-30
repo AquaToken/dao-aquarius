@@ -24,7 +24,9 @@ import RewardsSettingsModal from 'modals/RewardsSettingsModal';
 import { cardBoxShadow } from 'styles/mixins';
 import { COLORS, FONT_SIZE } from 'styles/style-constants';
 
-import DepositToPool from 'pages/amm/components/DepositToPool/DepositToPool';
+import ConcentratedFeesModal from 'pages/amm/components/ConcentratedLiquidity/modals/ConcentratedFeesModal/ConcentratedFeesModal';
+import ConcentratedWithdrawModal from 'pages/amm/components/ConcentratedLiquidity/modals/ConcentratedWithdrawModal/ConcentratedWithdrawModal';
+import AddLiquidityModal from 'pages/amm/components/AddLiquidity/AddLiquidityModal';
 import WithdrawFromPool from 'pages/amm/components/WithdrawFromPool/WithdrawFromPool';
 
 const Container = styled.div`
@@ -84,7 +86,7 @@ const ExpandedMenu = ({ pool }: Props) => {
                     {pool.pool_type !== POOL_TYPE.classic && (
                         <MenuRow
                             onClick={() => {
-                                ModalService.openModal(DepositToPool, { pool });
+                                ModalService.openModal(AddLiquidityModal, { pool });
                                 setIsShowMenu(false);
                             }}
                         >
@@ -94,6 +96,12 @@ const ExpandedMenu = ({ pool }: Props) => {
                     )}
                     <MenuRow
                         onClick={() => {
+                            if (pool.pool_type === POOL_TYPE.concentrated) {
+                                ModalService.openModal(ConcentratedWithdrawModal, { pool });
+                                setIsShowMenu(false);
+                                return;
+                            }
+
                             if ((pool as PoolUserProcessed).address) {
                                 ModalService.openModal(WithdrawFromPool, {
                                     pool,
@@ -110,6 +118,17 @@ const ExpandedMenu = ({ pool }: Props) => {
                         <IconWithdraw />
                         Withdraw
                     </MenuRow>
+                    {pool.pool_type === POOL_TYPE.concentrated && (
+                        <MenuRow
+                            onClick={() => {
+                                ModalService.openModal(ConcentratedFeesModal, { pool });
+                                setIsShowMenu(false);
+                            }}
+                        >
+                            <IconWithdraw />
+                            Manage fees
+                        </MenuRow>
+                    )}
                     {pool.pool_type !== POOL_TYPE.classic && (
                         <MenuRow
                             onClick={() => {

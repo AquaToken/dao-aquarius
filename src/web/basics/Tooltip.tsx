@@ -13,10 +13,10 @@ export enum TOOLTIP_POSITION {
     right = 'right',
 }
 
-const ChildrenBlock = styled.div`
+const ChildrenBlock = styled.div<{ $fullWidth: boolean }>`
     position: relative;
     display: flex;
-    width: fit-content;
+    width: ${({ $fullWidth }) => ($fullWidth ? '100%' : 'fit-content')};
     height: fit-content;
 `;
 
@@ -101,6 +101,7 @@ const TooltipBody = styled.div<{
     $color: string;
     $isHidden: boolean;
     $withoutPadding: boolean;
+    $matchTriggerWidth: boolean;
 }>`
     position: absolute;
     display: flex;
@@ -108,6 +109,7 @@ const TooltipBody = styled.div<{
     align-items: center;
     justify-content: center;
     padding: ${({ $withoutPadding }) => ($withoutPadding ? '0' : '0.9rem 1.2rem')};
+    min-width: ${({ $matchTriggerWidth }) => ($matchTriggerWidth ? '100%' : 'auto')};
     color: ${({ $color }) => $color};
     background-color: ${({ $background }) => $background};
     ${cardBoxShadow};
@@ -146,6 +148,8 @@ interface TooltipProps extends React.DOMAttributes<HTMLDivElement> {
     background?: string;
     color?: string;
     withoutPadding?: boolean;
+    fullWidth?: boolean;
+    matchTriggerWidth?: boolean;
 }
 
 const Tooltip = ({
@@ -157,6 +161,8 @@ const Tooltip = ({
     background = COLORS.purple400,
     color = COLORS.white,
     withoutPadding = false,
+    fullWidth = false,
+    matchTriggerWidth = false,
     ...props
 }: TooltipProps): React.ReactNode => {
     const [isTooltipVisible, setIsTooltipVisible] = useState(isShow);
@@ -253,6 +259,7 @@ const Tooltip = ({
 
     return (
         <ChildrenBlock
+            $fullWidth={fullWidth}
             {...props}
             onClick={handleClick}
             onMouseEnter={handleMouseEnter}
@@ -266,6 +273,7 @@ const Tooltip = ({
                     $color={color}
                     $isHidden={positionInProgress}
                     $withoutPadding={withoutPadding}
+                    $matchTriggerWidth={matchTriggerWidth}
                     ref={tooltipRef}
                 >
                     {content}

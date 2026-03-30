@@ -48,7 +48,7 @@ const SelectStyled = styled(Select)`
 
 enum FilterOptions {
     all = '',
-    claims = `${PoolEventType.claim}, ${PoolEventType.claimIncentives}`,
+    claims = `${PoolEventType.claim}, ${PoolEventType.claimFees}, ${PoolEventType.claimIncentives}`,
     swap = `${PoolEventType.swap}`,
     deposit = `${PoolEventType.deposit}`,
     withdraw = `${PoolEventType.withdraw}`,

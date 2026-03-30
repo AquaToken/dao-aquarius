@@ -2,7 +2,7 @@ import { POOL_TYPE } from 'constants/amm';
 
 import { PoolClassic, PoolClassicReserves } from 'types/stellar';
 
-import { ClassicToken, Token } from './token';
+import { ClassicToken, SorobanToken, Token } from './token';
 
 export type ListResponse<T> = {
     items: T[];
@@ -42,6 +42,11 @@ export type Pool = {
     incentive_apy_per_token: { [key: string]: string };
     incentive_apy: string;
     total_apy: string;
+    tick_spacing?: number;
+    sqrt_price_x96?: string;
+    current_tick?: number;
+    active_liquidity?: string;
+    tick_map?: Record<string, string>;
 };
 
 export type PoolRewards = {
@@ -88,6 +93,7 @@ export enum PoolEventType {
     withdraw = 'withdraw',
     swap = 'swap',
     claim = 'claim',
+    claimFees = 'claim_fees',
     claimIncentives = 'claim_incentives',
 }
 
@@ -174,6 +180,52 @@ export type PoolIncentives = {
         tps: string;
         user_reward: string;
     };
+};
+
+export type ConcentratedPoolInfo = {
+    pool_type: string;
+    fee?: number | string;
+    tick_spacing?: number;
+};
+
+export type ConcentratedSlot0 = {
+    sqrt_price_x96?: string;
+    tick?: number;
+    [key: string]: unknown;
+};
+
+export type ConcentratedPosition = {
+    tickLower: number;
+    tickUpper: number;
+    liquidity: string;
+};
+
+export type ConcentratedSnapshotRange = {
+    tick_lower: number;
+    tick_upper: number;
+    liquidity?: string | number | bigint | null;
+};
+
+export type ConcentratedUserPositionSnapshot = {
+    ranges: ConcentratedSnapshotRange[];
+    raw_liquidity?: string | number | bigint;
+    weighted_liquidity?: string | number | bigint;
+};
+
+export type DepositEstimate = {
+    amounts: string[];
+    liquidityDisplay: string;
+    liquidityLoading: boolean;
+};
+
+export type DepositPresetKey = 'full' | 'tight' | 'medium' | 'wide' | 'up' | 'down';
+
+export type PoolCreationFeeInfo = {
+    token: SorobanToken;
+    constantFee: string;
+    stableFee: string;
+    concentratedFee: string;
+    destination: string;
 };
 
 export enum RewardType {

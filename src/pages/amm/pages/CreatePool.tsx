@@ -1,17 +1,19 @@
-import { xdr } from '@stellar/stellar-sdk';
 import * as React from 'react';
+import BigNumber from 'bignumber.js';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { FilterOptions, getPools, PoolsSortFields } from 'api/amm';
 
-import { POOL_TYPE } from 'constants/amm';
+import { CONCENTRATED_TICK_SPACING_BY_FEE, POOL_TYPE } from 'constants/amm';
 import { AppRoutes } from 'constants/routes';
 import { CONTRACT_STATUS } from 'constants/soroban';
 
 import ErrorHandler from 'helpers/error-handler';
+import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
+import { navigateBackWithFallback } from 'helpers/navigation';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
 import { LoginTypes } from 'store/authStore/types';
@@ -20,8 +22,9 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 import { SorobanService, ToastService } from 'services/globalServices';
 
-import { PoolProcessed } from 'types/amm';
+import { PoolCreationFeeInfo, PoolExtended, PoolProcessed } from 'types/amm';
 import { Transaction } from 'types/stellar';
+import { Token, TokenType } from 'types/token';
 
 import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
 import Tick from 'assets/icons/small-icons/check/check-11x9.svg';
@@ -51,6 +54,12 @@ import {
 } from 'styles/sharedFormPage.styled';
 import { Breakpoints, COLORS } from 'styles/style-constants';
 
+import ConcentratedAddLiquidityForm, {
+    ConcentratedAddLiquidityFormData,
+} from '../components/AddLiquidity/Concentrated/form/ConcentratedAddLiquidityForm';
+import AddLiquidityForm, {
+    AddLiquidityFormData,
+} from '../components/AddLiquidity/Regular/AddLiquidityForm';
 import ContractNotFound from '../components/ContractNotFound/ContractNotFound';
 import PoolsList from '../components/PoolsList/PoolsList';
 
@@ -206,6 +215,45 @@ const STABLE_POOL_FEE_PERCENTS = {
     default: '0.1',
 };
 
+const buildCreatePoolPreview = (
+    tokens: Token[],
+    poolType: POOL_TYPE,
+    fee: string,
+    tickSpacing?: number,
+): PoolExtended => ({
+    index: '',
+    address: '',
+    share_token_address: '',
+    tokens_addresses: tokens.map(token => token.contract),
+    reserves: tokens.map(() => '0'),
+    pool_type: poolType,
+    fee,
+    a: null,
+    deposit_killed: false,
+    swap_killed: false,
+    claim_killed: false,
+    share_token_decimals: 0,
+    tokens_str: tokens.map(token => token.code),
+    volume: '0',
+    liquidity: '0',
+    reward_tps: '0',
+    total_share: '0',
+    apy: '0',
+    liquidity_usd: '0',
+    volume_usd: '0',
+    apy_tier: 0,
+    rewards_tps: '0',
+    rewards_apy: '0',
+    incentive_tps_per_token: {},
+    incentive_apy_per_token: {},
+    incentive_apy: '0',
+    total_apy: '0',
+    tokens,
+    stats: [],
+    membersCount: 0,
+    tick_spacing: tickSpacing,
+});
+
 const CreatePool = () => {
     const [type, setType] = useState(POOL_TYPE.constant);
     const [assetsCount, setAssetsCount] = useState(2);
@@ -220,7 +268,11 @@ const CreatePool = () => {
     const [constantFee, setConstantFee] = useState(10);
     const [stableFee, setStableFee] = useState(STABLE_POOL_FEE_PERCENTS.default);
     const [pending, setPending] = useState(false);
-    const [createInfo, setCreateInfo] = useState(null);
+    const [createInfo, setCreateInfo] = useState<PoolCreationFeeInfo | null>(null);
+    const [regularDepositFormData, setRegularDepositFormData] =
+        useState<AddLiquidityFormData | null>(null);
+    const [concentratedDepositFormData, setConcentratedDepositFormData] =
+        useState<ConcentratedAddLiquidityFormData | null>(null);
 
     const [agreeWithFee, setAgreeWithFee] = useState(false);
 
@@ -236,7 +288,7 @@ const CreatePool = () => {
             Number(stableFee) > Number(STABLE_POOL_FEE_PERCENTS.max));
 
     useEffect(() => {
-        if (type === POOL_TYPE.constant) {
+        if (type === POOL_TYPE.constant || type === POOL_TYPE.concentrated) {
             setAssetsCount(2);
             setThirdAsset(null);
             setFourthAsset(null);
@@ -270,7 +322,7 @@ const CreatePool = () => {
                 ) &&
                 selectedAssets.length === pool.tokens.length &&
                 type === pool.pool_type &&
-                +(type === POOL_TYPE.constant ? constantFee / 100 : stableFee) ===
+                +(type === POOL_TYPE.stable ? stableFee : constantFee / 100) ===
                     +(Number(pool.fee) * 100).toFixed(2),
         );
     }, [pools, firstAsset, secondAsset, thirdAsset, fourthAsset, type, stableFee, constantFee]);
@@ -323,42 +375,131 @@ const CreatePool = () => {
         });
     }, [fourthAsset]);
 
-    const signAndSubmitCreation = (tx: Transaction) =>
+    const signAndSubmitCreation = (tx: Transaction, poolAddress: string) =>
         account
             .signAndSubmitTx(tx, true)
-            .then(
-                (res: {
-                    status?: BuildSignAndSubmitStatuses;
-                    value: () => {
-                        value: () => { value: () => { toString: (format: string) => string } };
-                    }[];
-                }) => {
-                    setPending(false);
-                    if (!res) {
-                        return;
-                    }
+            .then((res: { status?: BuildSignAndSubmitStatuses }) => {
+                setPending(false);
+                if (!res) {
+                    return;
+                }
 
-                    if (
-                        (res as { status: BuildSignAndSubmitStatuses }).status ===
-                        BuildSignAndSubmitStatuses.pending
-                    ) {
-                        ToastService.showSuccessToast('More signatures required to complete');
-                        return;
-                    }
-                    const poolAddress = SorobanService.scVal.scValToNative(
-                        res.value()[1] as xdr.ScVal,
-                    );
-                    ToastService.showSuccessToast('Pool successfully created');
-                    navigate(AppRoutes.section.amm.to.pool({ poolAddress }));
-                },
-            )
+                if (
+                    (res as { status: BuildSignAndSubmitStatuses }).status ===
+                    BuildSignAndSubmitStatuses.pending
+                ) {
+                    ToastService.showSuccessToast('More signatures required to complete');
+                    return;
+                }
+                ToastService.showSuccessToast('Pool successfully created');
+                navigate(AppRoutes.section.amm.to.pool({ poolAddress }));
+            })
             .catch(e => {
                 const text = ErrorHandler(e);
                 ToastService.showErrorToast(text);
                 setPending(false);
             });
 
+    const selectedAssets = useMemo(
+        () =>
+            [firstAsset, secondAsset, thirdAsset, fourthAsset].filter(
+                asset => asset !== null,
+            ) as Token[],
+        [firstAsset, secondAsset, thirdAsset, fourthAsset],
+    );
+
+    const orderedConcentratedAssets = useMemo(
+        () =>
+            selectedAssets.length === 2
+                ? SorobanService.token.orderTokens([...selectedAssets])
+                : selectedAssets,
+        [selectedAssets],
+    );
+
+    const createPoolPreview = useMemo(() => {
+        if (!selectedAssets.length) {
+            return null;
+        }
+
+        if (type === POOL_TYPE.concentrated) {
+            return buildCreatePoolPreview(
+                orderedConcentratedAssets,
+                type,
+                String(constantFee / 10000),
+                CONCENTRATED_TICK_SPACING_BY_FEE[constantFee],
+            );
+        }
+
+        return buildCreatePoolPreview(
+            selectedAssets,
+            type,
+            String((type === POOL_TYPE.stable ? Number(stableFee) : constantFee / 100) / 100),
+        );
+    }, [selectedAssets, orderedConcentratedAssets, type, constantFee, stableFee]);
+
+    const hasAllSelectedAssets =
+        !!firstAsset &&
+        !!secondAsset &&
+        (assetsCount < 3 || !!thirdAsset) &&
+        (assetsCount < 4 || !!fourthAsset);
+    const hasContractErrors = [
+        firstAssetStatus,
+        secondAssetStatus,
+        thirdAssetStatus,
+        fourthAssetStatus,
+    ].some(status => status === CONTRACT_STATUS.NOT_FOUND);
+    const isPoolConfigurationValid =
+        hasAllSelectedAssets &&
+        !hasContractErrors &&
+        !isStableFeeInputError &&
+        (type !== POOL_TYPE.stable || !!stableFee) &&
+        !existingPools.length;
+    const isRegularInitialDepositValid = !!regularDepositFormData?.hasAllAmounts;
+    const isConcentratedInitialDepositValid =
+        !!concentratedDepositFormData &&
+        !concentratedDepositFormData.isDepositDisabled &&
+        concentratedDepositFormData.tickLower !== null &&
+        concentratedDepositFormData.tickUpper !== null;
+    const hasValidInitialDeposit =
+        type === POOL_TYPE.concentrated
+            ? isConcentratedInitialDepositValid
+            : isRegularInitialDepositValid;
+
+    useEffect(() => {
+        setRegularDepositFormData(null);
+        setConcentratedDepositFormData(null);
+    }, [
+        type,
+        firstAsset,
+        secondAsset,
+        thirdAsset,
+        fourthAsset,
+        assetsCount,
+        constantFee,
+        stableFee,
+    ]);
+
+    const getInsufficientBalanceTokens = (
+        assets: Token[],
+        balances: Map<string, string> | null,
+        amounts: Map<string, string>,
+    ) =>
+        assets.filter(asset => {
+            const requestedAmount =
+                amounts.get(getAssetString(asset)) || amounts.get(asset.contract) || '0';
+            const availableBalance =
+                asset.type === TokenType.soroban
+                    ? balances?.get(getAssetString(asset)) || '0'
+                    : String(account?.getAssetBalance(asset) || '0');
+
+            return new BigNumber(availableBalance).lt(requestedAmount);
+        });
+
     const createStablePool = () => {
+        if (!account || !createInfo || !regularDepositFormData) {
+            return;
+        }
+
         if (
             createInfo &&
             Number(account.getAssetBalance(createInfo.token)) < Number(createInfo.stableFee)
@@ -369,6 +510,21 @@ const CreatePool = () => {
             return;
         }
 
+        const insufficientBalanceTokens = getInsufficientBalanceTokens(
+            selectedAssets,
+            regularDepositFormData.balances,
+            regularDepositFormData.amounts,
+        );
+
+        if (insufficientBalanceTokens.length) {
+            ToastService.showErrorToast(
+                `Insufficient balance ${insufficientBalanceTokens
+                    .map(({ code }) => code)
+                    .join(' ')}`,
+            );
+            return;
+        }
+
         if (account.authType === LoginTypes.walletConnect) {
             openCurrentWalletIfExist();
         }
@@ -376,13 +532,14 @@ const CreatePool = () => {
         setPending(true);
 
         SorobanService.amm
-            .getInitStableSwapPoolTx(
+            .getCreateAndDepositStablePoolTx(
                 account.accountId(),
-                [firstAsset, secondAsset, thirdAsset, fourthAsset].filter(asset => asset !== null),
+                selectedAssets,
                 Number(stableFee),
                 createInfo,
+                regularDepositFormData.amounts,
             )
-            .then(tx => signAndSubmitCreation(tx))
+            .then(({ tx, poolAddress }) => signAndSubmitCreation(tx, poolAddress))
             .catch(e => {
                 ToastService.showErrorToast(e.message ?? e.toString());
                 setPending(false);
@@ -390,6 +547,10 @@ const CreatePool = () => {
     };
 
     const createConstantPool = () => {
+        if (!account || !createInfo || !regularDepositFormData || !firstAsset || !secondAsset) {
+            return;
+        }
+
         if (
             createInfo &&
             Number(account.getAssetBalance(createInfo.token)) < Number(createInfo.constantFee)
@@ -399,19 +560,101 @@ const CreatePool = () => {
             );
             return;
         }
+
+        const insufficientBalanceTokens = getInsufficientBalanceTokens(
+            [firstAsset, secondAsset],
+            regularDepositFormData.balances,
+            regularDepositFormData.amounts,
+        );
+
+        if (insufficientBalanceTokens.length) {
+            ToastService.showErrorToast(
+                `Insufficient balance ${insufficientBalanceTokens
+                    .map(({ code }) => code)
+                    .join(' ')}`,
+            );
+            return;
+        }
+
         if (account.authType === LoginTypes.walletConnect) {
             openCurrentWalletIfExist();
         }
         setPending(true);
         SorobanService.amm
-            .getInitConstantPoolTx(
+            .getCreateAndDepositConstantPoolTx(
                 account.accountId(),
                 firstAsset,
                 secondAsset,
                 constantFee,
                 createInfo,
+                regularDepositFormData.amounts,
             )
-            .then(tx => signAndSubmitCreation(tx))
+            .then(({ tx, poolAddress }) => signAndSubmitCreation(tx, poolAddress))
+            .catch(e => {
+                ToastService.showErrorToast(e.message ?? e.toString());
+                setPending(false);
+            });
+    };
+
+    const createConcentratedPool = () => {
+        if (
+            !account ||
+            !createInfo ||
+            !concentratedDepositFormData ||
+            !firstAsset ||
+            !secondAsset ||
+            concentratedDepositFormData.tickLower === null ||
+            concentratedDepositFormData.tickUpper === null
+        ) {
+            return;
+        }
+
+        if (
+            createInfo &&
+            Number(account.getAssetBalance(createInfo.token)) < Number(createInfo.concentratedFee)
+        ) {
+            ToastService.showErrorToast(
+                `You need at least ${createInfo.concentratedFee} ${createInfo.token.code} to create pool`,
+            );
+            return;
+        }
+
+        const [baseToken, counterToken] = orderedConcentratedAssets;
+        const desiredAmounts = new Map([
+            [baseToken.contract, concentratedDepositFormData.amount0 || '0'],
+            [counterToken.contract, concentratedDepositFormData.amount1 || '0'],
+        ]);
+        const insufficientBalanceTokens = getInsufficientBalanceTokens(
+            [baseToken, counterToken],
+            concentratedDepositFormData.tokenBalances,
+            desiredAmounts,
+        );
+
+        if (insufficientBalanceTokens.length) {
+            ToastService.showErrorToast(
+                `Insufficient balance ${insufficientBalanceTokens
+                    .map(({ code }) => code)
+                    .join(' ')}`,
+            );
+            return;
+        }
+
+        if (account.authType === LoginTypes.walletConnect) {
+            openCurrentWalletIfExist();
+        }
+        setPending(true);
+        SorobanService.amm
+            .getCreateAndDepositConcentratedPoolTx(
+                account.accountId(),
+                baseToken,
+                counterToken,
+                constantFee,
+                createInfo,
+                concentratedDepositFormData.tickLower,
+                concentratedDepositFormData.tickUpper,
+                desiredAmounts,
+            )
+            .then(({ tx, poolAddress }) => signAndSubmitCreation(tx, poolAddress))
             .catch(e => {
                 ToastService.showErrorToast(e.message ?? e.toString());
                 setPending(false);
@@ -421,6 +664,9 @@ const CreatePool = () => {
     const createPool = () => {
         if (type === POOL_TYPE.stable) {
             return createStablePool();
+        }
+        if (type === POOL_TYPE.concentrated) {
+            return createConcentratedPool();
         }
         createConstantPool();
     };
@@ -447,7 +693,12 @@ const CreatePool = () => {
         <PageContainer>
             <FormPageHeaderWrap>
                 <FormPageContentWrap>
-                    <FormBackButton label="Pools" to={AppRoutes.section.amm.link.index}>
+                    <FormBackButton
+                        label="Pools"
+                        onClick={() =>
+                            navigateBackWithFallback(navigate, AppRoutes.section.amm.link.index)
+                        }
+                    >
                         <ArrowLeft />
                     </FormBackButton>
 
@@ -490,6 +741,19 @@ const CreatePool = () => {
                                 </div>
                                 <Tick />
                             </PoolType>
+                            <PoolType
+                                $isActive={type === POOL_TYPE.concentrated}
+                                onClick={() => setType(POOL_TYPE.concentrated)}
+                            >
+                                <div>
+                                    <h3>Concentrated</h3>
+                                    <p>
+                                        Concentrated liquidity model with custom tick ranges and
+                                        better capital efficiency.
+                                    </p>
+                                </div>
+                                <Tick />
+                            </PoolType>
                             {type === POOL_TYPE.stable && (
                                 <Alert
                                     title="Note:"
@@ -500,6 +764,12 @@ const CreatePool = () => {
 
                         <StyledFormSection>
                             <FormSectionTitle>Select tokens for pool</FormSectionTitle>
+                            {type === POOL_TYPE.concentrated && (
+                                <Alert
+                                    title="Rebasing yield is not supported"
+                                    text="You can create a concentrated pool with rebasing tokens, but any balance growth or yield accrual will not be reflected inside concentrated positions."
+                                />
+                            )}
                             <StyledAssetDropdown
                                 label="First asset"
                                 asset={firstAsset}
@@ -649,6 +919,39 @@ const CreatePool = () => {
                             )}
                         </StyledFormSection>
 
+                        {isPoolConfigurationValid && createPoolPreview && (
+                            <StyledFormSection>
+                                <FormSectionTitle>Initial deposit</FormSectionTitle>
+                                <FormSectionDescriptionStyled>
+                                    Initial deposit is required. Pool creation and first deposit
+                                    will be executed in a single batch transaction.
+                                </FormSectionDescriptionStyled>
+                                <Alert
+                                    title="Required step"
+                                    text="You cannot create a pool without funding it in the same transaction."
+                                />
+                                {type === POOL_TYPE.concentrated ? (
+                                    <ConcentratedAddLiquidityForm
+                                        pool={createPoolPreview}
+                                        onDataChange={setConcentratedDepositFormData}
+                                        initialTickSpacing={
+                                            CONCENTRATED_TICK_SPACING_BY_FEE[constantFee]
+                                        }
+                                        skipPoolDataLoading
+                                        disableNetworkEstimate
+                                    />
+                                ) : (
+                                    <AddLiquidityForm
+                                        pool={createPoolPreview}
+                                        onDataChange={setRegularDepositFormData}
+                                        showPoolSummaryRows={false}
+                                        showPoolInfo={false}
+                                        withPoolInfoCardSpacing={false}
+                                    />
+                                )}
+                            </StyledFormSection>
+                        )}
+
                         <StyledFormSection>
                             <FormSectionTitle>Pool creation fee</FormSectionTitle>
                             <FormSectionDescriptionStyled>
@@ -660,9 +963,13 @@ const CreatePool = () => {
                                     <AssetLogo asset={createInfo.token} isCircle={false} />
                                     <span>
                                         {formatBalance(
-                                            type === POOL_TYPE.stable
-                                                ? createInfo.stableFee
-                                                : createInfo.constantFee,
+                                            Number(
+                                                type === POOL_TYPE.stable
+                                                    ? createInfo.stableFee
+                                                    : type === POOL_TYPE.concentrated
+                                                      ? createInfo.concentratedFee
+                                                      : createInfo.constantFee,
+                                            ),
                                         )}{' '}
                                         {createInfo.token.code}
                                     </span>
@@ -679,6 +986,7 @@ const CreatePool = () => {
                                 onClick={() => createPool()}
                                 pending={pending}
                                 disabled={
+                                    !account ||
                                     !agreeWithFee ||
                                     !firstAsset ||
                                     !secondAsset ||
@@ -691,11 +999,12 @@ const CreatePool = () => {
                                         fourthAssetStatus,
                                     ].some(status => status === CONTRACT_STATUS.NOT_FOUND) ||
                                     isStableFeeInputError ||
-                                    !stableFee ||
-                                    Boolean(existingPools.length)
+                                    (type === POOL_TYPE.stable && !stableFee) ||
+                                    Boolean(existingPools.length) ||
+                                    !hasValidInitialDeposit
                                 }
                             >
-                                Create pool
+                                Create pool and deposit
                             </Button>
                         </StyledFormSection>
                     </StyledForm>
@@ -704,7 +1013,12 @@ const CreatePool = () => {
                             <StyledFormSection>
                                 <FormSectionTitle>Existing pools</FormSectionTitle>
                                 <FormDescription>
-                                    {type === POOL_TYPE.constant ? 'Volatile' : 'Stable'} pool{' '}
+                                    {type === POOL_TYPE.constant
+                                        ? 'Volatile'
+                                        : type === POOL_TYPE.stable
+                                          ? 'Stable'
+                                          : 'Concentrated'}{' '}
+                                    pool{' '}
                                     {existingPools[0].tokens.map(({ code }) => code).join(' / ')}{' '}
                                     with fee = {(Number(existingPools[0].fee) * 100).toFixed(2)}%
                                     already exists.

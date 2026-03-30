@@ -1,4 +1,8 @@
+import { useNavigate } from 'react-router-dom';
+
 import { AppRoutes } from 'constants/routes';
+
+import { navigateBackWithFallback } from 'helpers/navigation';
 
 import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
 
@@ -21,12 +25,18 @@ import { useBribeForm } from './hooks/useBribeForm';
 
 const AddBribePage = () => {
     const form = useBribeForm();
+    const navigate = useNavigate();
 
     return (
         <PageContainer>
             <FormPageHeaderWrap>
                 <FormPageContentWrap>
-                    <FormBackButton label="Bribes" to={AppRoutes.section.bribes.link.index}>
+                    <FormBackButton
+                        label="Bribes"
+                        onClick={() =>
+                            navigateBackWithFallback(navigate, AppRoutes.section.bribes.link.index)
+                        }
+                    >
                         <ArrowLeft />
                     </FormBackButton>
                     <FormPageHeaderTitle>Create Bribe</FormPageHeaderTitle>
