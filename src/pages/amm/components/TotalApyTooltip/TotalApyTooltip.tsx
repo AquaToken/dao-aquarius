@@ -133,117 +133,127 @@ interface Props {
     userBoost?: number;
 }
 
-const TotalApyTooltip = ({ pool, withBoost, userBoost }: Props) => (
-    <Container>
-        {withBoost && (
-            <BoostBlock to={AppRoutes.section.locker.link.index}>
-                <BoostBlockContent>
-                    <Label
-                        color={COLORS.blue700}
-                        background={COLORS.white}
-                        labelSize="big"
-                        labelText={
-                            <LabelText>
-                                <IconBoost /> ICE BOOST
-                            </LabelText>
-                        }
-                        withoutBorder
-                    />
-                    <span>
-                        Boost AQUA rewards up to 2.5× with your <b>ICE balance</b>
-                    </span>
-                </BoostBlockContent>
-                <WhiteArrow />
-            </BoostBlock>
-        )}
-        <ContentBlock>
-            {!!Number(pool.apy) || (!Number(pool.rewards_apy) && !Number(pool.incentive_apy)) ? (
-                <ContentRow>
-                    <Title>Swap Fees:</Title>
-                    <Value>{apyValueToDisplay(pool.apy)}</Value>
-                </ContentRow>
-            ) : null}
+const TotalApyTooltip = ({ pool, withBoost, userBoost }: Props) => {
+    const boostMultiplier = userBoost || 2.5;
+    const boostedRewardsApy = (+pool.rewards_apy || 0) * boostMultiplier;
+    const boostedIncentiveApy = (+pool.incentive_apy || 0) * boostMultiplier;
+    const totalBoostedApy = boostedRewardsApy + boostedIncentiveApy + (+pool.apy || 0);
 
-            {!!Number(pool.rewards_apy) && (
-                <ContentRow>
-                    <Title>AQUA Rewards{userBoost ? '' : withBoost ? ' (Max)' : ' (Base)'}:</Title>
-                    <Value>
-                        {withBoost ? (
-                            <>
-                                <Cross>{apyValueToDisplay(pool.rewards_apy)}</Cross>
-                                <LabelText>
-                                    <IconBoost />{' '}
-                                    {apyValueToDisplay(
-                                        (+pool.rewards_apy * (userBoost || 2.5)).toString(),
-                                    )}
-                                </LabelText>
-                            </>
-                        ) : (
-                            apyValueToDisplay(pool.rewards_apy)
-                        )}
-                    </Value>
-                </ContentRow>
-            )}
-            {!!Number(pool.incentive_apy) && (
-                <ContentRow>
-                    <Title>Extra Incentives:</Title>
-                    <Value>{apyValueToDisplay(pool.incentive_apy)}</Value>
-                </ContentRow>
-            )}
-            {!withBoost && (
-                <ContentRowWithBackground $background={hexWithOpacity(COLORS.gray200, 20)}>
-                    <Title>Total APR:</Title>
-                    <Value>{apyValueToDisplay(pool.total_apy)}</Value>
-                </ContentRowWithBackground>
-            )}
-            {Boolean(userBoost) && (
-                <ContentRowWithBackground $background={hexWithOpacity(COLORS.purple500, 10)}>
-                    <Title>Your Boost APR:</Title>
-                    <Value>
-                        <LabelTextTotal>
-                            <IconBoost />
-                            {apyValueToDisplay(
-                                (
-                                    (+pool.rewards_apy || 0) * userBoost +
-                                    (+pool.apy || 0) +
-                                    (+pool.incentive_apy || 0)
-                                ).toString(),
-                            )}
-                        </LabelTextTotal>
-                        <Label
-                            background={COLORS.blue700}
-                            labelSize="medium"
-                            labelText={
-                                userBoost === 1
-                                    ? 'No boost'
-                                    : userBoost < 1.01
-                                    ? 'X<1.01'
-                                    : `X${userBoost.toFixed(2)}`
-                            }
-                        />
-                    </Value>
-                </ContentRowWithBackground>
-            )}
+    return (
+        <Container>
             {withBoost && (
-                <ContentRowWithBackground $background={hexWithOpacity(COLORS.blue700, 10)}>
-                    <Title>Max Boost APR:</Title>
-                    <Value>
-                        <Cross>{apyValueToDisplay(pool.total_apy)}</Cross>
-                        <LabelTextTotal>
-                            <IconBoost />
-                            {apyValueToDisplay(
-                                (
-                                    (+pool.rewards_apy || 0) * 2.5 +
-                                    (+pool.apy || 0) +
-                                    (+pool.incentive_apy || 0)
-                                ).toString(),
-                            )}
-                        </LabelTextTotal>
-                    </Value>
-                </ContentRowWithBackground>
+                <BoostBlock to={AppRoutes.section.locker.link.index}>
+                    <BoostBlockContent>
+                        <Label
+                            color={COLORS.blue700}
+                            background={COLORS.white}
+                            labelSize="big"
+                            labelText={
+                                <LabelText>
+                                    <IconBoost /> ICE BOOST
+                                </LabelText>
+                            }
+                            withoutBorder
+                        />
+                        <span>
+                            Boost rewards and incentives up to 2.5× with your <b>ICE balance</b>
+                        </span>
+                    </BoostBlockContent>
+                    <WhiteArrow />
+                </BoostBlock>
             )}
-        </ContentBlock>
-    </Container>
-);
+            <ContentBlock>
+                {!!Number(pool.apy) ||
+                (!Number(pool.rewards_apy) && !Number(pool.incentive_apy)) ? (
+                    <ContentRow>
+                        <Title>Swap Fees:</Title>
+                        <Value>{apyValueToDisplay(pool.apy)}</Value>
+                    </ContentRow>
+                ) : null}
+
+                {!!Number(pool.rewards_apy) && (
+                    <ContentRow>
+                        <Title>
+                            AQUA Rewards{userBoost ? '' : withBoost ? ' (Max)' : ' (Base)'}:
+                        </Title>
+                        <Value>
+                            {withBoost ? (
+                                <>
+                                    <Cross>{apyValueToDisplay(pool.rewards_apy)}</Cross>
+                                    <LabelText>
+                                        <IconBoost />{' '}
+                                        {apyValueToDisplay(boostedRewardsApy.toString())}
+                                    </LabelText>
+                                </>
+                            ) : (
+                                apyValueToDisplay(pool.rewards_apy)
+                            )}
+                        </Value>
+                    </ContentRow>
+                )}
+                {!!Number(pool.incentive_apy) && (
+                    <ContentRow>
+                        <Title>
+                            Extra Incentives{userBoost ? '' : withBoost ? ' (Max)' : ' (Base)'}:
+                        </Title>
+                        <Value>
+                            {withBoost ? (
+                                <>
+                                    <Cross>{apyValueToDisplay(pool.incentive_apy)}</Cross>
+                                    <LabelText>
+                                        <IconBoost />{' '}
+                                        {apyValueToDisplay(boostedIncentiveApy.toString())}
+                                    </LabelText>
+                                </>
+                            ) : (
+                                apyValueToDisplay(pool.incentive_apy)
+                            )}
+                        </Value>
+                    </ContentRow>
+                )}
+                {!withBoost && (
+                    <ContentRowWithBackground $background={hexWithOpacity(COLORS.gray200, 20)}>
+                        <Title>Total APR:</Title>
+                        <Value>{apyValueToDisplay(pool.total_apy)}</Value>
+                    </ContentRowWithBackground>
+                )}
+                {Boolean(userBoost) && (
+                    <ContentRowWithBackground $background={hexWithOpacity(COLORS.purple500, 10)}>
+                        <Title>Your Boost APR:</Title>
+                        <Value>
+                            <LabelTextTotal>
+                                <IconBoost />
+                                {apyValueToDisplay(totalBoostedApy.toString())}
+                            </LabelTextTotal>
+                            <Label
+                                background={COLORS.blue700}
+                                labelSize="medium"
+                                labelText={
+                                    userBoost === 1
+                                        ? 'No boost'
+                                        : userBoost < 1.01
+                                          ? 'X<1.01'
+                                          : `X${userBoost.toFixed(2)}`
+                                }
+                            />
+                        </Value>
+                    </ContentRowWithBackground>
+                )}
+                {withBoost && (
+                    <ContentRowWithBackground $background={hexWithOpacity(COLORS.blue700, 10)}>
+                        <Title>Max Boost APR:</Title>
+                        <Value>
+                            <Cross>{apyValueToDisplay(pool.total_apy)}</Cross>
+                            <LabelTextTotal>
+                                <IconBoost />
+                                {apyValueToDisplay(totalBoostedApy.toString())}
+                            </LabelTextTotal>
+                        </Value>
+                    </ContentRowWithBackground>
+                )}
+            </ContentBlock>
+        </Container>
+    );
+};
 
 export default TotalApyTooltip;

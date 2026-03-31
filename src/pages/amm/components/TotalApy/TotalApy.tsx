@@ -29,72 +29,82 @@ interface Props {
     userBoost?: number;
 }
 
-const TotalApy = ({ pool, userBoost }: Props) => (
-    <Container>
-        {(!userBoost || (Boolean(userBoost) && !Number(pool.rewards_apy))) && (
-            <Tooltip
-                content={<TotalApyTooltip pool={pool} />}
-                showOnHover
-                background={COLORS.white}
-                color={COLORS.textTertiary}
-                withoutPadding
-            >
-                <Label
-                    labelText={apyValueToDisplay(pool.total_apy)}
-                    labelSize="extraLarge"
-                    background={hexWithOpacity(COLORS.gray200, 20)}
-                    color={COLORS.textTertiary}
-                    withoutBorder
-                    fontWeight={400}
-                />
-            </Tooltip>
-        )}
+const TotalApy = ({ pool, userBoost }: Props) => {
+    const hasRewardsApy = Boolean(Number(pool.rewards_apy));
+    const hasIncentivesApy = Boolean(Number(pool.incentive_apy));
+    const hasAdditionalApy = hasRewardsApy || hasIncentivesApy;
+    const boostMultiplier = userBoost || 2.5;
 
-        {Boolean(Number(pool.rewards_apy)) && (
-            <Tooltip
-                content={<TotalApyTooltip pool={pool} withBoost userBoost={userBoost} />}
-                showOnHover
-                background={COLORS.white}
-                color={COLORS.textTertiary}
-                withoutPadding
-            >
-                <Label
-                    labelText={
-                        <LabelContent>
-                            <IconBoost />
-                            {apyValueToDisplay(
-                                (
-                                    (+pool.rewards_apy || 0) * (userBoost || 2.5) +
-                                    (+pool.apy || 0) +
-                                    (+pool.incentive_apy || 0)
-                                ).toString(),
-                            )}
-                        </LabelContent>
-                    }
-                    labelSize="extraLarge"
-                    background={hexWithOpacity(userBoost ? COLORS.purple500 : COLORS.blue700, 10)}
+    return (
+        <Container>
+            {(!userBoost || (Boolean(userBoost) && !hasAdditionalApy)) && (
+                <Tooltip
+                    content={<TotalApyTooltip pool={pool} />}
+                    showOnHover
+                    background={COLORS.white}
                     color={COLORS.textTertiary}
+                    withoutPadding
+                >
+                    <Label
+                        labelText={apyValueToDisplay(pool.total_apy)}
+                        labelSize="extraLarge"
+                        background={hexWithOpacity(COLORS.gray200, 20)}
+                        color={COLORS.textTertiary}
+                        withoutBorder
+                        fontWeight={400}
+                    />
+                </Tooltip>
+            )}
+
+            {hasAdditionalApy && (
+                <Tooltip
+                    content={<TotalApyTooltip pool={pool} withBoost userBoost={userBoost} />}
+                    showOnHover
+                    background={COLORS.white}
+                    color={COLORS.textTertiary}
+                    withoutPadding
+                >
+                    <Label
+                        labelText={
+                            <LabelContent>
+                                <IconBoost />
+                                {apyValueToDisplay(
+                                    (
+                                        ((+pool.rewards_apy || 0) + (+pool.incentive_apy || 0)) *
+                                            boostMultiplier +
+                                        (+pool.apy || 0)
+                                    ).toString(),
+                                )}
+                            </LabelContent>
+                        }
+                        labelSize="extraLarge"
+                        background={hexWithOpacity(
+                            userBoost ? COLORS.purple500 : COLORS.blue700,
+                            10,
+                        )}
+                        color={COLORS.textTertiary}
+                        withoutBorder
+                        fontWeight={400}
+                    />
+                </Tooltip>
+            )}
+            {!!userBoost && hasAdditionalApy && (
+                <Label
+                    background={COLORS.blue700}
+                    labelSize="extraLarge"
                     withoutBorder
-                    fontWeight={400}
+                    fontWeight={700}
+                    labelText={
+                        userBoost === 1
+                            ? 'No boost'
+                            : userBoost < 1.01
+                              ? 'X<1.01'
+                              : `X${userBoost.toFixed(2)}`
+                    }
                 />
-            </Tooltip>
-        )}
-        {!!userBoost && !!Number(pool.rewards_apy) && (
-            <Label
-                background={COLORS.blue700}
-                labelSize="extraLarge"
-                withoutBorder
-                fontWeight={700}
-                labelText={
-                    userBoost === 1
-                        ? 'No boost'
-                        : userBoost < 1.01
-                        ? 'X<1.01'
-                        : `X${userBoost.toFixed(2)}`
-                }
-            />
-        )}
-    </Container>
-);
+            )}
+        </Container>
+    );
+};
 
 export default TotalApy;
