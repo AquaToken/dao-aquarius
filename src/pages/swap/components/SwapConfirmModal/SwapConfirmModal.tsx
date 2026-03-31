@@ -6,6 +6,8 @@ import styled from 'styled-components';
 
 import { getPathPoolsFee } from 'api/amm';
 
+import { BASE_FEE } from 'constants/stellar';
+
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
@@ -263,7 +265,7 @@ const SwapConfirmModal = ({
                 <span>
                     {txFee !== null ? (
                         `${formatBalance(
-                            +(STROOP * (Number(txFee) + Number(StellarSdk.BASE_FEE))).toFixed(7),
+                            +(STROOP * (Number(txFee) + Number(BASE_FEE))).toFixed(7),
                         )} XLM`
                     ) : (
                         <DotsLoader />
