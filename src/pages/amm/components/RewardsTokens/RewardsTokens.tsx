@@ -159,9 +159,7 @@ const RewardsTokens = ({ pool, myRewards, myIncentives }: Props) => {
                         </>
                     )}
 
-                    {(hasIncentives || (!!myIncentives?.length && !!myRewards)) && (
-                        <TooltipDivider />
-                    )}
+                    {hasIncentives && hasRewards && <TooltipDivider />}
 
                     {(Boolean(Number(pool.incentive_apy)) || !!myIncentives?.length) && (
                         <>
@@ -219,7 +217,7 @@ const RewardsTokens = ({ pool, myRewards, myIncentives }: Props) => {
                     </BlockWithIcon>
                 )}
 
-                {(hasIncentives || (!!myIncentives?.length && !!myRewards)) && <Divider />}
+                {hasIncentives && hasRewards && <Divider />}
 
                 {(hasIncentives || !!myIncentives?.length) && (
                     <Logos>
