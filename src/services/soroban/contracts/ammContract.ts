@@ -1581,6 +1581,36 @@ export default class AmmContract {
             });
     }
 
+    estimateConcentratedWorkingBalanceAndSupply(
+        accountId: string,
+        poolId: string,
+        tickLower: number,
+        tickUpper: number,
+        liquidity: string,
+    ): Promise<{
+        workingBalance: number;
+        workingSupply: number;
+    }> {
+        return this.connection
+            .buildSmartContractTx(
+                accountId,
+                poolId,
+                AMM_CONTRACT_METHOD.ESTIMATE_WORKING_BALANCE,
+                publicKeyToScVal(accountId),
+                tickToScVal(tickLower),
+                tickToScVal(tickUpper),
+                amountToUint128(liquidity, 0),
+            )
+            .then(tx => this.connection.simulateTx(tx))
+            .then(res => {
+                const [workingBalance, workingSupply] = (
+                    res.result.retval.value() as unknown as Array<xdr.ScVal>
+                ).map(v => Number(i128ToInt(v)));
+
+                return { workingBalance, workingSupply };
+            });
+    }
+
     getConcentratedPoolInfo(poolId: string): Promise<ConcentratedPoolInfo> {
         return this.connection
             .buildSmartContractTx(ACCOUNT_FOR_SIMULATE, poolId, AMM_CONTRACT_METHOD.GET_INFO)
@@ -1638,6 +1668,10 @@ export default class AmmContract {
             )
             .then(tx => this.connection.simulateTx(tx))
             .then(({ result }) => {
+                if (!result?.retval) {
+                    return null;
+                }
+
                 const native = scValToNative(result.retval) as Record<string, unknown>;
                 if (!native) {
                     return null;
@@ -1672,6 +1706,7 @@ export default class AmmContract {
             .then(({ result }) => {
                 const [amountsScVal, liquidityScVal] =
                     result.retval.value() as unknown as xdr.ScVal[];
+
                 return {
                     amounts: parseTokenAmountsScVal(
                         amountsScVal.value() as xdr.ScVal[],
