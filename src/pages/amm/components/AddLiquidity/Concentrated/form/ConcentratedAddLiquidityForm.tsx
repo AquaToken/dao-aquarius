@@ -1,15 +1,19 @@
 import * as React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
+
+import { getAssetString } from 'helpers/assets';
 
 import { DepositEstimate, PoolExtended } from 'types/amm';
 
 import Alert from 'basics/Alert';
 import PageLoader from 'basics/loaders/PageLoader';
 
-import { Container, Section } from '../styled/ConcentratedAddLiquidity.styled';
-import { useConcentratedAddLiquidityForm } from '../hooks/useConcentratedAddLiquidityForm';
 import AddLiquidityAmountsSection from './sections/AddLiquidityAmountsSection';
 import AddLiquidityPriceRangeSection from './sections/AddLiquidityPriceRangeSection';
+
+import AddLiquidityPoolInfo from '../../Regular/AddLiquidityPoolInfo';
+import { useConcentratedAddLiquidityForm } from '../hooks/useConcentratedAddLiquidityForm';
+import { Container, Section } from '../styled/ConcentratedAddLiquidity.styled';
 
 export type ConcentratedAddLiquidityFormData = {
     amount0: string;
@@ -46,6 +50,14 @@ const ConcentratedAddLiquidityForm = ({
         skipPoolDataLoading,
         disableNetworkEstimate,
     });
+    const amounts = useMemo(
+        () =>
+            new Map<string, string>([
+                [getAssetString(pool.tokens[0]), form.amount0],
+                [getAssetString(pool.tokens[1]), form.amount1],
+            ]),
+        [pool.tokens, form.amount0, form.amount1],
+    );
 
     useEffect(() => {
         if (!onDataChange) {
@@ -138,6 +150,14 @@ const ConcentratedAddLiquidityForm = ({
                                 onStepUpperUp={form.handleStepUpperUp}
                                 onMinPriceChange={form.handleMinPriceChange}
                                 onMaxPriceChange={form.handleMaxPriceChange}
+                            />
+
+                            <AddLiquidityPoolInfo
+                                pool={pool}
+                                amounts={amounts}
+                                tickLower={form.tickLower}
+                                tickUpper={form.tickUpper}
+                                withPoolInfoCardSpacing
                             />
                         </>
                     )}
