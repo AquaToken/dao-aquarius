@@ -126,14 +126,14 @@ const Asset = ({
     const assetInfo = isNative
         ? LumenInfo
         : assetInstance
-        ? assetsInfo.get(getAssetString(assetInstance as ClassicToken))
-        : null;
+          ? assetsInfo.get(getAssetString(assetInstance as ClassicToken))
+          : null;
 
     const domain = useMemo(() => {
         if (asset.type === TokenType.soroban) {
             return (
                 <DomainDetailsLink
-                    href={getExplorerLink(ExplorerSection.contract, asset.contract)}
+                    href={getExplorerLink(ExplorerSection.asset, asset.contract)}
                     target="_blank"
                 >
                     soroban token
@@ -204,7 +204,7 @@ const Asset = ({
                             {asset.type === TokenType.soroban ? (
                                 'Soroban Token'
                             ) : hasAssetInfo ? (
-                                assetInfo.home_domain ?? 'unknown'
+                                (assetInfo.home_domain ?? 'unknown')
                             ) : (
                                 <DotsLoader />
                             )}

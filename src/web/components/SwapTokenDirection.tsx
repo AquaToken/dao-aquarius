@@ -115,7 +115,7 @@ const SwapTokenDirection = ({ assets }: Props) => {
         e.stopPropagation();
 
         if (asset.type === TokenType.soroban) {
-            window.open(getExplorerLink(ExplorerSection.contract, asset.contract), '_blank');
+            window.open(getExplorerLink(ExplorerSection.asset, asset.contract), '_blank');
             return;
         }
 
