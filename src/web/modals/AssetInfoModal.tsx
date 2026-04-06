@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -9,9 +9,11 @@ import { AppRoutes } from 'constants/routes';
 
 import { getAssetString, getEnvClassicAssetData } from 'helpers/assets';
 import { getDateString } from 'helpers/date';
-import { getIsTestnetEnv } from 'helpers/env';
+import getExplorerLink, { ExplorerSection } from 'helpers/explorer-links';
 import { formatBalance } from 'helpers/format-number';
 import { createLumen } from 'helpers/token';
+
+import { useIsMounted } from 'hooks/useIsMounted';
 
 import { LumenInfo } from 'store/assetsStore/reducer';
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
@@ -143,9 +145,10 @@ const AssetInfoModal = ({ params }: ModalProps<AssetInfoModalParams>): React.Rea
     const { asset } = params;
 
     const [tomlInfo, setTomlInfo] = useState<StellarTomlType>({});
-    const [expertData, setExpertData] = useState<ExpertAssetData>(undefined);
+    const [expertData, setExpertData] = useState<ExpertAssetData | null>();
 
     const { assetsInfo } = useAssetsStore();
+    const isMounted = useIsMounted();
 
     const { desc, home_domain } = assetsInfo.get(getAssetString(asset)) || {};
     const {
@@ -160,22 +163,37 @@ const AssetInfoModal = ({ params }: ModalProps<AssetInfoModalParams>): React.Rea
         : assetsInfo.get(getAssetString(asset));
 
     useEffect(() => {
+        if (!home_domain) {
+            setTomlInfo({});
+            return;
+        }
+
         resolveToml(home_domain)
             .then(res => {
-                setTomlInfo(res);
+                if (isMounted.current) {
+                    setTomlInfo(res);
+                }
             })
             .catch(() => {
-                setTomlInfo({});
+                if (isMounted.current) {
+                    setTomlInfo({});
+                }
             });
+    }, [home_domain, isMounted]);
 
+    useEffect(() => {
         getAssetDetails(asset)
             .then(details => {
-                setExpertData(details);
+                if (isMounted.current) {
+                    setExpertData(details ?? null);
+                }
             })
             .catch(() => {
-                setExpertData(null);
+                if (isMounted.current) {
+                    setExpertData(null);
+                }
             });
-    }, []);
+    }, [asset, isMounted]);
 
     const xLink = useMemo(() => {
         if (!tomlInfo?.DOCUMENTATION?.ORG_TWITTER) {
@@ -198,6 +216,15 @@ const AssetInfoModal = ({ params }: ModalProps<AssetInfoModalParams>): React.Rea
         }
         return tomlInfo?.DOCUMENTATION?.ORG_GITHUB.split('/')[3];
     }, [tomlInfo]);
+
+    const authorizationFlags = [
+        assetInfo.auth_required && 'auth required',
+        assetInfo.auth_clawback_enabled && 'clawback enabled',
+        assetInfo.auth_immutable && 'immutable',
+        assetInfo.auth_revocable && 'revocable',
+    ]
+        .filter(Boolean)
+        .join(', ');
 
     return (
         <ModalWrapper $isWide>
@@ -227,9 +254,7 @@ const AssetInfoModal = ({ params }: ModalProps<AssetInfoModalParams>): React.Rea
                 )}
                 <ContactLink
                     target="_blank"
-                    href={`https://stellar.expert/explorer/${
-                        getIsTestnetEnv() ? 'testnet' : 'public'
-                    }/asset/${asset.code}-${asset.issuer}`}
+                    href={getExplorerLink(ExplorerSection.asset, getAssetString(asset))}
                 >
                     <ExternalBlack />
                     StellarExpert
@@ -242,10 +267,12 @@ const AssetInfoModal = ({ params }: ModalProps<AssetInfoModalParams>): React.Rea
                             <span>Asset holders:</span>
                             <span>{formatBalance(expertData.trustlines[0])}</span>
                         </Detail>
-                        <Detail>
-                            <span>First transaction:</span>
-                            <span>{getDateString(expertData.created * 1000)}</span>
-                        </Detail>
+                        {!asset.isNative() && (
+                            <Detail>
+                                <span>First transaction:</span>
+                                <span>{getDateString(expertData.created * 1000)}</span>
+                            </Detail>
+                        )}
                         <Detail>
                             <span>Overall payments volume:</span>
                             <span>
@@ -274,25 +301,17 @@ const AssetInfoModal = ({ params }: ModalProps<AssetInfoModalParams>): React.Rea
                             <span>24H change:</span>
                             <Changes24 expertData={expertData} />
                         </Detail>
-                        <Detail>
-                            <span>Issuer:</span>
-                            <CopyButtonStyled text={asset.issuer}>
-                                <PublicKeyWithIcon pubKey={asset.issuer} />
-                            </CopyButtonStyled>
-                        </Detail>
+                        {!asset.isNative() && (
+                            <Detail>
+                                <span>Issuer:</span>
+                                <CopyButtonStyled text={asset.issuer}>
+                                    <PublicKeyWithIcon pubKey={asset.issuer} />
+                                </CopyButtonStyled>
+                            </Detail>
+                        )}
                         <Detail>
                             <span>Authorization flags:</span>
-                            <span>
-                                {assetInfo.auth_required && 'auth required '}
-                                {assetInfo.auth_clawback_enabled && 'clawback enabled '}
-                                {assetInfo.auth_immutable && 'immutable '}
-                                {assetInfo.auth_revocable && 'revocable'}
-                                {!assetInfo.auth_required &&
-                                    !assetInfo.auth_clawback_enabled &&
-                                    !assetInfo.auth_immutable &&
-                                    !assetInfo.auth_revocable &&
-                                    'None'}
-                            </span>
+                            <span>{authorizationFlags || 'None'}</span>
                         </Detail>
                         <Detail>
                             <span>Supply status:</span>
