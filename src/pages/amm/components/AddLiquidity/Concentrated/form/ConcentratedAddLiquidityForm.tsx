@@ -50,6 +50,10 @@ const ConcentratedAddLiquidityForm = ({
         skipPoolDataLoading,
         disableNetworkEstimate,
     });
+    const hasIncentiveTps = Object.values(pool.incentive_tps_per_token || {}).some(
+        value => Number(value) > 0,
+    );
+    const shouldShowPoolInfo = Number(pool.reward_tps) > 0 || hasIncentiveTps;
     const amounts = useMemo(
         () =>
             new Map<string, string>([
@@ -152,13 +156,15 @@ const ConcentratedAddLiquidityForm = ({
                                 onMaxPriceChange={form.handleMaxPriceChange}
                             />
 
-                            <AddLiquidityPoolInfo
-                                pool={pool}
-                                amounts={amounts}
-                                tickLower={form.tickLower}
-                                tickUpper={form.tickUpper}
-                                withPoolInfoCardSpacing
-                            />
+                            {shouldShowPoolInfo && (
+                                <AddLiquidityPoolInfo
+                                    pool={pool}
+                                    amounts={amounts}
+                                    tickLower={form.tickLower}
+                                    tickUpper={form.tickUpper}
+                                    withPoolInfoCardSpacing
+                                />
+                            )}
                         </>
                     )}
 
