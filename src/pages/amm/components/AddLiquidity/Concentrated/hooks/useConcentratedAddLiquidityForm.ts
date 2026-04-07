@@ -725,7 +725,7 @@ export const useConcentratedAddLiquidityForm = ({
                 const raw =
                     token.type === TokenType.soroban
                         ? await account.getAssetBalance(token)
-                        : account.getAssetBalance(token);
+                        : account.getAvailableForSwapBalance(token);
                 return [getAssetString(token), String(raw || '0')] as [string, string];
             }),
         ).then(next => {
