@@ -146,6 +146,7 @@ export const RangeGrid = styled.div`
 
     ${respondDown(Breakpoints.sm)`
         grid-template-columns: 1fr;
+        gap: 5rem;
     `}
 `;
 
