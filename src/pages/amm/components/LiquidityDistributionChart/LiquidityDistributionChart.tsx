@@ -42,6 +42,7 @@ import {
     ChartTitle,
     EmptyDistribution,
 } from './LiquidityDistributionChart.styled';
+
 import ConcentratedPositionCard from '../ConcentratedLiquidity/components/ConcentratedPositionCard/ConcentratedPositionCard';
 
 type PositionedDistributionItem = DistributionItem & {
@@ -508,7 +509,7 @@ const LiquidityDistributionChart = React.forwardRef<LiquidityDistributionChartHa
             ],
         );
         const getFallbackCenter = () => (Number.isFinite(currentTick) ? currentTick : 0);
-        const canPanByDrag = !selectableRange && zoom > ZOOM_MIN;
+        const canPanByDrag = zoom > ZOOM_MIN;
         const hoveredPositionDetails = useMemo(() => {
             if (!hoveredPositionKeys.length) {
                 return [];
@@ -572,48 +573,33 @@ const LiquidityDistributionChart = React.forwardRef<LiquidityDistributionChartHa
             [resetView],
         );
 
-        useEffect(() => {
-            if (!drag.active || !canPanByDrag || rangeDragHandle) {
-                return;
-            }
-
-            const onMouseMove = (event: MouseEvent) => {
+        const panChartToClientX = useCallback(
+            (clientX: number) => {
                 const plotBounds = getPlotClientBounds();
                 if (!plotBounds) {
                     return;
                 }
-                const plotWidthPx = plotBounds.width;
-                const ticksPerPixel = viewSpan / plotWidthPx;
-                const dx = event.clientX - drag.startX;
+
+                const ticksPerPixel = viewSpan / plotBounds.width;
+                const dx = clientX - drag.startX;
                 setHasManualViewport(true);
                 setViewCenterTick(drag.startCenter - dx * ticksPerPixel);
-            };
+            },
+            [drag.startCenter, drag.startX, viewSpan],
+        );
 
-            const onMouseUp = () => {
-                setDrag(prev => ({ ...prev, active: false }));
-            };
+        const dragRangeToClientX = useCallback(
+            (clientX: number) => {
+                if (!rangeDragHandle || !selectableRange || selectableRange.tickSpacing === null) {
+                    return;
+                }
 
-            window.addEventListener('mousemove', onMouseMove);
-            window.addEventListener('mouseup', onMouseUp);
-
-            return () => {
-                window.removeEventListener('mousemove', onMouseMove);
-                window.removeEventListener('mouseup', onMouseUp);
-            };
-        }, [drag, canPanByDrag, viewSpan, rangeDragHandle]);
-
-        useEffect(() => {
-            if (!rangeDragHandle || !selectableRange || selectableRange.tickSpacing === null) {
-                return;
-            }
-
-            const onMouseMove = (event: MouseEvent) => {
                 const plotBounds = getPlotClientBounds();
                 if (!plotBounds) {
                     return;
                 }
 
-                const relativeX = clamp(event.clientX - plotBounds.left, 0, plotBounds.width);
+                const relativeX = clamp(clientX - plotBounds.left, 0, plotBounds.width);
                 const nextTick = viewDomain[0] + (relativeX / plotBounds.width) * viewSpan;
 
                 if (rangeDragHandle === 'lower') {
@@ -640,6 +626,69 @@ const LiquidityDistributionChart = React.forwardRef<LiquidityDistributionChartHa
                     selectableRange.tickLower ?? selectableRange.minTickBound,
                     nextUpper,
                 );
+            },
+            [rangeDragHandle, selectableRange, viewDomain, viewSpan],
+        );
+
+        useEffect(() => {
+            if (!drag.active || !canPanByDrag || rangeDragHandle) {
+                return;
+            }
+
+            const onMouseMove = (event: MouseEvent) => {
+                panChartToClientX(event.clientX);
+            };
+
+            const onMouseUp = () => {
+                setDrag(prev => ({ ...prev, active: false }));
+            };
+
+            window.addEventListener('mousemove', onMouseMove);
+            window.addEventListener('mouseup', onMouseUp);
+
+            return () => {
+                window.removeEventListener('mousemove', onMouseMove);
+                window.removeEventListener('mouseup', onMouseUp);
+            };
+        }, [drag.active, canPanByDrag, rangeDragHandle, panChartToClientX]);
+
+        useEffect(() => {
+            if (!drag.active || !canPanByDrag || rangeDragHandle) {
+                return;
+            }
+
+            const onTouchMove = (event: TouchEvent) => {
+                const touch = event.touches[0];
+                if (!touch) {
+                    return;
+                }
+
+                event.preventDefault();
+                panChartToClientX(touch.clientX);
+            };
+
+            const onTouchEnd = () => {
+                setDrag(prev => ({ ...prev, active: false }));
+            };
+
+            window.addEventListener('touchmove', onTouchMove, { passive: false });
+            window.addEventListener('touchend', onTouchEnd);
+            window.addEventListener('touchcancel', onTouchEnd);
+
+            return () => {
+                window.removeEventListener('touchmove', onTouchMove);
+                window.removeEventListener('touchend', onTouchEnd);
+                window.removeEventListener('touchcancel', onTouchEnd);
+            };
+        }, [drag.active, canPanByDrag, rangeDragHandle, panChartToClientX]);
+
+        useEffect(() => {
+            if (!rangeDragHandle || !selectableRange || selectableRange.tickSpacing === null) {
+                return;
+            }
+
+            const onMouseMove = (event: MouseEvent) => {
+                dragRangeToClientX(event.clientX);
             };
 
             const onMouseUp = () => {
@@ -653,7 +702,37 @@ const LiquidityDistributionChart = React.forwardRef<LiquidityDistributionChartHa
                 window.removeEventListener('mousemove', onMouseMove);
                 window.removeEventListener('mouseup', onMouseUp);
             };
-        }, [rangeDragHandle, selectableRange, viewDomain, viewSpan]);
+        }, [rangeDragHandle, selectableRange, dragRangeToClientX]);
+
+        useEffect(() => {
+            if (!rangeDragHandle || !selectableRange || selectableRange.tickSpacing === null) {
+                return;
+            }
+
+            const onTouchMove = (event: TouchEvent) => {
+                const touch = event.touches[0];
+                if (!touch) {
+                    return;
+                }
+
+                event.preventDefault();
+                dragRangeToClientX(touch.clientX);
+            };
+
+            const onTouchEnd = () => {
+                setRangeDragHandle(null);
+            };
+
+            window.addEventListener('touchmove', onTouchMove, { passive: false });
+            window.addEventListener('touchend', onTouchEnd);
+            window.addEventListener('touchcancel', onTouchEnd);
+
+            return () => {
+                window.removeEventListener('touchmove', onTouchMove);
+                window.removeEventListener('touchend', onTouchEnd);
+                window.removeEventListener('touchcancel', onTouchEnd);
+            };
+        }, [rangeDragHandle, selectableRange, dragRangeToClientX]);
 
         useEffect(() => {
             const node = svgRef.current;
@@ -895,6 +974,15 @@ const LiquidityDistributionChart = React.forwardRef<LiquidityDistributionChartHa
                         : 'ew-resize',
                 )
                 .on('mousedown', (event, item) => {
+                    if (selectableRange?.disabled || selectableRange?.tickSpacing === null) {
+                        return;
+                    }
+                    event.preventDefault();
+                    event.stopPropagation();
+                    setHasManualViewport(true);
+                    setRangeDragHandle(item.kind);
+                })
+                .on('touchstart', (event, item) => {
                     if (selectableRange?.disabled || selectableRange?.tickSpacing === null) {
                         return;
                     }
@@ -1227,6 +1315,24 @@ const LiquidityDistributionChart = React.forwardRef<LiquidityDistributionChartHa
                                                 (Number.isFinite(currentTick) ? currentTick : 0),
                                         });
                                     }}
+                                    onTouchStart={event => {
+                                        if (rangeDragHandle) {
+                                            return;
+                                        }
+                                        const touch = event.touches[0];
+                                        if (!touch) {
+                                            return;
+                                        }
+                                        event.preventDefault();
+                                        setHasManualViewport(true);
+                                        setDrag({
+                                            active: true,
+                                            startX: touch.clientX,
+                                            startCenter:
+                                                viewCenterTick ??
+                                                (Number.isFinite(currentTick) ? currentTick : 0),
+                                        });
+                                    }}
                                 />
                             )}
                         </svg>
@@ -1250,5 +1356,7 @@ const LiquidityDistributionChart = React.forwardRef<LiquidityDistributionChartHa
         );
     },
 );
+
+LiquidityDistributionChart.displayName = 'LiquidityDistributionChart';
 
 export default LiquidityDistributionChart;
