@@ -11,7 +11,7 @@ import {
     CONCENTRATED_LIQUIDITY_CHART_ZOOM_MIN,
 } from 'constants/amm';
 
-import { clamp, priceToTick, tickToPrice } from 'helpers/amm-concentrated';
+import { clamp, priceToTick, snapDown, snapUp, tickToPrice } from 'helpers/amm-concentrated';
 import {
     buildPoolLiquidityDistributionData,
     fetchUserLiquidityDistributionData,
