@@ -33,7 +33,11 @@ export const FormRow = styled.div`
 export const Balance = styled.div`
     ${FONT_SIZE.sm};
     color: ${COLORS.textGray};
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
     white-space: nowrap;
+    text-align: right;
 `;
 
 export const BalanceClickable = styled.span`
@@ -64,6 +68,10 @@ export const CurrentPrice = styled.div`
     color: ${COLORS.textGray};
     text-align: right;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-left: auto;
+    min-width: 0;
 `;
 
 export const Presets = styled.div`
