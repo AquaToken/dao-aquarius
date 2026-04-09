@@ -74,14 +74,17 @@ const Label = styled.div`
     position: absolute;
     bottom: calc(100% + 1.2rem);
     left: 0;
+    max-width: calc(50% - 0.6rem);
     font-size: 1.6rem;
     line-height: 1.8rem;
     color: ${COLORS.textTertiary};
+    ${textEllipsis};
 `;
 
 const LabelRight = styled(Label)`
     left: unset;
     right: 0;
+    text-align: right;
 `;
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {

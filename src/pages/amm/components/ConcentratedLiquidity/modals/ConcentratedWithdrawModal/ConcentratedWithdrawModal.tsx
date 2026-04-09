@@ -4,9 +4,9 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { getNativePrices } from 'api/amm';
 
-import { CONCENTRATED_MAX_TICK, CONCENTRATED_MIN_TICK, POOL_TYPE } from 'constants/amm';
+import { POOL_TYPE } from 'constants/amm';
 
-import { parseConcentratedPercent, snapDown, snapUp } from 'helpers/amm-concentrated';
+import { parseConcentratedPercent } from 'helpers/amm-concentrated';
 import {
     hydratePositionsLiquidity,
     keyOfPosition,
@@ -75,16 +75,6 @@ const ConcentratedWithdrawModal = ({
 
     const title = 'Concentrated Withdraw';
 
-    const [minTickBound, maxTickBound] = useMemo(() => {
-        if (tickSpacing === null) {
-            return [CONCENTRATED_MIN_TICK, CONCENTRATED_MAX_TICK];
-        }
-        return [
-            snapUp(CONCENTRATED_MIN_TICK, tickSpacing),
-            snapDown(CONCENTRATED_MAX_TICK, tickSpacing),
-        ];
-    }, [tickSpacing]);
-
     const selectedPosition = useMemo(
         () => positions.find(item => keyOfPosition(item) === selectedPositionKey) || null,
         [positions, selectedPositionKey],
@@ -122,21 +112,11 @@ const ConcentratedWithdrawModal = ({
                                 tokenEstimates: estimate || pool.tokens.map(() => '0'),
                                 liquidityUsd: positionLiquidityUsd.toNumber(),
                             }}
-                            minTickBound={minTickBound}
-                            maxTickBound={maxTickBound}
                         />
                     ),
                 };
             }),
-        [
-            positions,
-            minTickBound,
-            maxTickBound,
-            pool.tokens,
-            pool,
-            positionTokenEstimates,
-            tokenPrices,
-        ],
+        [positions, pool.tokens, pool, positionTokenEstimates, tokenPrices],
     );
 
     useEffect(() => {

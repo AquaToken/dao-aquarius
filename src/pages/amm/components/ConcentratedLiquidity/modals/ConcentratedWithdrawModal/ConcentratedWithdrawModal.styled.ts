@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import Input from 'basics/inputs/Input';
 import RangeInput from 'basics/inputs/RangeInput';
 
-import { flexRowSpaceBetween } from 'styles/mixins';
-import { COLORS } from 'styles/style-constants';
+import { flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 export const WithdrawSection = styled.div`
     &:not(:last-child) {
@@ -25,14 +25,30 @@ export const WithdrawFormRow = styled.div`
     align-items: center;
     gap: 2.4rem;
     padding: 0 0.2rem;
+
+    ${respondDown(Breakpoints.sm)`
+        flex-direction: column;
+        align-items: stretch;
+        gap: 2rem;
+    `}
 `;
 
 export const WithdrawPercentInput = styled(Input)`
     flex: 1;
+
+    ${respondDown(Breakpoints.sm)`
+        flex: none;
+        width: 100%;
+    `}
 `;
 
 export const WithdrawRangeInput = styled(RangeInput)`
     flex: 2.8;
+
+    ${respondDown(Breakpoints.sm)`
+        flex: none;
+        width: 100%;
+    `}
 `;
 
 export const WithdrawFieldsStack = styled.div`
