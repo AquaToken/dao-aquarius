@@ -64,32 +64,54 @@ const buildLiquiditySegmentsFromTickMap = (
     return segments;
 };
 
+const normalizeDistributionItems = (
+    items: Array<Omit<DistributionItem, 'liquidity'>>,
+): DistributionItem[] => {
+    const maxLiquidity = items.reduce((acc, item) => {
+        const liquidity = new BigNumber(item.liquidityRaw || '0');
+
+        return liquidity.gt(acc) ? liquidity : acc;
+    }, new BigNumber(0));
+
+    if (maxLiquidity.lte(0)) {
+        return [];
+    }
+
+    return items
+        .map(item => ({
+            ...item,
+            // Keep chart heights proportional without coercing large raw liquidity values to JS numbers.
+            liquidity: new BigNumber(item.liquidityRaw || '0').dividedBy(maxLiquidity).toNumber(),
+        }))
+        .filter(item => item.liquidity > 0);
+};
+
 const mapSegmentsToDistributionItems = (segments: Segment[]): DistributionItem[] =>
-    segments
-        .map(segment => ({
+    normalizeDistributionItems(
+        segments.map(segment => ({
             tickLower: segment.tickLower,
             tickUpper: segment.tickUpper,
-            liquidity: segment.liquidity.toNumber(),
-        }))
-        .filter(segment => segment.liquidity > 0);
+            liquidityRaw: segment.liquidity.toFixed(),
+        })),
+    );
 
 const mapHydratedPositionsToDistributionItems = (
     hydrated: ConcentratedPosition[],
 ): DistributionItem[] => {
-    const nonEmptyHydrated = hydrated.filter(item => Number(item.liquidity || 0) > 0);
+    const nonEmptyHydrated = hydrated.filter(item => new BigNumber(item.liquidity || 0).gt(0));
     const unique = new Map(
         nonEmptyHydrated.map(position => [
             keyOfPosition(position),
             {
                 tickLower: position.tickLower,
                 tickUpper: position.tickUpper,
-                liquidity: new BigNumber(position.liquidity || 0).toNumber(),
+                liquidityRaw: String(position.liquidity || '0'),
                 positionKey: keyOfPosition(position),
             },
         ]),
     );
 
-    return [...unique.values()].filter(position => position.liquidity > 0);
+    return normalizeDistributionItems([...unique.values()]);
 };
 
 export const buildPoolLiquidityDistributionData = (pool: PoolExtended): DistributionData => {

@@ -3,6 +3,7 @@ import BigNumber from 'bignumber.js';
 export type DistributionItem = {
     tickLower: number;
     tickUpper: number;
+    liquidityRaw: string;
     liquidity: number;
     isPreview?: boolean;
     positionKey?: string;
