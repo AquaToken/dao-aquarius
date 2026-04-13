@@ -1,6 +1,10 @@
 import BigNumber from 'bignumber.js';
 
-import { CONCENTRATED_TICK_BASE, CONCENTRATED_TICK_LOG_BASE } from 'constants/amm';
+import {
+    CONCENTRATED_AMOUNT_INPUT_MAX_DECIMALS,
+    CONCENTRATED_TICK_BASE,
+    CONCENTRATED_TICK_LOG_BASE,
+} from 'constants/amm';
 
 import { formatBalance } from 'helpers/format-number';
 
@@ -77,7 +81,7 @@ export const formatConcentratedAmountInputValue = (
 };
 
 export const formatConcentratedDerivedAmount = (value: BigNumber.Value, decimals: number) =>
-    formatConcentratedAmountInputValue(value, decimals, 10);
+    formatConcentratedAmountInputValue(value, decimals, CONCENTRATED_AMOUNT_INPUT_MAX_DECIMALS);
 
 export const parseConcentratedPercent = (value: string) => {
     const normalized = value.trim();
