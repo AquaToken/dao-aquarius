@@ -412,7 +412,7 @@ const IceLocks = ({ ammAquaBalance }: IceLocksProps): React.ReactNode => {
                                             label: 'Lock end:',
                                         },
                                         {
-                                            children: `${formatBalance(+lock.amount, true)} AQUA`,
+                                            children: `${formatBalance(lock.amount, true)} AQUA`,
                                             label: 'AQUA locked:',
                                             align: CellAlign.Right,
                                         },

@@ -1,6 +1,8 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { MINUTE } from 'constants/intervals';
+
 import { formatBalance } from 'helpers/format-number';
 
 import { useUpdateIndex } from 'hooks/useUpdateIndex';
@@ -89,7 +91,7 @@ const ClaimButton = styled(Button)`
 `;
 
 const ConcentratedFeesBanner = ({ pool }: { pool: PoolExtended }) => {
-    const updateIndex = useUpdateIndex(5000);
+    const updateIndex = useUpdateIndex(5 * MINUTE);
     const { account, allFees, hasAnyFees, claimAllFees, pending } = useConcentratedFeesSummary(
         pool,
         {
@@ -113,7 +115,7 @@ const ConcentratedFeesBanner = ({ pool }: { pool: PoolExtended }) => {
                                 <AssetLogo asset={asset} isSmall isCircle />
                                 <FeeValue>
                                     {formatBalance(
-                                        Number(allFees[index] || 0),
+                                        allFees[index] || '0',
                                         true,
                                         false,
                                         asset.decimal,

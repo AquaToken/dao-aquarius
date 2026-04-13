@@ -1,6 +1,11 @@
 import BigNumber from 'bignumber.js';
 
-import { CONCENTRATED_TICK_BASE, CONCENTRATED_TICK_LOG_BASE } from 'constants/amm';
+import {
+    CONCENTRATED_AMOUNT_INPUT_MAX_DECIMALS,
+    CONCENTRATED_TICK_BASE,
+    CONCENTRATED_TICK_LOG_BASE,
+} from 'constants/amm';
+
 import { formatBalance } from 'helpers/format-number';
 
 export const clamp = (value: number, min: number, max: number) =>
@@ -57,7 +62,11 @@ export const isValidNonNegativeConcentratedAmount = (value: string) => {
     return parsed !== null && parsed.gte(0);
 };
 
-export const formatConcentratedDerivedAmount = (value: BigNumber.Value, decimals: number) => {
+export const formatConcentratedAmountInputValue = (
+    value: BigNumber.Value,
+    decimals: number,
+    precision: number = decimals,
+) => {
     const bnValue = new BigNumber(value);
     if (!bnValue.isFinite() || bnValue.lt(0)) {
         return '';
@@ -65,10 +74,14 @@ export const formatConcentratedDerivedAmount = (value: BigNumber.Value, decimals
     if (bnValue.isZero()) {
         return '0';
     }
-    const fixed = bnValue.toFixed(Math.min(10, decimals));
+
+    const fixed = bnValue.toFixed(Math.min(precision, decimals));
     const normalized = fixed.replace(/\.?0+$/, '');
     return normalized === '' ? '0' : normalized;
 };
+
+export const formatConcentratedDerivedAmount = (value: BigNumber.Value, decimals: number) =>
+    formatConcentratedAmountInputValue(value, decimals, CONCENTRATED_AMOUNT_INPUT_MAX_DECIMALS);
 
 export const parseConcentratedPercent = (value: string) => {
     const normalized = value.trim();

@@ -199,7 +199,7 @@ const BribesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
                     <BribeDetail>
                         <BribeDetailTitle>Bribes APY:</BribeDetailTitle>
                         <BribeDetailValue>
-                            up to {formatBalance(+maxApy.toFixed(2), true)}%
+                            up to {formatBalance(maxApy.toFixed(2), true)}%
                         </BribeDetailValue>
                     </BribeDetail>
 
@@ -244,14 +244,14 @@ const BribesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
                             label: 'Asset:',
                         },
                         {
-                            children: `${formatBalance(+bribe.daily_amount, true)} ${
+                            children: `${formatBalance(bribe.daily_amount, true)} ${
                                 bribe.asset_code
                             }`,
                             align: CellAlign.Right,
                             label: 'Reward per day:',
                         },
                         {
-                            children: `${formatBalance(+bribe.daily_aqua_equivalent, true)} AQUA`,
+                            children: `${formatBalance(bribe.daily_aqua_equivalent, true)} AQUA`,
                             align: CellAlign.Right,
                             label: 'AQUA amount:',
                         },

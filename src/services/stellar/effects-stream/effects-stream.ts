@@ -60,7 +60,7 @@ export default class EffectsStream {
                         };
 
                         ToastService.showSuccessToast(
-                            `Payment sent: ${formatBalance(Number(amount))} ${
+                            `Payment sent: ${formatBalance(amount)} ${
                                 asset_type === 'native' ? 'XLM' : asset_code
                             }`,
                         );
@@ -82,7 +82,7 @@ export default class EffectsStream {
                         }
 
                         ToastService.showSuccessToast(
-                            `Payment received: ${formatBalance(Number(amount))} ${
+                            `Payment received: ${formatBalance(amount)} ${
                                 asset_type === 'native' ? 'XLM' : asset_code
                             }`,
                         );

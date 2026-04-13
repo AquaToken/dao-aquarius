@@ -328,7 +328,7 @@ const YourVotes = ({ proposal }: YourVotesProps): React.ReactNode => {
                         {
                             children: (
                                 <Cell>
-                                    {formatBalance(Number(log.amount))}
+                                    {formatBalance(log.amount)}
                                     {log.asset_code === 'AQUA' ? (
                                         <AquaLogo />
                                     ) : log.asset_code === GOV_ICE_CODE ? (

@@ -211,9 +211,7 @@ const CustomWithdraw = ({ pool, accountShare, rewards, close, incentives }: Prop
                     if (!Number(amounts.get(token))) return;
 
                     ToastService.showSuccessToast(
-                        `Payment received: ${formatBalance(Number(amounts.get(token)))} ${
-                            token.code
-                        }`,
+                        `Payment received: ${formatBalance(amounts.get(token) || 0)} ${token.code}`,
                     );
                 }
             });
@@ -260,14 +258,14 @@ const CustomWithdraw = ({ pool, accountShare, rewards, close, incentives }: Prop
             <Summary>
                 <span>You have</span>
 
-                <span>{formatBalance(+accountShare)} shares</span>
+                <span>{formatBalance(accountShare)} shares</span>
             </Summary>
 
             {!!sharesToRemove && (
                 <Summary>
                     <span>You remove</span>
 
-                    <span>{formatBalance(+sharesToRemove)} shares</span>
+                    <span>{formatBalance(sharesToRemove)} shares</span>
                 </Summary>
             )}
 
@@ -299,7 +297,7 @@ const CustomWithdraw = ({ pool, accountShare, rewards, close, incentives }: Prop
                         .filter(incentive => Boolean(Number(incentive.info.user_reward)))
                         .map(
                             incentive =>
-                                `${formatBalance(+incentive.info.user_reward, true)} ${
+                                `${formatBalance(incentive.info.user_reward, true)} ${
                                     incentive.token.code
                                 }`,
                         )

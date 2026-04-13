@@ -382,7 +382,7 @@ const VotesList = ({ votes, pair, withoutClaimDate }: VotesListProps): React.Rea
                             children: (
                                 <>
                                     <Amount>
-                                        {formatBalance(+claim.amount)} {claim.assetCode}
+                                        {formatBalance(claim.amount)} {claim.assetCode}
                                     </Amount>
                                     {claim.isDownVote && (
                                         <TooltipStyled

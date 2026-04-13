@@ -222,7 +222,7 @@ const BalancedWithdraw = ({
                     );
 
                     ToastService.showSuccessToast(
-                        `Payment received: ${formatBalance(Number(resAmount))} ${token.code}`,
+                        `Payment received: ${formatBalance(resAmount)} ${token.code}`,
                     );
                 }
             });
@@ -308,7 +308,7 @@ const BalancedWithdraw = ({
                         .filter(incentive => Boolean(Number(incentive.info.user_reward)))
                         .map(
                             incentive =>
-                                `${formatBalance(+incentive.info.user_reward, true)} ${
+                                `${formatBalance(incentive.info.user_reward, true)} ${
                                     incentive.token.code
                                 }`,
                         )

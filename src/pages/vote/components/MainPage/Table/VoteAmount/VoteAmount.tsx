@@ -199,31 +199,31 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
                 <TooltipWrap>
                     <TooltipRowTitleFirst>
                         <span>Upvotes:</span>
-                        <span>{formatBalance(+pair.upvote_value, true)}</span>
+                        <span>{formatBalance(pair.upvote_value, true)}</span>
                     </TooltipRowTitleFirst>
                     <TooltipRow>
                         <span>ICE:</span>
                         <TokenAmount>
                             <IceLogo />
-                            {formatBalance(+upIce, true)}
+                            {formatBalance(upIce, true)}
                         </TokenAmount>
                     </TooltipRow>
                     <TooltipRow>
                         <span>dICE:</span>
                         <TokenAmount>
                             <DIceLogo />
-                            {formatBalance(+dIce, true)}
+                            {formatBalance(dIce, true)}
                         </TokenAmount>
                     </TooltipRow>
                     <TooltipRowTitle>
                         <span>Downvotes:</span>
-                        <span>{formatBalance(+pair.downvote_value, true)}</span>
+                        <span>{formatBalance(pair.downvote_value, true)}</span>
                     </TooltipRowTitle>
                     <TooltipRow>
                         <span>ICE:</span>
                         <TokenAmount>
                             <IceLogo />
-                            {formatBalance(+downIce, true)}
+                            {formatBalance(downIce, true)}
                         </TokenAmount>
                     </TooltipRow>
                     <TooltipRowTitle>
@@ -243,7 +243,7 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
             <label>Votes:</label>
             <Amount>
                 <AmountRow>
-                    {pair.votes_value ? formatBalance(+pair.votes_value, true) : null}
+                    {pair.votes_value ? formatBalance(pair.votes_value, true) : null}
                     <Percents>
                         <PercentMobile $isBoosted={boosted}>{percentBoostedValue}%</PercentMobile>
                     </Percents>

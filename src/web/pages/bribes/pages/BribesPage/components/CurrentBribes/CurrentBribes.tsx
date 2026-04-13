@@ -143,7 +143,7 @@ const CurrentBribes = () => {
                                             ModalService.openModal(BribesModal, { pair: bribe });
                                         }}
                                     >
-                                        up to {formatBalance(+apyMax.toFixed(2), true)}%
+                                        up to {formatBalance(apyMax.toFixed(2), true)}%
                                     </Apy>
                                 ) : (
                                     '-'

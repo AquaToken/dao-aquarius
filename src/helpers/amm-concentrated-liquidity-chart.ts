@@ -1,45 +1,16 @@
 import BigNumber from 'bignumber.js';
 
-import { getNativePrices } from 'api/amm';
-
-import { SorobanService, StellarService } from 'services/globalServices';
+import { SorobanService } from 'services/globalServices';
 
 import { ConcentratedPosition, PoolExtended } from 'types/amm';
-
 import {
-    hydratePositionsLiquidity,
-    keyOfPosition,
-    normalizePositions,
-} from './amm-concentrated-positions';
+    DistributionData,
+    DistributionItem,
+    Segment,
+} from 'types/amm-concentrated-liquidity-chart';
 
-export type DistributionItem = {
-    tickLower: number;
-    tickUpper: number;
-    liquidity: number;
-    isPreview?: boolean;
-    positionKey?: string;
-};
-
-export type UserDistributionPositionDetail = {
-    key: string;
-    tickLower: number;
-    tickUpper: number;
-    liquidity: string;
-    tokenEstimates: string[];
-    liquidityUsd: number;
-};
-
-type DistributionData = {
-    items: DistributionItem[];
-    currentTick: number | null;
-    positionDetails?: UserDistributionPositionDetail[];
-};
-
-type Segment = {
-    tickLower: number;
-    tickUpper: number;
-    liquidity: BigNumber;
-};
+import { keyOfPosition } from './amm-concentrated-positions';
+import { loadConcentratedUserPositions } from './amm-concentrated-user-positions';
 
 const buildLiquiditySegmentsFromTickMap = (
     tickMap: Record<string, string>,
@@ -87,32 +58,54 @@ const buildLiquiditySegmentsFromTickMap = (
     return segments;
 };
 
+const normalizeDistributionItems = (
+    items: Array<Omit<DistributionItem, 'liquidity'>>,
+): DistributionItem[] => {
+    const maxLiquidity = items.reduce((acc, item) => {
+        const liquidity = new BigNumber(item.liquidityRaw || '0');
+
+        return liquidity.gt(acc) ? liquidity : acc;
+    }, new BigNumber(0));
+
+    if (maxLiquidity.lte(0)) {
+        return [];
+    }
+
+    return items
+        .map(item => ({
+            ...item,
+            // Keep chart heights proportional without coercing large raw liquidity values to JS numbers.
+            liquidity: new BigNumber(item.liquidityRaw || '0').dividedBy(maxLiquidity).toNumber(),
+        }))
+        .filter(item => item.liquidity > 0);
+};
+
 const mapSegmentsToDistributionItems = (segments: Segment[]): DistributionItem[] =>
-    segments
-        .map(segment => ({
+    normalizeDistributionItems(
+        segments.map(segment => ({
             tickLower: segment.tickLower,
             tickUpper: segment.tickUpper,
-            liquidity: segment.liquidity.toNumber(),
-        }))
-        .filter(segment => segment.liquidity > 0);
+            liquidityRaw: segment.liquidity.toFixed(),
+        })),
+    );
 
 const mapHydratedPositionsToDistributionItems = (
     hydrated: ConcentratedPosition[],
 ): DistributionItem[] => {
-    const nonEmptyHydrated = hydrated.filter(item => Number(item.liquidity || 0) > 0);
+    const nonEmptyHydrated = hydrated.filter(item => new BigNumber(item.liquidity || 0).gt(0));
     const unique = new Map(
         nonEmptyHydrated.map(position => [
             keyOfPosition(position),
             {
                 tickLower: position.tickLower,
                 tickUpper: position.tickUpper,
-                liquidity: new BigNumber(position.liquidity || 0).toNumber(),
+                liquidityRaw: String(position.liquidity || '0'),
                 positionKey: keyOfPosition(position),
             },
         ]),
     );
 
-    return [...unique.values()].filter(position => position.liquidity > 0);
+    return normalizeDistributionItems([...unique.values()]);
 };
 
 export const buildPoolLiquidityDistributionData = (pool: PoolExtended): DistributionData => {
@@ -142,79 +135,23 @@ export const fetchUserLiquidityDistributionData = async (
     pool: PoolExtended,
     accountId?: string,
 ): Promise<DistributionData> => {
-    const [slot0, snapshot] = await Promise.all([
+    const [slot0, userPositions] = await Promise.all([
         SorobanService.amm.getConcentratedSlot0(pool.address),
         accountId
-            ? SorobanService.amm.getUserPositionSnapshot(pool.address, accountId)
-            : Promise.resolve(null),
+            ? loadConcentratedUserPositions(pool, accountId)
+            : Promise.resolve({ positions: [], rawLiquidity: '0' }),
     ]);
 
     const resolvedCurrentTick = Number((slot0 as Record<string, unknown>)?.tick);
     const currentTick = Number.isFinite(resolvedCurrentTick) ? resolvedCurrentTick : null;
 
-    if (!accountId || !snapshot) {
+    if (!accountId) {
         return { items: [], currentTick };
     }
-
-    const ranges = normalizePositions(snapshot);
-    const hydrated = await hydratePositionsLiquidity(ranges, async range => {
-        const position = await SorobanService.amm.getPosition(
-            pool.address,
-            accountId,
-            range.tickLower,
-            range.tickUpper,
-        );
-        return position?.liquidity;
-    });
-
-    const nonEmptyPositions = hydrated.filter(item => new BigNumber(item.liquidity || 0).gt(0));
-    const prices = await getNativePrices().catch(() => new Map());
-    const tokenPrices = new Map([...prices.entries()].map(([key, value]) => [key, value.price]));
-    const positionDetailsEntries = await Promise.all(
-        nonEmptyPositions.map(async position => {
-            try {
-                const tokenEstimates = await SorobanService.amm.estimateWithdrawPosition(
-                    accountId,
-                    pool.address,
-                    pool.tokens,
-                    position.tickLower,
-                    position.tickUpper,
-                    String(position.liquidity || '0'),
-                );
-                const liquidityUsd = tokenEstimates.reduce((acc, amount, index) => {
-                    const tokenPriceXlm = new BigNumber(
-                        tokenPrices.get(pool.tokens[index].contract) || '0',
-                    );
-                    const tokenUsdPrice = tokenPriceXlm.multipliedBy(
-                        StellarService.price.priceLumenUsd || 0,
-                    );
-
-                    return acc.plus(new BigNumber(amount || '0').multipliedBy(tokenUsdPrice));
-                }, new BigNumber(0));
-
-                return {
-                    key: keyOfPosition(position),
-                    tickLower: position.tickLower,
-                    tickUpper: position.tickUpper,
-                    liquidity: String(position.liquidity || '0'),
-                    tokenEstimates,
-                    liquidityUsd: liquidityUsd.toNumber(),
-                } satisfies UserDistributionPositionDetail;
-            } catch {
-                return {
-                    key: keyOfPosition(position),
-                    tickLower: position.tickLower,
-                    tickUpper: position.tickUpper,
-                    liquidity: String(position.liquidity || '0'),
-                    tokenEstimates: pool.tokens.map(() => '0'),
-                    liquidityUsd: 0,
-                } satisfies UserDistributionPositionDetail;
-            }
-        }),
-    );
+    const positionDetailsEntries = userPositions.positions;
 
     return {
-        items: mapHydratedPositionsToDistributionItems(nonEmptyPositions),
+        items: mapHydratedPositionsToDistributionItems(positionDetailsEntries),
         currentTick,
         positionDetails: positionDetailsEntries,
     };

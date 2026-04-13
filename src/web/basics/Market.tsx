@@ -371,7 +371,7 @@ const Market = ({
                         {assets.map((asset, index) => (
                             <React.Fragment key={getAssetString(asset)}>
                                 {index > 0 ? isSwapResult ? <ArrowRight /> : ' / ' : ''}
-                                {amounts ? `${formatBalance(Number(amounts[index]))} ` : ''}
+                                {amounts ? `${formatBalance(amounts[index])} ` : ''}
                                 {asset.code}
                             </React.Fragment>
                         ))}

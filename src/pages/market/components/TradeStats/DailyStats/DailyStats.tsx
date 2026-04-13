@@ -125,7 +125,7 @@ const DailyStats = ({ base, counter }: DailyStatsProps): React.ReactNode => {
                         `${
                             lastPrice === '-'
                                 ? '-'
-                                : `1 ${base.code} = ${formatBalance(+lastPrice)} ${counter.code}`
+                                : `1 ${base.code} = ${formatBalance(lastPrice)} ${counter.code}`
                         }`
                     ) : (
                         <DotsLoader />

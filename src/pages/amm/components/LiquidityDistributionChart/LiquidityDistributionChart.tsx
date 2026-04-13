@@ -15,8 +15,6 @@ import { clamp, priceToTick, snapDown, snapUp, tickToPrice } from 'helpers/amm-c
 import {
     buildPoolLiquidityDistributionData,
     fetchUserLiquidityDistributionData,
-    type DistributionItem,
-    type UserDistributionPositionDetail,
 } from 'helpers/amm-concentrated-liquidity-chart';
 import { formatBalance } from 'helpers/format-number';
 
@@ -25,6 +23,10 @@ import { useUpdateIndex } from 'hooks/useUpdateIndex';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { PoolExtended } from 'types/amm';
+import {
+    DistributionItem,
+    UserDistributionPositionDetail,
+} from 'types/amm-concentrated-liquidity-chart';
 
 import PageLoader from 'basics/loaders/PageLoader';
 

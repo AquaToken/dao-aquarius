@@ -179,7 +179,7 @@ const RewardsTokens = ({ pool, myRewards, myIncentives }: Props) => {
                                               {token.code}
                                           </TooltipToken>
                                           <span>
-                                              {formatBalance(+info.user_reward, true)} {token.code}
+                                              {formatBalance(info.user_reward, true)} {token.code}
                                           </span>
                                       </TooltipRow>
                                   ))

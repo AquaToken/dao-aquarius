@@ -1,9 +1,10 @@
+import BigNumber from 'bignumber.js';
 import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { getUserPools } from 'api/amm';
+
 import { contractValueToAmount } from 'helpers/amount';
-import { formatBalance } from 'helpers/format-number';
-import { getPercentValue } from 'helpers/number';
 
 import { useDebounce } from 'hooks/useDebounce';
 
@@ -11,19 +12,18 @@ import { SorobanService } from 'services/globalServices';
 
 import { PoolExtended } from 'types/amm';
 
-import Arrow from 'assets/icons/arrows/arrow-alt2-16.svg';
-
 import PageLoader from 'basics/loaders/PageLoader';
 
-import { DescriptionRow, PoolInfo } from './AddLiquidity.styled';
+import AddLiquidityRewardsInfo from '../../AddLiquidityRewardsInfo';
+import { useAddLiquidityPoolRewards } from '../../hooks/useAddLiquidityPoolRewards';
+import { PoolInfo } from '../../Regular/AddLiquidity.styled';
 
-import AddLiquidityRewardsInfo from '../AddLiquidityRewardsInfo';
-import { useAddLiquidityPoolRewards } from '../hooks/useAddLiquidityPoolRewards';
-
-type AddLiquidityPoolInfoProps = {
+type Props = {
     pool: PoolExtended;
     amounts: Map<string, string>;
     withPoolInfoCardSpacing: boolean;
+    tickLower: number | null;
+    tickUpper: number | null;
 };
 
 type EstimatedPoolInfo = {
@@ -32,11 +32,13 @@ type EstimatedPoolInfo = {
     newWorkingSupply: number | null;
 };
 
-const AddLiquidityPoolInfo = ({
+const ConcentratedAddLiquidityPoolInfo = ({
     pool,
     amounts,
     withPoolInfoCardSpacing,
-}: AddLiquidityPoolInfoProps): React.ReactNode => {
+    tickLower,
+    tickUpper,
+}: Props): React.ReactNode => {
     const {
         account,
         poolRewards,
@@ -61,18 +63,29 @@ const AddLiquidityPoolInfo = ({
         }
 
         setIsAccountShareLoading(true);
-        SorobanService.token
-            .getTokenBalance(pool.share_token_address, account.accountId())
+        getUserPools(account.accountId())
+            .then(userPools => {
+                const userPool = userPools.find(({ address }) => address === pool.address);
+
+                return contractValueToAmount(String(userPool?.balance ?? '0'));
+            })
             .then(setAccountShare)
             .finally(() => setIsAccountShareLoading(false));
-    }, [account, pool.share_token_address]);
+    }, [account, pool.address]);
 
     const debouncedAmounts = useDebounce(amounts, 1000);
+    const hasAnyPositiveAmount = useMemo(
+        () => [...debouncedAmounts.current.values()].some(value => Number(value) > 0),
+        [debouncedAmounts],
+    );
 
     useEffect(() => {
         if (
             !account ||
-            [...debouncedAmounts.current.values()].some(value => Number.isNaN(+value))
+            [...debouncedAmounts.current.values()].some(value => Number.isNaN(+value)) ||
+            tickLower === null ||
+            tickUpper === null ||
+            !hasAnyPositiveAmount
         ) {
             setEstimatedPoolInfo(null);
             setIsEstimateLoading(false);
@@ -83,32 +96,44 @@ const AddLiquidityPoolInfo = ({
         estimateRequestIdRef.current = requestId;
         setIsEstimateLoading(true);
 
-        const estimatePromise = SorobanService.amm
-            .estimateDeposit(
+        Promise.all([
+            SorobanService.amm.estimateDepositPosition(
                 account.accountId(),
                 pool.address,
                 pool.tokens,
+                tickLower,
+                tickUpper,
                 debouncedAmounts.current,
-            )
-            .then(depositShares => {
+            ),
+            SorobanService.amm.getPosition(pool.address, account.accountId(), tickLower, tickUpper),
+        ])
+            .then(([estimateResult, position]) => {
+                const depositShares = Number(
+                    contractValueToAmount(estimateResult?.liquidity || '0'),
+                );
+
                 if (!depositShares) {
                     return { depositShares, newWorkingBalance: null, newWorkingSupply: null };
                 }
 
+                const nextLiquidity = new BigNumber(position?.liquidity || '0')
+                    .plus(estimateResult?.liquidity || '0')
+                    .toFixed(0);
+
                 return SorobanService.amm
-                    .estimateWorkingBalanceAndSupply(
-                        pool,
+                    .estimateConcentratedWorkingBalanceAndSupply(
                         account.accountId(),
-                        String(Number(accountShare) + depositShares),
+                        pool.address,
+                        tickLower,
+                        tickUpper,
+                        nextLiquidity,
                     )
                     .then(({ workingBalance, workingSupply }) => ({
                         depositShares,
                         newWorkingBalance: workingBalance,
                         newWorkingSupply: workingSupply,
                     }));
-            });
-
-        estimatePromise
+            })
             .then(nextEstimatedPoolInfo => {
                 if (requestId !== estimateRequestIdRef.current || !nextEstimatedPoolInfo) {
                     return;
@@ -128,31 +153,15 @@ const AddLiquidityPoolInfo = ({
                     setIsEstimateLoading(false);
                 }
             });
-    }, [account, pool, debouncedAmounts, accountShare, pool.share_token_decimals]);
-
-    const depositShares = estimatedPoolInfo?.depositShares ?? null;
-    const newWorkingBalance = estimatedPoolInfo?.newWorkingBalance ?? null;
-    const newWorkingSupply = estimatedPoolInfo?.newWorkingSupply ?? null;
-
-    const sharesBeforePercent = useMemo(() => {
-        if (!Number(pool.total_share)) {
-            return 0;
-        }
-
-        return +getPercentValue(Number(accountShare), +contractValueToAmount(pool.total_share), 2);
-    }, [pool.total_share, accountShare]);
-
-    const sharesAfterPercent = useMemo(() => {
-        if (!depositShares) {
-            return 0;
-        }
-
-        return +getPercentValue(
-            Number(accountShare) + depositShares,
-            +contractValueToAmount(pool.total_share) + depositShares,
-            2,
-        );
-    }, [pool.total_share, accountShare, depositShares]);
+    }, [
+        account,
+        pool.address,
+        pool.tokens,
+        debouncedAmounts,
+        hasAnyPositiveAmount,
+        tickLower,
+        tickUpper,
+    ]);
 
     const isInitialDataLoading =
         !!account &&
@@ -176,19 +185,6 @@ const AddLiquidityPoolInfo = ({
 
     return (
         <PoolInfo $withCardSpacing={withPoolInfoCardSpacing}>
-            <DescriptionRow>
-                <span>Share of Pool</span>
-                <span>
-                    {formatBalance(sharesBeforePercent, true)}%
-                    {!!sharesAfterPercent && (
-                        <>
-                            <Arrow />
-                            {formatBalance(sharesAfterPercent, true)}%
-                        </>
-                    )}
-                </span>
-            </DescriptionRow>
-
             <AddLiquidityRewardsInfo
                 poolRewardTps={pool.reward_tps}
                 poolTotalShare={pool.total_share}
@@ -197,12 +193,12 @@ const AddLiquidityPoolInfo = ({
                 isRewardsEnabled={isRewardsEnabled}
                 hasActiveIncentives={hasActiveIncentives}
                 accountShare={accountShare}
-                depositShares={depositShares}
-                newWorkingBalance={newWorkingBalance}
-                newWorkingSupply={newWorkingSupply}
+                depositShares={estimatedPoolInfo?.depositShares ?? null}
+                newWorkingBalance={estimatedPoolInfo?.newWorkingBalance ?? null}
+                newWorkingSupply={estimatedPoolInfo?.newWorkingSupply ?? null}
             />
         </PoolInfo>
     );
 };
 
-export default AddLiquidityPoolInfo;
+export default ConcentratedAddLiquidityPoolInfo;

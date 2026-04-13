@@ -67,7 +67,7 @@ const ConcentratedPositionCard = ({
                         </PositionLogoWrap>
                         <PositionTokenValue $compact={compact}>
                             {formatBalance(
-                                Number(position.tokenEstimates[index] || 0),
+                                position.tokenEstimates[index] || '0',
                                 false,
                                 false,
                                 asset.decimal,

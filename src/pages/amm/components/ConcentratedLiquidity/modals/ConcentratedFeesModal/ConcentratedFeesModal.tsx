@@ -1,4 +1,5 @@
 import * as React from 'react';
+
 import { formatBalance } from 'helpers/format-number';
 
 import { PoolExtended } from 'types/amm';
@@ -54,7 +55,7 @@ const ConcentratedFeesModal = ({
                                             <span>{asset.code}</span>
                                             <span>
                                                 {formatBalance(
-                                                    Number(allFees[index] || 0),
+                                                    allFees[index] || '0',
                                                     true,
                                                     false,
                                                     asset.decimal,

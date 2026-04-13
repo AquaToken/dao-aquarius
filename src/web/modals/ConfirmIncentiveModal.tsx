@@ -147,7 +147,7 @@ const ConfirmIncentiveModal = ({ params, close }: ModalProps<Props>) => {
                 <InfoRow>
                     <Label>Daily reward amount:</Label>
                     <Value>
-                        {formatBalance(+amountPerDay)} {rewardToken.code}
+                        {formatBalance(amountPerDay)} {rewardToken.code}
                     </Value>
                 </InfoRow>
                 <InfoRow>

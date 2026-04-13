@@ -389,7 +389,7 @@ const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
 
                         <BalanceValue>
                             <AquaLogo />
-                            {formatBalance(+aquaBalance, true)} AQUA
+                            {formatBalance(aquaBalance, true)} AQUA
                         </BalanceValue>
                         <AdditionalInfo>
                             <InfoColumn>
@@ -418,7 +418,7 @@ const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
                                     {locksSum === null ? (
                                         <DotsLoader />
                                     ) : (
-                                        <span>{formatBalance(+locksSum, true)}</span>
+                                        <span>{formatBalance(locksSum, true)}</span>
                                     )}
                                 </AdditionalInfoBalance>
                                 <AdditionalInfoDescription>AQUA Locked</AdditionalInfoDescription>
@@ -445,28 +445,28 @@ const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
 
                         <BalanceValue>
                             <IceLogo />
-                            {formatBalance(+iceBalance, true)} ICE
+                            {formatBalance(iceBalance, true)} ICE
                         </BalanceValue>
                         <AdditionalInfo>
                             <InfoColumnIce>
                                 <BalanceTitleSmall>upvoteICE</BalanceTitleSmall>
                                 <BalanceValueSmall>
                                     <IceLogoSmall />
-                                    {formatBalance(+upIceBalance, true)}
+                                    {formatBalance(upIceBalance, true)}
                                 </BalanceValueSmall>
                             </InfoColumnIce>
                             <InfoColumnIce>
                                 <BalanceTitleSmall>downvoteICE</BalanceTitleSmall>
                                 <BalanceValueSmall>
                                     <IceLogoSmall />
-                                    {formatBalance(+downIceBalance, true)}
+                                    {formatBalance(downIceBalance, true)}
                                 </BalanceValueSmall>
                             </InfoColumnIce>
                             <InfoColumnIce>
                                 <BalanceTitleSmall>governICE</BalanceTitleSmall>
                                 <BalanceValueSmall>
                                     <IceLogoSmall />
-                                    {formatBalance(+govIceBalance, true)}
+                                    {formatBalance(govIceBalance, true)}
                                 </BalanceValueSmall>
                             </InfoColumnIce>
                         </AdditionalInfo>
@@ -476,7 +476,7 @@ const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
                     <LumenBalance>
                         <LumenBalanceLabel>Available XLM Balance:</LumenBalanceLabel>
                         <LumenLogo />
-                        <LumenBalanceValue>{formatBalance(+lumenBalance, true)}</LumenBalanceValue>
+                        <LumenBalanceValue>{formatBalance(lumenBalance, true)}</LumenBalanceValue>
                         <LumenBalanceLabel>XLM</LumenBalanceLabel>
                     </LumenBalance>
 

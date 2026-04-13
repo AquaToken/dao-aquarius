@@ -205,15 +205,13 @@ const SwapConfirmModal = ({
 
                 if (base.type === TokenType.soroban) {
                     ToastService.showSuccessToast(
-                        `Payment sent: ${formatBalance(Number(sentAmount))} ${base.code}`,
+                        `Payment sent: ${formatBalance(sentAmount)} ${base.code}`,
                     );
                 }
 
                 if (counter.type === TokenType.soroban) {
                     ToastService.showSuccessToast(
-                        `Payment received: ${formatBalance(Number(receivedAmount))} ${
-                            counter.code
-                        }`,
+                        `Payment received: ${formatBalance(receivedAmount)} ${counter.code}`,
                     );
                 }
                 setSwapPending(false);
@@ -238,13 +236,13 @@ const SwapConfirmModal = ({
             <DescriptionRow>
                 <span>You give</span>
                 <span>
-                    {formatBalance(Number(baseAmount))} {base.code}
+                    {formatBalance(baseAmount)} {base.code}
                 </span>
             </DescriptionRow>
             <DescriptionRow>
                 <span>You get (estimate)</span>
                 <span>
-                    {formatBalance(Number(counterAmount))} {counter.code}
+                    {formatBalance(counterAmount)} {counter.code}
                 </span>
             </DescriptionRow>
             <DescriptionRow>

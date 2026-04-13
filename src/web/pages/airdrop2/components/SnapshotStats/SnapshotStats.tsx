@@ -43,7 +43,7 @@ const SnapshotStats: React.FC = () => {
 
                 <Table>
                     <div>
-                        <Count>{formatBalance(+stats.accounts)}</Count>
+                        <Count>{formatBalance(stats.accounts)}</Count>
                         <Description>Eligible Accounts</Description>
                     </div>
 
@@ -63,7 +63,7 @@ const SnapshotStats: React.FC = () => {
                     </div>
 
                     <div>
-                        <Count>{formatBalance(+stats.total_xlm, true)} XLM</Count>
+                        <Count>{formatBalance(stats.total_xlm, true)} XLM</Count>
                         <Description>Total XLM in eligible wallets</Description>
                     </div>
 
