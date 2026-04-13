@@ -1,5 +1,5 @@
-import * as React from 'react';
 import BigNumber from 'bignumber.js';
+import * as React from 'react';
 import { useState } from 'react';
 
 import { getAssetString } from 'helpers/assets';
@@ -113,7 +113,7 @@ const AddLiquidityFlow = ({
                         );
 
                         ToastService.showSuccessToast(
-                            `Payment sent: ${formatBalance(Number(resAmount))} ${token.code}`,
+                            `Payment sent: ${formatBalance(resAmount)} ${token.code}`,
                         );
                     }
                 });

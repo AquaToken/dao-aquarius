@@ -217,7 +217,7 @@ const MarketCurrentBribes = ({ extra, bribes }: MarketCurrentBribes) => {
                                 label: 'Asset:',
                             },
                             {
-                                children: `${formatBalance(+bribe.daily_amount, true)} ${
+                                children: `${formatBalance(bribe.daily_amount, true)} ${
                                     bribe.asset_code
                                 }`,
                                 label: 'Reward per day:',

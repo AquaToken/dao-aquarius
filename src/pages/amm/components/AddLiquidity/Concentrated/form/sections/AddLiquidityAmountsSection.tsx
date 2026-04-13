@@ -1,5 +1,5 @@
-import * as React from 'react';
 import BigNumber from 'bignumber.js';
+import * as React from 'react';
 import { NumericFormat } from 'react-number-format';
 
 import { getAssetString } from 'helpers/assets';
@@ -62,8 +62,7 @@ const AddLiquidityAmountsSection = ({
                     onAmount0Change(token0BalanceValue);
                 }}
             >
-                {formatBalance(Number(token0Balance), false, false, token0Decimals)}{' '}
-                {pool.tokens[0].code}
+                {formatBalance(token0Balance, false, false, token0Decimals)} {pool.tokens[0].code}
             </BalanceClickable>{' '}
             available
         </Balance>
@@ -79,8 +78,7 @@ const AddLiquidityAmountsSection = ({
                     onAmount1Change(token1BalanceValue);
                 }}
             >
-                {formatBalance(Number(token1Balance), false, false, token1Decimals)}{' '}
-                {pool.tokens[1].code}
+                {formatBalance(token1Balance, false, false, token1Decimals)} {pool.tokens[1].code}
             </BalanceClickable>{' '}
             available
         </Balance>

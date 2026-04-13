@@ -346,7 +346,7 @@ const ConcentratedWithdrawModal = ({
                                                     <DotsLoader />
                                                 ) : withdrawEstimate ? (
                                                     formatBalance(
-                                                        Number(withdrawEstimate[index] || 0),
+                                                        withdrawEstimate[index] || '0',
                                                         false,
                                                         false,
                                                         asset.decimal,

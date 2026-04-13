@@ -82,7 +82,7 @@ const SnapshotHoldings: React.FC<SnapshotHoldingsProps> = ({ accountEligibility 
                 <LockAmount>
                     <div>
                         AQUA locked:{' '}
-                        <b>{formatBalance(+accountEligibility.aqua_lock_balance, true)} AQUA</b>
+                        <b>{formatBalance(accountEligibility.aqua_lock_balance, true)} AQUA</b>
                     </div>
                 </LockAmount>
             )}

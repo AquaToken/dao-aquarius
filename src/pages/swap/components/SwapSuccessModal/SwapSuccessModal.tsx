@@ -46,14 +46,14 @@ const SwapSuccessModal = ({ params, close }: ModalProps<Props>) => {
                     <Amount>
                         <AssetLogo asset={source} />
                         <span>
-                            {formatBalance(+sourceAmount)} {source.code}
+                            {formatBalance(sourceAmount)} {source.code}
                         </span>
                     </Amount>
                     <DarkArrow />
                     <Amount>
                         <AssetLogo asset={destination} />
                         <span>
-                            {formatBalance(+destinationAmount)} {destination.code}
+                            {formatBalance(destinationAmount)} {destination.code}
                         </span>
                     </Amount>
                 </Amounts>

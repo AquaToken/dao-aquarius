@@ -259,7 +259,7 @@ const SingleTokenWithdraw = ({ pool, rewards, accountShare, close, incentives }:
                     );
 
                     ToastService.showSuccessToast(
-                        `Payment received: ${formatBalance(Number(resAmount))} ${token.code}`,
+                        `Payment received: ${formatBalance(resAmount)} ${token.code}`,
                     );
                 }
             });
@@ -375,7 +375,7 @@ const SingleTokenWithdraw = ({ pool, rewards, accountShare, close, incentives }:
                         .filter(incentive => Boolean(Number(incentive.info.user_reward)))
                         .map(
                             incentive =>
-                                `${formatBalance(+incentive.info.user_reward, true)} ${
+                                `${formatBalance(incentive.info.user_reward, true)} ${
                                     incentive.token.code
                                 }`,
                         )

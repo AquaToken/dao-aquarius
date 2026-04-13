@@ -115,7 +115,7 @@ const ConcentratedFeesBanner = ({ pool }: { pool: PoolExtended }) => {
                                 <AssetLogo asset={asset} isSmall isCircle />
                                 <FeeValue>
                                     {formatBalance(
-                                        Number(allFees[index] || 0),
+                                        allFees[index] || '0',
                                         true,
                                         false,
                                         asset.decimal,
