@@ -304,7 +304,7 @@ const PoolPage = () => {
                 }
                 const value = SorobanService.scVal.i128ToInt(res as xdr.ScVal);
 
-                ToastService.showSuccessToast(`Claimed ${formatBalance(+value)} AQUA`);
+                ToastService.showSuccessToast(`Claimed ${formatBalance(value)} AQUA`);
                 setClaimPending(false);
             })
             .catch(err => {
@@ -456,8 +456,7 @@ const PoolPage = () => {
                                         .filter(({ info }) => !!Number(info.user_reward))
                                         .map(({ token, info }) => (
                                             <IncentiveAmount key={token.contract}>
-                                                {formatBalance(+info.user_reward, true)}{' '}
-                                                {token.code}
+                                                {formatBalance(info.user_reward, true)} {token.code}
                                             </IncentiveAmount>
                                         ))}
                                 </RewardsDescription>

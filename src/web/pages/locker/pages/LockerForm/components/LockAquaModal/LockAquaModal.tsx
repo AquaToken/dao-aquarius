@@ -109,7 +109,7 @@ const LockAquaModal = ({
                 <Label>Amount</Label>
                 <Value>
                     <AquaLogo />
-                    {formatBalance(+amount)} AQUA
+                    {formatBalance(amount)} AQUA
                 </Value>
             </Row>
 

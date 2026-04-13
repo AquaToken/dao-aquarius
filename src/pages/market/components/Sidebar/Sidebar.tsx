@@ -166,6 +166,69 @@ const Sidebar = ({
                 }),
         });
     };
+    const getUpVotesValue = React.useCallback(() => {
+        if (!votesData) {
+            return 0;
+        }
+
+        return (
+            +StellarService.cb.getMarketVotesValue(
+                votesData.account_id,
+                account?.accountId(),
+                aquaStellarAsset,
+            ) +
+            +StellarService.cb.getMarketVotesValue(
+                votesData.account_id,
+                account?.accountId(),
+                UP_ICE,
+            )
+        );
+    }, [account, aquaStellarAsset, votesData]);
+
+    const getDownVotesValue = React.useCallback(() => {
+        if (!votesData) {
+            return 0;
+        }
+
+        return (
+            +StellarService.cb.getMarketVotesValue(
+                votesData.downvote_account_id,
+                account?.accountId(),
+                aquaStellarAsset,
+            ) +
+            +StellarService.cb.getMarketVotesValue(
+                votesData.downvote_account_id,
+                account?.accountId(),
+                DOWN_ICE,
+            )
+        );
+    }, [account, aquaStellarAsset, votesData]);
+
+    const [balanceUp, setBalanceUp] = useState<number | null>(isLogged ? getUpVotesValue() : null);
+
+    const [balanceDown, setBalanceDown] = useState<number | null>(
+        isLogged ? getDownVotesValue() : null,
+    );
+
+    useEffect(() => {
+        if (!account || !votesData) {
+            setBalanceUp(null);
+            setBalanceDown(null);
+            return;
+        }
+
+        setBalanceUp(getUpVotesValue());
+        setBalanceDown(getDownVotesValue());
+
+        const unsub = StellarService.event.sub(({ type }) => {
+            if (type === StellarEvents.claimableUpdate) {
+                setBalanceUp(getUpVotesValue());
+                setBalanceDown(getDownVotesValue());
+            }
+        });
+        return () => unsub();
+    }, [account, getDownVotesValue, getUpVotesValue, votesData]);
+
     if (!votesData) {
         return (
             <Container>
@@ -201,46 +264,6 @@ const Sidebar = ({
     const dIce =
         votesData.extra?.upvote_assets.find(({ asset }) => asset === `${D_ICE_CODE}:${ICE_ISSUER}`)
             ?.votes_sum ?? 0;
-
-    const getUpVotesValue = () =>
-        +StellarService.cb.getMarketVotesValue(
-            votesData.account_id,
-            account?.accountId(),
-            aquaStellarAsset,
-        ) +
-        +StellarService.cb.getMarketVotesValue(votesData.account_id, account?.accountId(), UP_ICE);
-
-    const getDownVotesValue = () =>
-        +StellarService.cb.getMarketVotesValue(
-            votesData.downvote_account_id,
-            account?.accountId(),
-            aquaStellarAsset,
-        ) +
-        +StellarService.cb.getMarketVotesValue(
-            votesData.downvote_account_id,
-            account?.accountId(),
-            DOWN_ICE,
-        );
-
-    const [balanceUp, setBalanceUp] = useState(isLogged ? getUpVotesValue() : null);
-
-    const [balanceDown, setBalanceDown] = useState(isLogged ? getDownVotesValue() : null);
-
-    useEffect(() => {
-        if (!account) {
-            setBalanceUp(null);
-            setBalanceDown(null);
-            return;
-        }
-        const unsub = StellarService.event.sub(({ type }) => {
-            if (type === StellarEvents.claimableUpdate) {
-                setBalanceUp(getUpVotesValue());
-                setBalanceDown(getDownVotesValue());
-            }
-        });
-
-        return () => unsub();
-    }, [account]);
 
     return (
         <Container>
@@ -282,14 +305,14 @@ const Sidebar = ({
                     <IceLogo />
                     ICE voted:
                 </Label>
-                <Label>{formatBalance(+upIce, true)}</Label>
+                <Label>{formatBalance(upIce, true)}</Label>
             </Row>
             <Row>
                 <Label>
                     <DIceLogo />
                     dICE voted:
                 </Label>
-                <Label>{formatBalance(+dIce, true)}</Label>
+                <Label>{formatBalance(dIce, true)}</Label>
             </Row>
             <VotesProgressLine label="Downvotes" iceVotes={+downIce} total={total} />
             <Row>
@@ -297,7 +320,7 @@ const Sidebar = ({
                     <IceLogo />
                     ICE voted:
                 </Label>
-                <Label>{formatBalance(+downIce, true)}</Label>
+                <Label>{formatBalance(downIce, true)}</Label>
             </Row>
             <VoteButton
                 pair={votesData}

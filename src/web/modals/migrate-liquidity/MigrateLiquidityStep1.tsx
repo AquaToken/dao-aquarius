@@ -227,11 +227,11 @@ const MigrateLiquidityStep1 = ({ params, confirm }: ModalProps<MigrateLiquidityS
                 <Amounts>
                     <AssetLogo asset={base} />
                     <AmountWithdraw>
-                        {formatBalance(+amountsToWithdraw.baseAmount, true)} {base.code}
+                        {formatBalance(amountsToWithdraw.baseAmount, true)} {base.code}
                     </AmountWithdraw>
                     {Boolean(+amountsToWithdraw.baseLeft) && (
                         <span>
-                            ({formatBalance(+amountsToWithdraw.baseLeft, true)} {base.code} left)
+                            ({formatBalance(amountsToWithdraw.baseLeft, true)} {base.code} left)
                         </span>
                     )}
                 </Amounts>
@@ -242,11 +242,11 @@ const MigrateLiquidityStep1 = ({ params, confirm }: ModalProps<MigrateLiquidityS
                 <Amounts>
                     <AssetLogo asset={counter} />
                     <AmountWithdraw>
-                        {formatBalance(+amountsToWithdraw.counterAmount, true)} {counter.code}
+                        {formatBalance(amountsToWithdraw.counterAmount, true)} {counter.code}
                     </AmountWithdraw>
                     {Boolean(+amountsToWithdraw.counterLeft) && (
                         <span>
-                            ({formatBalance(+amountsToWithdraw.counterLeft, true)} {counter.code}{' '}
+                            ({formatBalance(amountsToWithdraw.counterLeft, true)} {counter.code}{' '}
                             left)
                         </span>
                     )}

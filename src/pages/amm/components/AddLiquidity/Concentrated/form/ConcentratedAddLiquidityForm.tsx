@@ -8,10 +8,10 @@ import { DepositEstimate, PoolExtended } from 'types/amm';
 import Alert from 'basics/Alert';
 import PageLoader from 'basics/loaders/PageLoader';
 
+import ConcentratedAddLiquidityPoolInfo from './ConcentratedAddLiquidityPoolInfo';
 import AddLiquidityAmountsSection from './sections/AddLiquidityAmountsSection';
 import AddLiquidityPriceRangeSection from './sections/AddLiquidityPriceRangeSection';
 
-import AddLiquidityPoolInfo from '../../Regular/AddLiquidityPoolInfo';
 import { useConcentratedAddLiquidityForm } from '../hooks/useConcentratedAddLiquidityForm';
 import { Container, Section } from '../styled/ConcentratedAddLiquidity.styled';
 
@@ -157,7 +157,7 @@ const ConcentratedAddLiquidityForm = ({
                             />
 
                             {shouldShowPoolInfo && (
-                                <AddLiquidityPoolInfo
+                                <ConcentratedAddLiquidityPoolInfo
                                     pool={pool}
                                     amounts={amounts}
                                     tickLower={form.tickLower}

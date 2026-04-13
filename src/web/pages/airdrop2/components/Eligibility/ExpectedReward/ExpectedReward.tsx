@@ -27,8 +27,8 @@ const ExpectedReward: React.FC<ExpectedRewardProps> = ({ accountEligibility }) =
     const hasBoost = Boolean(Number(accountEligibility.airdrop_boost));
 
     const formatted = {
-        raw: formatBalance(+accountEligibility.raw_airdrop_reward, true),
-        boosted: formatBalance(+accountEligibility.airdrop_reward, true),
+        raw: formatBalance(accountEligibility.raw_airdrop_reward, true),
+        boosted: formatBalance(accountEligibility.airdrop_reward, true),
         boostPercent: formatBalance(+accountEligibility.airdrop_boost * 100, true),
         yearly: formatBalance(+accountEligibility.airdrop_reward / 3, true),
         monthly: formatBalance(+accountEligibility.airdrop_reward / 36, true),

@@ -38,7 +38,7 @@ interface Props {
 const ApyBoosted = ({ value, color }: Props) => (
     <Container $color={colors[color]}>
         <Icon $color={colors[color]} />
-        {formatBalance(+value.toFixed(2))}%
+        {formatBalance(value.toFixed(2))}%
     </Container>
 );
 

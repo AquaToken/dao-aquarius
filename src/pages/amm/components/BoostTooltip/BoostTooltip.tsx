@@ -102,19 +102,19 @@ const BoostTooltip = ({ pool, userBoost }: Props) => (
         <BoostTooltipValuesBlock>
             <BoostTooltipValues>
                 <span>Max. reward:</span>
-                <Boosted>{formatBalance(+(Number(pool.rewards_apy) * 250).toFixed(2))}%</Boosted>
+                <Boosted>{formatBalance((Number(pool.rewards_apy) * 250).toFixed(2))}%</Boosted>
             </BoostTooltipValues>
             {userBoost && (
                 <UserBoostTooltipValues>
                     <span>Your reward:</span>
                     <Boosted>
-                        {formatBalance(+(Number(pool.rewards_apy) * 100 * userBoost).toFixed(2))}%
+                        {formatBalance((Number(pool.rewards_apy) * 100 * userBoost).toFixed(2))}%
                     </Boosted>
                 </UserBoostTooltipValues>
             )}
             <BoostTooltipValues>
                 <span>Min. reward:</span>
-                <span>{formatBalance(+(Number(pool.rewards_apy) * 100).toFixed(2))}%</span>
+                <span>{formatBalance((Number(pool.rewards_apy) * 100).toFixed(2))}%</span>
             </BoostTooltipValues>
         </BoostTooltipValuesBlock>
         <LinkButton to={AppRoutes.section.locker.link.index}>

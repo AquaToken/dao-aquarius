@@ -39,70 +39,68 @@ const AddLiquidityEstimateSummary = ({
     minPriceInput,
     maxPriceInput,
     depositEstimate,
-}: Props): React.ReactNode => {
-    return (
-        <RangeSummary>
-            <SummaryRows>
-                <SummaryRow>
-                    <SummaryLabel>
-                        Selected range ({pool.tokens[0].code}/{pool.tokens[1].code})
-                    </SummaryLabel>
-                    <SummaryValue>
-                        {hasTickRange && tickLower === minTickBound && tickUpper === maxTickBound
-                            ? 'Full Range'
-                            : `${minPriceInput} - ${maxPriceInput}`}
-                    </SummaryValue>
-                </SummaryRow>
-                <SummaryRow>
-                    <SummaryLabel>Ticks</SummaryLabel>
-                    <SummaryValue>
-                        {tickLower ?? '-'} to {tickUpper ?? '-'}
-                    </SummaryValue>
-                </SummaryRow>
-                {depositEstimate ? (
-                    <>
-                        <SummaryRow>
-                            <SummaryLabel>Amount</SummaryLabel>
-                            <SummaryAmounts>
-                                <SummaryAmountItem>
-                                    <span>
-                                        {formatBalance(
-                                            Number(depositEstimate.amounts[0]),
-                                            true,
-                                            false,
-                                            pool.tokens[0].decimal,
-                                        )}
-                                    </span>
-                                    <AssetLogo asset={pool.tokens[0]} isSmall isCircle />
-                                </SummaryAmountItem>
-                                <SummaryAmountItem>
-                                    <span>
-                                        {formatBalance(
-                                            Number(depositEstimate.amounts[1]),
-                                            true,
-                                            false,
-                                            pool.tokens[1].decimal,
-                                        )}
-                                    </span>
-                                    <AssetLogo asset={pool.tokens[1]} isSmall isCircle />
-                                </SummaryAmountItem>
-                            </SummaryAmounts>
-                        </SummaryRow>
-                        <SummaryRow>
-                            <SummaryLabel>Liquidity position</SummaryLabel>
-                            <SummaryValue>
-                                {depositEstimate.liquidityLoading ? (
-                                    <DotsLoader />
-                                ) : (
-                                    depositEstimate.liquidityDisplay
-                                )}
-                            </SummaryValue>
-                        </SummaryRow>
-                    </>
-                ) : null}
-            </SummaryRows>
-        </RangeSummary>
-    );
-};
+}: Props): React.ReactNode => (
+    <RangeSummary>
+        <SummaryRows>
+            <SummaryRow>
+                <SummaryLabel>
+                    Selected range ({pool.tokens[0].code}/{pool.tokens[1].code})
+                </SummaryLabel>
+                <SummaryValue>
+                    {hasTickRange && tickLower === minTickBound && tickUpper === maxTickBound
+                        ? 'Full Range'
+                        : `${minPriceInput} - ${maxPriceInput}`}
+                </SummaryValue>
+            </SummaryRow>
+            <SummaryRow>
+                <SummaryLabel>Ticks</SummaryLabel>
+                <SummaryValue>
+                    {tickLower ?? '-'} to {tickUpper ?? '-'}
+                </SummaryValue>
+            </SummaryRow>
+            {depositEstimate ? (
+                <>
+                    <SummaryRow>
+                        <SummaryLabel>Amount</SummaryLabel>
+                        <SummaryAmounts>
+                            <SummaryAmountItem>
+                                <span>
+                                    {formatBalance(
+                                        depositEstimate.amounts[0],
+                                        true,
+                                        false,
+                                        pool.tokens[0].decimal,
+                                    )}
+                                </span>
+                                <AssetLogo asset={pool.tokens[0]} isSmall isCircle />
+                            </SummaryAmountItem>
+                            <SummaryAmountItem>
+                                <span>
+                                    {formatBalance(
+                                        depositEstimate.amounts[1],
+                                        true,
+                                        false,
+                                        pool.tokens[1].decimal,
+                                    )}
+                                </span>
+                                <AssetLogo asset={pool.tokens[1]} isSmall isCircle />
+                            </SummaryAmountItem>
+                        </SummaryAmounts>
+                    </SummaryRow>
+                    <SummaryRow>
+                        <SummaryLabel>Liquidity position</SummaryLabel>
+                        <SummaryValue>
+                            {depositEstimate.liquidityLoading ? (
+                                <DotsLoader />
+                            ) : (
+                                depositEstimate.liquidityDisplay
+                            )}
+                        </SummaryValue>
+                    </SummaryRow>
+                </>
+            ) : null}
+        </SummaryRows>
+    </RangeSummary>
+);
 
 export default AddLiquidityEstimateSummary;

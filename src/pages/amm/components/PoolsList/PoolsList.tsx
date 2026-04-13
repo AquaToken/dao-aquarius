@@ -36,9 +36,9 @@ import VolumeChart from 'pages/amm/components/VolumeChart/VolumeChart';
 
 import MigratePoolButton from './MigratePoolButton/MigratePoolButton';
 
-import ConcentratedWithdrawModal from '../ConcentratedLiquidity/modals/ConcentratedWithdrawModal/ConcentratedWithdrawModal';
-import AddLiquidityFlow from '../AddLiquidity/Regular/AddLiquidityFlow';
 import AddLiquidityModal from '../AddLiquidity/AddLiquidityModal';
+import AddLiquidityFlow from '../AddLiquidity/Regular/AddLiquidityFlow';
+import ConcentratedWithdrawModal from '../ConcentratedLiquidity/modals/ConcentratedWithdrawModal/ConcentratedWithdrawModal';
 import WithdrawFromPool from '../WithdrawFromPool/WithdrawFromPool';
 
 const PoolBlock = styled.div`
@@ -484,7 +484,7 @@ const PoolsList = ({
                                             <ExpandedDataRow>
                                                 <span>Pool shares:</span>
                                                 <span>
-                                                    {formatBalance(+balance, true)} (
+                                                    {formatBalance(balance, true)} (
                                                     {Number(pool.total_share)
                                                         ? formatBalance(
                                                               (100 * +balance) / +totalShare,

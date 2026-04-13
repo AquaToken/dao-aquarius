@@ -142,7 +142,7 @@ const ConfirmBribeModal: React.FC<ModalProps<ConfirmBribeParams>> = ({ params, c
                 <InfoRow>
                     <Label>Weekly reward amount</Label>
                     <Value>
-                        {formatBalance(+amount)} {rewardAsset.code}
+                        {formatBalance(amount)} {rewardAsset.code}
                     </Value>
                 </InfoRow>
 

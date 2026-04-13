@@ -280,7 +280,7 @@ const Votes = (): React.ReactNode => {
                                 <Solution choice={voteChoice} />
                             </CellSolution>
                             <CellAmount>
-                                {formatBalance(Number(amount), true)}
+                                {formatBalance(amount, true)}
                                 {vote.asset_code === GD_ICE_CODE ? <GdIceLogo /> : <IceLogo />}
                                 <ExternalLink onClick={() => onVoteLinkClick(txLink)}>
                                     <ExternalLinkIcon />

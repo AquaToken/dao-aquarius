@@ -624,7 +624,7 @@ const VotesAmountModal = ({
                     <TotalAmountRow>
                         <Label>Total:</Label>
                         <TotalAmount>
-                            {amount ? formatBalance(+amount) : '0'} {targetAsset.code}{' '}
+                            {amount ? formatBalance(amount) : '0'} {targetAsset.code}{' '}
                             <AssetLogo asset={targetAsset} isCircle={false} />
                         </TotalAmount>
                     </TotalAmountRow>
