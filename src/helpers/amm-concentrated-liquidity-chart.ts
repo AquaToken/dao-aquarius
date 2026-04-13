@@ -5,41 +5,18 @@ import { getNativePrices } from 'api/amm';
 import { SorobanService, StellarService } from 'services/globalServices';
 
 import { ConcentratedPosition, PoolExtended } from 'types/amm';
+import {
+    DistributionData,
+    DistributionItem,
+    Segment,
+    UserDistributionPositionDetail,
+} from 'types/amm-concentrated-liquidity-chart';
 
 import {
     hydratePositionsLiquidity,
     keyOfPosition,
     normalizePositions,
 } from './amm-concentrated-positions';
-
-export type DistributionItem = {
-    tickLower: number;
-    tickUpper: number;
-    liquidity: number;
-    isPreview?: boolean;
-    positionKey?: string;
-};
-
-export type UserDistributionPositionDetail = {
-    key: string;
-    tickLower: number;
-    tickUpper: number;
-    liquidity: string;
-    tokenEstimates: string[];
-    liquidityUsd: number;
-};
-
-type DistributionData = {
-    items: DistributionItem[];
-    currentTick: number | null;
-    positionDetails?: UserDistributionPositionDetail[];
-};
-
-type Segment = {
-    tickLower: number;
-    tickUpper: number;
-    liquidity: BigNumber;
-};
 
 const buildLiquiditySegmentsFromTickMap = (
     tickMap: Record<string, string>,

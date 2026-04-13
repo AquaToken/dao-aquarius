@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js';
 
 import { CONCENTRATED_TICK_BASE, CONCENTRATED_TICK_LOG_BASE } from 'constants/amm';
+
 import { formatBalance } from 'helpers/format-number';
 
 export const clamp = (value: number, min: number, max: number) =>
