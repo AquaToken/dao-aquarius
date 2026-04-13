@@ -6,7 +6,7 @@ import Select from 'basics/inputs/Select';
 import { PositionsList, Section, SectionTitle } from './ConcentratedPositionsSection.styled';
 
 const PositionsSelectWrap = styled.div`
-    > div > div:nth-child(2) > .withdraw-position-card {
+    .withdraw-position-head .withdraw-position-card {
         padding: 2.4rem 0;
     }
 `;
@@ -39,6 +39,7 @@ const ConcentratedPositionsSection = ({
                         value={selectedPositionKey}
                         onChange={onSelectPosition}
                         placeholder="Select position"
+                        headClassName="withdraw-position-head"
                     />
                 </PositionsSelectWrap>
             ) : null}

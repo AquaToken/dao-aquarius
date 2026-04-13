@@ -122,6 +122,7 @@ type SelectProps<T> = {
     onChange: (value: T) => void;
     disabled?: boolean;
     placeholder?: string;
+    headClassName?: string;
 };
 
 const Select = <T,>({
@@ -130,6 +131,7 @@ const Select = <T,>({
     onChange,
     disabled,
     placeholder,
+    headClassName,
     ...props
 }: SelectProps<T>): React.ReactNode => {
     const [isOpen, setIsOpen] = useState(false);
@@ -163,7 +165,7 @@ const Select = <T,>({
         >
             <DropdownArrow $isOpen={isOpen} />
             {selectedOption && !isOpen ? (
-                <DropdownItemHead>
+                <DropdownItemHead className={headClassName}>
                     {Boolean(selectedOption.icon) && (
                         <DropdownItemIcon>{selectedOption.icon}</DropdownItemIcon>
                     )}
