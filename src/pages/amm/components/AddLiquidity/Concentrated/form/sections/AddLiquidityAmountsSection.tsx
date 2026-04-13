@@ -1,7 +1,7 @@
-import BigNumber from 'bignumber.js';
 import * as React from 'react';
 import { NumericFormat } from 'react-number-format';
 
+import { formatConcentratedAmountInputValue } from 'helpers/amm-concentrated';
 import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 
@@ -44,13 +44,8 @@ const AddLiquidityAmountsSection = ({
     const token1Balance = tokenBalances.get(token1Key) || '0';
     const token0Decimals = pool.tokens[0].decimal;
     const token1Decimals = pool.tokens[1].decimal;
-    const normalizeBalanceInputValue = (value: string, decimals: number) => {
-        const fixed = new BigNumber(value || '0').toFixed(decimals);
-        const normalized = fixed.replace(/\.?0+$/, '');
-        return normalized === '' ? '0' : normalized;
-    };
-    const token0BalanceValue = normalizeBalanceInputValue(token0Balance, token0Decimals);
-    const token1BalanceValue = normalizeBalanceInputValue(token1Balance, token1Decimals);
+    const token0BalanceValue = formatConcentratedAmountInputValue(token0Balance, token0Decimals);
+    const token1BalanceValue = formatConcentratedAmountInputValue(token1Balance, token1Decimals);
 
     const token0RightLabel = tokenBalances.has(token0Key) ? (
         <Balance>
