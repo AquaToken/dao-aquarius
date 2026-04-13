@@ -2,16 +2,11 @@ import BigNumber from 'bignumber.js';
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 
-import { getNativePrices } from 'api/amm';
-
 import { POOL_TYPE } from 'constants/amm';
 
 import { parseConcentratedPercent } from 'helpers/amm-concentrated';
-import {
-    hydratePositionsLiquidity,
-    keyOfPosition,
-    normalizePositions,
-} from 'helpers/amm-concentrated-positions';
+import { keyOfPosition } from 'helpers/amm-concentrated-positions';
+import { loadConcentratedUserPositions } from 'helpers/amm-concentrated-user-positions';
 import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
@@ -20,9 +15,10 @@ import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
-import { SorobanService, StellarService, ToastService } from 'services/globalServices';
+import { SorobanService, ToastService } from 'services/globalServices';
 
-import { ConcentratedPosition, PoolExtended } from 'types/amm';
+import { PoolExtended } from 'types/amm';
+import { UserDistributionPositionDetail } from 'types/amm-concentrated-liquidity-chart';
 import { ModalProps } from 'types/modal';
 
 import Alert from 'basics/Alert';
@@ -58,12 +54,7 @@ const ConcentratedWithdrawModal = ({
     const { pool } = params;
     const { account } = useAuthStore();
 
-    const [tickSpacing, setTickSpacing] = useState<number | null>(null);
-    const [positions, setPositions] = useState<ConcentratedPosition[]>([]);
-    const [positionTokenEstimates, setPositionTokenEstimates] = useState<Map<string, string[]>>(
-        new Map(),
-    );
-    const [tokenPrices, setTokenPrices] = useState<Map<string, string>>(new Map());
+    const [positions, setPositions] = useState<UserDistributionPositionDetail[]>([]);
 
     const [withdrawPercent, setWithdrawPercent] = useState('100');
     const [selectedPositionKey, setSelectedPositionKey] = useState<string | null>(null);
@@ -84,66 +75,24 @@ const ConcentratedWithdrawModal = ({
 
     const positionSelectOptions = useMemo(
         () =>
-            positions.map(position => {
-                const estimate = positionTokenEstimates.get(keyOfPosition(position));
-                const positionLiquidityUsd = estimate
-                    ? estimate.reduce((acc, amount, index) => {
-                          const tokenPriceXlm = new BigNumber(
-                              tokenPrices.get(pool.tokens[index].contract) || '0',
-                          );
-                          const tokenUsdPrice = tokenPriceXlm.multipliedBy(
-                              StellarService.price.priceLumenUsd || 0,
-                          );
-
-                          return acc.plus(new BigNumber(amount || '0').multipliedBy(tokenUsdPrice));
-                      }, new BigNumber(0))
-                    : new BigNumber(0);
-
-                return {
-                    value: keyOfPosition(position),
-                    label: (
-                        <ConcentratedPositionCard
-                            className="withdraw-position-card"
-                            pool={pool}
-                            position={{
-                                tickLower: position.tickLower,
-                                tickUpper: position.tickUpper,
-                                liquidity: position.liquidity,
-                                tokenEstimates: estimate || pool.tokens.map(() => '0'),
-                                liquidityUsd: positionLiquidityUsd.toNumber(),
-                            }}
-                        />
-                    ),
-                };
-            }),
-        [positions, pool.tokens, pool, positionTokenEstimates, tokenPrices],
+            positions.map(position => ({
+                value: keyOfPosition(position),
+                label: (
+                    <ConcentratedPositionCard
+                        className="withdraw-position-card"
+                        pool={pool}
+                        position={{
+                            tickLower: position.tickLower,
+                            tickUpper: position.tickUpper,
+                            liquidity: position.liquidity,
+                            tokenEstimates: position.tokenEstimates,
+                            liquidityUsd: position.liquidityUsd,
+                        }}
+                    />
+                ),
+            })),
+        [positions, pool],
     );
-
-    useEffect(() => {
-        let mounted = true;
-
-        getNativePrices()
-            .then(prices => {
-                if (!mounted) {
-                    return;
-                }
-
-                setTokenPrices(
-                    new Map([...prices.entries()].map(([key, value]) => [key, value.price])),
-                );
-            })
-            .catch(() => {
-                if (!mounted) {
-                    return;
-                }
-
-                setTokenPrices(new Map());
-            });
-
-        return () => {
-            mounted = false;
-        };
-    }, []);
 
     const normalizedWithdrawLiquidity = useMemo(() => {
         if (!selectedPosition) {
@@ -196,32 +145,6 @@ const ConcentratedWithdrawModal = ({
         [pool.tokens],
     );
 
-    const hydratePositionTokenEstimates = async (ranges: ConcentratedPosition[]) => {
-        if (!account || !ranges.length) {
-            return new Map<string, string[]>();
-        }
-
-        const entries = await Promise.all(
-            ranges.map(async range => {
-                try {
-                    const amounts = await SorobanService.amm.estimateWithdrawPosition(
-                        account.accountId(),
-                        pool.address,
-                        pool.tokens,
-                        range.tickLower,
-                        range.tickUpper,
-                        String(range.liquidity || '0'),
-                    );
-                    return [keyOfPosition(range), amounts] as [string, string[]];
-                } catch {
-                    return null;
-                }
-            }),
-        );
-
-        return new Map(entries.filter(Boolean) as [string, string[]][]);
-    };
-
     const load = () => {
         if (!account || pool.pool_type !== POOL_TYPE.concentrated) {
             return;
@@ -229,31 +152,12 @@ const ConcentratedWithdrawModal = ({
 
         setLoading(true);
 
-        Promise.all([
-            SorobanService.amm.getConcentratedTickSpacing(pool.address),
-            SorobanService.amm.getUserPositionSnapshot(pool.address, account.accountId()),
-        ])
-            .then(async ([spacing, snapshot]) => {
-                setTickSpacing(spacing);
-                const ranges = normalizePositions(snapshot);
-                const hydrated = await hydratePositionsLiquidity(ranges, async range => {
-                    const position = await SorobanService.amm.getPosition(
-                        pool.address,
-                        account.accountId(),
-                        range.tickLower,
-                        range.tickUpper,
-                    );
-                    return position?.liquidity;
-                });
-                const nextPositions = hydrated
-                    .filter(item => new BigNumber(item.liquidity || '0').gt(0))
-                    .sort((a, b) =>
-                        new BigNumber(b.liquidity || '0').minus(a.liquidity || '0').toNumber(),
-                    );
+        loadConcentratedUserPositions(pool, account.accountId())
+            .then(({ positions: loadedPositions }) => {
+                const nextPositions = [...loadedPositions].sort((a, b) =>
+                    new BigNumber(b.liquidity || '0').minus(a.liquidity || '0').toNumber(),
+                );
                 setPositions(nextPositions);
-                setPositionTokenEstimates(new Map());
-                const tokenEstimates = await hydratePositionTokenEstimates(nextPositions);
-                setPositionTokenEstimates(tokenEstimates);
 
                 if (!nextPositions.length) {
                     setSelectedPositionKey(null);
@@ -442,7 +346,7 @@ const ConcentratedWithdrawModal = ({
                                                     <DotsLoader />
                                                 ) : withdrawEstimate ? (
                                                     formatBalance(
-                                                        Number(withdrawEstimate[index]),
+                                                        Number(withdrawEstimate[index] || 0),
                                                         false,
                                                         false,
                                                         asset.decimal,

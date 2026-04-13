@@ -7,7 +7,7 @@ import { getAssetsList } from 'api/amm';
 
 import { POOL_TYPE } from 'constants/amm';
 
-import { hydratePositionsLiquidity, normalizePositions } from 'helpers/amm-concentrated-positions';
+import { loadConcentratedUserPositions } from 'helpers/amm-concentrated-user-positions';
 import { contractValueToAmount } from 'helpers/amount';
 import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
@@ -169,68 +169,25 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
         }
 
         if (isConcentrated) {
-            SorobanService.amm
-                .getUserPositionSnapshot(pool.address, account.accountId())
-                .then(async snapshot => {
-                    const ranges = normalizePositions(snapshot);
-
-                    if (!ranges.length) {
+            loadConcentratedUserPositions(pool, account.accountId())
+                .then(({ positions, rawLiquidity }) => {
+                    if (!positions.length) {
                         setAccountShare(0);
                         setAccountPooledAmounts(pool.tokens.map(() => '0'));
                         return;
                     }
-
-                    const hydrated = await hydratePositionsLiquidity(ranges, async range => {
-                        const position = await SorobanService.amm.getPosition(
-                            pool.address,
-                            account.accountId(),
-                            range.tickLower,
-                            range.tickUpper,
-                        );
-                        return position?.liquidity;
-                    });
-
-                    const nonZeroPositions = hydrated.filter(item =>
-                        new BigNumber(item.liquidity || '0').gt(0),
-                    );
-
-                    if (!nonZeroPositions.length) {
-                        setAccountShare(0);
-                        setAccountPooledAmounts(pool.tokens.map(() => '0'));
-                        return;
-                    }
-
-                    const estimatedAmounts = await Promise.all(
-                        nonZeroPositions.map(position =>
-                            SorobanService.amm
-                                .estimateWithdrawPosition(
-                                    account.accountId(),
-                                    pool.address,
-                                    pool.tokens,
-                                    position.tickLower,
-                                    position.tickUpper,
-                                    String(position.liquidity || '0'),
-                                )
-                                .catch(() => pool.tokens.map(() => '0')),
-                        ),
-                    );
 
                     const pooledTotals = pool.tokens.map((_, index) =>
-                        estimatedAmounts
+                        positions
                             .reduce(
-                                (acc, amounts) => acc.plus(amounts[index] || '0'),
+                                (acc, position) => acc.plus(position.tokenEstimates[index] || '0'),
                                 new BigNumber(0),
                             )
                             .toFixed(),
                     );
 
                     setAccountShare(
-                        Number(
-                            contractValueToAmount(
-                                String(snapshot?.raw_liquidity ?? '0'),
-                                pool.share_token_decimals,
-                            ),
-                        ),
+                        Number(contractValueToAmount(rawLiquidity, pool.share_token_decimals)),
                     );
                     setAccountPooledAmounts(pooledTotals);
                 })
