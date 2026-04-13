@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 
-import { POOL_TYPE } from 'constants/amm';
+import { CONCENTRATED_WITHDRAW_ESTIMATE_DEBOUNCE_MS, POOL_TYPE } from 'constants/amm';
 
 import { parseConcentratedPercent } from 'helpers/amm-concentrated';
 import { keyOfPosition } from 'helpers/amm-concentrated-positions';
@@ -10,6 +10,8 @@ import { loadConcentratedUserPositions } from 'helpers/amm-concentrated-user-pos
 import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { useDebounce } from 'hooks/useDebounce';
 
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
@@ -144,6 +146,11 @@ const ConcentratedWithdrawModal = ({
             ]),
         [pool.tokens],
     );
+    const debouncedNormalizedWithdrawLiquidity = useDebounce(
+        normalizedWithdrawLiquidity,
+        CONCENTRATED_WITHDRAW_ESTIMATE_DEBOUNCE_MS,
+        true,
+    );
 
     const load = () => {
         if (!account || pool.pool_type !== POOL_TYPE.concentrated) {
@@ -187,7 +194,7 @@ const ConcentratedWithdrawModal = ({
         if (
             !account ||
             !selectedPosition ||
-            !normalizedWithdrawLiquidity ||
+            !debouncedNormalizedWithdrawLiquidity ||
             withdrawLiquidityError
         ) {
             setWithdrawEstimate(null);
@@ -195,37 +202,49 @@ const ConcentratedWithdrawModal = ({
             return;
         }
 
-        const timeoutId = window.setTimeout(() => {
-            setWithdrawEstimateLoading(true);
-            SorobanService.amm
-                .estimateWithdrawPosition(
-                    account.accountId(),
-                    pool.address,
-                    pool.tokens,
-                    selectedPosition.tickLower,
-                    selectedPosition.tickUpper,
-                    normalizedWithdrawLiquidity,
-                )
-                .then(setWithdrawEstimate)
-                .catch(() => {
-                    setWithdrawEstimate(null);
-                })
-                .finally(() => {
-                    setWithdrawEstimateLoading(false);
-                });
-        }, 400);
-
-        return () => {
-            window.clearTimeout(timeoutId);
-        };
+        setWithdrawEstimateLoading(true);
+        SorobanService.amm
+            .estimateWithdrawPosition(
+                account.accountId(),
+                pool.address,
+                pool.tokens,
+                selectedPosition.tickLower,
+                selectedPosition.tickUpper,
+                debouncedNormalizedWithdrawLiquidity,
+            )
+            .then(setWithdrawEstimate)
+            .catch(() => {
+                setWithdrawEstimate(null);
+            })
+            .finally(() => {
+                setWithdrawEstimateLoading(false);
+            });
     }, [
         account,
+        debouncedNormalizedWithdrawLiquidity,
         selectedPosition,
-        normalizedWithdrawLiquidity,
         withdrawLiquidityError,
         pool.address,
         pool.tokens,
     ]);
+
+    const handleWithdrawPercentChange = (value: string) => {
+        const parsed = parseConcentratedPercent(value);
+        if (value !== '' && !parsed) {
+            return;
+        }
+        if (parsed && parsed.gt(100)) {
+            return;
+        }
+
+        const [integerPart, fractionalPart] = value.split('.');
+        const roundedValue =
+            fractionalPart && fractionalPart.length > 1
+                ? `${integerPart}.${fractionalPart.slice(0, 1)}`
+                : value;
+
+        setWithdrawPercent(roundedValue);
+    };
 
     const withdraw = () => {
         if (!account || !selectedPosition || pending) {
@@ -307,24 +326,9 @@ const ConcentratedWithdrawModal = ({
                                         <WithdrawPercentInput
                                             postfix="%"
                                             value={withdrawPercent}
-                                            onChange={({ target }) => {
-                                                const parsed = parseConcentratedPercent(
-                                                    target.value,
-                                                );
-                                                if (target.value !== '' && !parsed) {
-                                                    return;
-                                                }
-                                                if (parsed && parsed.gt(100)) {
-                                                    return;
-                                                }
-                                                const [integerPart, fractionalPart] =
-                                                    target.value.split('.');
-                                                const roundedValue =
-                                                    fractionalPart && fractionalPart.length > 1
-                                                        ? `${integerPart}.${fractionalPart.slice(0, 1)}`
-                                                        : target.value;
-                                                setWithdrawPercent(roundedValue);
-                                            }}
+                                            onChange={({ target }) =>
+                                                handleWithdrawPercentChange(target.value)
+                                            }
                                             inputMode="decimal"
                                         />
                                         <WithdrawRangeInput
