@@ -292,6 +292,14 @@ const Links = () => {
                             Liquidity Voting
                         </NavLinkStyled>
 
+                        <NavLinkStyled
+                            to={AppRoutes.section.assetRegistry.link.index}
+                            style={({ isActive }) => (isActive ? { fontWeight: 700 } : undefined)}
+                            title="Asset Registry"
+                        >
+                            Asset Registry
+                        </NavLinkStyled>
+
                         <NavLinkWithCount>
                             <NavLinkStyled
                                 to={AppRoutes.section.governance.link.index}

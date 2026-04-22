@@ -31,6 +31,7 @@ const TokenPage = lazy(() => import('pages/token/TokenPage'));
 const QuestPage = lazy(() => import('pages/quest/Quest'));
 const DelegatePage = lazy(() => import('pages/delegate/Delegate'));
 const IncentivesPage = lazy(() => import('pages/incentives/Incentives'));
+const AssetRegistryPage = lazy(() => import('../pages/asset-registry/AssetRegistry/AssetRegistry'));
 
 const AppRouter = () => {
     useScrollOnNavigate();
@@ -203,6 +204,14 @@ const AppRouter = () => {
             element: (
                 <PageTitle title="Incentives - Aquarius">
                     <IncentivesPage />
+                </PageTitle>
+            ),
+        },
+        {
+            path: AppRoutes.section.assetRegistry.parentRoute,
+            element: (
+                <PageTitle title="Asset Registry - Aquarius">
+                    <AssetRegistryPage />
                 </PageTitle>
             ),
         },
