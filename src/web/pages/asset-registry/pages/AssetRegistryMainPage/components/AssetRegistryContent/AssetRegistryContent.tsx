@@ -5,6 +5,7 @@ import { Layout, LeftColumn } from './AssetRegistryContent.styled';
 import {
     ActiveVotingData,
     RegistryAsset,
+    RegistryAssetMarketStatsMap,
     UpcomingVoteData,
 } from '../../AssetRegistryMainPage.types';
 import AssetRegistryList from '../AssetRegistryList/AssetRegistryList';
@@ -12,6 +13,8 @@ import AssetRegistrySidebar from '../AssetRegistrySidebar/AssetRegistrySidebar';
 
 type AssetRegistryContentProps = {
     items: RegistryAsset[];
+    marketStats: RegistryAssetMarketStatsMap;
+    isMarketStatsLoading: boolean;
     activeVoting: ActiveVotingData;
     upcomingVotes: UpcomingVoteData[];
     toolbar: React.ReactNode;
@@ -19,6 +22,8 @@ type AssetRegistryContentProps = {
 
 const AssetRegistryContent = ({
     items,
+    marketStats,
+    isMarketStatsLoading,
     activeVoting,
     upcomingVotes,
     toolbar,
@@ -26,7 +31,11 @@ const AssetRegistryContent = ({
     <Layout>
         <LeftColumn>
             {toolbar}
-            <AssetRegistryList items={items} />
+            <AssetRegistryList
+                items={items}
+                marketStats={marketStats}
+                isMarketStatsLoading={isMarketStatsLoading}
+            />
         </LeftColumn>
         <AssetRegistrySidebar activeVoting={activeVoting} upcomingVotes={upcomingVotes} />
     </Layout>

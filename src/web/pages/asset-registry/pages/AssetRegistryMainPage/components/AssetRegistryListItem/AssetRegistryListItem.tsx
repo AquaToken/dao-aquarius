@@ -1,16 +1,23 @@
 import * as React from 'react';
+import { useEffect, useMemo, useState } from 'react';
+
+import { getAssetDetails } from 'api/stellar-expert';
 
 import { PROPOSAL_STATUS } from 'constants/dao';
 
 import { getAssetString } from 'helpers/assets';
 import { getDateString } from 'helpers/date';
+import { formatBalance } from 'helpers/format-number';
 import { createAsset } from 'helpers/token';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
 import ArrowDown from 'assets/icons/arrows/arrow-down-16.svg';
+import IconInfo from 'assets/icons/status/icon-info-16.svg';
 
 import Asset from 'basics/Asset';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+import DotsLoader from 'basics/loaders/DotsLoader';
 
 import {
     AssetRow,
@@ -18,6 +25,8 @@ import {
     ChevronIconWrap,
     ChevronPlaceholder,
     DesktopSummary,
+    InfoIconWrap,
+    InfoLabelWrap,
     ItemCard,
     Metric,
     MetricLabel,
@@ -33,16 +42,11 @@ import {
 import {
     AssetRegistryBadgeVariant,
     RegistryAsset,
+    RegistryAssetMarketStatsMap,
     RegistryAssetProposal,
 } from '../../AssetRegistryMainPage.types';
 import AssetRegistryStatusBadge from '../AssetRegistryStatusBadge/AssetRegistryStatusBadge';
 import AssetRegistryVoteHistory from '../AssetRegistryVoteHistory/AssetRegistryVoteHistory';
-
-const DEFAULT_ASSET_METRICS = {
-    assetHolders: '149190',
-    tvl: '$18.28K',
-    tradingVolume: '$795.78',
-};
 
 const getProposalTargetLabel = (proposalType: RegistryAssetProposal['proposal_type']) =>
     proposalType === 'ADD_ASSET' ? 'Whitelist' : 'Revoke';
@@ -68,14 +72,51 @@ const getProposalResultsStatus = (proposal: RegistryAssetProposal) => {
 
 type AssetRegistryListItemProps = {
     item: RegistryAsset;
+    marketStats: RegistryAssetMarketStatsMap;
+    isMarketStatsLoading: boolean;
     isExpanded: boolean;
     onToggle: () => void;
 };
 
-const AssetRegistryListItem = ({ item, isExpanded, onToggle }: AssetRegistryListItemProps) => {
-    const asset = createAsset(item.asset_code, item.asset_issuer ?? '');
-
+const AssetRegistryListItem = ({
+    item,
+    marketStats,
+    isMarketStatsLoading,
+    isExpanded,
+    onToggle,
+}: AssetRegistryListItemProps) => {
+    const asset = useMemo(
+        () => createAsset(item.asset_code, item.asset_issuer ?? ''),
+        [item.asset_code, item.asset_issuer],
+    );
     const { assetsInfo } = useAssetsStore();
+    const [lumenHolders, setLumenHolders] = useState<number | null>(null);
+
+    useEffect(() => {
+        if (!asset.isNative()) {
+            return undefined;
+        }
+
+        let isCancelled = false;
+
+        setLumenHolders(null);
+
+        getAssetDetails(asset)
+            .then(details => {
+                if (!isCancelled) {
+                    setLumenHolders(details?.trustlines?.[0] ?? 0);
+                }
+            })
+            .catch(() => {
+                if (!isCancelled) {
+                    setLumenHolders(0);
+                }
+            });
+
+        return () => {
+            isCancelled = true;
+        };
+    }, [asset]);
 
     const statusBadge = item.whitelisted
         ? {
@@ -110,6 +151,39 @@ const AssetRegistryListItem = ({ item, isExpanded, onToggle }: AssetRegistryList
             };
         });
     const hasVotesHistory = votesHistory.length > 0;
+    const assetContract = item.asset_contract_address ?? asset.contract;
+    const currentMarketStats = marketStats[assetContract];
+
+    const assetHolders = useMemo(() => {
+        if (asset.isNative()) {
+            return lumenHolders === null ? <DotsLoader /> : formatBalance(lumenHolders);
+        }
+
+        const holders = assetsInfo.get(getAssetString(asset))?.accounts_authorized;
+
+        return holders === undefined ? '—' : formatBalance(holders);
+    }, [asset, assetsInfo, lumenHolders]);
+
+    const getUsdAmountView = (value?: number) => {
+        if (isMarketStatsLoading) {
+            return <DotsLoader />;
+        }
+
+        if (value === undefined) {
+            return '—';
+        }
+
+        return `$${formatBalance(value, true, true)}`;
+    };
+
+    const tooltipContent = 'Data from Aquarius AMM.';
+    const renderInfoTooltip = () => (
+        <Tooltip content={tooltipContent} position={TOOLTIP_POSITION.top} showOnHover>
+            <InfoIconWrap>
+                <IconInfo />
+            </InfoIconWrap>
+        </Tooltip>
+    );
 
     return (
         <ItemCard>
@@ -121,17 +195,25 @@ const AssetRegistryListItem = ({ item, isExpanded, onToggle }: AssetRegistryList
                 <SummaryRight>
                     <Metric>
                         <MetricLabel>Asset holders</MetricLabel>
-                        <MetricValue>
-                            {assetsInfo.get(getAssetString(asset))?.accounts_authorized}
-                        </MetricValue>
+                        <MetricValue>{assetHolders}</MetricValue>
                     </Metric>
                     <Metric>
-                        <MetricLabel>TVL</MetricLabel>
-                        <MetricValue>{DEFAULT_ASSET_METRICS.tvl}</MetricValue>
+                        <MetricLabel>
+                            <InfoLabelWrap>
+                                TVL
+                                {renderInfoTooltip()}
+                            </InfoLabelWrap>
+                        </MetricLabel>
+                        <MetricValue>{getUsdAmountView(currentMarketStats?.tvlUsd)}</MetricValue>
                     </Metric>
                     <Metric>
-                        <MetricLabel>Trading volume</MetricLabel>
-                        <MetricValue>{DEFAULT_ASSET_METRICS.tradingVolume}</MetricValue>
+                        <MetricLabel>
+                            <InfoLabelWrap>
+                                Trading volume
+                                {renderInfoTooltip()}
+                            </InfoLabelWrap>
+                        </MetricLabel>
+                        <MetricValue>{getUsdAmountView(currentMarketStats?.volumeUsd)}</MetricValue>
                     </Metric>
                     <AssetRegistryStatusBadge
                         variant={statusBadge.variant}
@@ -175,17 +257,25 @@ const AssetRegistryListItem = ({ item, isExpanded, onToggle }: AssetRegistryList
                 <MobileMetrics>
                     <MobileMetric>
                         <MetricLabel>Asset holders</MetricLabel>
-                        <MetricValue>
-                            {assetsInfo.get(getAssetString(asset))?.accounts_authorized}
-                        </MetricValue>
+                        <MetricValue>{assetHolders}</MetricValue>
                     </MobileMetric>
                     <MobileMetric>
-                        <MetricLabel>TVL</MetricLabel>
-                        <MetricValue>{DEFAULT_ASSET_METRICS.tvl}</MetricValue>
+                        <MetricLabel>
+                            <InfoLabelWrap>
+                                TVL
+                                {renderInfoTooltip()}
+                            </InfoLabelWrap>
+                        </MetricLabel>
+                        <MetricValue>{getUsdAmountView(currentMarketStats?.tvlUsd)}</MetricValue>
                     </MobileMetric>
                     <MobileMetric>
-                        <MetricLabel>Trading volume</MetricLabel>
-                        <MetricValue>{DEFAULT_ASSET_METRICS.tradingVolume}</MetricValue>
+                        <MetricLabel>
+                            <InfoLabelWrap>
+                                Trading volume
+                                {renderInfoTooltip()}
+                            </InfoLabelWrap>
+                        </MetricLabel>
+                        <MetricValue>{getUsdAmountView(currentMarketStats?.volumeUsd)}</MetricValue>
                     </MobileMetric>
                 </MobileMetrics>
             </MobileSummary>

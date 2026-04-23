@@ -3,14 +3,16 @@ import { useState } from 'react';
 
 import { EmptyState, List } from './AssetRegistryList.styled';
 
-import { RegistryAsset } from '../../AssetRegistryMainPage.types';
+import { RegistryAsset, RegistryAssetMarketStatsMap } from '../../AssetRegistryMainPage.types';
 import AssetRegistryListItem from '../AssetRegistryListItem/AssetRegistryListItem';
 
 type AssetRegistryListProps = {
     items: RegistryAsset[];
+    marketStats: RegistryAssetMarketStatsMap;
+    isMarketStatsLoading: boolean;
 };
 
-const AssetRegistryList = ({ items }: AssetRegistryListProps) => {
+const AssetRegistryList = ({ items, marketStats, isMarketStatsLoading }: AssetRegistryListProps) => {
     const [expandedId, setExpandedId] = useState<string | null>(null);
 
     if (!items.length) {
@@ -26,6 +28,8 @@ const AssetRegistryList = ({ items }: AssetRegistryListProps) => {
                     <AssetRegistryListItem
                         key={itemId}
                         item={item}
+                        marketStats={marketStats}
+                        isMarketStatsLoading={isMarketStatsLoading}
                         isExpanded={expandedId === itemId}
                         onToggle={() =>
                             setExpandedId(current => (current === itemId ? null : itemId))

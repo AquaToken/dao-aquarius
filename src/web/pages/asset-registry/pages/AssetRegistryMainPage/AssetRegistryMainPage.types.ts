@@ -53,6 +53,13 @@ export type RegistryAssetsResponse = {
     results: RegistryAsset[];
 };
 
+export type RegistryAssetMarketStats = {
+    tvlUsd: number;
+    volumeUsd: number;
+};
+
+export type RegistryAssetMarketStatsMap = Record<string, RegistryAssetMarketStats>;
+
 export enum AssetRegistryBadgeVariant {
     whitelisted = 'whitelisted',
     revoked = 'revoked',

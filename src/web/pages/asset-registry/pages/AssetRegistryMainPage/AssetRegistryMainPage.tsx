@@ -1,7 +1,10 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 
-import { getRegistryAssetsRequest } from 'api/asset-registry';
+import {
+    getRegistryAssetMarketStatsRequest,
+    getRegistryAssetsRequest,
+} from 'api/asset-registry';
 
 import { ASSETS_ENV_DATA } from 'constants/assets';
 
@@ -25,6 +28,7 @@ import {
     AssetRegistryFilter,
     ActiveVotingData,
     RegistryAsset,
+    RegistryAssetMarketStatsMap,
     UpcomingVoteData,
 } from './AssetRegistryMainPage.types';
 import AssetRegistryContent from './components/AssetRegistryContent/AssetRegistryContent';
@@ -68,6 +72,8 @@ const AssetRegistryMainPage = () => {
     const [filter, setFilter] = useState(AssetRegistryFilter.all);
     const [search, setSearch] = useState('');
     const [apiRegistryAssets, setApiRegistryAssets] = useState<RegistryAsset[]>([]);
+    const [marketStats, setMarketStats] = useState<RegistryAssetMarketStatsMap>({});
+    const [isMarketStatsLoading, setIsMarketStatsLoading] = useState(true);
 
     useEffect(() => {
         let isCancelled = false;
@@ -84,6 +90,34 @@ const AssetRegistryMainPage = () => {
             isCancelled = true;
         };
     }, []);
+
+    useEffect(() => {
+        let isCancelled = false;
+
+        setIsMarketStatsLoading(true);
+
+        getRegistryAssetMarketStatsRequest()
+            .then(data => {
+                if (!isCancelled) {
+                    setMarketStats(data);
+                }
+            })
+            .catch(() => {
+                if (!isCancelled) {
+                    setMarketStats({});
+                }
+            })
+            .finally(() => {
+                if (!isCancelled) {
+                    setIsMarketStatsLoading(false);
+                }
+            });
+
+        return () => {
+            isCancelled = true;
+        };
+    }, []);
+
     const activeVoting = useMemo<ActiveVotingData>(
         () => ({
             assetCode: 'AQUA',
@@ -154,6 +188,8 @@ const AssetRegistryMainPage = () => {
 
                 <AssetRegistryContent
                     items={filteredItems}
+                    marketStats={marketStats}
+                    isMarketStatsLoading={isMarketStatsLoading}
                     activeVoting={activeVoting}
                     upcomingVotes={upcomingVotes}
                     toolbar={

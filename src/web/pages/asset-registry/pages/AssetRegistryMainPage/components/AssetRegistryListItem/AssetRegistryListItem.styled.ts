@@ -91,9 +91,22 @@ export const MetricLabel = styled.div`
     color: ${COLORS.textGray};
 `;
 
+export const InfoLabelWrap = styled.span`
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+`;
+
 export const MetricValue = styled.div`
     ${FONT_SIZE.md};
     color: ${COLORS.textSecondary};
+`;
+
+export const InfoIconWrap = styled.span`
+    ${flexAllCenter};
+    width: 1.6rem;
+    height: 1.6rem;
+    cursor: pointer;
 `;
 
 export const ChevronButton = styled.button`
