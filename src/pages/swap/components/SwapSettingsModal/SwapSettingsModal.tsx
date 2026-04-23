@@ -69,7 +69,7 @@ const SwapSettingsModal = ({ close }: ModalProps<never>): React.ReactNode => {
                     onChange={setSlippage}
                 />
                 <InputStyled
-                    isMedium
+                    inputSize="small"
                     postfix="%"
                     value={slippage}
                     onChange={({ target }) => setSlippage(target.value)}

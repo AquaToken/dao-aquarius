@@ -606,7 +606,7 @@ const VotesAmountModal = ({
                                     onFocus={() => {
                                         setIsHandleEdit(true);
                                     }}
-                                    isMedium
+                                    inputSize="small"
                                     isRightAligned
                                     inputMode="decimal"
                                 />
