@@ -8,12 +8,28 @@ import { getAmmAquaUrl, getGovernanceUrl } from 'helpers/url';
 import { ListResponse, Pool } from 'types/amm';
 
 import {
+    ActiveRegistryProposal,
     RegistryAssetMarketStatsMap,
     RegistryAssetsResponse,
 } from 'web/pages/asset-registry/pages/AssetRegistryMainPage/AssetRegistryMainPage.types';
 
 export const getRegistryAssetsRequest = (): Promise<RegistryAssetsResponse> =>
-    axios.get<RegistryAssetsResponse>(`${getGovernanceUrl()}/asset-tokens/`).then(({ data }) => data);
+    axios
+        .get<RegistryAssetsResponse>(`${getGovernanceUrl()}/asset-tokens/`)
+        .then(({ data }) => data);
+
+export const getActiveRegistryVotingRequest = (): Promise<ActiveRegistryProposal | null> =>
+    axios
+        .get<ListResponse<ActiveRegistryProposal>>(`${getGovernanceUrl()}/proposal/`, {
+            params: {
+                proposal_type: 'asset',
+                status: 'voting',
+                limit: 1,
+                page: 1,
+                ordering: '-created_at',
+            },
+        })
+        .then(({ data }) => data.results[0] ?? null);
 
 const AMM_PAGE_SIZE = 500;
 const STELLAR_DECIMALS = 1e7;
@@ -37,29 +53,31 @@ const getAllAmmPools = async (): Promise<Pool[]> => {
     return pools;
 };
 
-export const getRegistryAssetMarketStatsRequest = async (): Promise<RegistryAssetMarketStatsMap> => {
-    const [pools, nativePrices, lumenUsdPrice] = await Promise.all([
-        getAllAmmPools(),
-        getNativePrices(),
-        getLumenUsdPrice(),
-    ]);
+export const getRegistryAssetMarketStatsRequest =
+    async (): Promise<RegistryAssetMarketStatsMap> => {
+        const [pools, nativePrices, lumenUsdPrice] = await Promise.all([
+            getAllAmmPools(),
+            getNativePrices(),
+            getLumenUsdPrice(),
+        ]);
 
-    return pools.reduce<RegistryAssetMarketStatsMap>((acc, pool) => {
-        pool.tokens_addresses.forEach((tokenAddress, index) => {
-            const reserve = Number(pool.reserves[index]);
-            const tokenPriceInXlm = Number(nativePrices.get(tokenAddress)?.price ?? 0);
+        return pools.reduce<RegistryAssetMarketStatsMap>((acc, pool) => {
+            pool.tokens_addresses.forEach((tokenAddress, index) => {
+                const reserve = Number(pool.reserves[index]);
+                const tokenPriceInXlm = Number(nativePrices.get(tokenAddress)?.price ?? 0);
 
-            if (!acc[tokenAddress]) {
-                acc[tokenAddress] = {
-                    tvlUsd: 0,
-                    volumeUsd: 0,
-                };
-            }
+                if (!acc[tokenAddress]) {
+                    acc[tokenAddress] = {
+                        tvlUsd: 0,
+                        volumeUsd: 0,
+                    };
+                }
 
-            acc[tokenAddress].tvlUsd += (reserve / STELLAR_DECIMALS) * tokenPriceInXlm * lumenUsdPrice;
-            acc[tokenAddress].volumeUsd += Number(pool.volume_usd) / STELLAR_DECIMALS;
-        });
+                acc[tokenAddress].tvlUsd +=
+                    (reserve / STELLAR_DECIMALS) * tokenPriceInXlm * lumenUsdPrice;
+                acc[tokenAddress].volumeUsd += Number(pool.volume_usd) / STELLAR_DECIMALS;
+            });
 
-        return acc;
-    }, {});
-};
+            return acc;
+        }, {});
+    };

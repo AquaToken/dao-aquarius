@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 
-import {
-    getRegistryAssetMarketStatsRequest,
-    getRegistryAssetsRequest,
-} from 'api/asset-registry';
+import { getRegistryAssetMarketStatsRequest, getRegistryAssetsRequest } from 'api/asset-registry';
 
 import { ASSETS_ENV_DATA } from 'constants/assets';
 
@@ -26,7 +23,6 @@ import {
 } from './AssetRegistryMainPage.styled';
 import {
     AssetRegistryFilter,
-    ActiveVotingData,
     RegistryAsset,
     RegistryAssetMarketStatsMap,
     UpcomingVoteData,
@@ -118,18 +114,6 @@ const AssetRegistryMainPage = () => {
         };
     }, []);
 
-    const activeVoting = useMemo<ActiveVotingData>(
-        () => ({
-            assetCode: 'AQUA',
-            assetHolders: '149190',
-            tvl: '$18.28K',
-            tradingVolume: '$795.78',
-            supportPercent: 12,
-            endsIn: '2 days',
-            endsAt: '25.04.2026',
-        }),
-        [],
-    );
     const upcomingVotes = useMemo<UpcomingVoteData[]>(
         () => [
             {
@@ -190,7 +174,6 @@ const AssetRegistryMainPage = () => {
                     items={filteredItems}
                     marketStats={marketStats}
                     isMarketStatsLoading={isMarketStatsLoading}
-                    activeVoting={activeVoting}
                     upcomingVotes={upcomingVotes}
                     toolbar={
                         <Toolbar>

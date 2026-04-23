@@ -3,7 +3,6 @@ import * as React from 'react';
 import { Layout, LeftColumn } from './AssetRegistryContent.styled';
 
 import {
-    ActiveVotingData,
     RegistryAsset,
     RegistryAssetMarketStatsMap,
     UpcomingVoteData,
@@ -15,7 +14,6 @@ type AssetRegistryContentProps = {
     items: RegistryAsset[];
     marketStats: RegistryAssetMarketStatsMap;
     isMarketStatsLoading: boolean;
-    activeVoting: ActiveVotingData;
     upcomingVotes: UpcomingVoteData[];
     toolbar: React.ReactNode;
 };
@@ -24,7 +22,6 @@ const AssetRegistryContent = ({
     items,
     marketStats,
     isMarketStatsLoading,
-    activeVoting,
     upcomingVotes,
     toolbar,
 }: AssetRegistryContentProps) => (
@@ -37,7 +34,11 @@ const AssetRegistryContent = ({
                 isMarketStatsLoading={isMarketStatsLoading}
             />
         </LeftColumn>
-        <AssetRegistrySidebar activeVoting={activeVoting} upcomingVotes={upcomingVotes} />
+        <AssetRegistrySidebar
+            marketStats={marketStats}
+            isMarketStatsLoading={isMarketStatsLoading}
+            upcomingVotes={upcomingVotes}
+        />
     </Layout>
 );
 

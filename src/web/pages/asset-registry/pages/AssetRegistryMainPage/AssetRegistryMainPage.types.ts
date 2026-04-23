@@ -53,6 +53,12 @@ export type RegistryAssetsResponse = {
     results: RegistryAsset[];
 };
 
+export type ActiveRegistryProposal = RegistryAssetProposal & {
+    asset_code: string | null;
+    asset_issuer: string | null;
+    asset_contract_address: string | null;
+};
+
 export type RegistryAssetMarketStats = {
     tvlUsd: number;
     volumeUsd: number;
@@ -76,16 +82,6 @@ export type AssetRegistryHistoryEntry = {
     proposedToVariant: AssetRegistryBadgeVariant;
     supportedBy: string;
     resultsStatus: PROPOSAL_STATUS;
-};
-
-export type ActiveVotingData = {
-    assetCode: string;
-    assetHolders: string;
-    tvl: string;
-    tradingVolume: string;
-    supportPercent: number;
-    endsIn: string;
-    endsAt: string;
 };
 
 export type UpcomingVoteData = {

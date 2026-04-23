@@ -1,19 +1,27 @@
 import * as React from 'react';
 
-import { ActiveVotingData, UpcomingVoteData } from '../../AssetRegistryMainPage.types';
+import {
+    RegistryAssetMarketStatsMap,
+    UpcomingVoteData,
+} from '../../AssetRegistryMainPage.types';
 import ActiveVotingCard from '../ActiveVotingCard/ActiveVotingCard';
 import UpcomingVotesCard from '../UpcomingVotesCard/UpcomingVotesCard';
 
 import { Sidebar } from './AssetRegistrySidebar.styled';
 
 type AssetRegistrySidebarProps = {
-    activeVoting: ActiveVotingData;
+    marketStats: RegistryAssetMarketStatsMap;
+    isMarketStatsLoading: boolean;
     upcomingVotes: UpcomingVoteData[];
 };
 
-const AssetRegistrySidebar = ({ activeVoting, upcomingVotes }: AssetRegistrySidebarProps) => (
+const AssetRegistrySidebar = ({
+    marketStats,
+    isMarketStatsLoading,
+    upcomingVotes,
+}: AssetRegistrySidebarProps) => (
     <Sidebar>
-        <ActiveVotingCard voting={activeVoting} />
+        <ActiveVotingCard marketStats={marketStats} isMarketStatsLoading={isMarketStatsLoading} />
         <UpcomingVotesCard items={upcomingVotes} />
     </Sidebar>
 );

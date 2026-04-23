@@ -19,31 +19,14 @@ export const CardTitle = styled.h3`
 `;
 
 export const Header = styled.div`
-    ${flexAllCenter};
-    gap: 1.4rem;
+    ${flexRowSpaceBetween};
+    gap: 1.6rem;
+    align-items: center;
 `;
 
-export const TokenAvatar = styled.div`
-    ${FONT_SIZE.md};
-    ${flexAllCenter};
-    width: 4rem;
-    height: 4rem;
-    border-radius: 1.2rem;
-    background: ${COLORS.yellow500};
-    color: ${COLORS.textPrimary};
-    font-weight: 700;
-    text-transform: uppercase;
-`;
-
-export const TokenDetails = styled.div`
-    ${flexColumn};
+export const HeaderAsset = styled.div`
+    min-width: 0;
     flex: 1 1 auto;
-    gap: 0.2rem;
-`;
-
-export const TokenCode = styled.div`
-    ${FONT_SIZE.md};
-    color: ${COLORS.textSecondary};
 `;
 
 export const Stats = styled.div`
@@ -59,6 +42,19 @@ export const Meta = styled.div`
 export const MetaLabel = styled.div`
     ${FONT_SIZE.sm};
     color: ${COLORS.textGray};
+`;
+
+export const InfoLabelWrap = styled.span`
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+`;
+
+export const InfoIconWrap = styled.span`
+    ${flexAllCenter};
+    width: 1.6rem;
+    height: 1.6rem;
+    cursor: pointer;
 `;
 
 export const MetaValue = styled.div`
