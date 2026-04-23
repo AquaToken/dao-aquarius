@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { cardBoxShadow, flexAllCenter, flexColumn, flexRowSpaceBetween } from 'styles/mixins';
+import { cardBoxShadow, flexColumn, flexRowSpaceBetween } from 'styles/mixins';
 import { COLORS, FONT_SIZE } from 'styles/style-constants';
 
 export const Card = styled.section`
@@ -40,14 +40,16 @@ export const StartsAt = styled.div`
 `;
 
 export const ItemBody = styled.div`
-    ${flexAllCenter};
-    gap: 1.2rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
+    gap: 1.2rem;
+    min-width: 0;
 `;
 
 export const ItemAsset = styled.div`
-    flex: 1 1 auto;
-    min-width: 0;
+    width: 100%;
+    overflow: hidden;
 `;
 
 export const Divider = styled.div`

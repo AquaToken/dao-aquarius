@@ -64,6 +64,79 @@ const DEFAULT_REGISTRY_ASSETS: RegistryAsset[] = [
 const getRegistryAssetId = (asset: RegistryAsset) =>
     `${asset.asset_code ?? 'unknown'}:${asset.asset_issuer ?? 'native'}`;
 
+const MOCK_UPCOMING_VOTES: UpcomingVoteData[] = [
+    {
+        id: 'queue-1',
+        startsAt: 'Starts May 4, 00:00 UTC',
+        assetCode: 'sUSD',
+        assetIssuer: 'GCHW7CWI7GMIYQYFXMFJNJX5645XGWIINIAEQK3SABQO6CAYL5T7JYIH',
+        type: 'ADD_ASSET',
+    },
+    {
+        id: 'queue-2',
+        startsAt: 'Starts May 11, 00:00 UTC',
+        assetCode: 'USDP',
+        assetIssuer: 'GDTEQF6YGCKLIBD37RJZE5GTL3ZY6CBQIKH7COAW654SYEBE6XJJOLOW',
+        type: 'ADD_ASSET',
+    },
+    {
+        id: 'queue-3',
+        startsAt: 'Starts May 18, 00:00 UTC',
+        assetCode: 'AQUAmb',
+        assetIssuer: 'GDXF6SYWIQOKOZ7BACXHBFBLQZEIH25KOTTLWQK35GO3JKRNIFHHGBPC',
+        type: 'ADD_ASSET',
+    },
+    {
+        id: 'queue-4',
+        startsAt: 'Starts May 25, 00:00 UTC',
+        assetCode: 'yXLM',
+        assetIssuer: 'GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55',
+        type: 'ADD_ASSET',
+    },
+    {
+        id: 'queue-5',
+        startsAt: 'Starts Jun 1, 00:00 UTC',
+        assetCode: 'ESP',
+        assetIssuer: 'GD2JVUJNJFJTV3P3DACOQNILC2HDHDQAIX76UNUCMAAKCCT7MVW4OFEW',
+        type: 'ADD_ASSET',
+    },
+    {
+        id: 'queue-6',
+        startsAt: 'Starts Jun 8, 00:00 UTC',
+        assetCode: 'RAYO',
+        assetIssuer: 'GBPDJLJ23JEKXV5VVDD3FVNPW5XRRZPK6PCHWRIKM2STZ57423B6IXSQ',
+        type: 'ADD_ASSET',
+    },
+    {
+        id: 'queue-7',
+        startsAt: 'Starts Jun 15, 00:00 UTC',
+        assetCode: 'SHX',
+        assetIssuer: 'GDSTRSHXHGJ7ZIVRBXEYE5Q74XUVCUSEKEBR7UCHEUUEK72N7I7KJ6JH',
+        type: 'ADD_ASSET',
+    },
+    {
+        id: 'queue-8',
+        startsAt: 'Starts Jun 22, 00:00 UTC',
+        assetCode: 'ETH',
+        assetIssuer: 'GBFXOHVAS43OIWNIO7XLRJAHT3BICFEIKOJLZVXNT572MISM4CMGSOCC',
+        type: 'ADD_ASSET',
+    },
+    {
+        id: 'queue-9',
+        startsAt: 'Starts Jun 29, 00:00 UTC',
+        assetCode: 'yUSDC',
+        assetIssuer: 'GDGTVWSM4MGS4T7Z6W4RPWOCHE2I6RDFCIFZGS3DOA63LWQTRNZNTTFF',
+        type: 'ADD_ASSET',
+    },
+    {
+        id: 'queue-10',
+        startsAt: 'Starts Jul 6, 00:00 UTC',
+        assetCode: 'XRF',
+        assetIssuer: 'GCHI6I3X62ND5XUMWINNNKXS2HPYZWKFQBZZYBSMHJ4MIP2XJXSZTXRF',
+        type: 'ADD_ASSET',
+    },
+];
+
 const AssetRegistryMainPage = () => {
     const [filter, setFilter] = useState(AssetRegistryFilter.all);
     const [search, setSearch] = useState('');
@@ -114,25 +187,7 @@ const AssetRegistryMainPage = () => {
         };
     }, []);
 
-    const upcomingVotes = useMemo<UpcomingVoteData[]>(
-        () => [
-            {
-                id: 'queue-1',
-                startsAt: 'Starts May 3, 14:00 UTC',
-                assetCode: 'USDC',
-                assetIssuer: usdc.usdcIssuer,
-                type: 'ADD_ASSET',
-            },
-            {
-                id: 'queue-2',
-                startsAt: 'Starts May 10, 14:00 UTC',
-                assetCode: 'XLM',
-                assetIssuer: '',
-                type: 'REMOVE_ASSET',
-            },
-        ],
-        [],
-    );
+    const upcomingVotes = useMemo<UpcomingVoteData[]>(() => MOCK_UPCOMING_VOTES, []);
 
     const items = useMemo(() => {
         const defaultIds = new Set(DEFAULT_REGISTRY_ASSETS.map(getRegistryAssetId));

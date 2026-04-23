@@ -33,6 +33,7 @@ const Container = styled.div`
     flex-direction: row;
     align-items: center;
     box-sizing: border-box;
+    min-width: 0;
 `;
 
 const LogoWrap = styled.span<{ $state?: AssetState }>`
@@ -42,7 +43,8 @@ const LogoWrap = styled.span<{ $state?: AssetState }>`
 
 const AssetDetails = styled.div<{ $inRow?: boolean; $variant?: AssetVariant }>`
     display: flex;
-    width: 100%;
+    flex: 1 1 auto;
+    min-width: 0;
     flex-direction: ${({ $inRow }) => ($inRow ? 'row' : 'column')};
     margin-left: ${({ $inRow, $variant }) =>
         $variant === 'compactDomain' ? '1.2rem' : $inRow ? '0.8rem' : '1.6rem'};
@@ -85,6 +87,21 @@ const AssetDomain = styled.span<{
         color: inherit;
         text-decoration: inherit;
     }
+
+    ${({ $variant }) =>
+        $variant === 'compactDomain' &&
+        `
+            display: block;
+            max-width: 100%;
+            ${textEllipsis};
+
+            a,
+            span {
+                display: block;
+                max-width: 100%;
+                ${textEllipsis};
+            }
+        `}
 
     ${respondDown(Breakpoints.md)`
         white-space: nowrap;

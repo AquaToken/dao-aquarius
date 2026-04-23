@@ -38,6 +38,7 @@ const UpcomingVotesCard = ({ items }: UpcomingVotesCardProps) => (
                             <Asset
                                 asset={createAsset(item.assetCode, item.assetIssuer)}
                                 variant="compactDomain"
+                                hasAssetDetailsLink
                             />
                         </ItemAsset>
                         <AssetRegistryStatusBadge
