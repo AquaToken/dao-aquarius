@@ -45,13 +45,13 @@ export const bigLogoStyles = (isCircle: boolean) => css`
     border-radius: ${isCircle ? '50%' : '0.5rem'};
 `;
 
-export const customLogoSize = (size: number) => css`
+export const customLogoSize = (size: number, isCircle = true) => css`
     height: ${size}rem;
     width: ${size}rem;
     max-height: ${size}rem;
     max-width: ${size}rem;
     min-width: ${size}rem;
-    border-radius: 50%;
+    border-radius: ${isCircle ? '50%' : '0.5rem'};
 `;
 
 const Logo = styled.img<{
@@ -62,7 +62,7 @@ const Logo = styled.img<{
 }>`
     ${({ $isSmall, $isBig, $isCircle, $size }) => {
         if ($size) {
-            return customLogoSize($size);
+            return customLogoSize($size, $isCircle);
         }
         if ($isSmall) {
             return smallLogoStyles($isCircle);
@@ -82,7 +82,7 @@ const Unknown = styled(UnknownLogo)<{
 }>`
     ${({ $isSmall, $isBig, $isCircle, $size }) => {
         if ($size) {
-            return customLogoSize($size);
+            return customLogoSize($size, $isCircle);
         }
         if ($isSmall) {
             return smallLogoStyles($isCircle);
@@ -102,7 +102,7 @@ const Soroban = styled(SorobanLogo)<{
 }>`
     ${({ $isSmall, $isBig, $isCircle, $size }) => {
         if ($size) {
-            return customLogoSize($size);
+            return customLogoSize($size, $isCircle);
         }
         if ($isSmall) {
             return smallLogoStyles($isCircle);
@@ -118,8 +118,12 @@ const LogoLoaderContainer = styled.div<{
     $isSmall?: boolean;
     $isBig?: boolean;
     $isCircle?: boolean;
+    $size?: number;
 }>`
-    ${({ $isSmall, $isBig, $isCircle }) => {
+    ${({ $isSmall, $isBig, $isCircle, $size }) => {
+        if ($size) {
+            return customLogoSize($size, $isCircle);
+        }
         if ($isSmall) {
             return smallLogoStyles($isCircle);
         }
@@ -171,7 +175,13 @@ const AssetLogo = ({
 
     if (logoUrl === undefined) {
         return (
-            <LogoLoaderContainer $isSmall={isSmall} $isBig={isBig} $isCircle={isCircle} {...props}>
+            <LogoLoaderContainer
+                $isSmall={isSmall}
+                $isBig={isBig}
+                $isCircle={isCircle}
+                $size={size}
+                {...props}
+            >
                 <LogoLoader size="small" />
             </LogoLoaderContainer>
         );

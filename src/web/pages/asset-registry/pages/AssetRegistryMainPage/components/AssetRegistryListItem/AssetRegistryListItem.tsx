@@ -189,7 +189,11 @@ const AssetRegistryListItem = ({
         <ItemCard>
             <DesktopSummary>
                 <SummaryLeft>
-                    <Asset asset={asset} />
+                    <Asset
+                        asset={asset}
+                        variant="compactDomain"
+                        state={item.whitelisted ? 'default' : 'revoked'}
+                    />
                 </SummaryLeft>
 
                 <SummaryRight>
@@ -251,7 +255,11 @@ const AssetRegistryListItem = ({
                 </TopRow>
 
                 <SummaryLeft>
-                    <Asset asset={asset} />
+                    <Asset
+                        asset={asset}
+                        variant="compactDomain"
+                        state={item.whitelisted ? 'default' : 'revoked'}
+                    />
                 </SummaryLeft>
 
                 <MobileMetrics>

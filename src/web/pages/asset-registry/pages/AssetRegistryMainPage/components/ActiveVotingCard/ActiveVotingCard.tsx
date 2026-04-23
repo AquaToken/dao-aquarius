@@ -186,7 +186,7 @@ const ActiveVotingCard = ({ marketStats, isMarketStatsLoading }: ActiveVotingCar
 
             <Header>
                 <HeaderAsset>
-                    <Asset asset={asset} />
+                    <Asset asset={asset} variant="compactDomain" />
                 </HeaderAsset>
                 <AssetRegistryStatusBadge
                     variant={AssetRegistryBadgeVariant.inVoting}

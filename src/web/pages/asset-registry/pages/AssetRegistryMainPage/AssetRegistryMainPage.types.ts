@@ -86,9 +86,8 @@ export type AssetRegistryHistoryEntry = {
 
 export type UpcomingVoteData = {
     id: string;
-    queueLabel: string;
     startsAt: string;
     assetCode: string;
-    actionLabel: string;
-    actionVariant: AssetRegistryBadgeVariant;
+    assetIssuer: string;
+    type: RegistryAssetProposalType;
 };

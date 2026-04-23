@@ -118,19 +118,17 @@ const AssetRegistryMainPage = () => {
         () => [
             {
                 id: 'queue-1',
-                queueLabel: 'Queue #1',
                 startsAt: 'Starts May 3, 14:00 UTC',
                 assetCode: 'USDC',
-                actionLabel: 'Whitelist',
-                actionVariant: 'whitelisted',
+                assetIssuer: usdc.usdcIssuer,
+                type: 'ADD_ASSET',
             },
             {
                 id: 'queue-2',
-                queueLabel: 'Queue #2',
                 startsAt: 'Starts May 10, 14:00 UTC',
                 assetCode: 'XLM',
-                actionLabel: 'Revoke',
-                actionVariant: 'revoked',
+                assetIssuer: '',
+                type: 'REMOVE_ASSET',
             },
         ],
         [],

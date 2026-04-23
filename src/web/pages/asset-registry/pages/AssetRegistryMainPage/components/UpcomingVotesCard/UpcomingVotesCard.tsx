@@ -1,7 +1,8 @@
 import * as React from 'react';
 
-import { UpcomingVoteData } from '../../AssetRegistryMainPage.types';
-import AssetRegistryStatusBadge from '../AssetRegistryStatusBadge/AssetRegistryStatusBadge';
+import { createAsset } from 'helpers/token';
+
+import Asset from 'basics/Asset';
 
 import {
     Card,
@@ -12,9 +13,11 @@ import {
     ItemHeader,
     QueueLabel,
     StartsAt,
-    TokenAvatar,
-    TokenCode,
+    ItemAsset,
 } from './UpcomingVotesCard.styled';
+
+import { UpcomingVoteData } from '../../AssetRegistryMainPage.types';
+import AssetRegistryStatusBadge from '../AssetRegistryStatusBadge/AssetRegistryStatusBadge';
 
 type UpcomingVotesCardProps = {
     items: UpcomingVoteData[];
@@ -27,17 +30,19 @@ const UpcomingVotesCard = ({ items }: UpcomingVotesCardProps) => (
             <React.Fragment key={item.id}>
                 <Item>
                     <ItemHeader>
-                        <QueueLabel>{item.queueLabel}</QueueLabel>
+                        <QueueLabel>{`Queue #${index + 1}`}</QueueLabel>
                         <StartsAt>{item.startsAt}</StartsAt>
                     </ItemHeader>
                     <ItemBody>
-                        <TokenAvatar>{item.assetCode.slice(0, 2)}</TokenAvatar>
-                        <div>
-                            <TokenCode>{item.assetCode}</TokenCode>
-                        </div>
+                        <ItemAsset>
+                            <Asset
+                                asset={createAsset(item.assetCode, item.assetIssuer)}
+                                variant="compactDomain"
+                            />
+                        </ItemAsset>
                         <AssetRegistryStatusBadge
-                            variant={item.actionVariant}
-                            label={item.actionLabel}
+                            variant={item.type === 'ADD_ASSET' ? 'whitelisted' : 'revoked'}
+                            label={item.type === 'ADD_ASSET' ? 'Whitelist' : 'Revoke'}
                             withIcon
                         />
                     </ItemBody>

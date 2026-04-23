@@ -42,23 +42,12 @@ export const StartsAt = styled.div`
 export const ItemBody = styled.div`
     ${flexAllCenter};
     gap: 1.2rem;
+    align-items: center;
 `;
 
-export const TokenAvatar = styled.div`
-    ${FONT_SIZE.sm};
-    ${flexAllCenter};
-    width: 4rem;
-    height: 4rem;
-    border-radius: 1.2rem;
-    background: ${COLORS.gray100};
-    color: ${COLORS.textPrimary};
-    font-weight: 700;
-    text-transform: uppercase;
-`;
-
-export const TokenCode = styled.div`
-    ${FONT_SIZE.md};
-    color: ${COLORS.textSecondary};
+export const ItemAsset = styled.div`
+    flex: 1 1 auto;
+    min-width: 0;
 `;
 
 export const Divider = styled.div`
