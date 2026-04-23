@@ -14,16 +14,20 @@ import Asset from 'basics/Asset';
 
 import {
     AssetRow,
-    AssetSummary,
     ChevronButton,
     ChevronIconWrap,
     ChevronPlaceholder,
+    DesktopSummary,
     ItemCard,
     Metric,
     MetricLabel,
     MetricValue,
+    MobileMetric,
+    MobileMetrics,
+    MobileSummary,
     SummaryLeft,
     SummaryRight,
+    TopRow,
 } from './AssetRegistryListItem.styled';
 
 import {
@@ -109,7 +113,7 @@ const AssetRegistryListItem = ({ item, isExpanded, onToggle }: AssetRegistryList
 
     return (
         <ItemCard>
-            <AssetSummary>
+            <DesktopSummary>
                 <SummaryLeft>
                     <Asset asset={asset} />
                 </SummaryLeft>
@@ -143,7 +147,48 @@ const AssetRegistryListItem = ({ item, isExpanded, onToggle }: AssetRegistryList
                         <ChevronPlaceholder aria-hidden />
                     )}
                 </SummaryRight>
-            </AssetSummary>
+            </DesktopSummary>
+
+            <MobileSummary>
+                <TopRow>
+                    <AssetRegistryStatusBadge
+                        variant={statusBadge.variant}
+                        label={statusBadge.label}
+                    />
+                    <div>
+                        {hasVotesHistory ? (
+                            <ChevronButton type="button" onClick={onToggle}>
+                                <ChevronIconWrap $isExpanded={isExpanded}>
+                                    <ArrowDown />
+                                </ChevronIconWrap>
+                            </ChevronButton>
+                        ) : (
+                            <ChevronPlaceholder aria-hidden />
+                        )}
+                    </div>
+                </TopRow>
+
+                <SummaryLeft>
+                    <Asset asset={asset} />
+                </SummaryLeft>
+
+                <MobileMetrics>
+                    <MobileMetric>
+                        <MetricLabel>Asset holders</MetricLabel>
+                        <MetricValue>
+                            {assetsInfo.get(getAssetString(asset))?.accounts_authorized}
+                        </MetricValue>
+                    </MobileMetric>
+                    <MobileMetric>
+                        <MetricLabel>TVL</MetricLabel>
+                        <MetricValue>{DEFAULT_ASSET_METRICS.tvl}</MetricValue>
+                    </MobileMetric>
+                    <MobileMetric>
+                        <MetricLabel>Trading volume</MetricLabel>
+                        <MetricValue>{DEFAULT_ASSET_METRICS.tradingVolume}</MetricValue>
+                    </MobileMetric>
+                </MobileMetrics>
+            </MobileSummary>
 
             {isExpanded && hasVotesHistory ? (
                 <AssetRow>

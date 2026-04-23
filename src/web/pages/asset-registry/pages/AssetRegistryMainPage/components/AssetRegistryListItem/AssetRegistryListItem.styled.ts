@@ -1,6 +1,12 @@
 import styled from 'styled-components';
 
-import { cardBoxShadow, flexAllCenter, flexColumn, respondDown } from 'styles/mixins';
+import {
+    cardBoxShadow,
+    flexAllCenter,
+    flexColumn,
+    flexRowSpaceBetween,
+    respondDown,
+} from 'styles/mixins';
 import { Breakpoints, COLORS, FONT_SIZE } from 'styles/style-constants';
 
 export const ItemCard = styled.article`
@@ -14,18 +20,31 @@ export const ItemCard = styled.article`
     `}
 `;
 
-export const AssetSummary = styled.div`
+export const DesktopSummary = styled.div`
     display: grid;
-    grid-template-columns: 22rem 11rem 9rem 12rem 12rem 4rem;
+    grid-template-columns: 22rem 1fr;
     column-gap: 1.2rem;
     align-items: center;
-    justify-content: space-between;
 
     ${respondDown(Breakpoints.md)`
-        grid-template-columns: 1fr;
-        row-gap: 1.6rem;
-        justify-content: unset;
+        display: none;
     `}
+`;
+
+export const MobileSummary = styled.div`
+    display: none;
+
+    ${respondDown(Breakpoints.md)`
+        ${flexColumn};
+        gap: 1.6rem;
+        display: flex;
+    `}
+`;
+
+export const TopRow = styled.div`
+    ${flexRowSpaceBetween};
+    gap: 1.6rem;
+    width: 100%;
 `;
 
 export const SummaryLeft = styled.div`
@@ -34,34 +53,37 @@ export const SummaryLeft = styled.div`
     min-width: 0;
     width: 22rem;
     justify-content: flex-start;
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+    `}
 `;
 
 export const SummaryRight = styled.div`
     display: grid;
-    grid-column: 2 / -1;
     grid-template-columns: 11rem 9rem 12rem 12rem 4rem;
     column-gap: 1.2rem;
     align-items: center;
     justify-content: space-between;
-
-    ${respondDown(Breakpoints.md)`
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        row-gap: 1.6rem;
-        column-gap: 1.6rem;
-        grid-column: auto;
-        justify-content: unset;
-    `}
 `;
 
 export const Metric = styled.div`
     ${flexColumn};
     gap: 0.4rem;
     min-width: 0;
+`;
 
-    ${respondDown(Breakpoints.md)`
-        min-width: 0;
-    `}
+export const MobileMetrics = styled.div`
+    ${flexColumn};
+    gap: 1.2rem;
+    width: 100%;
+`;
+
+export const MobileMetric = styled.div`
+    ${flexRowSpaceBetween};
+    gap: 1.6rem;
+    width: 100%;
+    min-width: 0;
 `;
 
 export const MetricLabel = styled.div`
