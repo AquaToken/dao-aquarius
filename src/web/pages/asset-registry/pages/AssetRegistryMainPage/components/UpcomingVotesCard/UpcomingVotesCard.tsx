@@ -25,7 +25,7 @@ type UpcomingVotesCardProps = {
 
 const UpcomingVotesCard = ({ items }: UpcomingVotesCardProps) => (
     <Card>
-        <CardTitle>Upcoming votes</CardTitle>
+        <CardTitle>Upcoming Votes</CardTitle>
         {items.map((item, index) => (
             <React.Fragment key={item.id}>
                 <Item>

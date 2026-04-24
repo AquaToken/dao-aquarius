@@ -205,7 +205,7 @@ const ActiveVotingCard = ({
 
     return (
         <Card>
-            <CardTitle>{isActiveVoting ? 'Active voting' : 'Next voting'}</CardTitle>
+            <CardTitle>{isActiveVoting ? 'Active Voting' : 'Next Voting'}</CardTitle>
 
             <Header>
                 <HeaderAsset>
