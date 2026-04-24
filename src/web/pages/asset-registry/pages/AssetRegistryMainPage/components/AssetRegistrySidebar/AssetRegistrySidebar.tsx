@@ -21,7 +21,11 @@ const AssetRegistrySidebar = ({
     upcomingVotes,
 }: AssetRegistrySidebarProps) => (
     <Sidebar>
-        <ActiveVotingCard marketStats={marketStats} isMarketStatsLoading={isMarketStatsLoading} />
+        <ActiveVotingCard
+            marketStats={marketStats}
+            isMarketStatsLoading={isMarketStatsLoading}
+            upcomingVotes={upcomingVotes}
+        />
         <UpcomingVotesCard items={upcomingVotes} />
     </Sidebar>
 );

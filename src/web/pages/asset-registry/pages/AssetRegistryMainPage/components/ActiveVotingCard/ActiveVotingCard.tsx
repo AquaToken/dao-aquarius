@@ -43,6 +43,7 @@ import {
     AssetRegistryBadgeVariant,
     RegistryAssetMarketStatsMap,
     RegistryAssetProposal,
+    UpcomingVoteData,
 } from '../../AssetRegistryMainPage.types';
 import AssetRegistryStatusBadge from '../AssetRegistryStatusBadge/AssetRegistryStatusBadge';
 import VoteChoiceSelector from '../VoteChoiceSelector/VoteChoiceSelector';
@@ -50,6 +51,7 @@ import VoteChoiceSelector from '../VoteChoiceSelector/VoteChoiceSelector';
 type ActiveVotingCardProps = {
     marketStats: RegistryAssetMarketStatsMap;
     isMarketStatsLoading: boolean;
+    upcomingVotes: UpcomingVoteData[];
 };
 
 const getEndsInLabel = (proposal: RegistryAssetProposal) => {
@@ -79,7 +81,11 @@ const getSupportPercent = (proposal: RegistryAssetProposal) => {
     return totalVotes ? Math.round((voteFor / totalVotes) * 100) : 0;
 };
 
-const ActiveVotingCard = ({ marketStats, isMarketStatsLoading }: ActiveVotingCardProps) => {
+const ActiveVotingCard = ({
+    marketStats,
+    isMarketStatsLoading,
+    upcomingVotes,
+}: ActiveVotingCardProps) => {
     const [activeVoting, setActiveVoting] = useState<ActiveRegistryProposal | null>(null);
 
     useEffect(() => {
@@ -101,12 +107,23 @@ const ActiveVotingCard = ({ marketStats, isMarketStatsLoading }: ActiveVotingCar
             isCancelled = true;
         };
     }, []);
+    const nextVoting = upcomingVotes[0] ?? null;
+    const displayedVoting = activeVoting ?? nextVoting;
+    const isActiveVoting = Boolean(activeVoting);
     const asset = useMemo(
         () =>
-            activeVoting?.asset_code
-                ? createAsset(activeVoting.asset_code, activeVoting.asset_issuer ?? '')
+            displayedVoting?.asset_code || displayedVoting?.assetCode
+                ? createAsset(
+                      displayedVoting.asset_code ?? displayedVoting.assetCode,
+                      displayedVoting.asset_issuer ?? displayedVoting.assetIssuer ?? '',
+                  )
                 : null,
-        [activeVoting?.asset_code, activeVoting?.asset_issuer],
+        [
+            displayedVoting?.asset_code,
+            displayedVoting?.asset_issuer,
+            nextVoting?.assetCode,
+            nextVoting?.assetIssuer,
+        ],
     );
     const { assetsInfo } = useAssetsStore();
     const [lumenHolders, setLumenHolders] = useState<number | null>(null);
@@ -151,14 +168,20 @@ const ActiveVotingCard = ({ marketStats, isMarketStatsLoading }: ActiveVotingCar
         return holders === undefined ? '—' : formatBalance(holders);
     }, [asset, assetsInfo, lumenHolders]);
 
-    if (!activeVoting || !asset) {
+    if (!displayedVoting || !asset) {
         return null;
     }
 
-    const assetContract = activeVoting.asset_contract_address ?? asset.contract;
+    const assetContract =
+        ('asset_contract_address' in displayedVoting
+            ? displayedVoting.asset_contract_address
+            : null) ?? asset.contract;
     const currentMarketStats = marketStats[assetContract];
-    const supportPercent = getSupportPercent(activeVoting);
-    const endsAt = activeVoting.new_end_at ?? activeVoting.end_at;
+    const supportPercent = isActiveVoting && activeVoting ? getSupportPercent(activeVoting) : 0;
+    const endsAt =
+        isActiveVoting && activeVoting ? (activeVoting.new_end_at ?? activeVoting.end_at) : null;
+    const nextVotingStartsAt =
+        !isActiveVoting && nextVoting ? nextVoting.startsAt.replace(/^Starts\s+/i, '') : null;
 
     const getUsdAmountView = (value?: number) => {
         if (isMarketStatsLoading) {
@@ -182,16 +205,28 @@ const ActiveVotingCard = ({ marketStats, isMarketStatsLoading }: ActiveVotingCar
 
     return (
         <Card>
-            <CardTitle>Active voting</CardTitle>
+            <CardTitle>{isActiveVoting ? 'Active voting' : 'Next voting'}</CardTitle>
 
             <Header>
                 <HeaderAsset>
                     <Asset asset={asset} variant="compactDomain" />
                 </HeaderAsset>
-                <AssetRegistryStatusBadge
-                    variant={AssetRegistryBadgeVariant.inVoting}
-                    label="In voting"
-                />
+                {isActiveVoting ? (
+                    <AssetRegistryStatusBadge
+                        variant={AssetRegistryBadgeVariant.inVoting}
+                        label="In voting"
+                    />
+                ) : nextVoting ? (
+                    <AssetRegistryStatusBadge
+                        variant={
+                            nextVoting.type === 'ADD_ASSET'
+                                ? AssetRegistryBadgeVariant.whitelisted
+                                : AssetRegistryBadgeVariant.revoked
+                        }
+                        label={nextVoting.type === 'ADD_ASSET' ? 'Whitelist' : 'Revoke'}
+                        withIcon
+                    />
+                ) : null}
             </Header>
 
             <Stats>
@@ -221,28 +256,39 @@ const ActiveVotingCard = ({ marketStats, isMarketStatsLoading }: ActiveVotingCar
 
             <Divider />
 
-            <Section>
-                <MetaValue>{supportPercent}% support</MetaValue>
-                <ProgressBar>
-                    <ProgressFill style={{ width: `${supportPercent}%` }} />
-                </ProgressBar>
-            </Section>
+            {isActiveVoting && activeVoting ? (
+                <>
+                    <Section>
+                        <MetaValue>{supportPercent}% support</MetaValue>
+                        <ProgressBar>
+                            <ProgressFill style={{ width: `${supportPercent}%` }} />
+                        </ProgressBar>
+                    </Section>
 
-            <Section>
-                <MetaValue>Your vote</MetaValue>
-                <VoteChoiceSelector value="for" />
-            </Section>
+                    <Section>
+                        <MetaValue>Your vote</MetaValue>
+                        <VoteChoiceSelector value="for" />
+                    </Section>
 
-            <Divider />
+                    <Divider />
 
-            <FooterRow>
-                <MetaLabel>Ends in {getEndsInLabel(activeVoting)}</MetaLabel>
-                <MetaValue>{endsAt ? getDateString(new Date(endsAt).getTime()) : '—'}</MetaValue>
-            </FooterRow>
+                    <FooterRow>
+                        <MetaLabel>Ends in {getEndsInLabel(activeVoting)}</MetaLabel>
+                        <MetaValue>
+                            {endsAt ? getDateString(new Date(endsAt).getTime()) : '—'}
+                        </MetaValue>
+                    </FooterRow>
 
-            <Button isRounded fullWidth>
-                Details
-            </Button>
+                    <Button isRounded fullWidth>
+                        Details
+                    </Button>
+                </>
+            ) : (
+                <FooterRow>
+                    <MetaLabel>Starts at</MetaLabel>
+                    <MetaValue>{nextVotingStartsAt ?? '—'}</MetaValue>
+                </FooterRow>
+            )}
         </Card>
     );
 };
