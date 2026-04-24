@@ -1,12 +1,16 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { AQUA_DOCS_URL } from 'constants/urls';
+import { ModalService } from 'services/globalServices';
 
 import { BlankExternalLink } from 'basics/links';
 
 import { commonMaxWidth, respondDown } from 'styles/mixins';
 import { Breakpoints, COLORS, FONT_SIZE, hexWithOpacity } from 'styles/style-constants';
+
+import ExperimentalFeatureModal, {
+    ExperimentalFeatureModalBackground,
+} from '../../../ExperimentalFeatureModal/ExperimentalFeatureModal';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -80,22 +84,33 @@ const ReadMoreLink = styled(BlankExternalLink)`
     `}
 `;
 
-const ConcentratedPoolDisclaimer = (): React.ReactNode => (
-    <Wrapper>
-        <Inner>
-            <Emoji role="img" aria-label="Warning">
-                ☝️
-            </Emoji>
-            <Content>
-                <Title>Experimental Feature - use at your own risk</Title>
-                <Text>
-                    This feature is unaudited and may contain bugs. Deposits are at risk, and any
-                    potential compensation is limited.
-                </Text>
-            </Content>
-            <ReadMoreLink href={AQUA_DOCS_URL}>Read more</ReadMoreLink>
-        </Inner>
-    </Wrapper>
-);
+const ConcentratedPoolDisclaimer = (): React.ReactNode => {
+    const openDisclaimerModal = () =>
+        ModalService.openModal(
+            ExperimentalFeatureModal,
+            {},
+            true,
+            <ExperimentalFeatureModalBackground />,
+            true,
+        );
+
+    return (
+        <Wrapper>
+            <Inner>
+                <Emoji role="img" aria-label="Warning">
+                    ☝️
+                </Emoji>
+                <Content>
+                    <Title>Experimental Feature - use at your own risk</Title>
+                    <Text>
+                        This feature is unaudited and may contain bugs. Deposits are at risk, and
+                        any potential compensation is limited.
+                    </Text>
+                </Content>
+                <ReadMoreLink onClick={openDisclaimerModal}>Read more</ReadMoreLink>
+            </Inner>
+        </Wrapper>
+    );
+};
 
 export default ConcentratedPoolDisclaimer;
