@@ -61,7 +61,7 @@ const ExperimentalFeatureModal = ({ close }: ModalProps<never>): React.ReactNode
 
         <StickyButtonWrapper>
             <Button fullWidth isBig onClick={() => close()}>
-                I agree the risks
+                I accept the risks
             </Button>
         </StickyButtonWrapper>
     </ModalWrapper>
