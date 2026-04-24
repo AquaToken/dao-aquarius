@@ -231,7 +231,7 @@ const ActiveVotingCard = ({
 
             <Stats>
                 <Meta>
-                    <MetaLabel>Asset holders</MetaLabel>
+                    <MetaLabel>Asset Holders</MetaLabel>
                     <MetaValue>{assetHolders}</MetaValue>
                 </Meta>
                 <Meta>
