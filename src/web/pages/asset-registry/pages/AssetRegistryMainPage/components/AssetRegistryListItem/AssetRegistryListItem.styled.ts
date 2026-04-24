@@ -20,31 +20,22 @@ export const ItemCard = styled.article`
     `}
 `;
 
-export const DesktopSummary = styled.div`
+export const Summary = styled.div`
     display: grid;
     grid-template-columns: 22rem 1fr;
     column-gap: 1.2rem;
     align-items: center;
 
     ${respondDown(Breakpoints.md)`
-        display: none;
+        grid-template-columns: minmax(0, 1fr) 4rem;
+        row-gap: 1.6rem;
+        grid-template-areas:
+            'mobile-badge chevron'
+            'asset asset'
+            'holders holders'
+            'tvl tvl'
+            'volume volume';
     `}
-`;
-
-export const MobileSummary = styled.div`
-    display: none;
-
-    ${respondDown(Breakpoints.md)`
-        ${flexColumn};
-        gap: 1.6rem;
-        display: flex;
-    `}
-`;
-
-export const TopRow = styled.div`
-    ${flexRowSpaceBetween};
-    gap: 1.6rem;
-    width: 100%;
 `;
 
 export const SummaryLeft = styled.div`
@@ -55,6 +46,7 @@ export const SummaryLeft = styled.div`
     justify-content: flex-start;
 
     ${respondDown(Breakpoints.md)`
+        grid-area: asset;
         width: 100%;
     `}
 `;
@@ -65,6 +57,10 @@ export const SummaryRight = styled.div`
     column-gap: 1.2rem;
     align-items: center;
     justify-content: space-between;
+
+    ${respondDown(Breakpoints.md)`
+        display: contents;
+    `}
 `;
 
 export const Metric = styled.div`
@@ -73,17 +69,20 @@ export const Metric = styled.div`
     min-width: 0;
 `;
 
-export const MobileMetrics = styled.div`
-    ${flexColumn};
-    gap: 1.2rem;
-    width: 100%;
+export const DesktopBadgeWrap = styled.div`
+    ${respondDown(Breakpoints.md)`
+        display: none;
+    `}
 `;
 
-export const MobileMetric = styled.div`
-    ${flexRowSpaceBetween};
-    gap: 1.6rem;
-    width: 100%;
-    min-width: 0;
+export const MobileBadgeWrap = styled.div`
+    display: none;
+
+    ${respondDown(Breakpoints.md)`
+        display: block;
+        grid-area: mobile-badge;
+        min-width: 0;
+    `}
 `;
 
 export const MetricLabel = styled.div`
@@ -102,6 +101,33 @@ export const MetricValue = styled.div`
     color: ${COLORS.textSecondary};
 `;
 
+export const HoldersMetric = styled(Metric)`
+    ${respondDown(Breakpoints.md)`
+        grid-area: holders;
+        ${flexRowSpaceBetween};
+        gap: 1.6rem;
+        width: 100%;
+    `}
+`;
+
+export const TvlMetric = styled(Metric)`
+    ${respondDown(Breakpoints.md)`
+        grid-area: tvl;
+        ${flexRowSpaceBetween};
+        gap: 1.6rem;
+        width: 100%;
+    `}
+`;
+
+export const VolumeMetric = styled(Metric)`
+    ${respondDown(Breakpoints.md)`
+        grid-area: volume;
+        ${flexRowSpaceBetween};
+        gap: 1.6rem;
+        width: 100%;
+    `}
+`;
+
 export const InfoIconWrap = styled.span`
     ${flexAllCenter};
     width: 1.6rem;
@@ -118,6 +144,10 @@ export const ChevronButton = styled.button`
     background: ${COLORS.gray50};
     cursor: pointer;
     justify-self: end;
+
+    ${respondDown(Breakpoints.md)`
+        grid-area: chevron;
+    `}
 `;
 
 export const ChevronPlaceholder = styled.div`
@@ -125,6 +155,10 @@ export const ChevronPlaceholder = styled.div`
     height: 4rem;
     flex-shrink: 0;
     justify-self: end;
+
+    ${respondDown(Breakpoints.md)`
+        grid-area: chevron;
+    `}
 `;
 
 export const ChevronIconWrap = styled.div<{ $isExpanded: boolean }>`

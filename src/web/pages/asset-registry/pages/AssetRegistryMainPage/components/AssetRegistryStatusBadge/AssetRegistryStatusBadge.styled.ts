@@ -33,19 +33,24 @@ const getVariantStyles = (variant: AssetRegistryBadgeVariant) => {
 };
 
 export const Badge = styled.div<{ $variant: AssetRegistryBadgeVariant; $withIcon: boolean }>`
-    ${FONT_SIZE.xs};
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: ${({ $withIcon }) => ($withIcon ? '0.4rem' : '0')};
-    min-height: 2.4rem;
+    min-height: ${({ $withIcon }) => ($withIcon ? '3.2rem' : '2.4rem')};
     padding: ${({ $withIcon }) => ($withIcon ? '0.2rem 0.8rem 0.2rem 0.6rem' : '0.2rem 0.8rem')};
     border-radius: 3.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
     white-space: nowrap;
     background: ${({ $variant }) => getVariantStyles($variant).background};
     color: ${({ $variant }) => getVariantStyles($variant).color};
+
+    ${({ $withIcon }) =>
+        !$withIcon &&
+        `
+            ${FONT_SIZE.xs};
+            font-weight: 700;
+            text-transform: uppercase;
+        `}
 `;
 
 export const BadgeIcon = styled.div<{ $color: string }>`
@@ -59,4 +64,25 @@ export const BadgeIcon = styled.div<{ $color: string }>`
         height: 1.6rem;
         display: block;
     }
+`;
+
+export const BadgeContent = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    line-height: 0;
+`;
+
+export const BadgeCaption = styled.div`
+    font-size: 1rem;
+    line-height: 1rem;
+    font-weight: 500;
+`;
+
+export const BadgeLabel = styled.div`
+    font-size: 1.2rem;
+    line-height: 1.2rem;
+    font-weight: 700;
+    text-transform: uppercase;
 `;

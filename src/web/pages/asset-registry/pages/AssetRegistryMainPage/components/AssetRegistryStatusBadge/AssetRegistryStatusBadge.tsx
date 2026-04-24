@@ -2,7 +2,13 @@ import * as React from 'react';
 
 import Pending16 from 'assets/icons/status/pending-16.svg';
 
-import { Badge, BadgeIcon } from './AssetRegistryStatusBadge.styled';
+import {
+    Badge,
+    BadgeCaption,
+    BadgeContent,
+    BadgeIcon,
+    BadgeLabel,
+} from './AssetRegistryStatusBadge.styled';
 
 import { AssetRegistryBadgeVariant } from '../../AssetRegistryMainPage.types';
 
@@ -38,11 +44,17 @@ const AssetRegistryStatusBadge = ({
     return (
         <Badge $variant={variant} $withIcon={shouldShowIcon}>
             {shouldShowIcon ? (
-                <BadgeIcon $color={getBadgeTextColor(variant)}>
-                    <Pending16 />
-                </BadgeIcon>
+                <>
+                    <BadgeIcon $color={getBadgeTextColor(variant)}>
+                        <Pending16 />
+                    </BadgeIcon>
+                    <BadgeContent>
+                        <BadgeCaption>Request for</BadgeCaption>
+                        <BadgeLabel>{label}</BadgeLabel>
+                    </BadgeContent>
+                </>
             ) : null}
-            {label}
+            {!shouldShowIcon ? label : null}
         </Badge>
     );
 };

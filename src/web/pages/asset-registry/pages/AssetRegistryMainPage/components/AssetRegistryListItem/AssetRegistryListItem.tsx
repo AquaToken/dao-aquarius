@@ -16,27 +16,28 @@ import ArrowDown from 'assets/icons/arrows/arrow-down-16.svg';
 import IconInfo from 'assets/icons/status/icon-info-16.svg';
 
 import Asset from 'basics/Asset';
-import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 import DotsLoader from 'basics/loaders/DotsLoader';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import {
     AssetRow,
     ChevronButton,
     ChevronIconWrap,
     ChevronPlaceholder,
-    DesktopSummary,
+    DesktopBadgeWrap,
+    HoldersMetric,
     InfoIconWrap,
     InfoLabelWrap,
     ItemCard,
     Metric,
     MetricLabel,
     MetricValue,
-    MobileMetric,
-    MobileMetrics,
-    MobileSummary,
+    MobileBadgeWrap,
     SummaryLeft,
     SummaryRight,
-    TopRow,
+    Summary,
+    TvlMetric,
+    VolumeMetric,
 } from './AssetRegistryListItem.styled';
 
 import {
@@ -187,7 +188,14 @@ const AssetRegistryListItem = ({
 
     return (
         <ItemCard>
-            <DesktopSummary>
+            <Summary>
+                <MobileBadgeWrap>
+                    <AssetRegistryStatusBadge
+                        variant={statusBadge.variant}
+                        label={statusBadge.label}
+                    />
+                </MobileBadgeWrap>
+
                 <SummaryLeft>
                     <Asset
                         asset={asset}
@@ -197,11 +205,11 @@ const AssetRegistryListItem = ({
                 </SummaryLeft>
 
                 <SummaryRight>
-                    <Metric>
-                        <MetricLabel>Asset holders</MetricLabel>
+                    <HoldersMetric>
+                        <MetricLabel>Asset Holders</MetricLabel>
                         <MetricValue>{assetHolders}</MetricValue>
-                    </Metric>
-                    <Metric>
+                    </HoldersMetric>
+                    <TvlMetric>
                         <MetricLabel>
                             <InfoLabelWrap>
                                 TVL
@@ -209,20 +217,22 @@ const AssetRegistryListItem = ({
                             </InfoLabelWrap>
                         </MetricLabel>
                         <MetricValue>{getUsdAmountView(currentMarketStats?.tvlUsd)}</MetricValue>
-                    </Metric>
-                    <Metric>
+                    </TvlMetric>
+                    <VolumeMetric>
                         <MetricLabel>
                             <InfoLabelWrap>
-                                Trading volume
+                                Volume 24H
                                 {renderInfoTooltip()}
                             </InfoLabelWrap>
                         </MetricLabel>
                         <MetricValue>{getUsdAmountView(currentMarketStats?.volumeUsd)}</MetricValue>
-                    </Metric>
-                    <AssetRegistryStatusBadge
-                        variant={statusBadge.variant}
-                        label={statusBadge.label}
-                    />
+                    </VolumeMetric>
+                    <DesktopBadgeWrap>
+                        <AssetRegistryStatusBadge
+                            variant={statusBadge.variant}
+                            label={statusBadge.label}
+                        />
+                    </DesktopBadgeWrap>
                     {hasVotesHistory ? (
                         <ChevronButton type="button" onClick={onToggle}>
                             <ChevronIconWrap $isExpanded={isExpanded}>
@@ -233,60 +243,7 @@ const AssetRegistryListItem = ({
                         <ChevronPlaceholder aria-hidden />
                     )}
                 </SummaryRight>
-            </DesktopSummary>
-
-            <MobileSummary>
-                <TopRow>
-                    <AssetRegistryStatusBadge
-                        variant={statusBadge.variant}
-                        label={statusBadge.label}
-                    />
-                    <div>
-                        {hasVotesHistory ? (
-                            <ChevronButton type="button" onClick={onToggle}>
-                                <ChevronIconWrap $isExpanded={isExpanded}>
-                                    <ArrowDown />
-                                </ChevronIconWrap>
-                            </ChevronButton>
-                        ) : (
-                            <ChevronPlaceholder aria-hidden />
-                        )}
-                    </div>
-                </TopRow>
-
-                <SummaryLeft>
-                    <Asset
-                        asset={asset}
-                        variant="compactDomain"
-                        state={item.whitelisted ? 'default' : 'revoked'}
-                    />
-                </SummaryLeft>
-
-                <MobileMetrics>
-                    <MobileMetric>
-                        <MetricLabel>Asset holders</MetricLabel>
-                        <MetricValue>{assetHolders}</MetricValue>
-                    </MobileMetric>
-                    <MobileMetric>
-                        <MetricLabel>
-                            <InfoLabelWrap>
-                                TVL
-                                {renderInfoTooltip()}
-                            </InfoLabelWrap>
-                        </MetricLabel>
-                        <MetricValue>{getUsdAmountView(currentMarketStats?.tvlUsd)}</MetricValue>
-                    </MobileMetric>
-                    <MobileMetric>
-                        <MetricLabel>
-                            <InfoLabelWrap>
-                                Trading volume
-                                {renderInfoTooltip()}
-                            </InfoLabelWrap>
-                        </MetricLabel>
-                        <MetricValue>{getUsdAmountView(currentMarketStats?.volumeUsd)}</MetricValue>
-                    </MobileMetric>
-                </MobileMetrics>
-            </MobileSummary>
+            </Summary>
 
             {isExpanded && hasVotesHistory ? (
                 <AssetRow>

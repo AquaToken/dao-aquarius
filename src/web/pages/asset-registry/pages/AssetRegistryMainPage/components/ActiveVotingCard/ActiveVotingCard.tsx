@@ -4,11 +4,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { getActiveRegistryVotingRequest } from 'api/asset-registry';
 import { getAssetDetails } from 'api/stellar-expert';
 
-import Asset from 'basics/Asset';
-import Button from 'basics/buttons/Button';
-import DotsLoader from 'basics/loaders/DotsLoader';
-import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
-
 import { DAY } from 'constants/intervals';
 
 import { getAssetString } from 'helpers/assets';
@@ -19,6 +14,11 @@ import { createAsset } from 'helpers/token';
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
 import IconInfo from 'assets/icons/status/icon-info-16.svg';
+
+import Asset from 'basics/Asset';
+import Button from 'basics/buttons/Button';
+import DotsLoader from 'basics/loaders/DotsLoader';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import {
     Card,
@@ -211,7 +211,7 @@ const ActiveVotingCard = ({ marketStats, isMarketStatsLoading }: ActiveVotingCar
                 <Meta>
                     <MetaLabel>
                         <InfoLabelWrap>
-                            Trading volume
+                            Volume 24H
                             {renderInfoTooltip()}
                         </InfoLabelWrap>
                     </MetaLabel>

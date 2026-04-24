@@ -27,6 +27,9 @@ import {
     AssetRegistryFilter,
     RegistryAsset,
     RegistryAssetMarketStatsMap,
+    RegistryAssetOnchainExecutionStatus,
+    RegistryAssetProposalStatus,
+    RegistryAssetProposalType,
     UpcomingVoteData,
 } from './AssetRegistryMainPage.types';
 import AssetRegistryContent from './components/AssetRegistryContent/AssetRegistryContent';
