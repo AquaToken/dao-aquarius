@@ -52,6 +52,7 @@ import { Breakpoints, COLORS } from 'styles/style-constants';
 import LiquidityDistributionChart from 'pages/amm/components/LiquidityDistributionChart/LiquidityDistributionChart';
 
 import ConcentratedFeesBanner from '../components/ConcentratedLiquidity/components/ConcentratedFeesBanner/ConcentratedFeesBanner';
+import ConcentratedPoolDisclaimer from '../components/ConcentratedLiquidity/components/ConcentratedPoolDisclaimer/ConcentratedPoolDisclaimer';
 import LiquidityChart from '../components/LiquidityChart/LiquidityChart';
 import PoolEvents from '../components/PoolEvents/PoolEvents';
 import PoolMembers from '../components/PoolMembers/PoolMembers';
@@ -356,6 +357,7 @@ const PoolPage = () => {
 
     return (
         <MainBlock>
+            {pool.pool_type === POOL_TYPE.concentrated && <ConcentratedPoolDisclaimer />}
             <Background>
                 <Section>
                     <PageHeader>

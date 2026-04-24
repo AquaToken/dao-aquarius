@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import Button from 'basics/buttons/Button';
+import Checkbox from 'basics/inputs/Checkbox';
 
 import {
     flexAllCenter,
@@ -234,4 +234,13 @@ export const DepositFooter = styled.div`
     background: ${COLORS.white};
     padding: 4.8rem 0 0;
     z-index: 10;
+`;
+
+export const DepositAcknowledgementRow = styled.div`
+    display: flex;
+    align-items: center;
+    padding: 2.4rem;
+    margin-bottom: 1.6rem;
+    border-radius: 0.5rem;
+    background: ${COLORS.gray50};
 `;

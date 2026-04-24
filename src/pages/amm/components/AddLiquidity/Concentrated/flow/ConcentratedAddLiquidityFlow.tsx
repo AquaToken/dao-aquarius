@@ -16,11 +16,15 @@ import { PoolExtended } from 'types/amm';
 import { TokenType } from 'types/token';
 
 import { Button } from 'basics/buttons';
+import { Checkbox } from 'basics/inputs';
 
 import ConcentratedAddLiquidityForm, {
     ConcentratedAddLiquidityFormData,
 } from '../form/ConcentratedAddLiquidityForm';
-import { DepositFooter } from '../styled/ConcentratedAddLiquidity.styled';
+import {
+    DepositAcknowledgementRow,
+    DepositFooter,
+} from '../styled/ConcentratedAddLiquidity.styled';
 
 type ConcentratedAddLiquidityFlowProps = {
     pool: PoolExtended;
@@ -36,6 +40,7 @@ const ConcentratedAddLiquidityFlow = ({
     const { account } = useAuthStore();
     const [pending, setPending] = useState(false);
     const [formData, setFormData] = useState<ConcentratedAddLiquidityFormData | null>(null);
+    const [isRiskAcknowledged, setIsRiskAcknowledged] = useState(false);
 
     const submit = () => {
         if (!account || !formData) {
@@ -131,12 +136,19 @@ const ConcentratedAddLiquidityFlow = ({
         <>
             <ConcentratedAddLiquidityForm pool={pool} onDataChange={setFormData} />
             <DepositFooter>
+                <DepositAcknowledgementRow>
+                    <Checkbox
+                        checked={isRiskAcknowledged}
+                        onChange={setIsRiskAcknowledged}
+                        label="I acknowledge the risk of losing deposited funds"
+                    />
+                </DepositAcknowledgementRow>
                 <Button
                     fullWidth
                     isBig
                     onClick={submit}
                     pending={pending}
-                    disabled={!formData || formData.isDepositDisabled}
+                    disabled={!isRiskAcknowledged || !formData || formData.isDepositDisabled}
                 >
                     Deposit
                 </Button>
