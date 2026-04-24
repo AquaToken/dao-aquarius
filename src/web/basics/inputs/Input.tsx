@@ -7,8 +7,7 @@ import { COLORS } from 'styles/style-constants';
 
 const InputWrapper = styled.div`
     position: relative;
-    display: block;
-    min-width: 0;
+    width: 100%;
 `;
 
 type InputSize = 'small' | 'medium' | 'large';

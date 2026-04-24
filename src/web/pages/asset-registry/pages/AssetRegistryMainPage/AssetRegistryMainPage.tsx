@@ -11,13 +11,15 @@ import { Option } from 'types/option';
 
 import Search from 'assets/icons/actions/icon-search-16.svg';
 
+import { Input } from 'basics/inputs';
+
 import { PageContainer } from 'styles/commonPageStyles';
 import { COLORS } from 'styles/style-constants';
 
 import {
     FilterGroup,
     MainSection,
-    SearchInput,
+    SearchInputWrap,
     Title,
     Toolbar,
 } from './AssetRegistryMainPage.styled';
@@ -235,13 +237,15 @@ const AssetRegistryMainPage = () => {
                                 options={FILTER_OPTIONS}
                                 onChange={setFilter}
                             />
-                            <SearchInput
-                                inputSize="medium"
-                                placeholder="Search by token name or address"
-                                value={search}
-                                onChange={({ target }) => setSearch(target.value)}
-                                postfix={<Search />}
-                            />
+                            <SearchInputWrap>
+                                <Input
+                                    inputSize="medium"
+                                    placeholder="Search by token name or address"
+                                    value={search}
+                                    onChange={({ target }) => setSearch(target.value)}
+                                    postfix={<Search />}
+                                />
+                            </SearchInputWrap>
                         </Toolbar>
                     }
                 />

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Input, ToggleGroup } from 'basics/inputs';
+import { ToggleGroup } from 'basics/inputs';
 
 import { commonMaxWidth, flexRowSpaceBetween, respondDown } from 'styles/mixins';
 import { Breakpoints, COLORS, FONT_SIZE } from 'styles/style-constants';
@@ -47,7 +47,7 @@ export const FilterGroup = styled(ToggleGroup)`
     `}
 `;
 
-export const SearchInput = styled(Input)`
+export const SearchInputWrap = styled.div`
     width: 33rem;
 
     ${respondDown(Breakpoints.md)`
