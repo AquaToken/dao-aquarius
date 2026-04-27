@@ -197,7 +197,9 @@ const AssetRegistryMainPage = () => {
     const items = useMemo(() => {
         const defaultIds = new Set(DEFAULT_REGISTRY_ASSETS.map(getRegistryAssetId));
         const uniqueApiRegistryAssets = apiRegistryAssets.filter(
-            asset => !defaultIds.has(getRegistryAssetId(asset)),
+            asset =>
+                !defaultIds.has(getRegistryAssetId(asset)) &&
+                asset.proposals.some(proposal => proposal.proposal_status === 'VOTED'),
         );
 
         return [...DEFAULT_REGISTRY_ASSETS, ...uniqueApiRegistryAssets];
