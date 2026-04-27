@@ -2,7 +2,7 @@ import { getLumenUsdPrice } from 'api/price';
 
 import { ENV_TESTNET } from 'constants/env';
 
-import { getAquaAssetData } from 'helpers/assets';
+import { getEnvClassicAssetData } from 'helpers/assets';
 import { getEnv } from 'helpers/env';
 import { roundToPrecision } from 'helpers/format-number';
 import { createAsset, createLumen } from 'helpers/token';
@@ -27,7 +27,7 @@ export default class Price {
         if (getEnv() === ENV_TESTNET) {
             return 0;
         }
-        const { aquaStellarAsset } = getAquaAssetData();
+        const { asset: aquaStellarAsset } = getEnvClassicAssetData('aqua');
 
         const res = await this.horizon.server.orderbook(aquaStellarAsset, createLumen()).call();
 
@@ -94,7 +94,7 @@ export default class Price {
     }
 
     async getAquaEquivalent(asset: ClassicToken, amount: string) {
-        const { aquaStellarAsset } = getAquaAssetData();
+        const { asset: aquaStellarAsset } = getEnvClassicAssetData('aqua');
 
         const res = await this.horizon.server
             .strictSendPaths(asset, amount, [aquaStellarAsset])

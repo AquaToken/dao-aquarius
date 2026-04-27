@@ -6,7 +6,7 @@ import styled from 'styled-components';
 
 import { WITHDRAW_ONE_COIN_SLIPPAGE } from 'constants/withdraw';
 
-import { getAquaAssetData, getAssetString } from 'helpers/assets';
+import { getAssetString, getEnvClassicAssetData } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
@@ -145,7 +145,7 @@ const SingleTokenWithdraw = ({ pool, rewards, accountShare, close, incentives }:
     const [selectedToken, setSelectedToken] = useState(pool.tokens[0]);
     const [estimateWithdraw, setEstimateWithdraw] = useState(null);
 
-    const { aquaStellarAsset } = getAquaAssetData();
+    const { asset: aquaStellarAsset } = getEnvClassicAssetData('aqua');
 
     const { account } = useAuthStore();
 

@@ -2,16 +2,16 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { processIceTx } from 'api/ice';
+import { isIceApprovalRequired, processIceTx } from 'api/ice';
 
-import { GD_ICE_CODE, GOV_ICE_CODE, ICE_ISSUER } from 'constants/assets';
+import { GD_ICE_CODE, GOV_ICE_CODE } from 'constants/assets-env';
 import { VoteOptions } from 'constants/dao';
 import { AppRoutes } from 'constants/routes';
 
+import { getEnvClassicAssetData } from 'helpers/assets';
 import { getDateString } from 'helpers/date';
 import ErrorHandler from 'helpers/error-handler';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
-import { createAsset } from 'helpers/token';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
 import { useIsMounted } from 'hooks/useIsMounted';
@@ -119,13 +119,6 @@ const GetAquaLabel = styled.span`
     color: ${COLORS.textGray};
 `;
 
-const GOV_ICE = createAsset(GOV_ICE_CODE, ICE_ISSUER);
-const GD_ICE = createAsset(GD_ICE_CODE, ICE_ISSUER);
-
-const OPTIONS = [{ label: GOV_ICE_CODE, value: GOV_ICE, icon: <IceLogo /> }];
-
-const EXTENDED_OPTIONS = [...OPTIONS, { label: GD_ICE_CODE, value: GD_ICE, icon: <DIceLogo /> }];
-
 const ConfirmVoteModal = ({
     params,
     close,
@@ -138,18 +131,32 @@ const ConfirmVoteModal = ({
     const [percent, setPercent] = useState(0);
     const [amount, setAmount] = useState('');
     const [pending, setPending] = useState(false);
-    const [targetAsset, setTargetAsset] = useState(GOV_ICE);
+    const { asset: governIceStellarAsset } = useMemo(() => getEnvClassicAssetData('governIce'), []);
+    const { asset: gdIceStellarAsset } = useMemo(() => getEnvClassicAssetData('gdIce'), []);
+    const [targetAsset, setTargetAsset] = useState(governIceStellarAsset);
 
-    const targetBalance = useMemo(() => account?.getAssetBalance(targetAsset), [targetAsset]);
+    const options = useMemo(
+        () => [{ label: GOV_ICE_CODE, value: governIceStellarAsset, icon: <IceLogo /> }],
+        [governIceStellarAsset],
+    );
+    const extendedOptions = useMemo(
+        () => [...options, { label: GD_ICE_CODE, value: gdIceStellarAsset, icon: <DIceLogo /> }],
+        [gdIceStellarAsset, options],
+    );
 
-    const hasTrustLine = targetBalance !== null;
-    const hasTargetBalance = targetBalance !== 0;
+    const targetBalance = useMemo(
+        () => account?.getAssetBalance(targetAsset),
+        [account, targetAsset],
+    );
 
-    const formattedBalance = hasTrustLine && formatBalance(targetBalance);
+    const hasTrustLine = targetBalance !== null && targetBalance !== undefined;
+    const hasTargetBalance = Number(targetBalance) > 0;
+
+    const formattedBalance = hasTrustLine ? formatBalance(Number(targetBalance)) : null;
 
     const unlockDate = new Date(endDate).getTime() + 60 * 60 * 1000;
 
-    const hasGDIce = account?.getAssetBalance(GD_ICE) !== null;
+    const hasGDIce = account ? account.getAssetBalance(gdIceStellarAsset) !== null : false;
 
     useEffect(() => {
         setAmount('');
@@ -204,7 +211,9 @@ const ConfirmVoteModal = ({
                 targetAsset,
             );
             const tx = await StellarService.tx.buildTx(account, voteOp);
-            const processedTx = await processIceTx(tx, targetAsset);
+            const processedTx = isIceApprovalRequired(targetAsset)
+                ? await processIceTx(tx, targetAsset)
+                : tx;
             const result = await account.signAndSubmitTx(processedTx);
             if (isMounted.current) {
                 setPending(false);
@@ -269,7 +278,7 @@ const ConfirmVoteModal = ({
                 />
 
                 <StyledSelect
-                    options={hasGDIce ? EXTENDED_OPTIONS : OPTIONS}
+                    options={hasGDIce ? extendedOptions : options}
                     value={targetAsset}
                     onChange={setTargetAsset}
                     disabled={!hasGDIce}

@@ -3,7 +3,13 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { DOWN_ICE_CODE, GOV_ICE_CODE, ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'constants/assets';
+import {
+    DOWN_ICE_CODE,
+    GOV_ICE_CODE,
+    ICE_CODE,
+    ICE_ISSUER,
+    UP_ICE_CODE,
+} from 'constants/assets-env';
 import { AppRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';

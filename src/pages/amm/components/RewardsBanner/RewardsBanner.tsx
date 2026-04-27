@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useMemo } from 'react';
 import styled from 'styled-components';
 
-import { getAquaAssetData } from 'helpers/assets';
+import { getEnvClassicAssetData } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 
 import { ModalService } from 'services/globalServices';
@@ -131,7 +131,7 @@ const RewardsBanner = ({
     incentivesSum,
     userIncentivesCount,
 }: RewardsBannerProps) => {
-    const { aquaStellarAsset } = getAquaAssetData();
+    const { asset: aquaStellarAsset } = getEnvClassicAssetData('aqua');
 
     const tokens = useMemo(() => {
         const res: Token[] = [];

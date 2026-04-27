@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { WITHDRAW_CUSTOM_SLIPPAGE } from 'constants/withdraw';
 
-import { getAquaAssetData } from 'helpers/assets';
+import { getEnvClassicAssetData } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
@@ -94,7 +94,7 @@ const CustomWithdraw = ({ pool, accountShare, rewards, close, incentives }: Prop
 
     const debouncedAmounts = useDebounce(amounts, 700, true);
 
-    const { aquaStellarAsset } = getAquaAssetData();
+    const { asset: aquaStellarAsset } = getEnvClassicAssetData('aqua');
 
     const { account } = useAuthStore();
 

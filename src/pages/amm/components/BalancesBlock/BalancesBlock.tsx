@@ -82,7 +82,7 @@ const BalancesBlock = () => {
         <StyledContainer>
             <Header>
                 <Title>Balances</Title>
-                {account.hasMissingTestnetTokenTrustlines() && !distributionComplete && (
+                {account.hasMissingTestnetTokens() && !distributionComplete && (
                     <Button
                         withGradient
                         isRounded

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { D_ICE_CODE, DOWN_ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'constants/assets';
+import { D_ICE_CODE, DOWN_ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'constants/assets-env';
 
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
 

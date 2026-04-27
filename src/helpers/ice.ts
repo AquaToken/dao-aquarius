@@ -6,7 +6,7 @@ import {
     ICE_CODE,
     ICE_ISSUER,
     UP_ICE_CODE,
-} from 'constants/assets';
+} from 'constants/assets-env';
 import { MAX_X_UPVOTE_ICE_BOOST } from 'constants/ice';
 
 import { ClassicToken } from 'types/token';

@@ -1,8 +1,35 @@
+import { ENV_PRODUCTION, ENV_TESTNET } from 'constants/env';
+import { DAY } from 'constants/intervals';
+
+import { getEnv } from 'helpers/env';
+
 import { VoteChoiceSimple } from 'types/governance';
 
-export const CREATE_DISCUSSION_COST = 100000;
-export const CREATE_PROPOSAL_COST = 900000;
+const CREATE_DISCUSSION_COST_BY_ENV = {
+    [ENV_PRODUCTION]: 100000,
+    [ENV_TESTNET]: 1,
+};
+
+const CREATE_PROPOSAL_COST_BY_ENV = {
+    [ENV_PRODUCTION]: 900000,
+    [ENV_TESTNET]: 9,
+};
+
+const TIME_TO_DISCUSSION_BY_ENV = {
+    [ENV_PRODUCTION]: 7 * DAY,
+    [ENV_TESTNET]: 1,
+};
+
+const TIME_TO_EXPIRE_BY_ENV = {
+    [ENV_PRODUCTION]: 30 * DAY,
+    [ENV_TESTNET]: 30 * DAY,
+};
+
+export const CREATE_DISCUSSION_COST = CREATE_DISCUSSION_COST_BY_ENV[getEnv()];
+export const CREATE_PROPOSAL_COST = CREATE_PROPOSAL_COST_BY_ENV[getEnv()];
 export const APPROVED_PROPOSAL_REWARD = 1500000;
+export const TIME_TO_DISCUSSION = TIME_TO_DISCUSSION_BY_ENV[getEnv()];
+export const TIME_TO_EXPIRE = TIME_TO_EXPIRE_BY_ENV[getEnv()];
 
 export enum VoteOptions {
     for = 'For',
