@@ -23,8 +23,11 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 import { StellarService, ToastService } from 'services/globalServices';
 
-import { ModalProps } from 'types/modal';
 import { Proposal } from 'types/governance';
+import { ModalProps } from 'types/modal';
+
+import { AssetRegistryBadgeVariant } from 'web/pages/asset-registry/pages/AssetRegistryMainPage/AssetRegistryMainPage.types';
+import AssetRegistryStatusBadge from 'web/pages/asset-registry/pages/AssetRegistryMainPage/components/AssetRegistryStatusBadge/AssetRegistryStatusBadge';
 
 import DIce from 'assets/tokens/dice-logo.svg';
 import Ice from 'assets/tokens/ice-logo.svg';
@@ -40,9 +43,6 @@ import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import { flexAllCenter, flexRowSpaceBetween } from 'styles/mixins';
 import { COLORS } from 'styles/style-constants';
-
-import { AssetRegistryBadgeVariant } from 'web/pages/asset-registry/pages/AssetRegistryMainPage/AssetRegistryMainPage.types';
-import AssetRegistryStatusBadge from 'web/pages/asset-registry/pages/AssetRegistryMainPage/components/AssetRegistryStatusBadge/AssetRegistryStatusBadge';
 
 const MINIMUM_ICE_AMOUNT = 10;
 

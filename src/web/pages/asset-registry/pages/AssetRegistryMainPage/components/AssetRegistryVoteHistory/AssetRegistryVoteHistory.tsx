@@ -2,9 +2,9 @@ import * as React from 'react';
 
 import Table, { CellAlign } from 'basics/Table';
 
-import ProposalStatus from 'pages/governance/components/GovernanceMainPage/ProposalStatus/ProposalStatus';
-
 import { COLORS } from 'styles/style-constants';
+
+import ProposalStatus from 'pages/governance/components/GovernanceMainPage/ProposalStatus/ProposalStatus';
 
 import {
     Header,
@@ -27,7 +27,10 @@ const SupportedByBar = ({
     voteForResult,
     voteAgainstResult,
     voteAbstainResult,
-}: Pick<AssetRegistryHistoryEntry, 'voteForResult' | 'voteAgainstResult' | 'voteAbstainResult'>) => {
+}: Pick<
+    AssetRegistryHistoryEntry,
+    'voteForResult' | 'voteAgainstResult' | 'voteAbstainResult'
+>) => {
     const voteFor = Number(voteForResult);
     const voteAgainst = Number(voteAgainstResult);
     const voteAbstain = Number(voteAbstainResult);
@@ -43,10 +46,7 @@ const SupportedByBar = ({
     return (
         <SupportedByProgress>
             <SupportedByOuter>
-                <SupportedByInner
-                    $width={`${percentForAndAbstain}%`}
-                    $color={COLORS.gray100}
-                />
+                <SupportedByInner $width={`${percentForAndAbstain}%`} $color={COLORS.gray100} />
                 <SupportedByInner $width={`${percentFor}%`} $color={COLORS.purple500} />
             </SupportedByOuter>
         </SupportedByProgress>

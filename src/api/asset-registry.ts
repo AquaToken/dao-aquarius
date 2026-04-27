@@ -5,6 +5,8 @@ import { getLumenUsdPrice } from 'api/price';
 
 import { getAmmAquaUrl, getGovernanceUrl } from 'helpers/url';
 
+import { ListResponse as GovernanceListResponse } from 'store/assetsStore/types';
+
 import { ListResponse, Pool } from 'types/amm';
 import { Proposal } from 'types/governance';
 
@@ -20,7 +22,7 @@ export const getRegistryAssetsRequest = (): Promise<RegistryAssetsResponse> =>
 
 export const getActiveRegistryVotingRequest = (): Promise<Proposal | null> =>
     axios
-        .get<ListResponse<Proposal>>(`${getGovernanceUrl()}/proposal/`, {
+        .get<GovernanceListResponse<Proposal>>(`${getGovernanceUrl()}/proposal/`, {
             params: {
                 proposal_type: 'asset',
                 status: 'voting',
@@ -33,7 +35,7 @@ export const getActiveRegistryVotingRequest = (): Promise<Proposal | null> =>
 
 export const getUpcomingRegistryVotesRequest = (): Promise<Proposal[]> =>
     axios
-        .get<ListResponse<Proposal>>(`${getGovernanceUrl()}/proposal/`, {
+        .get<GovernanceListResponse<Proposal>>(`${getGovernanceUrl()}/proposal/`, {
             params: {
                 proposal_type: 'asset',
                 status: 'discussion',

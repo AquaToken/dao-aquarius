@@ -19,7 +19,7 @@ import AssetInfoContent from 'components/AssetInfoContent/AssetInfoContent';
 import NoTrustline from 'components/NoTrustline';
 
 import { respondDown } from 'styles/mixins';
-import { Breakpoints, COLORS } from 'styles/style-constants';
+import { Breakpoints } from 'styles/style-constants';
 
 const Buttons = styled.div`
     display: flex;

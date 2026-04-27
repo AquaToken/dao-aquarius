@@ -29,7 +29,6 @@ import {
     InfoIconWrap,
     InfoLabelWrap,
     ItemCard,
-    Metric,
     MetricLabel,
     MetricValue,
     MobileBadgeWrap,
@@ -136,18 +135,16 @@ const AssetRegistryListItem = ({
                 new Date(b.end_at ?? b.created_at).getTime() -
                 new Date(a.end_at ?? a.created_at).getTime(),
         )
-        .map(proposal => {
-            return {
-                id: String(proposal.id),
-                date: getDateString(new Date(proposal.end_at ?? proposal.created_at).getTime()),
-                proposedToLabel: getProposalTargetLabel(proposal.proposal_type),
-                proposedToVariant: getProposalTargetVariant(proposal.proposal_type),
-                voteForResult: proposal.vote_for_result,
-                voteAgainstResult: proposal.vote_against_result,
-                voteAbstainResult: proposal.vote_abstain_result,
-                resultsStatus: getProposalResultsStatus(proposal),
-            };
-        });
+        .map(proposal => ({
+            id: String(proposal.id),
+            date: getDateString(new Date(proposal.end_at ?? proposal.created_at).getTime()),
+            proposedToLabel: getProposalTargetLabel(proposal.proposal_type),
+            proposedToVariant: getProposalTargetVariant(proposal.proposal_type),
+            voteForResult: proposal.vote_for_result,
+            voteAgainstResult: proposal.vote_against_result,
+            voteAbstainResult: proposal.vote_abstain_result,
+            resultsStatus: getProposalResultsStatus(proposal),
+        }));
     const hasVotesHistory = votesHistory.length > 0;
     const assetContract = item.asset_contract_address ?? asset.contract;
     const currentMarketStats = marketStats[assetContract];

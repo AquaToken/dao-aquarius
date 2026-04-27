@@ -297,7 +297,7 @@ const ActiveVotingCard = ({
                                 fullWidth
                                 onClick={() =>
                                     onVoteClick({
-                                    option: VoteOptions.for,
+                                        option: VoteOptions.for,
                                         key: activeVoting.vote_for_issuer ?? '',
                                         endDate: activeVoting.end_at ?? '',
                                         startDate: activeVoting.start_at ?? '',

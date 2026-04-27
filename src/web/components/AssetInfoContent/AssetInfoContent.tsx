@@ -22,6 +22,8 @@ import { AssetInfo } from 'types/asset-info';
 import { StellarToml as StellarTomlType } from 'types/stellar';
 import { ClassicToken } from 'types/token';
 
+import { RegistryAssetMarketStatsMap } from 'web/pages/asset-registry/pages/AssetRegistryMainPage/AssetRegistryMainPage.types';
+
 import Mail from 'assets/community/email16.svg';
 import Git from 'assets/community/github16.svg';
 import X from 'assets/community/twitter16.svg';
@@ -48,8 +50,6 @@ import {
     Links,
     TopRow,
 } from './AssetInfoContent.styled';
-
-import { RegistryAssetMarketStatsMap } from 'web/pages/asset-registry/pages/AssetRegistryMainPage/AssetRegistryMainPage.types';
 
 const ExternalBlack = styled(External)`
     path {

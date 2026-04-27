@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 
-import Sidebar from 'pages/governance/components/GovernanceVoteProposalPage/Sidebar/Sidebar';
-
 import { commonMaxWidth, flexColumn, respondDown } from 'styles/mixins';
 import { Breakpoints, COLORS, FONT_SIZE } from 'styles/style-constants';
+
+import Sidebar from 'pages/governance/components/GovernanceVoteProposalPage/Sidebar/Sidebar';
 
 export const Main = styled.div`
     width: 100%;

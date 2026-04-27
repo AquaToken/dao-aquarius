@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
-import { AssetRegistryBadgeVariant } from '../../AssetRegistryMainPage.types';
-
 import { COLORS, FONT_SIZE } from 'styles/style-constants';
+
+import { AssetRegistryBadgeVariant } from '../../AssetRegistryMainPage.types';
 
 const getVariantStyles = (variant: AssetRegistryBadgeVariant) => {
     switch (variant) {

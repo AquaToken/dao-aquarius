@@ -5,6 +5,8 @@ import { AppRoutes } from 'constants/routes';
 
 import { createAsset } from 'helpers/token';
 
+import { AssetRegistryBadgeVariant } from 'web/pages/asset-registry/pages/AssetRegistryMainPage/AssetRegistryMainPage.types';
+
 import Asset from 'basics/Asset';
 
 import {
@@ -58,7 +60,11 @@ const UpcomingVotesCard = ({ items }: UpcomingVotesCardProps) => {
                                     />
                                 </ItemAsset>
                                 <AssetRegistryStatusBadge
-                                    variant={item.type === 'ADD_ASSET' ? 'whitelisted' : 'revoked'}
+                                    variant={
+                                        item.type === 'ADD_ASSET'
+                                            ? AssetRegistryBadgeVariant.whitelisted
+                                            : AssetRegistryBadgeVariant.revoked
+                                    }
                                     label={item.type === 'ADD_ASSET' ? 'Whitelist' : 'Revoke'}
                                     withIcon
                                 />
@@ -79,7 +85,11 @@ const UpcomingVotesCard = ({ items }: UpcomingVotesCardProps) => {
                                     />
                                 </ItemAsset>
                                 <AssetRegistryStatusBadge
-                                    variant={item.type === 'ADD_ASSET' ? 'whitelisted' : 'revoked'}
+                                    variant={
+                                        item.type === 'ADD_ASSET'
+                                            ? AssetRegistryBadgeVariant.whitelisted
+                                            : AssetRegistryBadgeVariant.revoked
+                                    }
                                     label={item.type === 'ADD_ASSET' ? 'Whitelist' : 'Revoke'}
                                     withIcon
                                 />

@@ -31,7 +31,9 @@ export const ItemInteractive = styled.div`
     margin: -0.8rem;
     border-radius: 1.6rem;
     cursor: pointer;
-    transition: background-color 150ms ease, transform 150ms ease;
+    transition:
+        background-color 150ms ease,
+        transform 150ms ease;
 
     &:hover {
         background: ${COLORS.gray50};
