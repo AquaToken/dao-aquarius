@@ -32,6 +32,9 @@ export type RegistryAssetProposal = {
     vote_for_result: string;
     vote_against_result: string;
     vote_abstain_result: string;
+    vote_for_issuer?: string | null;
+    vote_against_issuer?: string | null;
+    abstain_issuer?: string | null;
     onchain_execution_status: RegistryAssetOnchainExecutionStatus;
     onchain_execution_tx_hash: string | null;
     created_at: string;

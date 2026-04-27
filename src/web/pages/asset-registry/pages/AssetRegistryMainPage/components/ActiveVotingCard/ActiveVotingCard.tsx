@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { getActiveRegistryVotingRequest } from 'api/asset-registry';
 import { getAssetDetails } from 'api/stellar-expert';
 
+import { VoteOptions } from 'constants/dao';
 import { DAY } from 'constants/intervals';
 
 import { getAssetString } from 'helpers/assets';
@@ -12,19 +13,30 @@ import { formatBalance } from 'helpers/format-number';
 import { createAsset } from 'helpers/token';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { ModalService } from 'services/globalServices';
+
+import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 
 import IconInfo from 'assets/icons/status/icon-info-16.svg';
 
 import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';
+import { VoteIcon } from 'basics/icons';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
+import ConfirmVoteModal from 'pages/governance/components/GovernanceVoteProposalPage/ConfirmVoteModal/ConfirmVoteModal';
+
 import {
+    AbstainButton,
+    AgainstButton,
     Card,
     CardTitle,
     Divider,
     FooterRow,
+    ForButton,
     Header,
     HeaderAsset,
     InfoIconWrap,
@@ -36,6 +48,7 @@ import {
     ProgressFill,
     Section,
     Stats,
+    VotingButtonsRow,
 } from './ActiveVotingCard.styled';
 
 import {
@@ -46,7 +59,6 @@ import {
     UpcomingVoteData,
 } from '../../AssetRegistryMainPage.types';
 import AssetRegistryStatusBadge from '../AssetRegistryStatusBadge/AssetRegistryStatusBadge';
-import VoteChoiceSelector from '../VoteChoiceSelector/VoteChoiceSelector';
 
 type ActiveVotingCardProps = {
     marketStats: RegistryAssetMarketStatsMap;
@@ -87,6 +99,13 @@ const ActiveVotingCard = ({
     upcomingVotes,
 }: ActiveVotingCardProps) => {
     const [activeVoting, setActiveVoting] = useState<ActiveRegistryProposal | null>(null);
+    const [selectedOption, setSelectedOption] = useState<{
+        option: VoteOptions;
+        key: string;
+        endDate: string;
+        startDate: string;
+    } | null>(null);
+    const { isLogged } = useAuthStore();
 
     useEffect(() => {
         let isCancelled = false;
@@ -154,6 +173,14 @@ const ActiveVotingCard = ({
         };
     }, [asset]);
 
+    useEffect(() => {
+        if (isLogged && selectedOption) {
+            ModalService.openModal(ConfirmVoteModal, selectedOption).then(() => {
+                setSelectedOption(null);
+            });
+        }
+    }, [isLogged, selectedOption]);
+
     const assetHolders = useMemo(() => {
         if (!asset) {
             return '—';
@@ -202,6 +229,23 @@ const ActiveVotingCard = ({
             </InfoIconWrap>
         </Tooltip>
     );
+
+    const onVoteClick = (option: {
+        option: VoteOptions;
+        key: string;
+        endDate: string;
+        startDate: string;
+    }) => {
+        if (isLogged) {
+            ModalService.openModal(ConfirmVoteModal, option);
+            return;
+        }
+
+        setSelectedOption(option);
+        ModalService.openModal(ChooseLoginMethodModal, {
+            callback: () => ModalService.openModal(ConfirmVoteModal, option),
+        });
+    };
 
     return (
         <Card>
@@ -267,7 +311,47 @@ const ActiveVotingCard = ({
 
                     <Section>
                         <MetaValue>Your vote</MetaValue>
-                        <VoteChoiceSelector value="for" />
+                        <VotingButtonsRow>
+                            <ForButton
+                                fullWidth
+                                onClick={() =>
+                                    onVoteClick({
+                                        option: VoteOptions.for,
+                                        key: activeVoting.vote_for_issuer ?? '',
+                                        endDate: activeVoting.end_at ?? '',
+                                        startDate: activeVoting.start_at ?? '',
+                                    })
+                                }
+                            >
+                                <VoteIcon option={VoteOptions.for} size="medium" />
+                            </ForButton>
+                            <AbstainButton
+                                fullWidth
+                                onClick={() =>
+                                    onVoteClick({
+                                        option: VoteOptions.abstain,
+                                        key: activeVoting.abstain_issuer ?? '',
+                                        endDate: activeVoting.end_at ?? '',
+                                        startDate: activeVoting.start_at ?? '',
+                                    })
+                                }
+                            >
+                                <VoteIcon option={VoteOptions.abstain} size="medium" />
+                            </AbstainButton>
+                            <AgainstButton
+                                fullWidth
+                                onClick={() =>
+                                    onVoteClick({
+                                        option: VoteOptions.against,
+                                        key: activeVoting.vote_against_issuer ?? '',
+                                        endDate: activeVoting.end_at ?? '',
+                                        startDate: activeVoting.start_at ?? '',
+                                    })
+                                }
+                            >
+                                <VoteIcon option={VoteOptions.against} size="medium" />
+                            </AgainstButton>
+                        </VotingButtonsRow>
                     </Section>
 
                     <Divider />
