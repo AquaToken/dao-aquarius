@@ -75,15 +75,17 @@ interface Props {
     links: React.ReactNode;
     title: string;
     counts?: { active: number; discussion: number };
+    indicator?: React.ReactNode;
 }
 
-const ExpandedMenu = ({ links, title, counts }: Props): React.ReactNode => {
+const ExpandedMenu = ({ links, title, counts, indicator }: Props): React.ReactNode => {
     const [isOpen, setIsOpen] = useState(false);
     return (
         <Menu onMouseEnter={() => setIsOpen(true)} onMouseLeave={() => setIsOpen(false)}>
             <MenuHead>
                 <MenuHeadTitle>
                     {title}
+                    {indicator}
                     <ActiveProposals
                         discussionCount={counts?.discussion}
                         activeCount={counts?.active}

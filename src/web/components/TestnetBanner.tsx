@@ -10,14 +10,14 @@ import { ToastService } from 'services/globalServices';
 
 import { ToggleGroup } from 'basics/inputs';
 
-import { cardBoxShadow, flexAllCenter } from 'styles/mixins';
+import { flexAllCenter } from 'styles/mixins';
 import { COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     ${flexAllCenter};
-    background-color: ${COLORS.gray50};
+    background-color: ${COLORS.white};
+    border-bottom: 0.1rem solid ${COLORS.gray100};
     padding: 0 4rem;
-    ${cardBoxShadow};
 `;
 
 const OPTIONS = [

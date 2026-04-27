@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
+import { getActiveRegistryVotingRequest } from 'api/asset-registry';
 import { getActiveProposalsCount } from 'api/governance';
 
 import { AppRoutes } from 'constants/routes';
@@ -14,12 +15,15 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
 
+import { Proposal } from 'types/governance';
+
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 
 import AquaLogo from 'assets/aqua/aqua-logo-text.svg';
 import IconProfile from 'assets/icons/nav/icon-profile.svg';
 
 import { ActiveProposals } from 'components/Header/ActiveProposals/ActiveProposals';
+import ActiveAssetProposal from 'components/Header/ActiveAssetProposal/ActiveAssetProposal';
 import ExpandedMenu from 'components/Header/ExpandedMenu/ExpandedMenu';
 
 import { commonMaxWidth, respondDown } from 'styles/mixins';
@@ -221,12 +225,24 @@ const MyAquarius = styled(NavLink)`
 
 const Links = () => {
     const [proposalsCounts, setProposalsCounts] = useState({ active: 0, discussion: 0 });
+    const [activeAssetProposal, setActiveAssetProposal] = useState<Proposal | null>(null);
 
     useEffect(() => {
         getActiveProposalsCount().then(res => {
             setProposalsCounts(res);
         });
+
+        getActiveRegistryVotingRequest()
+            .then(setActiveAssetProposal)
+            .catch(() => {
+                setActiveAssetProposal(null);
+            });
     }, []);
+
+    const activeAssetIndicator = activeAssetProposal ? (
+        <ActiveAssetProposal proposal={activeAssetProposal} />
+    ) : null;
+
     return (
         <>
             <NavLinkStyled
@@ -281,6 +297,7 @@ const Links = () => {
             <ExpandedMenu
                 title="DAO"
                 counts={proposalsCounts}
+                indicator={activeAssetIndicator}
                 links={
                     <>
                         <NavLinkStyled
@@ -292,13 +309,18 @@ const Links = () => {
                             Liquidity Voting
                         </NavLinkStyled>
 
-                        <NavLinkStyled
-                            to={AppRoutes.section.assetRegistry.link.index}
-                            style={({ isActive }) => (isActive ? { fontWeight: 700 } : undefined)}
-                            title="Asset Registry"
-                        >
-                            Asset Registry
-                        </NavLinkStyled>
+                        <NavLinkWithCount>
+                            <NavLinkStyled
+                                to={AppRoutes.section.assetRegistry.link.index}
+                                style={({ isActive }) =>
+                                    isActive ? { fontWeight: 700 } : undefined
+                                }
+                                title="Asset Registry"
+                            >
+                                Asset Registry
+                            </NavLinkStyled>
+                            {activeAssetIndicator}
+                        </NavLinkWithCount>
 
                         <NavLinkWithCount>
                             <NavLinkStyled
