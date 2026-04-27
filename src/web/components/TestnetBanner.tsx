@@ -6,6 +6,8 @@ import { ENV_PRODUCTION, ENV_TESTNET } from 'constants/env';
 import { getEnv, getIsTestnetEnv, setProductionEnv } from 'helpers/env';
 import Timer from 'helpers/timer';
 
+import useAssetsStore from 'store/assetsStore/useAssetsStore';
+
 import { ToastService } from 'services/globalServices';
 
 import { ToggleGroup } from 'basics/inputs';
@@ -31,8 +33,10 @@ const TestnetBanner = (): ReactElement => {
     const [isTestnet, setIsTestnet] = useState(getIsTestnetEnv());
     const currentEnv = getEnv();
     const [toggleValue, setToggleValue] = useState(currentEnv);
+    const { clearAssets } = useAssetsStore();
 
     const close = () => {
+        clearAssets();
         setProductionEnv();
         setIsTestnet(false);
     };
