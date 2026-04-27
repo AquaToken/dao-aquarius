@@ -61,7 +61,8 @@ export const getProposalsRequest = async ({
     });
 
     const filteredResults = data.results.filter(
-        proposal => proposal.proposal_type?.toLowerCase() !== 'asset',
+        proposal =>
+            proposal.proposal_type === 'GENERAL' || proposal.proposal_type?.toLowerCase() === 'general',
     );
 
     return {

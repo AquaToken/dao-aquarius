@@ -5,7 +5,7 @@ type PaymentStatus =
     | 'INVALID_PAYMENT'
     | 'FINE'
     | 'FAILED_TRANSACTION';
-type ProposalType = 'GENERAL' | 'ASSET' | 'general' | 'asset';
+type ProposalType = 'GENERAL' | 'ADD_ASSET' | 'REMOVE_ASSET' | 'general';
 type OnchainActionType = 'NONE';
 type OnchainExecutionStatus =
     | 'NOT_REQUIRED'

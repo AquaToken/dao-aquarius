@@ -23,7 +23,11 @@ import { ExternalLink } from 'basics/links';
 
 import PublicKeyWithIcon from 'components/PublicKeyWithIcon';
 
-import { commonMaxWidth, flexAllCenter, respondDown } from 'styles/mixins';
+import {
+    commonMaxWidth,
+    flexAllCenter,
+    respondDown,
+} from 'styles/mixins';
 import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { statePage } from '../../../pages/GovernanceProposalCreationPage';
