@@ -137,17 +137,14 @@ const AssetRegistryListItem = ({
                 new Date(a.end_at ?? a.created_at).getTime(),
         )
         .map(proposal => {
-            const voteFor = Number(proposal.vote_for_result);
-            const voteAgainst = Number(proposal.vote_against_result);
-            const voteAbstain = Number(proposal.vote_abstain_result);
-            const totalVotes = voteFor + voteAgainst + voteAbstain;
-
             return {
                 id: String(proposal.id),
                 date: getDateString(new Date(proposal.end_at ?? proposal.created_at).getTime()),
                 proposedToLabel: getProposalTargetLabel(proposal.proposal_type),
                 proposedToVariant: getProposalTargetVariant(proposal.proposal_type),
-                supportedBy: totalVotes ? `${Math.round((voteFor / totalVotes) * 100)}%` : '-',
+                voteForResult: proposal.vote_for_result,
+                voteAgainstResult: proposal.vote_against_result,
+                voteAbstainResult: proposal.vote_abstain_result,
                 resultsStatus: getProposalResultsStatus(proposal),
             };
         });

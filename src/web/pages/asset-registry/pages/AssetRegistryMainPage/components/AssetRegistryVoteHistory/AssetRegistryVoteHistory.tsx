@@ -4,13 +4,53 @@ import Table, { CellAlign } from 'basics/Table';
 
 import ProposalStatus from 'pages/governance/components/GovernanceMainPage/ProposalStatus/ProposalStatus';
 
-import { Header, HistoryTable, Value, VoteTitle } from './AssetRegistryVoteHistory.styled';
+import { COLORS } from 'styles/style-constants';
+
+import {
+    Header,
+    HistoryTable,
+    SupportedByInner,
+    SupportedByOuter,
+    SupportedByProgress,
+    Value,
+    VoteTitle,
+} from './AssetRegistryVoteHistory.styled';
 
 import { AssetRegistryHistoryEntry } from '../../AssetRegistryMainPage.types';
 import AssetRegistryStatusBadge from '../AssetRegistryStatusBadge/AssetRegistryStatusBadge';
 
 type AssetRegistryVoteHistoryProps = {
     rows: AssetRegistryHistoryEntry[];
+};
+
+const SupportedByBar = ({
+    voteForResult,
+    voteAgainstResult,
+    voteAbstainResult,
+}: Pick<AssetRegistryHistoryEntry, 'voteForResult' | 'voteAgainstResult' | 'voteAbstainResult'>) => {
+    const voteFor = Number(voteForResult);
+    const voteAgainst = Number(voteAgainstResult);
+    const voteAbstain = Number(voteAbstainResult);
+    const totalVotes = voteFor + voteAgainst + voteAbstain;
+
+    if (!totalVotes) {
+        return <Value>-</Value>;
+    }
+
+    const percentFor = (voteFor / totalVotes) * 100;
+    const percentForAndAbstain = ((voteFor + voteAbstain) / totalVotes) * 100;
+
+    return (
+        <SupportedByProgress>
+            <SupportedByOuter>
+                <SupportedByInner
+                    $width={`${percentForAndAbstain}%`}
+                    $color={COLORS.gray100}
+                />
+                <SupportedByInner $width={`${percentFor}%`} $color={COLORS.purple500} />
+            </SupportedByOuter>
+        </SupportedByProgress>
+    );
 };
 
 const AssetRegistryVoteHistory = ({ rows }: AssetRegistryVoteHistoryProps) => (
@@ -45,7 +85,13 @@ const AssetRegistryVoteHistory = ({ rows }: AssetRegistryVoteHistoryProps) => (
                             label: 'Propose to:',
                         },
                         {
-                            children: <Value>{row.supportedBy}</Value>,
+                            children: (
+                                <SupportedByBar
+                                    voteForResult={row.voteForResult}
+                                    voteAgainstResult={row.voteAgainstResult}
+                                    voteAbstainResult={row.voteAbstainResult}
+                                />
+                            ),
                             label: 'Supported by:',
                             align: CellAlign.Right,
                         },

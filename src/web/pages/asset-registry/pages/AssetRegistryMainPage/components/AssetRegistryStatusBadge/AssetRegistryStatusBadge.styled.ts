@@ -2,26 +2,21 @@ import styled from 'styled-components';
 
 import { AssetRegistryBadgeVariant } from '../../AssetRegistryMainPage.types';
 
-import { COLORS, FONT_SIZE, hexWithOpacity } from 'styles/style-constants';
+import { COLORS, FONT_SIZE } from 'styles/style-constants';
 
 const getVariantStyles = (variant: AssetRegistryBadgeVariant) => {
     switch (variant) {
         case AssetRegistryBadgeVariant.whitelisted:
         case AssetRegistryBadgeVariant.accepted:
             return {
-                background: '#CCFADF',
-                color: '#002600',
+                background: COLORS.green50,
+                color: COLORS.green900,
             };
         case AssetRegistryBadgeVariant.revoked:
         case AssetRegistryBadgeVariant.rejected:
             return {
-                background: '#FFE8ED',
-                color: '#AB0D0D',
-            };
-        case AssetRegistryBadgeVariant.inVoting:
-            return {
-                background: hexWithOpacity(COLORS.purple500, 14),
-                color: COLORS.purple500,
+                background: COLORS.red50,
+                color: COLORS.red700,
             };
         case AssetRegistryBadgeVariant.noQuorum:
         default:
