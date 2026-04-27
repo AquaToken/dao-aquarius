@@ -6,6 +6,7 @@ import { getAssetDetails } from 'api/stellar-expert';
 
 import { VoteOptions } from 'constants/dao';
 import { DAY } from 'constants/intervals';
+import { AppRoutes } from 'constants/routes';
 
 import { getAssetString } from 'helpers/assets';
 import { getDateString } from 'helpers/date';
@@ -17,6 +18,8 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
 
+import { Proposal } from 'types/governance';
+
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 
 import IconInfo from 'assets/icons/status/icon-info-16.svg';
@@ -27,6 +30,7 @@ import { VoteIcon } from 'basics/icons';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
+import CurrentResults from 'pages/governance/components/GovernanceMainPage/ProposalPreview/CurrentResults/CurrentResults';
 import ConfirmVoteModal from 'pages/governance/components/GovernanceVoteProposalPage/ConfirmVoteModal/ConfirmVoteModal';
 
 import {
@@ -34,6 +38,7 @@ import {
     AgainstButton,
     Card,
     CardTitle,
+    DetailsLink,
     Divider,
     FooterRow,
     ForButton,
@@ -44,18 +49,14 @@ import {
     Meta,
     MetaLabel,
     MetaValue,
-    ProgressBar,
-    ProgressFill,
     Section,
     Stats,
     VotingButtonsRow,
 } from './ActiveVotingCard.styled';
 
 import {
-    ActiveRegistryProposal,
     AssetRegistryBadgeVariant,
     RegistryAssetMarketStatsMap,
-    RegistryAssetProposal,
     UpcomingVoteData,
 } from '../../AssetRegistryMainPage.types';
 import AssetRegistryStatusBadge from '../AssetRegistryStatusBadge/AssetRegistryStatusBadge';
@@ -66,8 +67,8 @@ type ActiveVotingCardProps = {
     upcomingVotes: UpcomingVoteData[];
 };
 
-const getEndsInLabel = (proposal: RegistryAssetProposal) => {
-    const endAt = proposal.new_end_at ?? proposal.end_at;
+const getEndsInLabel = (proposal: Proposal) => {
+    const { end_at: endAt } = proposal;
 
     if (!endAt) {
         return '—';
@@ -84,21 +85,12 @@ const getEndsInLabel = (proposal: RegistryAssetProposal) => {
     return `${days} day${days === 1 ? '' : 's'}`;
 };
 
-const getSupportPercent = (proposal: RegistryAssetProposal) => {
-    const voteFor = Number(proposal.vote_for_result);
-    const voteAgainst = Number(proposal.vote_against_result);
-    const voteAbstain = Number(proposal.vote_abstain_result);
-    const totalVotes = voteFor + voteAgainst + voteAbstain;
-
-    return totalVotes ? Math.round((voteFor / totalVotes) * 100) : 0;
-};
-
 const ActiveVotingCard = ({
     marketStats,
     isMarketStatsLoading,
     upcomingVotes,
 }: ActiveVotingCardProps) => {
-    const [activeVoting, setActiveVoting] = useState<ActiveRegistryProposal | null>(null);
+    const [activeVoting, setActiveVoting] = useState<Proposal | null>(null);
     const [selectedOption, setSelectedOption] = useState<{
         option: VoteOptions;
         key: string;
@@ -127,22 +119,13 @@ const ActiveVotingCard = ({
         };
     }, []);
     const nextVoting = upcomingVotes[0] ?? null;
-    const displayedVoting = activeVoting ?? nextVoting;
     const isActiveVoting = Boolean(activeVoting);
+    const assetCode = activeVoting?.asset_code ?? nextVoting?.assetCode ?? null;
+    const assetIssuer = activeVoting?.asset_issuer ?? nextVoting?.assetIssuer ?? '';
+    const assetContract = activeVoting?.asset_contract_address ?? null;
     const asset = useMemo(
-        () =>
-            displayedVoting?.asset_code || displayedVoting?.assetCode
-                ? createAsset(
-                      displayedVoting.asset_code ?? displayedVoting.assetCode,
-                      displayedVoting.asset_issuer ?? displayedVoting.assetIssuer ?? '',
-                  )
-                : null,
-        [
-            displayedVoting?.asset_code,
-            displayedVoting?.asset_issuer,
-            nextVoting?.assetCode,
-            nextVoting?.assetIssuer,
-        ],
+        () => (assetCode ? createAsset(assetCode, assetIssuer) : null),
+        [assetCode, assetIssuer],
     );
     const { assetsInfo } = useAssetsStore();
     const [lumenHolders, setLumenHolders] = useState<number | null>(null);
@@ -195,18 +178,12 @@ const ActiveVotingCard = ({
         return holders === undefined ? '—' : formatBalance(holders);
     }, [asset, assetsInfo, lumenHolders]);
 
-    if (!displayedVoting || !asset) {
+    if (!assetCode || !asset) {
         return null;
     }
 
-    const assetContract =
-        ('asset_contract_address' in displayedVoting
-            ? displayedVoting.asset_contract_address
-            : null) ?? asset.contract;
-    const currentMarketStats = marketStats[assetContract];
-    const supportPercent = isActiveVoting && activeVoting ? getSupportPercent(activeVoting) : 0;
-    const endsAt =
-        isActiveVoting && activeVoting ? (activeVoting.new_end_at ?? activeVoting.end_at) : null;
+    const currentMarketStats = marketStats[assetContract ?? asset.contract];
+    const endsAt = isActiveVoting && activeVoting ? activeVoting.end_at : null;
     const nextVotingStartsAt =
         !isActiveVoting && nextVoting ? nextVoting.startsAt.replace(/^Starts\s+/i, '') : null;
 
@@ -235,6 +212,7 @@ const ActiveVotingCard = ({
         key: string;
         endDate: string;
         startDate: string;
+        proposal?: Proposal;
     }) => {
         if (isLogged) {
             ModalService.openModal(ConfirmVoteModal, option);
@@ -255,10 +233,15 @@ const ActiveVotingCard = ({
                 <HeaderAsset>
                     <Asset asset={asset} variant="compactDomain" />
                 </HeaderAsset>
-                {isActiveVoting ? (
+                {isActiveVoting && activeVoting ? (
                     <AssetRegistryStatusBadge
-                        variant={AssetRegistryBadgeVariant.inVoting}
-                        label="In voting"
+                        variant={
+                            activeVoting.proposal_type === 'ADD_ASSET'
+                                ? AssetRegistryBadgeVariant.whitelisted
+                                : AssetRegistryBadgeVariant.revoked
+                        }
+                        label={activeVoting.proposal_type === 'ADD_ASSET' ? 'Whitelist' : 'Revoke'}
+                        withIcon
                     />
                 ) : nextVoting ? (
                     <AssetRegistryStatusBadge
@@ -303,10 +286,8 @@ const ActiveVotingCard = ({
             {isActiveVoting && activeVoting ? (
                 <>
                     <Section>
-                        <MetaValue>{supportPercent}% support</MetaValue>
-                        <ProgressBar>
-                            <ProgressFill style={{ width: `${supportPercent}%` }} />
-                        </ProgressBar>
+                        <MetaValue>Current results</MetaValue>
+                        <CurrentResults proposal={activeVoting} />
                     </Section>
 
                     <Section>
@@ -316,10 +297,11 @@ const ActiveVotingCard = ({
                                 fullWidth
                                 onClick={() =>
                                     onVoteClick({
-                                        option: VoteOptions.for,
+                                    option: VoteOptions.for,
                                         key: activeVoting.vote_for_issuer ?? '',
                                         endDate: activeVoting.end_at ?? '',
                                         startDate: activeVoting.start_at ?? '',
+                                        proposal: activeVoting,
                                     })
                                 }
                             >
@@ -333,6 +315,7 @@ const ActiveVotingCard = ({
                                         key: activeVoting.abstain_issuer ?? '',
                                         endDate: activeVoting.end_at ?? '',
                                         startDate: activeVoting.start_at ?? '',
+                                        proposal: activeVoting,
                                     })
                                 }
                             >
@@ -346,6 +329,7 @@ const ActiveVotingCard = ({
                                         key: activeVoting.vote_against_issuer ?? '',
                                         endDate: activeVoting.end_at ?? '',
                                         startDate: activeVoting.start_at ?? '',
+                                        proposal: activeVoting,
                                     })
                                 }
                             >
@@ -363,9 +347,15 @@ const ActiveVotingCard = ({
                         </MetaValue>
                     </FooterRow>
 
-                    <Button isRounded fullWidth>
-                        Details
-                    </Button>
+                    <DetailsLink
+                        to={AppRoutes.section.assetRegistry.to.voting({
+                            id: String(activeVoting.id),
+                        })}
+                    >
+                        <Button isRounded fullWidth>
+                            Details
+                        </Button>
+                    </DetailsLink>
                 </>
             ) : (
                 <FooterRow>

@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 import Button from 'basics/buttons/Button';
+import { BlankRouterLink } from 'basics/links';
 
 import { cardBoxShadow, flexAllCenter, flexColumn, flexRowSpaceBetween } from 'styles/mixins';
 import { COLORS, FONT_SIZE } from 'styles/style-constants';
@@ -70,23 +71,13 @@ export const Divider = styled.div`
     background: ${COLORS.gray100};
 `;
 
+export const DetailsLink = styled(BlankRouterLink)`
+    width: 100%;
+`;
+
 export const Section = styled.div`
     ${flexColumn};
     gap: 1.2rem;
-`;
-
-export const ProgressBar = styled.div`
-    width: 100%;
-    height: 0.6rem;
-    overflow: hidden;
-    background: ${COLORS.gray100};
-    border-radius: 4.8rem;
-`;
-
-export const ProgressFill = styled.div`
-    height: 100%;
-    background: ${COLORS.purple500};
-    border-radius: inherit;
 `;
 
 export const FooterRow = styled.div`

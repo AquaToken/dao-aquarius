@@ -203,7 +203,11 @@ const Asset = ({
 
         if (hasDomainLink && assetInfo.home_domain) {
             return (
-                <DomainLink href={`https://${assetInfo.home_domain}`} target="_blank">
+                <DomainLink
+                    href={`https://${assetInfo.home_domain}`}
+                    target="_blank"
+                    onClick={event => event.stopPropagation()}
+                >
                     {domainView}
                 </DomainLink>
             );
@@ -211,7 +215,12 @@ const Asset = ({
 
         if (hasAssetDetailsLink) {
             return (
-                <DomainDetails onClick={() => ModalService.openModal(AssetInfoModal, { asset })}>
+                <DomainDetails
+                    onClick={event => {
+                        event.stopPropagation();
+                        ModalService.openModal(AssetInfoModal, { asset });
+                    }}
+                >
                     {domainView}
                 </DomainDetails>
             );

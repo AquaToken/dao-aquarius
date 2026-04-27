@@ -23,6 +23,25 @@ export const Item = styled.div`
     gap: 0.8rem;
 `;
 
+export const ItemInteractive = styled.div`
+    ${flexColumn};
+    gap: 0.8rem;
+    width: 100%;
+    padding: 0.8rem;
+    margin: -0.8rem;
+    border-radius: 1.6rem;
+    cursor: pointer;
+    transition: background-color 150ms ease, transform 150ms ease;
+
+    &:hover {
+        background: ${COLORS.gray50};
+    }
+
+    &:active {
+        transform: scale(0.99);
+    }
+`;
+
 export const ItemHeader = styled.div`
     ${flexRowSpaceBetween};
     gap: 1.6rem;

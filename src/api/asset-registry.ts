@@ -6,9 +6,9 @@ import { getLumenUsdPrice } from 'api/price';
 import { getAmmAquaUrl, getGovernanceUrl } from 'helpers/url';
 
 import { ListResponse, Pool } from 'types/amm';
+import { Proposal } from 'types/governance';
 
 import {
-    ActiveRegistryProposal,
     RegistryAssetMarketStatsMap,
     RegistryAssetsResponse,
 } from 'web/pages/asset-registry/pages/AssetRegistryMainPage/AssetRegistryMainPage.types';
@@ -18,9 +18,9 @@ export const getRegistryAssetsRequest = (): Promise<RegistryAssetsResponse> =>
         .get<RegistryAssetsResponse>(`${getGovernanceUrl()}/asset-tokens/`)
         .then(({ data }) => data);
 
-export const getActiveRegistryVotingRequest = (): Promise<ActiveRegistryProposal | null> =>
+export const getActiveRegistryVotingRequest = (): Promise<Proposal | null> =>
     axios
-        .get<ListResponse<ActiveRegistryProposal>>(`${getGovernanceUrl()}/proposal/`, {
+        .get<ListResponse<Proposal>>(`${getGovernanceUrl()}/proposal/`, {
             params: {
                 proposal_type: 'asset',
                 status: 'voting',
@@ -30,6 +30,19 @@ export const getActiveRegistryVotingRequest = (): Promise<ActiveRegistryProposal
             },
         })
         .then(({ data }) => data.results[0] ?? null);
+
+export const getUpcomingRegistryVotesRequest = (): Promise<Proposal[]> =>
+    axios
+        .get<ListResponse<Proposal>>(`${getGovernanceUrl()}/proposal/`, {
+            params: {
+                proposal_type: 'asset',
+                status: 'discussion',
+                limit: 100,
+                page: 1,
+                ordering: 'start_at',
+            },
+        })
+        .then(({ data }) => data.results);
 
 const AMM_PAGE_SIZE = 500;
 const STELLAR_DECIMALS = 1e7;

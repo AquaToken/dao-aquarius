@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { roundToPrecision } from 'helpers/format-number';
 
-import { ProposalSimple } from 'types/governance';
+import { Proposal } from 'types/governance';
 
 import { flexAllCenter } from 'styles/mixins';
 import { COLORS } from 'styles/style-constants';
@@ -46,7 +46,7 @@ const Inner = styled.div<{ $width: string; $color: string }>`
     background-color: ${({ $color }) => $color};
 `;
 
-const CurrentResults = ({ proposal }: { proposal: ProposalSimple }) => {
+const CurrentResults = ({ proposal }: { proposal: Proposal }) => {
     const {
         vote_for_result: voteFor,
         vote_against_result: voteAgainst,

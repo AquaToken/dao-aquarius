@@ -56,12 +56,6 @@ export type RegistryAssetsResponse = {
     results: RegistryAsset[];
 };
 
-export type ActiveRegistryProposal = RegistryAssetProposal & {
-    asset_code: string | null;
-    asset_issuer: string | null;
-    asset_contract_address: string | null;
-};
-
 export type RegistryAssetMarketStats = {
     tvlUsd: number;
     volumeUsd: number;
@@ -75,7 +69,6 @@ export enum AssetRegistryBadgeVariant {
     rejected = 'rejected',
     accepted = 'accepted',
     noQuorum = 'noQuorum',
-    inVoting = 'inVoting',
 }
 
 export type AssetRegistryHistoryEntry = {
@@ -83,12 +76,14 @@ export type AssetRegistryHistoryEntry = {
     date: string;
     proposedToLabel: string;
     proposedToVariant: AssetRegistryBadgeVariant;
-    supportedBy: string;
+    voteForResult: string;
+    voteAgainstResult: string;
+    voteAbstainResult: string;
     resultsStatus: PROPOSAL_STATUS;
 };
 
 export type UpcomingVoteData = {
-    id: string;
+    id?: string;
     startsAt: string;
     assetCode: string;
     assetIssuer: string;
