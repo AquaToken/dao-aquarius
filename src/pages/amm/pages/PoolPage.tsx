@@ -11,7 +11,7 @@ import { DAY } from 'constants/intervals';
 import { AppRoutes } from 'constants/routes';
 
 import { contractValueToAmount } from 'helpers/amount';
-import { getAssetString, getEnvClassicAssetData } from 'helpers/assets';
+import { getAssetFromString, getAssetString, getEnvClassicAssetData } from 'helpers/assets';
 import getExplorerLink, { ExplorerSection } from 'helpers/explorer-links';
 import { formatBalance } from 'helpers/format-number';
 import { truncateString } from 'helpers/truncate-string';
