@@ -287,7 +287,11 @@ const ActiveVotingCard = ({
                 <>
                     <Section>
                         <MetaValue>Current results</MetaValue>
-                        <CurrentResults proposal={activeVoting} />
+                        <CurrentResults
+                            proposal={activeVoting}
+                            withResultLabel={false}
+                            isEmptyStateCompact
+                        />
                     </Section>
 
                     <Section>

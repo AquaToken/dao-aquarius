@@ -25,6 +25,11 @@ const Label = styled.div`
     margin-bottom: 1.2rem;
 `;
 
+const EmptyValue = styled(SummaryValue)<{ $isCompact?: boolean }>`
+    font-size: ${({ $isCompact }) => ($isCompact ? '1.4rem' : '1.6rem')};
+    line-height: ${({ $isCompact }) => ($isCompact ? '2rem' : '2.4rem')};
+`;
+
 const Vote = styled.div`
     ${flexAllCenter};
 `;
@@ -51,7 +56,15 @@ type CurrentResultsProposal = Pick<
     'vote_for_result' | 'vote_against_result' | 'vote_abstain_result'
 >;
 
-const CurrentResults = ({ proposal }: { proposal: CurrentResultsProposal }) => {
+const CurrentResults = ({
+    proposal,
+    withResultLabel = true,
+    isEmptyStateCompact = false,
+}: {
+    proposal: CurrentResultsProposal;
+    withResultLabel?: boolean;
+    isEmptyStateCompact?: boolean;
+}) => {
     const {
         vote_for_result: voteFor,
         vote_against_result: voteAgainst,
@@ -71,8 +84,8 @@ const CurrentResults = ({ proposal }: { proposal: CurrentResultsProposal }) => {
     if (Number.isNaN(percentFor)) {
         return (
             <>
-                <SummaryTitle>Result:</SummaryTitle>
-                <SummaryValue>No votes yet</SummaryValue>
+                {withResultLabel ? <SummaryTitle>Result:</SummaryTitle> : null}
+                <EmptyValue $isCompact={isEmptyStateCompact}>No votes yet</EmptyValue>
             </>
         );
     }
