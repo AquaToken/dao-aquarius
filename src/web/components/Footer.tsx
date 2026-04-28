@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { MAIL_AQUA_LISTINGS } from 'constants/emails';
+import { MAIL_AQUA_SECURITY } from 'constants/emails';
 import { AppRoutes } from 'constants/routes';
 import { AQUA_DOCS_AUDIT, AQUA_DOCS_URL } from 'constants/urls';
 
@@ -256,13 +256,13 @@ const Footer = (): React.ReactNode => {
                     </DocLinks>
                     <ExchangesAndCopyright>
                         <Exchanges>
-                            For exchanges:{' '}
+                            Security reports:{' '}
                             <MailLink
-                                href={`mailto:${MAIL_AQUA_LISTINGS}`}
+                                href={`mailto:${MAIL_AQUA_SECURITY}`}
                                 target="_blank"
                                 rel="noreferrer noopener"
                             >
-                                {MAIL_AQUA_LISTINGS}
+                                {MAIL_AQUA_SECURITY}
                             </MailLink>
                         </Exchanges>
                         <span>© {new Date().getFullYear()} aqua.network</span>
