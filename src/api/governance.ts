@@ -38,6 +38,7 @@ export const getProposalsRequest = async ({
     params.append('limit', pageSize.toString());
     params.append('page', page.toString());
     params.append('ordering', '-created_at');
+    params.append('proposal_type', 'general');
     if (filter === PROPOSAL_FILTER.ACTIVE) {
         params.append('status', 'voting');
     } else if (filter === PROPOSAL_FILTER.CLOSED) {
@@ -59,7 +60,21 @@ export const getProposalsRequest = async ({
         params,
     });
 
-    return { proposals: data, filter, total: data.count };
+    const filteredResults = data.results.filter(
+        proposal =>
+            proposal.proposal_type === 'GENERAL' ||
+            proposal.proposal_type?.toLowerCase() === 'general',
+    );
+
+    return {
+        proposals: {
+            ...data,
+            count: filteredResults.length,
+            results: filteredResults,
+        },
+        filter,
+        total: filteredResults.length,
+    };
 };
 
 export const getActiveProposalsCount = (): Promise<{ active: number; discussion: number }> =>

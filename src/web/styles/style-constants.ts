@@ -50,7 +50,9 @@ export const COLORS = {
     cyan500: '#24b1c7',
 
     // Green scale
+    green50: '#CCFADF',
     green500: '#00B796',
+    green900: '#002600',
 
     // Yellow scale
     yellow500: '#F8D26C',
@@ -60,7 +62,9 @@ export const COLORS = {
     orange500: '#FF8F00',
 
     // Red scale
+    red50: '#FFE8ED',
     red500: '#FF3461',
+    red700: '#AB0D0D',
 };
 
 /**

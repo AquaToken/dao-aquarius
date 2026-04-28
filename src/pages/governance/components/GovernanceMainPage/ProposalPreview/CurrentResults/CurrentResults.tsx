@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { roundToPrecision } from 'helpers/format-number';
 
-import { ProposalSimple } from 'types/governance';
+import { Proposal, ProposalSimple } from 'types/governance';
 
 import { flexAllCenter } from 'styles/mixins';
 import { COLORS } from 'styles/style-constants';
@@ -23,6 +23,11 @@ const Label = styled.div`
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1.2rem;
+`;
+
+const EmptyValue = styled(SummaryValue)<{ $isCompact?: boolean }>`
+    font-size: ${({ $isCompact }) => ($isCompact ? '1.4rem' : '1.6rem')};
+    line-height: ${({ $isCompact }) => ($isCompact ? '2rem' : '2.4rem')};
 `;
 
 const Vote = styled.div`
@@ -46,7 +51,20 @@ const Inner = styled.div<{ $width: string; $color: string }>`
     background-color: ${({ $color }) => $color};
 `;
 
-const CurrentResults = ({ proposal }: { proposal: ProposalSimple }) => {
+type CurrentResultsProposal = Pick<
+    Proposal | ProposalSimple,
+    'vote_for_result' | 'vote_against_result' | 'vote_abstain_result'
+>;
+
+const CurrentResults = ({
+    proposal,
+    withResultLabel = true,
+    isEmptyStateCompact = false,
+}: {
+    proposal: CurrentResultsProposal;
+    withResultLabel?: boolean;
+    isEmptyStateCompact?: boolean;
+}) => {
     const {
         vote_for_result: voteFor,
         vote_against_result: voteAgainst,
@@ -66,8 +84,8 @@ const CurrentResults = ({ proposal }: { proposal: ProposalSimple }) => {
     if (Number.isNaN(percentFor)) {
         return (
             <>
-                <SummaryTitle>Result:</SummaryTitle>
-                <SummaryValue>No votes yet</SummaryValue>
+                {withResultLabel ? <SummaryTitle>Result:</SummaryTitle> : null}
+                <EmptyValue $isCompact={isEmptyStateCompact}>No votes yet</EmptyValue>
             </>
         );
     }

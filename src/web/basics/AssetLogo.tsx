@@ -45,13 +45,13 @@ export const bigLogoStyles = (isCircle: boolean) => css`
     border-radius: ${isCircle ? '50%' : '0.5rem'};
 `;
 
-export const customLogoSize = (size: number) => css`
+export const customLogoSize = (size: number, isCircle = true) => css`
     height: ${size}rem;
     width: ${size}rem;
     max-height: ${size}rem;
     max-width: ${size}rem;
     min-width: ${size}rem;
-    border-radius: 50%;
+    border-radius: ${isCircle ? '50%' : '0.5rem'};
 `;
 
 const Logo = styled.img<{
@@ -62,7 +62,7 @@ const Logo = styled.img<{
 }>`
     ${({ $isSmall, $isBig, $isCircle, $size }) => {
         if ($size) {
-            return customLogoSize($size);
+            return customLogoSize($size, $isCircle);
         }
         if ($isSmall) {
             return smallLogoStyles($isCircle);
@@ -82,7 +82,7 @@ const Unknown = styled(UnknownLogo)<{
 }>`
     ${({ $isSmall, $isBig, $isCircle, $size }) => {
         if ($size) {
-            return customLogoSize($size);
+            return customLogoSize($size, $isCircle);
         }
         if ($isSmall) {
             return smallLogoStyles($isCircle);
@@ -102,7 +102,7 @@ const Soroban = styled(SorobanLogo)<{
 }>`
     ${({ $isSmall, $isBig, $isCircle, $size }) => {
         if ($size) {
-            return customLogoSize($size);
+            return customLogoSize($size, $isCircle);
         }
         if ($isSmall) {
             return smallLogoStyles($isCircle);
@@ -122,7 +122,7 @@ const LogoLoaderContainer = styled.div<{
 }>`
     ${({ $isSmall, $isBig, $isCircle, $size }) => {
         if ($size) {
-            return customLogoSize($size);
+            return customLogoSize($size, $isCircle);
         }
         if ($isSmall) {
             return smallLogoStyles($isCircle);

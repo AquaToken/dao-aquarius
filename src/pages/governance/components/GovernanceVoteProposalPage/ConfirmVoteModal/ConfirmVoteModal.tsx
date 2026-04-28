@@ -12,6 +12,7 @@ import { getEnvClassicAssetData } from 'helpers/assets';
 import { getDateString } from 'helpers/date';
 import ErrorHandler from 'helpers/error-handler';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
+import { createAsset } from 'helpers/token';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
 import { useIsMounted } from 'hooks/useIsMounted';
@@ -22,11 +23,16 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 import { StellarService, ToastService } from 'services/globalServices';
 
+import { Proposal } from 'types/governance';
 import { ModalProps } from 'types/modal';
+
+import { AssetRegistryBadgeVariant } from 'web/pages/asset-registry/pages/AssetRegistryMainPage/AssetRegistryMainPage.types';
+import AssetRegistryStatusBadge from 'web/pages/asset-registry/pages/AssetRegistryMainPage/components/AssetRegistryStatusBadge/AssetRegistryStatusBadge';
 
 import DIce from 'assets/tokens/dice-logo.svg';
 import Ice from 'assets/tokens/ice-logo.svg';
 
+import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';
 import { VoteIcon } from 'basics/icons';
 import Input from 'basics/inputs/Input';
@@ -47,6 +53,18 @@ const ContentRow = styled.div`
     &:first-child {
         margin-top: 7.2rem;
     }
+`;
+
+const AssetRow = styled.div`
+    ${flexRowSpaceBetween};
+    gap: 1.6rem;
+    align-items: flex-start;
+    margin-top: 3rem;
+`;
+
+const AssetWrap = styled.div`
+    min-width: 0;
+    flex: 1 1 auto;
 `;
 
 const Label = styled.span`
@@ -122,9 +140,15 @@ const GetAquaLabel = styled.span`
 const ConfirmVoteModal = ({
     params,
     close,
-}: ModalProps<{ option: VoteOptions; key: string; endDate: string; startDate: string }>) => {
+}: ModalProps<{
+    option: VoteOptions;
+    key: string;
+    endDate: string;
+    startDate: string;
+    proposal?: Proposal;
+}>) => {
     const { account } = useAuthStore();
-    const { option, key, endDate } = params;
+    const { option, key, endDate, proposal } = params;
 
     const isMounted = useIsMounted();
 
@@ -151,6 +175,12 @@ const ConfirmVoteModal = ({
 
     const hasTrustLine = targetBalance !== null && targetBalance !== undefined;
     const hasTargetBalance = Number(targetBalance) > 0;
+    const isAssetProposal =
+        proposal?.proposal_type === 'ADD_ASSET' || proposal?.proposal_type === 'REMOVE_ASSET';
+    const proposalAsset =
+        isAssetProposal && proposal?.asset_code
+            ? createAsset(proposal.asset_code, proposal.asset_issuer ?? '')
+            : null;
 
     const formattedBalance = hasTrustLine ? formatBalance(Number(targetBalance)) : null;
 
@@ -243,6 +273,22 @@ const ConfirmVoteModal = ({
             <ModalDescription>
                 Your ICE will be locked until the voting ends. Please check the details carefully.
             </ModalDescription>
+            {proposalAsset ? (
+                <AssetRow>
+                    <AssetWrap>
+                        <Asset asset={proposalAsset} variant="compactDomain" />
+                    </AssetWrap>
+                    <AssetRegistryStatusBadge
+                        variant={
+                            proposal?.proposal_type === 'ADD_ASSET'
+                                ? AssetRegistryBadgeVariant.whitelisted
+                                : AssetRegistryBadgeVariant.revoked
+                        }
+                        label={proposal?.proposal_type === 'ADD_ASSET' ? 'Whitelist' : 'Revoke'}
+                        withIcon
+                    />
+                </AssetRow>
+            ) : null}
             <ContentRow>
                 <Label>Your vote:</Label>
                 <Label>

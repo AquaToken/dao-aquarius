@@ -10,15 +10,55 @@ const InputWrapper = styled.div`
     width: 100%;
 `;
 
+type InputSize = 'small' | 'medium' | 'large';
+
+const DEFAULT_INPUT_SIZE: InputSize = 'large';
+
+const getInputHeight = (size: InputSize) => {
+    if (size === 'small') {
+        return '4rem';
+    }
+
+    if (size === 'medium') {
+        return '4.8rem';
+    }
+
+    return '6.6rem';
+};
+
+const getInputPadding = (size: InputSize) => {
+    if (size === 'small') {
+        return '1.1rem 1.6rem';
+    }
+
+    if (size === 'medium') {
+        return '1.5rem 4.8rem 1.5rem 2.4rem';
+    }
+
+    return '2.4rem 6.5rem 2.4rem 2.4rem';
+};
+
+const getInputPaddingLeft = (size: InputSize) => {
+    if (size === 'small') {
+        return '1.6rem';
+    }
+
+    if (size === 'medium') {
+        return '2.4rem';
+    }
+
+    return '2.4rem';
+};
+
 const StyledInput = styled.input<{
     ref: RefObject<HTMLInputElement>;
-    $isMedium?: boolean;
+    $inputSize: InputSize;
     $isRightAligned?: boolean;
     $isCenterAligned?: boolean;
     $paddingLeft?: string;
 }>`
-    height: ${({ $isMedium }) => ($isMedium ? '4rem' : '6.6rem')};
-    padding: ${({ $isMedium }) => ($isMedium ? `1.1rem 1.6rem` : `2.4rem 6.5rem 2.4rem 2.4rem`)};
+    height: ${({ $inputSize }) => getInputHeight($inputSize)};
+    padding: ${({ $inputSize }) => getInputPadding($inputSize)};
     text-align: ${({ $isRightAligned, $isCenterAligned }) =>
         $isRightAligned ? `right` : $isCenterAligned ? 'center' : 'start'};
     width: 100%;
@@ -90,7 +130,7 @@ const LabelRight = styled(Label)`
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     postfix?: React.ReactNode;
     prefixCustom?: React.ReactNode;
-    isMedium?: boolean;
+    inputSize?: InputSize;
     isRightAligned?: boolean;
     isCenterAligned?: boolean;
     label?: string | React.ReactNode;
@@ -105,7 +145,7 @@ const Input = forwardRef(
             className,
             label,
             rightLabel,
-            isMedium,
+            inputSize = DEFAULT_INPUT_SIZE,
             isRightAligned,
             isCenterAligned,
             ...props
@@ -113,11 +153,11 @@ const Input = forwardRef(
         ref: RefObject<HTMLInputElement>,
     ): React.ReactNode => {
         const prefixRef = useRef(null);
-        const [paddingLeft, setPaddingLeft] = useState(isMedium ? '1.6rem' : '2.4rem');
+        const [paddingLeft, setPaddingLeft] = useState(getInputPaddingLeft(inputSize));
 
         const updatePaddingLeft = () => {
             if (!prefixRef.current) {
-                setPaddingLeft(isMedium ? '1.6rem' : '2.4rem');
+                setPaddingLeft(getInputPaddingLeft(inputSize));
             } else {
                 const width = prefixRef.current.getBoundingClientRect().width;
                 setPaddingLeft(`${width / 10 + 2.4}rem`);
@@ -126,7 +166,7 @@ const Input = forwardRef(
 
         useLayoutEffect(() => {
             updatePaddingLeft();
-        }, [prefixCustom, isMedium]);
+        }, [prefixCustom, inputSize]);
 
         return (
             <InputWrapper className={className}>
@@ -135,7 +175,7 @@ const Input = forwardRef(
                 <Prefix ref={prefixRef}>{prefixCustom}</Prefix>
                 <StyledInput
                     ref={ref}
-                    $isMedium={isMedium}
+                    $inputSize={inputSize}
                     $isRightAligned={isRightAligned}
                     $isCenterAligned={isCenterAligned}
                     $paddingLeft={paddingLeft}

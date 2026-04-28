@@ -6,18 +6,20 @@ import { ENV_PRODUCTION, ENV_TESTNET } from 'constants/env';
 import { getEnv, getIsTestnetEnv, setProductionEnv } from 'helpers/env';
 import Timer from 'helpers/timer';
 
+import useAssetsStore from 'store/assetsStore/useAssetsStore';
+
 import { ToastService } from 'services/globalServices';
 
 import { ToggleGroup } from 'basics/inputs';
 
-import { cardBoxShadow, flexAllCenter } from 'styles/mixins';
+import { flexAllCenter } from 'styles/mixins';
 import { COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     ${flexAllCenter};
-    background-color: ${COLORS.gray50};
+    background-color: ${COLORS.white};
+    border-bottom: 0.1rem solid ${COLORS.gray100};
     padding: 0 4rem;
-    ${cardBoxShadow};
 `;
 
 const OPTIONS = [
@@ -31,8 +33,10 @@ const TestnetBanner = (): ReactElement => {
     const [isTestnet, setIsTestnet] = useState(getIsTestnetEnv());
     const currentEnv = getEnv();
     const [toggleValue, setToggleValue] = useState(currentEnv);
+    const { clearAssets } = useAssetsStore();
 
     const close = () => {
+        clearAssets();
         setProductionEnv();
         setIsTestnet(false);
     };

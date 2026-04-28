@@ -9,6 +9,7 @@ enum SectionBases {
     swap = '/swap/',
     delegate = '/delegate/',
     incentives = '/incentives/',
+    assetRegistry = '/asset-registry/',
 }
 
 export const AppRoutes = {
@@ -61,6 +62,11 @@ export const AppRoutes = {
         }),
         swap: createNestedRoutes(SectionBases.swap, {
             index: ':source/:destination/',
+        }),
+        assetRegistry: createNestedRoutes(SectionBases.assetRegistry, {
+            index: '',
+            create: 'create',
+            voting: ':id',
         }),
     },
 };

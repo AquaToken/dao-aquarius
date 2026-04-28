@@ -30,6 +30,8 @@ import { Proposal } from 'types/governance';
 
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 
+import Pending16 from 'assets/icons/status/pending-16.svg';
+
 import Button from 'basics/buttons/Button';
 import { VoteIcon } from 'basics/icons';
 import { ExternalLink } from 'basics/links';
@@ -187,6 +189,33 @@ const DiscussionDescription = styled.div`
     margin-bottom: 2.5rem;
 `;
 
+const QueueBadge = styled.div`
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 3.2rem;
+    padding: 0.2rem 0.8rem 0.2rem 0.6rem;
+    border-radius: 3.7rem;
+    background: ${COLORS.gray100};
+    color: ${COLORS.textGray};
+    font-size: 1.2rem;
+    line-height: 1.2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+`;
+
+const QueueBadgeIcon = styled.div`
+    width: 1.6rem;
+    height: 1.6rem;
+    flex-shrink: 0;
+
+    svg {
+        width: 1.6rem;
+        height: 1.6rem;
+        display: block;
+    }
+`;
+
 const Sidebar = forwardRef(
     ({ proposal, ...props }: { proposal: Proposal }, ref: RefObject<HTMLDivElement>) => {
         const [selectedOption, setSelectedOption] = useState(null);
@@ -246,6 +275,8 @@ const Sidebar = forwardRef(
             end_at: endDate,
             proposal_status: status,
         } = proposal;
+        const isAssetProposal =
+            proposal.proposal_type === 'ADD_ASSET' || proposal.proposal_type === 'REMOVE_ASSET';
 
         if (status === 'VOTED') {
             const voteForValue = Number(voteForResult);
@@ -308,6 +339,7 @@ const Sidebar = forwardRef(
                                     key: voteForKey,
                                     endDate,
                                     startDate,
+                                    proposal,
                                 })
                             }
                         >
@@ -322,6 +354,7 @@ const Sidebar = forwardRef(
                                     key: voteAbstainKey,
                                     endDate,
                                     startDate,
+                                    proposal,
                                 })
                             }
                         >
@@ -336,6 +369,7 @@ const Sidebar = forwardRef(
                                     key: voteAgainstKey,
                                     endDate,
                                     startDate,
+                                    proposal,
                                 })
                             }
                         >
@@ -363,6 +397,34 @@ const Sidebar = forwardRef(
         }
 
         if (status === 'DISCUSSION') {
+            if (isAssetProposal) {
+                return (
+                    <SidebarBlock ref={ref} {...props}>
+                        <Container>
+                            <QueueBadge>
+                                <QueueBadgeIcon>
+                                    <Pending16 />
+                                </QueueBadgeIcon>
+                                In queue
+                            </QueueBadge>
+                            <DiscussionDescription>
+                                <span>
+                                    This voting is in queue and will start on{' '}
+                                    <b>
+                                        {startDate
+                                            ? `${getDateString(new Date(startDate).getTime(), {
+                                                  withoutYear: true,
+                                                  withTime: true,
+                                              })} UTC`
+                                            : '—'}
+                                    </b>
+                                </span>
+                            </DiscussionDescription>
+                        </Container>
+                    </SidebarBlock>
+                );
+            }
+
             if (version) {
                 const versionDate = proposal.history_proposal.find(
                     history => history.version === Number(version),
