@@ -207,7 +207,7 @@ const YourVotes = () => {
                                     <UnlockedVotesStats>
                                         {unclaimedVotesInfo.count} vote
                                         {unclaimedVotesInfo.count > 1 ? 's' : ''} for{' '}
-                                        {formatBalance(unclaimedVotesInfo.sum)} AQUA + ICE
+                                        {formatBalance(unclaimedVotesInfo.sum)} ICE
                                     </UnlockedVotesStats>
                                 </UnlockedVotesData>
 
