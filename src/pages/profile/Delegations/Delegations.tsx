@@ -282,8 +282,8 @@ const getDelegateDestination = (lock: ClaimableBalance): string | null =>
 
 const getTokenCode = (asset: string): string => asset.split(':')[0];
 
-const formatTokenAmount = (amount: number | undefined, asset: string): string =>
-    amount ? `${formatBalance(amount, true)} ${getTokenCode(asset)}` : '-';
+const formatTokenAmount = (amount: number, asset: string): string =>
+    `${formatBalance(amount, true)} ${getTokenCode(asset)}`;
 
 const Delegations = (): React.ReactNode => {
     const [locks, setLocks] = useState<ClaimableBalance[] | null>(null);
@@ -456,39 +456,46 @@ const Delegations = (): React.ReactNode => {
                     <span />
                 </Head>
 
-                {rows.map(({ destination, delegatee, amounts }) => (
-                    <Row key={destination}>
-                        <DelegateCell>
-                            {delegatee.image ? (
-                                <Avatar src={delegatee.image} alt={delegatee.name} />
-                            ) : (
-                                <IdenticonStyled pubKey={destination} />
-                            )}
-                            <DelegateName>
-                                {delegatee.name || truncateString(destination, 4)}
-                            </DelegateName>
-                        </DelegateCell>
+                {rows.map(({ destination, delegatee, amounts }) => {
+                    const visibleAmounts = ICE_TO_DELEGATE.filter(asset => Number(amounts[asset]));
 
-                        <Amounts>
-                            {ICE_TO_DELEGATE.map(asset => (
-                                <AmountItem key={asset}>
-                                    <IceIcon />
-                                    {formatTokenAmount(amounts[asset], asset)}
-                                </AmountItem>
-                            ))}
-                        </Amounts>
+                    return (
+                        <Row key={destination}>
+                            <DelegateCell>
+                                {delegatee.image ? (
+                                    <Avatar src={delegatee.image} alt={delegatee.name} />
+                                ) : (
+                                    <IdenticonStyled pubKey={destination} />
+                                )}
+                                <DelegateName>
+                                    {delegatee.name || truncateString(destination, 4)}
+                                </DelegateName>
+                            </DelegateCell>
 
-                        <Actions>
-                            <ActionButton onClick={() => openDelegateModal(delegatee)}>
-                                <PlusIcon />
-                                Delegate
-                            </ActionButton>
-                            <ActionButton $secondary onClick={() => openUndelegateModal(delegatee)}>
-                                Undelegate
-                            </ActionButton>
-                        </Actions>
-                    </Row>
-                ))}
+                            <Amounts>
+                                {visibleAmounts.map(asset => (
+                                    <AmountItem key={asset}>
+                                        <IceIcon />
+                                        {formatTokenAmount(amounts[asset], asset)}
+                                    </AmountItem>
+                                ))}
+                            </Amounts>
+
+                            <Actions>
+                                <ActionButton onClick={() => openDelegateModal(delegatee)}>
+                                    <PlusIcon />
+                                    Delegate
+                                </ActionButton>
+                                <ActionButton
+                                    $secondary
+                                    onClick={() => openUndelegateModal(delegatee)}
+                                >
+                                    Undelegate
+                                </ActionButton>
+                            </Actions>
+                        </Row>
+                    );
+                })}
             </Card>
         </Container>
     );
