@@ -21,6 +21,7 @@ import Activity from 'pages/profile/Activity/Activity';
 
 import AccountInfo from './AccountInfo/AccountInfo';
 import Balances from './Balances/Balances';
+import Delegations from './Delegations/Delegations';
 import IceLocks from './IceLocks/IceLocks';
 import SdexRewards from './SdexRewards/SdexRewards';
 import YourGovernanceVotes from './YourGovernanceVotes/YourGovernanceVotes';
@@ -94,6 +95,7 @@ export enum ProfileTabs {
     governance = 'governance',
     iceLocks = 'ice_locks',
     activity = 'activity',
+    delegations = 'ice_delegations',
 }
 
 const OPTIONS = [
@@ -104,6 +106,7 @@ const OPTIONS = [
     { label: 'Governance Votes', value: ProfileTabs.governance },
     { label: 'ICE Locks', value: ProfileTabs.iceLocks },
     { label: 'Activity', value: ProfileTabs.activity },
+    { label: 'ICE Delegations', value: ProfileTabs.delegations },
 ];
 
 const Profile = () => {
@@ -155,6 +158,7 @@ const Profile = () => {
                         <IceLocks ammAquaBalance={ammAquaBalance} />
                     )}
                     {selectedTab === ProfileTabs.activity && <Activity />}
+                    {selectedTab === ProfileTabs.delegations && <Delegations />}
                 </Content>
             </ContentWrap>
         </Container>
