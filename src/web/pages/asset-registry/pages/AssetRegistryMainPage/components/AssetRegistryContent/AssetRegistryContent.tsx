@@ -21,6 +21,7 @@ type AssetRegistryContentProps = {
     marketStats: RegistryAssetMarketStatsMap;
     isMarketStatsLoading: boolean;
     upcomingVotes: UpcomingVoteData[];
+    isUpcomingVotesLoading: boolean;
     toolbar: React.ReactNode;
 };
 
@@ -33,6 +34,7 @@ const AssetRegistryContent = ({
     marketStats,
     isMarketStatsLoading,
     upcomingVotes,
+    isUpcomingVotesLoading,
     toolbar,
 }: AssetRegistryContentProps) => (
     <Layout>
@@ -53,6 +55,7 @@ const AssetRegistryContent = ({
             marketStats={marketStats}
             isMarketStatsLoading={isMarketStatsLoading}
             upcomingVotes={upcomingVotes}
+            isUpcomingVotesLoading={isUpcomingVotesLoading}
         />
     </Layout>
 );

@@ -91,65 +91,12 @@ const getRegistryAssetId = (asset: RegistryAsset) =>
 const getRewardsAssetId = (code: string, issuer: string) =>
     code === 'XLM' && !issuer ? 'XLM:native' : `${code}:${issuer}`;
 
-const MOCK_UPCOMING_VOTES_ASSETS: Array<Pick<UpcomingVoteData, 'assetCode' | 'assetIssuer'>> = [
-    {
-        assetCode: 'PYUSD',
-        assetIssuer: 'GDQE7IXJ4HUHV6RQHIUPRJSEZE4DRS5WY577O2FY6YQ5LVWZ7JZTU2V5',
-    },
-    {
-        assetCode: 'ESP',
-        assetIssuer: 'GD2JVUJNJFJTV3P3DACOQNILC2HDHDQAIX76UNUCMAAKCCT7MVW4OFEW',
-    },
-    {
-        assetCode: 'USDP',
-        assetIssuer: 'GDTEQF6YGCKLIBD37RJZE5GTL3ZY6CBQIKH7COAW654SYEBE6XJJOLOW',
-    },
-    {
-        assetCode: 'AQUAmb',
-        assetIssuer: 'GDXF6SYWIQOKOZ7BACXHBFBLQZEIH25KOTTLWQK35GO3JKRNIFHHGBPC',
-    },
-    {
-        assetCode: 'yXLM',
-        assetIssuer: 'GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55',
-    },
-    {
-        assetCode: 'SHX',
-        assetIssuer: 'GDSTRSHXHGJ7ZIVRBXEYE5Q74XUVCUSEKEBR7UCHEUUEK72N7I7KJ6JH',
-    },
-    {
-        assetCode: 'RAYO',
-        assetIssuer: 'GBPDJLJ23JEKXV5VVDD3FVNPW5XRRZPK6PCHWRIKM2STZ57423B6IXSQ',
-    },
-    {
-        assetCode: 'yUSDC',
-        assetIssuer: 'GDGTVWSM4MGS4T7Z6W4RPWOCHE2I6RDFCIFZGS3DOA63LWQTRNZNTTFF',
-    },
-    {
-        assetCode: 'ETH',
-        assetIssuer: 'GBFXOHVAS43OIWNIO7XLRJAHT3BICFEIKOJLZVXNT572MISM4CMGSOCC',
-    },
-];
-
-const MOCK_UPCOMING_VOTES: UpcomingVoteData[] = MOCK_UPCOMING_VOTES_ASSETS.map(
-    ({ assetCode, assetIssuer }, index) => {
-        const startAt = convertLocalDateToUTCIgnoringTimezone(
-            new Date(Date.UTC(2026, 4, 11 + index * 7, 0, 0, 0)),
-        );
-
-        return {
-            startsAt: `Starts ${getDateString(startAt.getTime(), {})}`,
-            assetCode,
-            assetIssuer,
-            type: 'ADD_ASSET',
-        };
-    },
-);
-
 const AssetRegistryMainPage = () => {
     const [filter, setFilter] = useState(AssetRegistryFilter.all);
     const [search, setSearch] = useState('');
     const [apiRegistryAssets, setApiRegistryAssets] = useState<RegistryAsset[]>(null);
     const [apiUpcomingVotes, setApiUpcomingVotes] = useState<UpcomingVoteData[]>([]);
+    const [isUpcomingVotesLoading, setIsUpcomingVotesLoading] = useState(true);
     const [myVoteProposals, setMyVoteProposals] = useState<RegistryProposalPreview[]>([]);
     const [historyVoteProposals, setHistoryVoteProposals] = useState<RegistryProposalPreview[]>([]);
     const [isMyVotesLoading, setIsMyVotesLoading] = useState(false);
@@ -278,6 +225,8 @@ const AssetRegistryMainPage = () => {
     useEffect(() => {
         let isCancelled = false;
 
+        setIsUpcomingVotesLoading(true);
+
         getUpcomingRegistryVotesRequest()
             .then(data => {
                 if (isCancelled) {
@@ -315,6 +264,11 @@ const AssetRegistryMainPage = () => {
             .catch(() => {
                 if (!isCancelled) {
                     setApiUpcomingVotes([]);
+                }
+            })
+            .finally(() => {
+                if (!isCancelled) {
+                    setIsUpcomingVotesLoading(false);
                 }
             });
 
@@ -368,10 +322,7 @@ const AssetRegistryMainPage = () => {
         };
     }, [apiRegistryAssets]);
 
-    const upcomingVotes = useMemo<UpcomingVoteData[]>(
-        () => (apiUpcomingVotes.length ? apiUpcomingVotes : MOCK_UPCOMING_VOTES),
-        [apiUpcomingVotes],
-    );
+    const upcomingVotes = useMemo<UpcomingVoteData[]>(() => apiUpcomingVotes, [apiUpcomingVotes]);
 
     const items = useMemo(() => {
         const defaultIds = new Set(DEFAULT_REGISTRY_ASSETS.map(getRegistryAssetId));
@@ -506,6 +457,7 @@ const AssetRegistryMainPage = () => {
                     marketStats={marketStats}
                     isMarketStatsLoading={isMarketStatsLoading}
                     upcomingVotes={upcomingVotes}
+                    isUpcomingVotesLoading={isUpcomingVotesLoading}
                     toolbar={
                         <Toolbar>
                             <FilterGroup
