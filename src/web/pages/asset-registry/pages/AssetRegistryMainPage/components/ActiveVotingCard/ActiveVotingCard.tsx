@@ -203,11 +203,11 @@ const ActiveVotingCard = ({
         }
     }, [isLogged, selectedOption]);
 
-    if (!assetCode || !asset) {
-        return null;
-    }
-
     const assetHolders = useMemo(() => {
+        if (!asset) {
+            return '—';
+        }
+
         if (asset.isNative()) {
             return lumenHolders === null ? <DotsLoader /> : formatBalance(lumenHolders);
         }
@@ -216,6 +216,10 @@ const ActiveVotingCard = ({
 
         return holders === undefined ? '—' : formatBalance(holders);
     }, [asset, assetsInfo, lumenHolders]);
+
+    if (!assetCode || !asset) {
+        return null;
+    }
 
     const currentMarketStats = marketStats[assetContract ?? asset.contract];
     const endsAt = isActiveVoting && activeVoting ? activeVoting.end_at : null;

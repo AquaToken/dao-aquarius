@@ -13,12 +13,14 @@ type AssetRegistrySidebarProps = {
     marketStats: RegistryAssetMarketStatsMap;
     isMarketStatsLoading: boolean;
     upcomingVotes: UpcomingVoteData[];
+    isUpcomingVotesLoading: boolean;
 };
 
 const AssetRegistrySidebar = ({
     marketStats,
     isMarketStatsLoading,
     upcomingVotes,
+    isUpcomingVotesLoading,
 }: AssetRegistrySidebarProps) => (
     <Sidebar>
         <ActiveVotingCard
@@ -26,7 +28,9 @@ const AssetRegistrySidebar = ({
             isMarketStatsLoading={isMarketStatsLoading}
             upcomingVotes={upcomingVotes}
         />
-        <UpcomingVotesCard items={upcomingVotes} />
+        {!isUpcomingVotesLoading && upcomingVotes.length > 0 ? (
+            <UpcomingVotesCard items={upcomingVotes} />
+        ) : null}
     </Sidebar>
 );
 
