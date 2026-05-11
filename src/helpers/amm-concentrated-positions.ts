@@ -1,4 +1,8 @@
+import { CONCENTRATED_MAX_TICK, CONCENTRATED_MIN_TICK } from 'constants/amm';
+
 import { ConcentratedPosition, ConcentratedUserPositionSnapshot } from 'types/amm';
+
+import { snapDown, snapUp } from './amm-concentrated';
 
 export const keyOfPosition = (position: ConcentratedPosition) =>
     `${position.tickLower}:${position.tickUpper}`;
@@ -54,3 +58,12 @@ export const hydratePositionsLiquidity = (
         }),
     );
 };
+
+export const isFullRangePosition = (
+    position: Pick<ConcentratedPosition, 'tickLower' | 'tickUpper'>,
+    tickSpacing: number,
+) =>
+    Number.isFinite(tickSpacing) &&
+    tickSpacing > 0 &&
+    position.tickLower === snapUp(CONCENTRATED_MIN_TICK, tickSpacing) &&
+    position.tickUpper === snapDown(CONCENTRATED_MAX_TICK, tickSpacing);

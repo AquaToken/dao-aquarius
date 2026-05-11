@@ -13,16 +13,25 @@ import AddLiquidityFlow from './Regular/AddLiquidityFlow';
 type AddLiquidityModalParams = {
     pool: PoolExtended;
     onUpdate?: () => void;
+    initialConcentratedRange?: {
+        tickLower: number;
+        tickUpper: number;
+    };
 };
 
 const AddLiquidityModal = ({ params, close }: ModalProps<AddLiquidityModalParams>) => {
-    const { pool, onUpdate } = params;
+    const { initialConcentratedRange, pool, onUpdate } = params;
 
     return (
         <ModalWrapper $width={pool.pool_type === POOL_TYPE.concentrated ? '64rem' : undefined}>
             <ModalTitle>Add liquidity</ModalTitle>
             {pool.pool_type === POOL_TYPE.concentrated ? (
-                <ConcentratedAddLiquidityFlow pool={pool} onUpdate={onUpdate} onClose={close} />
+                <ConcentratedAddLiquidityFlow
+                    pool={pool}
+                    initialRange={initialConcentratedRange}
+                    onUpdate={onUpdate}
+                    onClose={close}
+                />
             ) : (
                 <AddLiquidityFlow pool={pool} isModal onUpdate={onUpdate} onClose={close} />
             )}
