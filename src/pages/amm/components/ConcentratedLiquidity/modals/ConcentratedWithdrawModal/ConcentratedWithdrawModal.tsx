@@ -48,12 +48,13 @@ import { Container } from '../../components/ConcentratedPositionsSection/Concent
 
 type ConcentratedWithdrawModalParams = {
     pool: PoolExtended;
+    initialPositionKey?: string;
 };
 
 const ConcentratedWithdrawModal = ({
     params,
 }: ModalProps<ConcentratedWithdrawModalParams>): React.ReactNode => {
-    const { pool } = params;
+    const { initialPositionKey, pool } = params;
     const { account } = useAuthStore();
 
     const [positions, setPositions] = useState<UserDistributionPositionDetail[]>([]);
@@ -171,10 +172,14 @@ const ConcentratedWithdrawModal = ({
                     return;
                 }
 
+                const nextSelectedPositionKey = selectedPositionKey ?? initialPositionKey;
                 const selectedExists = nextPositions.some(
-                    item => keyOfPosition(item) === selectedPositionKey,
+                    item => keyOfPosition(item) === nextSelectedPositionKey,
                 );
-                if (!selectedExists) {
+
+                if (selectedExists && nextSelectedPositionKey) {
+                    setSelectedPositionKey(nextSelectedPositionKey);
+                } else {
                     setSelectedPositionKey(keyOfPosition(nextPositions[0]));
                 }
             })
@@ -188,7 +193,7 @@ const ConcentratedWithdrawModal = ({
 
     useEffect(() => {
         load();
-    }, [account, pool.address]);
+    }, [account, initialPositionKey, pool.address]);
 
     useEffect(() => {
         if (
