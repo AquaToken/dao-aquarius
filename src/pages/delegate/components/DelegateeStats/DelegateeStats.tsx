@@ -11,6 +11,7 @@ import { AppRoutes } from 'constants/routes';
 
 import { getAssetFromString, getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
+import { createAsset } from 'helpers/token';
 
 import { useUpdateIndex } from 'hooks/useUpdateIndex';
 
@@ -20,6 +21,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import { ModalService } from 'services/globalServices';
 
 import { Delegatee, DelegateeVote } from 'types/delegate';
+import { ProposalSimple } from 'types/governance';
 
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import DelegateClaimModal from 'web/modals/DelegateClaimModal';
@@ -35,7 +37,14 @@ import { ToggleGroup } from 'basics/inputs';
 import { PageLoader } from 'basics/loaders';
 import { CircularProgress } from 'basics/progress';
 
-import { cardBoxShadow, customScroll, flexAllCenter, flexColumn, respondDown } from 'styles/mixins';
+import {
+    cardBoxShadow,
+    customScroll,
+    flexAllCenter,
+    flexColumn,
+    respondDown,
+    textEllipsis,
+} from 'styles/mixins';
 import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { MarketKey } from 'pages/vote/api/types';
@@ -174,6 +183,18 @@ const LinkInner = styled(LinkRouter)`
     }
 `;
 
+const DaoLinkInner = styled(LinkInner)`
+    flex: 0 0 8rem;
+    min-width: 8rem;
+    margin-right: 0;
+
+    span {
+        ${textEllipsis};
+        min-width: 0;
+        display: block;
+    }
+`;
+
 const VoteType = styled.div`
     display: flex;
     align-items: center;
@@ -223,13 +244,23 @@ interface Props {
     withClaim?: boolean;
 }
 
+type DaoVoteSummary = {
+    id: number;
+    proposalType?: ProposalSimple['proposal_type'];
+    assetCode?: string | null;
+    assetIssuer?: string | null;
+    sum_for: number;
+    sum_against: number;
+    sum_abstain: number;
+};
+
 const DelegateeStats = forwardRef(
     (
         { fromTop, popupVisible, delegatee, delegatees, withClaim }: Props,
         popupRef: RefObject<HTMLDivElement>,
     ) => {
         const [marketVotes, setMarketVotes] = useState<(DelegateeVote & MarketKey)[]>(null);
-        const [daoVotes, setDaoVotes] = useState(null);
+        const [daoVotes, setDaoVotes] = useState<DaoVoteSummary[] | null>(null);
         const [selectedAsset, setSelecttedAsset] = useState(UP_ICE);
 
         const { isLogged } = useAuthStore();
@@ -263,9 +294,10 @@ const DelegateeStats = forwardRef(
                 pubkey: delegatee.account,
                 page: 1,
                 pageSize: 500,
+                includeAssetProposals: true,
             }).then(res => {
                 const summary = res.proposals.results.map(proposal => {
-                    const { id, logvote_set } = proposal;
+                    const { id, logvote_set, proposal_type, asset_code, asset_issuer } = proposal;
 
                     const result = logvote_set.reduce(
                         (acc, vote) => {
@@ -293,6 +325,9 @@ const DelegateeStats = forwardRef(
 
                     return {
                         id,
+                        proposalType: proposal_type,
+                        assetCode: asset_code,
+                        assetIssuer: asset_issuer,
                         sum_for: result.sum_for,
                         sum_against: result.sum_against,
                         sum_abstain: result.sum_abstain,
@@ -452,13 +487,36 @@ const DelegateeStats = forwardRef(
                                 <React.Fragment key={vote.id}>
                                     {!!vote.sum_for && (
                                         <StatsRow>
-                                            <LinkInner
-                                                to={AppRoutes.section.governance.to.proposal({
-                                                    id: vote.id,
-                                                })}
+                                            <DaoLinkInner
+                                                to={
+                                                    vote.proposalType === 'ADD_ASSET' ||
+                                                    vote.proposalType === 'REMOVE_ASSET'
+                                                        ? AppRoutes.section.assetRegistry.to.voting(
+                                                              {
+                                                                  id: String(vote.id),
+                                                              },
+                                                          )
+                                                        : AppRoutes.section.governance.to.proposal({
+                                                              id: String(vote.id),
+                                                          })
+                                                }
                                             >
-                                                <span>#{vote.id}</span>{' '}
-                                            </LinkInner>
+                                                {vote.assetCode ? (
+                                                    <>
+                                                        <AssetLogoStyled
+                                                            isCircle
+                                                            asset={createAsset(
+                                                                vote.assetCode,
+                                                                vote.assetIssuer ?? '',
+                                                            )}
+                                                            isSmall
+                                                        />
+                                                        <span>{vote.assetCode}</span>
+                                                    </>
+                                                ) : (
+                                                    <span>#{vote.id}</span>
+                                                )}
+                                            </DaoLinkInner>
                                             <VoteType>
                                                 <VoteIcon option={VoteOptions.for} />
                                                 For
@@ -472,13 +530,36 @@ const DelegateeStats = forwardRef(
                                     )}
                                     {!!vote.sum_abstain && (
                                         <StatsRow>
-                                            <LinkInner
-                                                to={AppRoutes.section.governance.to.proposal({
-                                                    id: vote.id,
-                                                })}
+                                            <DaoLinkInner
+                                                to={
+                                                    vote.proposalType === 'ADD_ASSET' ||
+                                                    vote.proposalType === 'REMOVE_ASSET'
+                                                        ? AppRoutes.section.assetRegistry.to.voting(
+                                                              {
+                                                                  id: String(vote.id),
+                                                              },
+                                                          )
+                                                        : AppRoutes.section.governance.to.proposal({
+                                                              id: String(vote.id),
+                                                          })
+                                                }
                                             >
-                                                <span>#{vote.id}</span>{' '}
-                                            </LinkInner>
+                                                {vote.assetCode ? (
+                                                    <>
+                                                        <AssetLogoStyled
+                                                            isCircle
+                                                            asset={createAsset(
+                                                                vote.assetCode,
+                                                                vote.assetIssuer ?? '',
+                                                            )}
+                                                            isSmall
+                                                        />
+                                                        <span>{vote.assetCode}</span>
+                                                    </>
+                                                ) : (
+                                                    <span>#{vote.id}</span>
+                                                )}
+                                            </DaoLinkInner>
                                             <VoteType>
                                                 <VoteIcon option={VoteOptions.abstain} />
                                                 Abstain
@@ -493,13 +574,36 @@ const DelegateeStats = forwardRef(
                                     )}
                                     {!!vote.sum_against && (
                                         <StatsRow>
-                                            <LinkInner
-                                                to={AppRoutes.section.governance.to.proposal({
-                                                    id: vote.id,
-                                                })}
+                                            <DaoLinkInner
+                                                to={
+                                                    vote.proposalType === 'ADD_ASSET' ||
+                                                    vote.proposalType === 'REMOVE_ASSET'
+                                                        ? AppRoutes.section.assetRegistry.to.voting(
+                                                              {
+                                                                  id: String(vote.id),
+                                                              },
+                                                          )
+                                                        : AppRoutes.section.governance.to.proposal({
+                                                              id: String(vote.id),
+                                                          })
+                                                }
                                             >
-                                                <span>#{vote.id}</span>{' '}
-                                            </LinkInner>
+                                                {vote.assetCode ? (
+                                                    <>
+                                                        <AssetLogoStyled
+                                                            isCircle
+                                                            asset={createAsset(
+                                                                vote.assetCode,
+                                                                vote.assetIssuer ?? '',
+                                                            )}
+                                                            isSmall
+                                                        />
+                                                        <span>{vote.assetCode}</span>
+                                                    </>
+                                                ) : (
+                                                    <span>#{vote.id}</span>
+                                                )}
+                                            </DaoLinkInner>
                                             <VoteType>
                                                 <VoteIcon option={VoteOptions.against} />
                                                 Against
