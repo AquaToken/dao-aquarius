@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js';
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { getAssetsList } from 'api/amm';
 
@@ -40,15 +40,9 @@ import ConcentratedWithdrawModal from '../ConcentratedLiquidity/modals/Concentra
 import LiquidityDistributionChart from '../LiquidityDistributionChart/LiquidityDistributionChart';
 import WithdrawFromPool from '../WithdrawFromPool/WithdrawFromPool';
 
-const Container = styled.aside`
-    float: right;
-    position: sticky;
+const sidebarPlacement = css`
     right: 2%;
-    top: 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-top: -26rem;
+    width: 48rem;
     min-width: 35rem;
     max-width: 48rem;
     z-index: 102;
@@ -62,6 +56,27 @@ const Container = styled.aside`
          margin: 1.6rem;
          box-shadow: unset;
          max-width: unset;
+    `}
+`;
+
+const Container = styled.aside`
+    ${sidebarPlacement};
+    float: right;
+    position: relative;
+    margin-top: -26rem;
+`;
+
+const StickyContainer = styled.aside`
+    ${sidebarPlacement};
+    float: right;
+    clear: right;
+    position: sticky;
+    top: 2rem;
+    margin-top: 1rem;
+
+    ${respondDown(Breakpoints.lg)`
+        position: relative;
+        top: unset;
     `}
 `;
 
@@ -273,83 +288,87 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
     };
 
     return (
-        <Container>
-            <Card>
-                <SwapForm
-                    base={source}
-                    setBase={changeSource}
-                    counter={destination}
-                    setCounter={changeDestination}
-                    assetsList={assetsList}
-                    isEmbedded
-                />
-            </Card>
-            <Card>
-                {isLogged && accountShare === null ? (
-                    <PageLoader />
-                ) : (
-                    isLogged && (
-                        <UserShares>
-                            {isConcentrated && (
-                                <DistributionCanvas>
-                                    <LiquidityDistributionChart
-                                        pool={pool}
-                                        dataSource="user"
-                                        compact
-                                    />
-                                </DistributionCanvas>
-                            )}
-                            <SidebarRow>
-                                <span>Pool shares:</span>
-                                <span>
-                                    {formatBalance(
-                                        accountShare,
-                                        true,
-                                        isConcentrated,
-                                        pool.share_token_decimals,
-                                    )}
-                                </span>
-                            </SidebarRow>
-                            {pool.tokens.map((asset, index) => (
-                                <SidebarRow key={getAssetString(asset)}>
-                                    <span>Pooled {asset.code}:</span>
+        <>
+            <Container>
+                <Card>
+                    <SwapForm
+                        base={source}
+                        setBase={changeSource}
+                        counter={destination}
+                        setCounter={changeDestination}
+                        assetsList={assetsList}
+                        isEmbedded
+                    />
+                </Card>
+            </Container>
+            <StickyContainer>
+                <Card>
+                    {isLogged && accountShare === null ? (
+                        <PageLoader />
+                    ) : (
+                        isLogged && (
+                            <UserShares>
+                                {isConcentrated && (
+                                    <DistributionCanvas>
+                                        <LiquidityDistributionChart
+                                            pool={pool}
+                                            dataSource="user"
+                                            compact
+                                        />
+                                    </DistributionCanvas>
+                                )}
+                                <SidebarRow>
+                                    <span>Pool shares:</span>
                                     <span>
                                         {formatBalance(
-                                            pooledAmounts[index] || 0,
-                                            false,
-                                            false,
-                                            asset.decimal,
-                                        )}{' '}
-                                        <Asset asset={asset} onlyLogoSmall />
+                                            accountShare,
+                                            true,
+                                            isConcentrated,
+                                            pool.share_token_decimals,
+                                        )}
                                     </span>
                                 </SidebarRow>
-                            ))}
-                        </UserShares>
-                    )
-                )}
+                                {pool.tokens.map((asset, index) => (
+                                    <SidebarRow key={getAssetString(asset)}>
+                                        <span>Pooled {asset.code}:</span>
+                                        <span>
+                                            {formatBalance(
+                                                pooledAmounts[index] || 0,
+                                                false,
+                                                false,
+                                                asset.decimal,
+                                            )}{' '}
+                                            <Asset asset={asset} onlyLogoSmall />
+                                        </span>
+                                    </SidebarRow>
+                                ))}
+                            </UserShares>
+                        )
+                    )}
 
-                <Buttons>
-                    <Button
-                        fullWidth
-                        isBig
-                        onClick={() => openDepositModal()}
-                        disabled={!isConcentrated && pool.deposit_killed}
-                    >
-                        <DepositIconStyled />
-                        Deposit
-                    </Button>
-                    <Button
-                        fullWidth
-                        isBig
-                        onClick={() => openWithdrawModal()}
-                        disabled={!isConcentrated && isLogged && Number(accountShare) === 0}
-                    >
-                        <WithdrawIconStyled />
-                        Withdraw
-                    </Button>
-                </Buttons>
-            </Card>
-        </Container>
+                    <Buttons>
+                        <Button
+                            fullWidth
+                            isBig
+                            onClick={() => openDepositModal()}
+                            disabled={!isConcentrated && pool.deposit_killed}
+                        >
+                            <DepositIconStyled />
+                            Deposit
+                        </Button>
+                        <Button
+                            fullWidth
+                            isBig
+                            onClick={() => openWithdrawModal()}
+                            disabled={!isConcentrated && isLogged && Number(accountShare) === 0}
+                        >
+                            <WithdrawIconStyled />
+                            Withdraw
+                        </Button>
+                    </Buttons>
+                </Card>
+            </StickyContainer>
+        </>
     );
 };
 
