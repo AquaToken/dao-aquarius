@@ -22,6 +22,9 @@ export type VoteChoiceSimple = 'vote_for' | 'vote_against' | 'vote_abstain';
 export type ProposalSimple = {
     id: number;
     proposal_type?: ProposalType;
+    asset_code?: string | null;
+    asset_issuer?: string | null;
+    asset_contract_address?: string | null;
     proposed_by: string;
     title: string;
     text: string;
