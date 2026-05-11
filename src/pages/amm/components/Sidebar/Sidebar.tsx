@@ -275,6 +275,16 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
     return (
         <Container>
             <Card>
+                <SwapForm
+                    base={source}
+                    setBase={changeSource}
+                    counter={destination}
+                    setCounter={changeDestination}
+                    assetsList={assetsList}
+                    isEmbedded
+                />
+            </Card>
+            <Card>
                 {isLogged && accountShare === null ? (
                     <PageLoader />
                 ) : (
@@ -338,16 +348,6 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
                         Withdraw
                     </Button>
                 </Buttons>
-            </Card>
-            <Card>
-                <SwapForm
-                    base={source}
-                    setBase={changeSource}
-                    counter={destination}
-                    setCounter={changeDestination}
-                    assetsList={assetsList}
-                    isEmbedded
-                />
             </Card>
         </Container>
     );
