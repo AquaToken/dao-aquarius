@@ -36,6 +36,10 @@ type Params = {
     tickSpacing: number | null;
     minTickBound: number;
     maxTickBound: number;
+    initialRange?: {
+        tickLower: number;
+        tickUpper: number;
+    };
     onPreviewChange: (
         nextAmount0: string,
         nextAmount1: string,
@@ -48,13 +52,14 @@ export const useConcentratedRangeFormState = ({
     pool,
     isEmptyPool,
     currentTick,
+    initialRange,
     tickSpacing,
     minTickBound,
     maxTickBound,
     onPreviewChange,
 }: Params) => {
-    const [tickLower, setTickLower] = useState<number | null>(null);
-    const [tickUpper, setTickUpper] = useState<number | null>(null);
+    const [tickLower, setTickLower] = useState<number | null>(initialRange?.tickLower ?? null);
+    const [tickUpper, setTickUpper] = useState<number | null>(initialRange?.tickUpper ?? null);
     const [minPriceInput, setMinPriceInput] = useState('');
     const [maxPriceInput, setMaxPriceInput] = useState('');
     const [amount0, setAmount0] = useState('');

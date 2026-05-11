@@ -44,7 +44,7 @@ export const formatConcentratedPriceInputValue = (value: number) => {
         return value.toExponential(6);
     }
 
-    return formatBalance(value, false, false, value >= 1 ? 6 : 10);
+    return formatBalance(value, false, false);
 };
 
 export const parseConcentratedAmount = (value: string) => {

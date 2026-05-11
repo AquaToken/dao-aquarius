@@ -53,6 +53,7 @@ import LiquidityDistributionChart from 'pages/amm/components/LiquidityDistributi
 
 import ConcentratedFeesBanner from '../components/ConcentratedLiquidity/components/ConcentratedFeesBanner/ConcentratedFeesBanner';
 import ConcentratedPoolDisclaimer from '../components/ConcentratedLiquidity/components/ConcentratedPoolDisclaimer/ConcentratedPoolDisclaimer';
+import ConcentratedPoolPositions from '../components/ConcentratedLiquidity/components/ConcentratedPoolPositions/ConcentratedPoolPositions';
 import LiquidityChart from '../components/LiquidityChart/LiquidityChart';
 import PoolEvents from '../components/PoolEvents/PoolEvents';
 import PoolMembers from '../components/PoolMembers/PoolMembers';
@@ -480,6 +481,13 @@ const PoolPage = () => {
                         </SectionWrap>
                     </Section>
                 )}
+
+                {isLogged && pool.pool_type === POOL_TYPE.concentrated && (
+                    <Section>
+                        <ConcentratedPoolPositions pool={pool} />
+                    </Section>
+                )}
+
                 <Section>
                     <SectionWrap>
                         {Boolean(pool.stats.length) && (

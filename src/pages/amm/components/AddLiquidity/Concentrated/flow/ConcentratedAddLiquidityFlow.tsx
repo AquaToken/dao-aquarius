@@ -29,11 +29,16 @@ import {
 
 type ConcentratedAddLiquidityFlowProps = {
     pool: PoolExtended;
+    initialRange?: {
+        tickLower: number;
+        tickUpper: number;
+    };
     onClose?: () => void;
     onUpdate?: () => void;
 };
 
 const ConcentratedAddLiquidityFlow = ({
+    initialRange,
     pool,
     onClose,
     onUpdate,
@@ -135,7 +140,11 @@ const ConcentratedAddLiquidityFlow = ({
 
     return (
         <>
-            <ConcentratedAddLiquidityForm pool={pool} onDataChange={setFormData} />
+            <ConcentratedAddLiquidityForm
+                pool={pool}
+                initialRange={initialRange}
+                onDataChange={setFormData}
+            />
             <Alert
                 title="Concentrated Liquidity Pool — Security Audit in Progress"
                 text="This pool uses a new concentrated liquidity mechanism. Deposits carry elevated risk of partial or total loss."

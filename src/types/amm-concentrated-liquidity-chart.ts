@@ -15,6 +15,7 @@ export type UserDistributionPositionDetail = {
     tickUpper: number;
     liquidity: string;
     tokenEstimates: string[];
+    feeEstimates?: string[];
     liquidityUsd: number;
 };
 

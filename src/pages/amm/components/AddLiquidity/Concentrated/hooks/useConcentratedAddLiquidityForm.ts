@@ -15,6 +15,10 @@ import { useConcentratedRangeFormState } from './useConcentratedRangeFormState';
 
 type Params = {
     pool: PoolExtended;
+    initialRange?: {
+        tickLower: number;
+        tickUpper: number;
+    };
     initialTickSpacing?: number | null;
     skipPoolDataLoading?: boolean;
     disableNetworkEstimate?: boolean;
@@ -66,6 +70,7 @@ type ReturnValue = {
 };
 
 export const useConcentratedAddLiquidityForm = ({
+    initialRange,
     pool,
     initialTickSpacing = null,
     skipPoolDataLoading = false,
@@ -105,6 +110,7 @@ export const useConcentratedAddLiquidityForm = ({
         tickSpacing,
         minTickBound,
         maxTickBound,
+        initialRange,
         onPreviewChange: updateLocalDepositPreview,
     });
 
