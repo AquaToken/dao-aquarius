@@ -17,7 +17,6 @@ import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import AquaLogo from 'assets/aqua/aqua-logo.svg';
 
 import Button from 'basics/buttons/Button';
-import { ExternalLink } from 'basics/links';
 
 import { cardBoxShadow } from 'styles/mixins';
 import { COLORS } from 'styles/style-constants';
@@ -57,23 +56,6 @@ const Description = styled.span`
     margin-bottom: 2.4rem;
 `;
 
-const ProcessChangedBlock = styled.div`
-    display: flex;
-    flex-direction: column;
-    padding: 2.4rem;
-    border-radius: 0.5rem;
-    background-color: ${COLORS.gray50};
-    margin-bottom: 2.4rem;
-`;
-
-const ChangedProcessText = styled.div`
-    font-weight: 400;
-    font-size: 1.6rem;
-    line-height: 2.4rem;
-    color: ${COLORS.textGray};
-    margin: 1.6rem 0;
-`;
-
 const CreateProposal = forwardRef((_, ref: RefObject<HTMLDivElement>) => {
     const navigate = useNavigate();
     const { isLogged } = useAuthStore();
@@ -97,17 +79,7 @@ const CreateProposal = forwardRef((_, ref: RefObject<HTMLDivElement>) => {
                 {formatBalance(APPROVED_PROPOSAL_REWARD)} AQUA. Create a discussion with the
                 community to start the governance process.
             </Description>
-            <ProcessChangedBlock>
-                <span>☝️</span>
-                <ChangedProcessText>
-                    We have changed the proposal creation process, and a discussion phase is now
-                    mandatory. This change allows for community feedback before final publication to
-                    a vote.
-                </ChangedProcessText>
-                <ExternalLink href="https://medium.com/aquarius-aqua/launching-governance-v2-0-79c81fa6b639">
-                    Read more
-                </ExternalLink>
-            </ProcessChangedBlock>
+
             <Button onClick={() => handleClick()}>create discussion</Button>
         </Container>
     );
