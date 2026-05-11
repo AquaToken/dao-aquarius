@@ -202,6 +202,8 @@ const ProposalPreview = ({
     withMyVotes: boolean;
 }) => {
     const status = getProposalStatus(proposal);
+    const isAssetProposal =
+        proposal.proposal_type === 'ADD_ASSET' || proposal.proposal_type === 'REMOVE_ASSET';
 
     const getVotedProposalResult = () => {
         const {
@@ -300,9 +302,15 @@ const ProposalPreview = ({
     return (
         <Container>
             <Link
-                to={AppRoutes.section.governance.to.proposal({
-                    id: String(proposal.id),
-                })}
+                to={
+                    isAssetProposal
+                        ? AppRoutes.section.assetRegistry.to.voting({
+                              id: String(proposal.id),
+                          })
+                        : AppRoutes.section.governance.to.proposal({
+                              id: String(proposal.id),
+                          })
+                }
             >
                 <Header>
                     <Id>#{proposal.id}</Id>
