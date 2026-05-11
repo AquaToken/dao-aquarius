@@ -10,6 +10,13 @@ const Dot = styled.span<{ $isVisible: boolean }>`
     visibility: ${({ $isVisible }) => ($isVisible ? 'visible' : 'hidden')};
 `;
 
+const Container = styled.span`
+    display: inline-flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    white-space: nowrap !important;
+`;
+
 const DotsLoader = ({ ...props }): React.ReactElement => {
     const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -22,7 +29,7 @@ const DotsLoader = ({ ...props }): React.ReactElement => {
     }, []);
 
     return (
-        <span {...props}>
+        <Container {...props}>
             {DOTS.map((dot, index) => {
                 const isVisible = index <= currentIndex;
 
@@ -32,7 +39,7 @@ const DotsLoader = ({ ...props }): React.ReactElement => {
                     </Dot>
                 );
             })}
-        </span>
+        </Container>
     );
 };
 

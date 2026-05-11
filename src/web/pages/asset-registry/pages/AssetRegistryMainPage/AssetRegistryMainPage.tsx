@@ -14,6 +14,7 @@ import { getEnvClassicAssetData } from 'helpers/assets';
 import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/date';
 import { createAsset } from 'helpers/token';
 
+import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
@@ -106,6 +107,7 @@ const AssetRegistryMainPage = () => {
     const [marketStats, setMarketStats] = useState<RegistryAssetMarketStatsMap>({});
     const [isMarketStatsLoading, setIsMarketStatsLoading] = useState(true);
     const { account, isLogged } = useAuthStore();
+    const { processNewAssets } = useAssetsStore();
 
     useEffect(() => {
         let isCancelled = false;
@@ -115,6 +117,20 @@ const AssetRegistryMainPage = () => {
                 if (!isCancelled) {
                     setApiRegistryAssets(data.results);
                 }
+
+                processNewAssets(
+                    [...DEFAULT_REGISTRY_ASSETS, ...data.results]
+                        .filter(
+                            asset =>
+                                asset.asset_code &&
+                                asset.asset_issuer !== null &&
+                                asset.asset_issuer !== undefined,
+                        )
+                        .map(asset => ({
+                            code: asset.asset_code as string,
+                            issuer: asset.asset_issuer as string,
+                        })),
+                );
             })
             .catch(() => undefined);
 
