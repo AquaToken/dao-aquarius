@@ -41,10 +41,10 @@ import LiquidityDistributionChart from '../LiquidityDistributionChart/LiquidityD
 import WithdrawFromPool from '../WithdrawFromPool/WithdrawFromPool';
 
 const sidebarPlacement = css`
-    right: 2%;
     width: 48rem;
     min-width: 35rem;
     max-width: 48rem;
+    margin-right: 2%;
     z-index: 102;
 
     ${respondDown(Breakpoints.lg)`
@@ -52,7 +52,6 @@ const sidebarPlacement = css`
          position: relative;
          min-width: unset;
          width: calc(100% - 3.2rem);
-         right: unset;
          margin: 1.6rem;
          box-shadow: unset;
          max-width: unset;

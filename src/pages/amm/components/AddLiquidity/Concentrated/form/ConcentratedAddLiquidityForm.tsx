@@ -179,7 +179,7 @@ const ConcentratedAddLiquidityForm = ({
                                 />
                             )}
 
-                            {!hasLockedRange && shouldShowPoolInfo && (
+                            {shouldShowPoolInfo && (
                                 <ConcentratedAddLiquidityPoolInfo
                                     pool={pool}
                                     amounts={amounts}
