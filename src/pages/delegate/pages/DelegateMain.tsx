@@ -120,7 +120,9 @@ const MainTitle = styled.h2`
     `}
 `;
 
-const MainDescription = styled.p`
+// Rendered as <div> (not <p>) because the description may contain block-level
+// children, which is invalid HTML inside <p> and triggers React hydration warnings.
+const MainDescription = styled.div`
     font-weight: 400;
     font-size: 1.6rem;
     line-height: 2.8rem;

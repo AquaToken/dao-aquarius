@@ -10,28 +10,38 @@ const Container = styled.div`
     display: flex;
 `;
 
-const Buttons = styled.div`
+const Buttons = styled.div<{ $compact?: boolean }>`
     display: flex;
+    gap: ${({ $compact }) => ($compact ? '0.4rem' : '0')};
 
     ${respondDown(Breakpoints.sm)`
         width: 100%;
     `}
 `;
 
-const PercentButton = styled.div`
-    padding: 0 0.4rem;
+const PercentButton = styled.button<{ $compact?: boolean }>`
+    padding: ${({ $compact }) => ($compact ? '0.1rem 0.8rem' : '0 0.4rem')};
+    font: inherit;
     font-size: 1.4rem;
     line-height: 1.6rem;
     color: ${COLORS.textGray};
     cursor: pointer;
-    flex: 1;
+    flex: ${({ $compact }) => ($compact ? '0 0 auto' : '1')};
+    border: none;
+    border-radius: 0.4rem;
+    background-color: ${({ $compact }) => ($compact ? COLORS.gray50 : 'transparent')};
 
     &:not(:last-child) {
-        margin-right: 1.2rem;
+        margin-right: ${({ $compact }) => ($compact ? '0' : '1.2rem')};
     }
 
     &:hover {
         color: ${COLORS.textPrimary};
+    }
+
+    &:focus-visible {
+        outline: 0.2rem solid ${COLORS.purple500};
+        outline-offset: 0.2rem;
     }
 
     ${respondDown(Breakpoints.sm)`
@@ -40,11 +50,14 @@ const PercentButton = styled.div`
     `}
 `;
 
+const PERCENT_OPTIONS = [25, 50, 75, 100] as const;
+
 interface PercentButtonsProps {
     setPercent: (percent: number) => void;
+    compact?: boolean;
 }
 
-const PercentButtons = ({ setPercent }: PercentButtonsProps) => {
+const PercentButtons = ({ setPercent, compact }: PercentButtonsProps) => {
     const { account } = useAuthStore();
 
     if (!account) {
@@ -52,11 +65,17 @@ const PercentButtons = ({ setPercent }: PercentButtonsProps) => {
     }
     return (
         <Container>
-            <Buttons>
-                <PercentButton onClick={() => setPercent(25)}>25%</PercentButton>
-                <PercentButton onClick={() => setPercent(50)}>50%</PercentButton>
-                <PercentButton onClick={() => setPercent(75)}>75%</PercentButton>
-                <PercentButton onClick={() => setPercent(100)}>100%</PercentButton>
+            <Buttons $compact={compact}>
+                {PERCENT_OPTIONS.map(percent => (
+                    <PercentButton
+                        key={percent}
+                        type="button"
+                        $compact={compact}
+                        onClick={() => setPercent(percent)}
+                    >
+                        {percent}%
+                    </PercentButton>
+                ))}
             </Buttons>
         </Container>
     );
