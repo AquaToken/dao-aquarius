@@ -92,6 +92,18 @@ export const getActiveProposalsCount = (): Promise<{ active: number; discussion:
         discussion: discussion.proposals.count,
     }));
 
+export const getActiveDaoVotingRequest = (): Promise<ProposalSimple | null> =>
+    axios
+        .get<ListResponse<ProposalSimple>>(`${getGovernanceUrl()}/proposal/`, {
+            params: {
+                status: 'voting',
+                limit: 1,
+                page: 1,
+                ordering: '-created_at',
+            },
+        })
+        .then(({ data }) => data.results[0] ?? null);
+
 export const getProposalRequest = (id: string): Promise<Proposal> =>
     axios.get<Proposal>(`${getGovernanceUrl()}/proposal/${id}/`).then(res => res.data);
 

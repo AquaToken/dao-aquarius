@@ -2,7 +2,10 @@ import { forwardRef, RefObject, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { getActiveDaoVotingRequest } from 'api/governance';
+
 import {
+    ACTIVE_DAO_VOTING_ERROR_TEXT,
     CREATE_DISCUSSION_COST,
     CREATE_PROPOSAL_COST,
     PROPOSAL_STATUS,
@@ -24,7 +27,7 @@ import { formatBalance, roundToPrecision } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { ModalService } from 'services/globalServices';
+import { ModalService, ToastService } from 'services/globalServices';
 
 import { Proposal } from 'types/governance';
 
@@ -219,6 +222,7 @@ const QueueBadgeIcon = styled.div`
 const Sidebar = forwardRef(
     ({ proposal, ...props }: { proposal: Proposal }, ref: RefObject<HTMLDivElement>) => {
         const [selectedOption, setSelectedOption] = useState(null);
+        const [publishChecking, setPublishChecking] = useState(false);
         const { isLogged, account } = useAuthStore();
         const { version } = useParams<{ version?: string }>();
 
@@ -245,7 +249,11 @@ const Sidebar = forwardRef(
             ModalService.openModal(CreateDiscussionModal, proposal);
         };
 
-        const onPublishClick = () => {
+        const onPublishClick = async () => {
+            if (publishChecking) {
+                return;
+            }
+
             const aquaBalance = account.getAquaBalance();
             const hasNecessaryBalance = aquaBalance >= CREATE_PROPOSAL_COST;
 
@@ -254,7 +262,24 @@ const Sidebar = forwardRef(
                 return;
             }
 
-            ModalService.openModal(PublishProposalModal, { proposal });
+            setPublishChecking(true);
+
+            try {
+                const activeVoting = await getActiveDaoVotingRequest();
+
+                if (activeVoting) {
+                    ToastService.showErrorToast(ACTIVE_DAO_VOTING_ERROR_TEXT);
+                    return;
+                }
+
+                ModalService.openModal(PublishProposalModal, { proposal });
+            } catch {
+                ToastService.showErrorToast(
+                    'Unable to check active DAO vote status. Please try again later.',
+                );
+            } finally {
+                setPublishChecking(false);
+            }
         };
 
         useEffect(() => {
@@ -492,6 +517,7 @@ const Sidebar = forwardRef(
                                     isBig
                                     fullWidth
                                     disabled={!isPublishAvailable}
+                                    pending={publishChecking}
                                     onClick={() => onPublishClick()}
                                 >
                                     publish

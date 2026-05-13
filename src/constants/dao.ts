@@ -30,6 +30,8 @@ export const CREATE_PROPOSAL_COST = CREATE_PROPOSAL_COST_BY_ENV[getEnv()];
 export const APPROVED_PROPOSAL_REWARD = 1500000;
 export const TIME_TO_DISCUSSION = TIME_TO_DISCUSSION_BY_ENV[getEnv()];
 export const TIME_TO_EXPIRE = TIME_TO_EXPIRE_BY_ENV[getEnv()];
+export const ACTIVE_DAO_VOTING_ERROR_TEXT =
+    'Unable to publish the proposal. There is already an active DAO vote in progress. Please try again later.';
 
 export enum VoteOptions {
     for = 'For',
