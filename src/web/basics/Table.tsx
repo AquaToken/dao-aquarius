@@ -40,7 +40,7 @@ interface TableHeadItem extends TableItem {
 
 interface TableRow {
     rowItems: TableItem[];
-    onRowClick?: () => void;
+    onRowClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
     key: string;
     afterRow?: React.ReactNode;
     isNarrow?: boolean;
@@ -226,7 +226,7 @@ const TableRowWrap = styled.div<{
         
         &:hover {
             background: ${({ $isClickable, $mobileBackground }) =>
-                $isClickable ? COLORS.gray50 : $mobileBackground ?? COLORS.white};
+                $isClickable ? COLORS.gray50 : ($mobileBackground ?? COLORS.white)};
         }
     `}
 `;
@@ -267,7 +267,7 @@ const Row = ({
     <TableRowWrap
         $mobileBackground={row.mobileBackground}
         $isClickable={Boolean(row.onRowClick)}
-        onClick={() => row.onRowClick?.()}
+        onClick={event => row.onRowClick?.(event)}
         style={style}
         $mobileBreakpoint={$mobileBreakpoint}
     >
