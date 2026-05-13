@@ -47,10 +47,35 @@ const Container = styled.div<{
     ${respondDown(Breakpoints.sm)`
         padding: 3.2rem 1.6rem;
     `}
+
+    ${({ $hasPickerOptions }) =>
+        $hasPickerOptions &&
+        respondDown(Breakpoints.sm)`
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            grid-template-areas:
+                'label percent'
+                'amount picker'
+                'details details'
+                'balance balance';
+            gap: 0.8rem 1.2rem;
+            min-height: auto;
+        `}
 `;
 
 const AmountLabel = styled.span`
     font-size: 1.6rem;
+`;
+
+const AmountDetails = styled.div`
+    color: ${COLORS.textGray};
+    font-size: 1.4rem;
+    line-height: 1.6rem;
+    white-space: nowrap;
+
+    ${respondDown(Breakpoints.sm)`
+        white-space: normal;
+    `}
 `;
 
 const AmountContainer = styled.div<{ $hasPickerOptions?: boolean }>`
@@ -72,13 +97,26 @@ const AmountContainer = styled.div<{ $hasPickerOptions?: boolean }>`
                 line-height: 4.8rem;
             `}
     }
-`;
 
-const AmountDetails = styled.div`
-    color: ${COLORS.textGray};
-    font-size: 1.4rem;
-    line-height: 1.6rem;
-    white-space: nowrap;
+    ${({ $hasPickerOptions }) =>
+        $hasPickerOptions &&
+        respondDown(Breakpoints.sm)`
+            display: contents;
+
+            ${AmountLabel} {
+                grid-area: label;
+            }
+
+            > div:first-of-type {
+                grid-area: amount;
+                min-width: 0;
+            }
+
+            ${AmountDetails} {
+                grid-area: details;
+                min-width: 0;
+            }
+        `}
 `;
 
 const PickerContainer = styled.div<{ $hasPickerOptions?: boolean }>`
@@ -88,6 +126,27 @@ const PickerContainer = styled.div<{ $hasPickerOptions?: boolean }>`
     width: ${({ $hasPickerOptions }) => ($hasPickerOptions ? '19.1rem' : '50%')};
     gap: ${({ $hasPickerOptions }) => ($hasPickerOptions ? '0.8rem' : '0')};
     align-items: flex-end;
+
+    ${({ $hasPickerOptions }) =>
+        $hasPickerOptions &&
+        respondDown(Breakpoints.sm)`
+            display: contents;
+
+            > div:first-child {
+                grid-area: percent;
+                justify-self: end;
+            }
+
+            > div:nth-child(2) {
+                grid-area: picker;
+                justify-self: end;
+            }
+
+            > div:nth-child(3) {
+                grid-area: balance;
+                justify-self: end;
+            }
+        `}
 `;
 
 const Balance = styled.div<{ $hasPickerOptions?: boolean }>`
