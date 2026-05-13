@@ -5,9 +5,13 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { checkProposalStatus, publishProposal } from 'api/governance';
+import { checkProposalStatus, getActiveDaoVotingRequest, publishProposal } from 'api/governance';
 
-import { APPROVED_PROPOSAL_REWARD, CREATE_PROPOSAL_COST } from 'constants/dao';
+import {
+    ACTIVE_DAO_VOTING_ERROR_TEXT,
+    APPROVED_PROPOSAL_REWARD,
+    CREATE_PROPOSAL_COST,
+} from 'constants/dao';
 
 import { getDateString } from 'helpers/date';
 import ErrorHandler from 'helpers/error-handler';
@@ -152,11 +156,21 @@ const PublishProposalModal = ({
 
         setLoading(true);
 
-        if (account.authType === LoginTypes.walletConnect) {
-            openCurrentWalletIfExist();
-        }
-
         try {
+            const activeVoting = await getActiveDaoVotingRequest();
+
+            if (activeVoting) {
+                ToastService.showErrorToast(ACTIVE_DAO_VOTING_ERROR_TEXT);
+                if (isMounted.current) {
+                    setLoading(false);
+                }
+                return;
+            }
+
+            if (account.authType === LoginTypes.walletConnect) {
+                openCurrentWalletIfExist();
+            }
+
             const op = StellarService.op.createBurnAquaOperation(CREATE_PROPOSAL_COST.toString());
             const hash = sha256(proposal.text);
             const memoHash = StellarService.tx.createMemo(MemoHash, hash);
