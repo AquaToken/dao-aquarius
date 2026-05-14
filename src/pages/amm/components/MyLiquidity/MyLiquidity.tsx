@@ -37,6 +37,7 @@ import { SorobanToken, Token } from 'types/token';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 
 import IconClaim from 'assets/icons/actions/icon-claim-17x16.svg';
+import ArrowDown from 'assets/icons/arrows/arrow-down-16.svg';
 import Lock from 'assets/icons/objects/icon-lock-16.svg';
 import Info from 'assets/icons/status/icon-info-16.svg';
 
@@ -62,6 +63,7 @@ import { Breakpoints, COLORS, FONT_SIZE, hexWithOpacity } from 'styles/style-con
 
 import { TitleWithTooltip, TooltipInnerHead } from 'pages/amm/components/AllPools/AllPools';
 import ExpandedMenu from 'pages/amm/components/MyLiquidity/ExpandedMenu/ExpandedMenu';
+import MyLiquidityConcentratedPositions from 'pages/amm/components/MyLiquidity/MyLiquidityConcentratedPositions/MyLiquidityConcentratedPositions';
 import MigratePoolButton from 'pages/amm/components/PoolsList/MigratePoolButton/MigratePoolButton';
 import RewardsBanner from 'pages/amm/components/RewardsBanner/RewardsBanner';
 import RewardsTokens from 'pages/amm/components/RewardsTokens/RewardsTokens';
@@ -158,6 +160,28 @@ const Buttons = styled.div`
     gap: 0.8rem;
 `;
 
+const Actions = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+
+    ${respondDown(Breakpoints.xl)`
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+
+        ${Buttons} {
+            justify-content: flex-end;
+        }
+    `}
+`;
+
+const NoRowToggle = styled.div`
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+`;
+
 const Pooled = styled.div`
     display: flex;
     gap: 0.8rem;
@@ -206,6 +230,79 @@ const LabelInner = styled.div`
     ${FONT_SIZE.sm};
 `;
 
+const PairWithChevron = styled.div`
+    display: grid;
+    grid-template-columns: 3.2rem minmax(0, 1fr);
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+
+    ${respondDown(Breakpoints.xl)`
+        grid-template-columns: minmax(0, 1fr);
+    `}
+`;
+
+const ChevronSlot = styled.div`
+    width: 3.2rem;
+    height: 3.2rem;
+    flex: 0 0 auto;
+
+    ${respondDown(Breakpoints.xl)`
+        display: none;
+    `}
+`;
+
+const ChevronButton = styled.button<{ $expanded: boolean }>`
+    ${flexAllCenter};
+    width: 3.2rem;
+    height: 3.2rem;
+    padding: 0;
+    border: none;
+    border-radius: 0.4rem;
+    background: ${COLORS.transparent};
+    color: ${COLORS.textPrimary};
+    cursor: pointer;
+    transition:
+        background 0.15s ease,
+        transform 0.2s ease;
+
+    svg {
+        width: 1.6rem;
+        height: 1.6rem;
+        transition: transform 0.2s ease;
+        transform: rotate(${({ $expanded }) => ($expanded ? '180deg' : '0deg')});
+    }
+
+    &:hover {
+        background: ${COLORS.gray100};
+    }
+`;
+
+const MobileChevronButton = styled(ChevronButton)`
+    display: none;
+
+    ${respondDown(Breakpoints.xl)`
+        display: flex;
+        width: 100%;
+        background: ${COLORS.gray50};
+
+        &:hover {
+            background: ${COLORS.gray100};
+        }
+    `}
+`;
+
+const AfterRowWrapper = styled.div`
+    width: 100%;
+    padding: 0 0 1.6rem;
+
+    ${respondDown(Breakpoints.xl)`
+        padding: 0;
+    `}
+`;
+
+const ROW_PADDING = '0.8rem';
+
 enum FilterValues {
     all = 'all',
     volatile = 'volatile',
@@ -247,6 +344,19 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
     const [concentratedData, setConcentratedData] = useState<
         Map<string, { tokenEstimates: string[]; liquidityUsd: number; rawLiquidity: string }>
     >(new Map());
+    const [expandedPools, setExpandedPools] = useState<Set<string>>(new Set());
+
+    const togglePoolExpanded = (poolAddress: string) => {
+        setExpandedPools(prev => {
+            const next = new Set(prev);
+            if (next.has(poolAddress)) {
+                next.delete(poolAddress);
+            } else {
+                next.add(poolAddress);
+            }
+            return next;
+        });
+    };
 
     const { value: filter, setValue: setFilter } = useUrlParam<FilterValues>(
         MyLiquidityUrlParams.filter,
@@ -627,20 +737,68 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                             pool.pool_type === POOL_TYPE.concentrated &&
                             !concentratedData.has(pool.address);
 
+                        const isConcentrated = pool.pool_type === POOL_TYPE.concentrated;
+                        const isExpanded = isConcentrated && expandedPools.has(pool.address);
+
+                        const marketCell = (
+                            <Market
+                                assets={pool.tokens}
+                                mobileVerticalDirections
+                                withoutLink
+                                poolType={pool.pool_type as POOL_TYPE}
+                                isRewardsOn={Boolean(Number(pool.reward_tps))}
+                                poolAddress={pool.address}
+                                fee={pool.fee}
+                            />
+                        );
+
                         return {
                             key: pool.address || pool.id,
+                            style: {
+                                padding: ROW_PADDING,
+                            },
+                            onRowClick: isConcentrated
+                                ? (event: React.MouseEvent<HTMLDivElement>) => {
+                                      if (
+                                          (event.target as HTMLElement).closest(
+                                              '[data-no-row-toggle="true"]',
+                                          )
+                                      ) {
+                                          return;
+                                      }
+                                      togglePoolExpanded(pool.address);
+                                  }
+                                : undefined,
+                            afterRow: isExpanded ? (
+                                <AfterRowWrapper data-no-row-toggle="true">
+                                    <MyLiquidityConcentratedPositions pool={pool} />
+                                </AfterRowWrapper>
+                            ) : null,
                             rowItems: [
                                 {
                                     children: (
-                                        <Market
-                                            assets={pool.tokens}
-                                            mobileVerticalDirections
-                                            withoutLink
-                                            poolType={pool.pool_type as POOL_TYPE}
-                                            isRewardsOn={Boolean(Number(pool.reward_tps))}
-                                            poolAddress={pool.address}
-                                            fee={pool.fee}
-                                        />
+                                        <PairWithChevron>
+                                            <ChevronSlot>
+                                                {isConcentrated ? (
+                                                    <ChevronButton
+                                                        type="button"
+                                                        $expanded={isExpanded}
+                                                        aria-label={
+                                                            isExpanded
+                                                                ? 'Collapse positions'
+                                                                : 'Expand positions'
+                                                        }
+                                                        aria-expanded={isExpanded}
+                                                        tabIndex={-1}
+                                                    >
+                                                        <ArrowDown />
+                                                    </ChevronButton>
+                                                ) : null}
+                                            </ChevronSlot>
+                                            <NoRowToggle data-no-row-toggle="true">
+                                                {marketCell}
+                                            </NoRowToggle>
+                                        </PairWithChevron>
                                     ),
                                     flexSize: 4,
                                 },
@@ -861,44 +1019,70 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                 },
                                 {
                                     children: (
-                                        <Buttons>
-                                            {pool.address ? (
-                                                <Button
-                                                    isSquare
-                                                    pending={pool.address === claimPendingId}
-                                                    disabled={
-                                                        (pool.address !== claimPendingId &&
-                                                            Boolean(claimPendingId)) ||
-                                                        (!Number(
-                                                            userRewards.get(pool.address)?.to_claim,
-                                                        ) &&
-                                                            !userIncentives
-                                                                .get(pool.address)
-                                                                ?.some(
-                                                                    ({ info }) =>
-                                                                        !!Number(info.user_reward),
-                                                                ))
+                                        <Actions>
+                                            <Buttons data-no-row-toggle="true">
+                                                {pool.address ? (
+                                                    <Button
+                                                        isSquare
+                                                        pending={pool.address === claimPendingId}
+                                                        disabled={
+                                                            (pool.address !== claimPendingId &&
+                                                                Boolean(claimPendingId)) ||
+                                                            (!Number(
+                                                                userRewards.get(pool.address)
+                                                                    ?.to_claim,
+                                                            ) &&
+                                                                !userIncentives
+                                                                    .get(pool.address)
+                                                                    ?.some(
+                                                                        ({ info }) =>
+                                                                            !!Number(
+                                                                                info.user_reward,
+                                                                            ),
+                                                                    ))
+                                                        }
+                                                        onClick={() => claim(pool.address)}
+                                                        title="Claim rewards and incentives"
+                                                    >
+                                                        {pool.address === claimPendingId ? (
+                                                            <CircleLoader isWhite size="small" />
+                                                        ) : (
+                                                            <IconClaim />
+                                                        )}
+                                                    </Button>
+                                                ) : (
+                                                    <MigratePoolButton
+                                                        isSmall
+                                                        pool={pool}
+                                                        onUpdate={() => {}}
+                                                    />
+                                                )}
+                                                <ExpandedMenu pool={pool} />
+                                            </Buttons>
+                                            {isConcentrated ? (
+                                                <MobileChevronButton
+                                                    type="button"
+                                                    $expanded={isExpanded}
+                                                    aria-label={
+                                                        isExpanded
+                                                            ? 'Collapse positions'
+                                                            : 'Expand positions'
                                                     }
-                                                    onClick={() => claim(pool.address)}
-                                                    title="Claim rewards and incentives"
+                                                    aria-expanded={isExpanded}
+                                                    onClick={event => {
+                                                        event.stopPropagation();
+                                                        togglePoolExpanded(pool.address);
+                                                    }}
                                                 >
-                                                    {pool.address === claimPendingId ? (
-                                                        <CircleLoader isWhite size="small" />
-                                                    ) : (
-                                                        <IconClaim />
-                                                    )}
-                                                </Button>
-                                            ) : (
-                                                <MigratePoolButton
-                                                    isSmall
-                                                    pool={pool}
-                                                    onUpdate={() => {}}
-                                                />
-                                            )}
-                                            <ExpandedMenu pool={pool} />
-                                        </Buttons>
+                                                    <ArrowDown />
+                                                </MobileChevronButton>
+                                            ) : null}
+                                        </Actions>
                                     ),
                                     align: CellAlign.Right,
+                                    mobileStyle: {
+                                        width: '100%',
+                                    },
                                 },
                             ],
                         };

@@ -21,18 +21,15 @@ export {
     TokenSeparator,
 } from 'pages/amm/components/ConcentratedLiquidity/components/ConcentratedPositionShared.styled';
 
-export const Card = styled.div`
+export const Container = styled.div`
     ${flexColumn};
-    gap: 3.2rem;
+    gap: 0.8rem;
     width: 100%;
-    padding: 3.2rem;
-    background: ${COLORS.white};
-    border-radius: 0.6rem;
-
-    ${respondDown(Breakpoints.md)`
-        padding: 2.4rem 1.6rem;
-        gap: 2.4rem;
-    `}
+    padding: 1.6rem;
+    margin-top: 0.8rem;
+    background: ${COLORS.gray50};
+    border-radius: 1rem;
+    overflow: hidden;
 `;
 
 export const Header = styled.div`
@@ -41,18 +38,19 @@ export const Header = styled.div`
     width: 100%;
 
     ${respondDown(Breakpoints.sm)`
-        align-items: flex-start;
         flex-direction: column;
+        align-items: flex-start;
     `}
 `;
 
-export const Title = styled.h5`
-    ${FONT_SIZE.lg};
+export const Title = styled.span`
+    font-weight: 700;
+    font-size: 2rem;
     line-height: 2.8rem;
     color: ${COLORS.textTertiary};
 `;
 
-export const CurrentPrice = styled.div`
+export const CurrentPrice = styled.span`
     ${FONT_SIZE.sm};
     color: ${COLORS.textGray};
     white-space: nowrap;
@@ -62,111 +60,114 @@ export const CurrentPrice = styled.div`
     }
 `;
 
-export const Positions = styled.div`
-    ${flexColumn};
-    width: 100%;
+export const EmptyState = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    ${FONT_SIZE.sm};
+    color: ${COLORS.textGray};
+    padding: 1.6rem;
 `;
 
 export const Position = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2.4rem;
+    width: 100%;
+    padding: 1.2rem 2.4rem;
+    background: ${COLORS.white};
+    border-radius: 0.8rem;
+
+    ${respondDown(Breakpoints.lg)`
+        flex-wrap: wrap;
+        gap: 1.6rem;
+    `}
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column;
+        align-items: stretch;
+        padding: 1.6rem;
+    `}
+`;
+
+export const PositionInfo = styled.div`
     ${flexColumn};
-    gap: 1.6rem;
-    width: 100%;
+    justify-content: space-between;
+    gap: 0.8rem;
+    width: 11.6rem;
+    min-height: 5.4rem;
 
-    &:not(:last-child) {
-        padding-bottom: 3.2rem;
-        margin-bottom: 3.2rem;
-        border-bottom: 0.1rem solid ${COLORS.gray100};
-    }
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 0;
+    `}
 `;
 
-export const PositionHeader = styled.div`
-    ${flexRowSpaceBetween};
-    align-items: flex-start;
-    gap: 2rem;
-    width: 100%;
-`;
-
-export const PositionMain = styled.div`
+export const ValueBlock = styled.div`
     ${flexColumn};
     gap: 0.8rem;
     min-width: 0;
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+    `}
 `;
 
 export const LiquidityValue = styled.span`
     color: ${COLORS.textTertiary};
-    font-size: 3.6rem;
-    line-height: 4.2rem;
+    font-size: 2.2rem;
+    line-height: 2.8rem;
     white-space: nowrap;
-
-    ${respondDown(Breakpoints.sm)`
-        font-size: 3rem;
-        line-height: 3.6rem;
-    `}
 `;
 
 export const TokensValue = styled.span`
-    display: flex;
+    display: inline-flex;
     align-items: center;
     flex-wrap: wrap;
     gap: 0.4rem;
     ${FONT_SIZE.sm};
     color: ${COLORS.textTertiary};
-    max-width: 100%;
-    overflow-wrap: anywhere;
 `;
 
-export const Details = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 3.2rem;
-    min-height: 6.7rem;
-
-    ${respondDown(Breakpoints.md)`
-        align-items: stretch;
-        flex-direction: column;
-        gap: 1.6rem;
-    `}
-`;
-
-export const Metrics = styled.div`
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 3.2rem;
-    flex: 1;
-    min-width: 0;
-`;
-
-export const Metric = styled.div`
+export const Metric = styled.div<{ $wide?: boolean }>`
     ${flexColumn};
     gap: 0.2rem;
-    min-width: 0;
-`;
-
-export const DividerVertical = styled.div`
-    align-self: stretch;
-    width: 0.1rem;
-    min-height: 6.7rem;
-    background: ${COLORS.gray100};
+    width: ${({ $wide }) => ($wide ? '12rem' : '7rem')};
 
     ${respondDown(Breakpoints.md)`
-        display: none;
+        flex-direction: row;
+        width: 100%;
+        align-items: center;
+        justify-content: space-between;
     `}
 `;
 
-export const Range = styled(ConcentratedPositionPriceRange)`
-    flex: 1;
+export const RangeBlock = styled(ConcentratedPositionPriceRange)`
+    width: 21.6rem;
     min-width: 0;
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+    `}
 `;
 
 export const Actions = styled.div`
     display: flex;
     align-items: center;
     gap: 0.8rem;
+    flex-shrink: 0;
 
-    ${respondDown(Breakpoints.sm)`
+    ${respondDown(Breakpoints.md)`
         width: 100%;
-        flex-direction: column;
-        align-items: stretch;
+        justify-content: stretch;
+
+        & > button {
+            flex: 1;
+        }
     `}
 `;
 
@@ -174,19 +175,14 @@ export const ActionButton = styled.button<{ $primary?: boolean }>`
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.8rem;
+    gap: 0.4rem;
+    min-width: 3.2rem;
     min-height: 3.2rem;
     padding: 0.8rem;
     border: none;
     border-radius: 0.6rem;
     background: ${({ $primary }) => ($primary ? COLORS.purple950 : COLORS.gray100)};
     color: ${({ $primary }) => ($primary ? COLORS.white : COLORS.textPrimary)};
-    font-size: 1.4rem;
-    line-height: 1.6rem;
-    font-weight: 700;
-    letter-spacing: 0.14rem;
-    text-transform: uppercase;
-    white-space: nowrap;
     cursor: pointer;
     transition: background 0.2s ease;
 
@@ -203,9 +199,4 @@ export const ActionButton = styled.button<{ $primary?: boolean }>`
     &:hover {
         background: ${({ $primary }) => ($primary ? COLORS.purple500 : COLORS.gray50)};
     }
-`;
-
-export const EmptyState = styled.div`
-    ${FONT_SIZE.sm};
-    color: ${COLORS.textGray};
 `;
