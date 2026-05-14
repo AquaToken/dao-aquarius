@@ -79,7 +79,7 @@ export const getProposalsRequest = async ({
             results: filteredResults,
         },
         filter,
-        total: filteredResults.length,
+        total: data.count,
     };
 };
 
