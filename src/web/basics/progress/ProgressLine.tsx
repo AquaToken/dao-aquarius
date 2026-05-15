@@ -34,10 +34,26 @@ const Outer = styled.div`
     background-color: ${COLORS.gray100};
 `;
 
-const Inner = styled.div<{ $width: string }>`
+type InnerProps = {
+    $width: string;
+    $color?: string;
+    $isAnimated?: boolean;
+};
+
+type ProgressLineProps = {
+    percent: number;
+    leftLabel: string;
+    rightLabel: React.ReactNode;
+    color?: string;
+    isAnimated?: boolean;
+};
+
+const Inner = styled.div<InnerProps>`
     ${progressLineStyles};
     width: ${({ $width }) => $width};
-    background-color: ${({ $color }: { $color?: string }) => $color || COLORS.purple500};
+    background-color: ${({ $color }) => $color || COLORS.purple500};
+    transition: ${({ $isAnimated }) => ($isAnimated ? 'width 500ms ease-out' : 'none')};
+    will-change: ${({ $isAnimated }) => ($isAnimated ? 'width' : 'auto')};
 `;
 
 const ProgressLine = ({
@@ -45,19 +61,15 @@ const ProgressLine = ({
     leftLabel,
     rightLabel,
     color = COLORS.purple500,
-}: {
-    percent: number;
-    leftLabel: string;
-    rightLabel: string | React.ReactNode;
-    color?: string;
-}): React.ReactNode => (
+    isAnimated = false,
+}: ProgressLineProps): React.ReactElement => (
     <Container>
         <Labels>
             <LeftLabel>{leftLabel}</LeftLabel>
             <span>{rightLabel}</span>
         </Labels>
         <Outer>
-            <Inner $width={`${percent}%` || '0'} $color={color} />
+            <Inner $width={`${percent}%`} $color={color} $isAnimated={isAnimated} />
         </Outer>
     </Container>
 );
