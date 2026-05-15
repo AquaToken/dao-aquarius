@@ -70,23 +70,29 @@ export const EmptyState = styled.div`
 `;
 
 export const Position = styled.div`
-    display: flex;
+    display: grid;
+    grid-template-columns:
+        11.6rem minmax(16rem, 1fr) 12rem minmax(21.6rem, 1.2fr)
+        7.2rem;
     align-items: center;
-    justify-content: space-between;
-    gap: 2.4rem;
+    column-gap: 7rem;
     width: 100%;
     padding: 1.2rem 2.4rem;
     background: ${COLORS.white};
     border-radius: 0.8rem;
 
     ${respondDown(Breakpoints.lg)`
-        flex-wrap: wrap;
-        gap: 1.6rem;
+        grid-template-columns:
+            11.6rem minmax(16rem, 1fr) 12rem minmax(20rem, 1fr)
+            7.2rem;
+        column-gap: 1.6rem;
     `}
 
     ${respondDown(Breakpoints.md)`
+        display: flex;
         flex-direction: column;
         align-items: stretch;
+        gap: 1.6rem;
         padding: 1.6rem;
     `}
 `;
@@ -110,6 +116,7 @@ export const PositionInfo = styled.div`
 export const ValueBlock = styled.div`
     ${flexColumn};
     gap: 0.8rem;
+    width: 100%;
     min-width: 0;
 
     ${respondDown(Breakpoints.md)`
@@ -147,7 +154,7 @@ export const Metric = styled.div<{ $wide?: boolean }>`
 `;
 
 export const RangeBlock = styled(ConcentratedPositionPriceRange)`
-    width: 21.6rem;
+    width: 100%;
     min-width: 0;
 
     ${respondDown(Breakpoints.md)`
@@ -158,6 +165,7 @@ export const RangeBlock = styled(ConcentratedPositionPriceRange)`
 export const Actions = styled.div`
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: 0.8rem;
     flex-shrink: 0;
 
