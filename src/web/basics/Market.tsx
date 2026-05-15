@@ -140,11 +140,8 @@ const AssetsCodes = styled.span<{ $mobileVerticalDirections?: boolean; $bigCodes
     display: flex;
     flex-direction: row;
     align-items: center;
-
-    span {
-        display: flex;
-        align-items: center;
-    }
+    flex-wrap: wrap;
+    min-width: 0;
 
     ${({ $mobileVerticalDirections }) =>
         $mobileVerticalDirections &&
@@ -154,9 +151,14 @@ const AssetsCodes = styled.span<{ $mobileVerticalDirections?: boolean; $bigCodes
             color: ${COLORS.purple950};
             margin-top: 0.7rem;
             margin-bottom: 0.4rem;
-            display: flex;
-            flex-wrap: wrap;
         `}
+`;
+
+const AssetsCodesValue = styled.span`
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+    white-space: nowrap;
 `;
 
 const AssetsDomains = styled.span<{ $mobileVerticalDirections?: boolean }>`
@@ -367,7 +369,7 @@ const Market = ({
                     $mobileVerticalDirections={mobileVerticalDirections}
                     $bigCodes={bigCodes}
                 >
-                    <span>
+                    <AssetsCodesValue>
                         {assets.map((asset, index) => (
                             <React.Fragment key={getAssetString(asset)}>
                                 {index > 0 ? isSwapResult ? <ArrowRight /> : ' / ' : ''}
@@ -375,7 +377,7 @@ const Market = ({
                                 {asset.code}
                             </React.Fragment>
                         ))}
-                    </span>
+                    </AssetsCodesValue>
 
                     {!bottomLabels && labels}
 

@@ -121,6 +121,7 @@ const AssetRegistryMigrationStatus = ({
                     }
                     percent={approvedAssetsPercent}
                     color={COLORS.blue500}
+                    isAnimated
                 />
                 <ProgressLine
                     leftLabel="AQUA Rewards Alignment"
@@ -140,6 +141,7 @@ const AssetRegistryMigrationStatus = ({
                                   ASSET_MIGRATION_REWARD_TARGET,
                               ),
                     )}
+                    isAnimated
                 />
             </ProgressWrap>
 
