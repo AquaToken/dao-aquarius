@@ -14,7 +14,7 @@ export const StatusBadge = styled.div<{ $inRange: boolean }>`
     justify-content: center;
     gap: 0.8rem;
     align-self: flex-start;
-    min-width: ${({ $inRange }) => ($inRange ? '8.2rem' : '11.6rem')};
+    min-width: 11.6rem;
     padding: 0.2rem 0.8rem;
     border-radius: 3.7rem;
     background: ${({ $inRange }) => ($inRange ? COLORS.green50 : COLORS.red50)};
