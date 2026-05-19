@@ -13,7 +13,7 @@ import {
 } from 'constants/assets-env';
 import { AppRoutes } from 'constants/routes';
 
-import { getAssetString } from 'helpers/assets';
+import { getAssetFromString, getAssetString } from 'helpers/assets';
 import { getTimeAgoValue } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 import { createAsset, createLumen } from 'helpers/token';
@@ -638,16 +638,16 @@ const MainPage = (): React.ReactNode => {
         e.stopPropagation();
         if (isLogged) {
             ModalService.openModal(CreatePairModal, {
-                base: searchBase,
-                counter: searchCounter,
+                base: getAssetFromString(searchBase),
+                counter: getAssetFromString(searchCounter),
             });
             return;
         }
         ModalService.openModal(ChooseLoginMethodModal, {
             callback: () =>
                 ModalService.openModal(CreatePairModal, {
-                    base: searchBase,
-                    counter: searchCounter,
+                    base: getAssetFromString(searchBase),
+                    counter: getAssetFromString(searchCounter),
                 }),
         });
     };
