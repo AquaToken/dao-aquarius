@@ -12,8 +12,6 @@ export const LOBSTR_VAULT_API_URL = 'https://vault.lobstr.co/api/transactions/';
 
 export const API_ST_TICKER = 'https://api.stellarterm.com/v1/ticker.json';
 
-export const API_DELEGATION_URL = 'https://api-delegation.aqua.network/api/delegation/';
-
 export const API_AIRDROP_2 = 'https://airdrop2-checker-api.aqua.network/api/snapshot/';
 
 export const API_URLS = {
@@ -30,6 +28,7 @@ export const API_URLS = {
         reward: 'https://reward-api.aqua.network/api/',
         bribes: 'https://bribes-api.aqua.network/api/',
         profile: 'https://profile-api.aqua.network/api/',
+        delegation: 'https://api-delegation.aqua.network/api/delegation/',
     },
     [ENV_TESTNET]: {
         onRampProxy: 'https://soroban-on-ramp-testnet.aqua.network',
@@ -43,5 +42,6 @@ export const API_URLS = {
         reward: 'https://reward-api-testnet.aqua.network/api/',
         bribes: 'https://bribes-api-testnet.aqua.network/api/',
         profile: 'https://profile-api-testnet.aqua.network/api/',
+        delegation: 'https://api-delegation-testnet.aqua.network/api/delegation/',
     },
 };

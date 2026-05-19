@@ -14,6 +14,7 @@ export const getRewardsUrl = () => `${getRewardUrl()}rewards/`;
 export const getRewardQuestUrl = () => `${getRewardUrl()}quest/`;
 export const getBribesUrl = () => API_URLS[getEnv()].bribes;
 export const getProfileUrl = () => API_URLS[getEnv()].profile;
+export const getDelegationUrl = () => API_URLS[getEnv()].delegation;
 
 export const getOnRampWidgetUrl = (params): string => {
     const urlParams = new URLSearchParams(params).toString();

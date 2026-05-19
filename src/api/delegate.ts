@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-import { API_DELEGATION_URL } from 'constants/api';
 import { getIceDelegationMap } from 'constants/assets';
 
 import { getAssetString } from 'helpers/assets';
+import { getDelegationUrl } from 'helpers/url';
 
 import { Delegatee, DelegateeVote, MyDelegatees } from 'types/delegate';
 import { ClassicToken } from 'types/token';
@@ -12,8 +12,8 @@ import { getMarketsMap } from 'pages/vote/api/api';
 import { MarketKey } from 'pages/vote/api/types';
 import { UP_ICE } from 'pages/vote/components/MainPage/MainPage';
 
-const API_URL_V1 = `${API_DELEGATION_URL}`;
-const API_URL_V2 = `${API_DELEGATION_URL}v2/`;
+const API_URL_V1 = `${getDelegationUrl()}`;
+const API_URL_V2 = `${getDelegationUrl()}v2/`;
 
 export const getDelegatees = (): Promise<Delegatee[]> =>
     axios
