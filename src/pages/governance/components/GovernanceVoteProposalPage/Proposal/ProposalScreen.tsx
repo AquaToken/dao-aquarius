@@ -560,7 +560,7 @@ const ProposalScreen = ({
             {(status === 'VOTING' || status === 'VOTED') && (
                 <ProposalSection>
                     <LeftContent>
-                        <Votes />
+                        <Votes proposal={proposal} />
                     </LeftContent>
                 </ProposalSection>
             )}

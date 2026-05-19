@@ -23,11 +23,13 @@ export const getProposalsRequest = async ({
     pubkey,
     page,
     pageSize,
+    includeAssetProposals = false,
 }: {
     filter: PROPOSAL_FILTER;
     pubkey?: string;
     page: number;
     pageSize: number;
+    includeAssetProposals?: boolean;
 }): Promise<{
     proposals: ListResponse<ProposalSimple>;
     filter: PROPOSAL_FILTER;
@@ -38,7 +40,9 @@ export const getProposalsRequest = async ({
     params.append('limit', pageSize.toString());
     params.append('page', page.toString());
     params.append('ordering', '-created_at');
-    params.append('proposal_type', 'general');
+    if (!includeAssetProposals) {
+        params.append('proposal_type', 'general');
+    }
     if (filter === PROPOSAL_FILTER.ACTIVE) {
         params.append('status', 'voting');
     } else if (filter === PROPOSAL_FILTER.CLOSED) {
@@ -60,11 +64,13 @@ export const getProposalsRequest = async ({
         params,
     });
 
-    const filteredResults = data.results.filter(
-        proposal =>
-            proposal.proposal_type === 'GENERAL' ||
-            proposal.proposal_type?.toLowerCase() === 'general',
-    );
+    const filteredResults = includeAssetProposals
+        ? data.results
+        : data.results.filter(
+              proposal =>
+                  proposal.proposal_type === 'GENERAL' ||
+                  proposal.proposal_type?.toLowerCase() === 'general',
+          );
 
     return {
         proposals: {
@@ -73,7 +79,7 @@ export const getProposalsRequest = async ({
             results: filteredResults,
         },
         filter,
-        total: filteredResults.length,
+        total: data.count,
     };
 };
 
@@ -85,6 +91,18 @@ export const getActiveProposalsCount = (): Promise<{ active: number; discussion:
         active: active.proposals.count,
         discussion: discussion.proposals.count,
     }));
+
+export const getActiveDaoVotingRequest = (): Promise<ProposalSimple | null> =>
+    axios
+        .get<ListResponse<ProposalSimple>>(`${getGovernanceUrl()}/proposal/`, {
+            params: {
+                status: 'voting',
+                limit: 1,
+                page: 1,
+                ordering: '-created_at',
+            },
+        })
+        .then(({ data }) => data.results[0] ?? null);
 
 export const getProposalRequest = (id: string): Promise<Proposal> =>
     axios.get<Proposal>(`${getGovernanceUrl()}/proposal/${id}/`).then(res => res.data);

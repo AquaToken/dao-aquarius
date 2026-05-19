@@ -1141,8 +1141,7 @@ const LiquidityDistributionChart = React.forwardRef<LiquidityDistributionChartHa
                 : isUserSource
                   ? 'No liquidity positions yet'
                   : 'No liquidity data yet';
-        const chartTitle =
-            title || (isUserSource ? 'My Liquidity Positions' : 'Liquidity Distribution');
+        const chartTitle = title || (isUserSource ? 'Your Liquidity' : 'Liquidity Distribution');
         const hasRenderableChart = isUserSource
             ? hasData
             : hasData ||

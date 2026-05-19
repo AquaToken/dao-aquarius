@@ -10,6 +10,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import PageLoader from 'basics/loaders/PageLoader';
 
 import ProposalPreview from '../../governance/components/GovernanceMainPage/ProposalPreview/ProposalPreview';
+import AssetRegistryMyVotesProposalPreview from '../../../web/pages/asset-registry/pages/AssetRegistryMainPage/components/AssetRegistryMyVotesProposalPreview/AssetRegistryMyVotesProposalPreview';
 import { Container, Header, Title } from '../SdexRewards/SdexRewards';
 import { Empty, Section } from '../YourVotes/YourVotes';
 
@@ -24,8 +25,9 @@ const YourGovernanceVotes = () => {
             pubkey: account.accountId(),
             page: 1,
             pageSize: 50,
+            includeAssetProposals: true,
         }).then(res => {
-            setProposals(res.proposals.results.reverse());
+            setProposals(res.proposals.results);
         });
     }, []);
 
@@ -38,9 +40,17 @@ const YourGovernanceVotes = () => {
             {!proposals ? (
                 <PageLoader />
             ) : proposals.length ? (
-                proposals.map(proposal => (
-                    <ProposalPreview key={proposal.id} proposal={proposal} withMyVotes />
-                ))
+                proposals.map(proposal =>
+                    proposal.proposal_type === 'ADD_ASSET' ||
+                    proposal.proposal_type === 'REMOVE_ASSET' ? (
+                        <AssetRegistryMyVotesProposalPreview
+                            key={proposal.id}
+                            proposal={proposal}
+                        />
+                    ) : (
+                        <ProposalPreview key={proposal.id} proposal={proposal} withMyVotes />
+                    ),
+                )
             ) : (
                 <Section>
                     <Empty>

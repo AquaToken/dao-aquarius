@@ -1,13 +1,7 @@
 import * as React from 'react';
 
-import { CONCENTRATED_MAX_TICK, CONCENTRATED_MIN_TICK } from 'constants/amm';
-
-import {
-    formatConcentratedPriceInputValue,
-    snapDown,
-    snapUp,
-    tickToPrice,
-} from 'helpers/amm-concentrated';
+import { formatConcentratedPriceInputValue, tickToPrice } from 'helpers/amm-concentrated';
+import { isFullRangePosition } from 'helpers/amm-concentrated-positions';
 import { contractValueToFormattedAmount } from 'helpers/amount';
 import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
@@ -51,11 +45,7 @@ const ConcentratedPositionCard = ({
 }: Props): React.ReactNode => {
     const decimalsDiff = pool.tokens[0].decimal - pool.tokens[1].decimal;
     const tickSpacing = Number(pool.tick_spacing);
-    const isFullRange =
-        Number.isFinite(tickSpacing) &&
-        tickSpacing > 0 &&
-        position.tickLower === snapUp(CONCENTRATED_MIN_TICK, tickSpacing) &&
-        position.tickUpper === snapDown(CONCENTRATED_MAX_TICK, tickSpacing);
+    const isFullRange = isFullRangePosition(position, tickSpacing);
 
     return (
         <PositionCard className={className} $compact={compact}>

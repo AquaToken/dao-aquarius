@@ -10,17 +10,17 @@ import { DAO_UPDATE_INTERVAL } from 'constants/dao';
 
 import { getDateString } from 'helpers/date';
 import { getIsTestnetEnv } from 'helpers/env';
-import { formatBalance } from 'helpers/format-number';
+import { formatBalance, roundToPrecision } from 'helpers/format-number';
 
-import { Vote } from 'types/governance';
+import { Proposal, Vote } from 'types/governance';
 
 import ExternalLinkIcon from 'assets/icons/nav/icon-external-link-16.svg';
 import DIce from 'assets/tokens/dice-logo.svg';
 import Ice from 'assets/tokens/ice-logo.svg';
 
-import { IconSort } from 'basics/icons';
 import { CircleLoader } from 'basics/loaders';
 import Pagination from 'basics/Pagination';
+import Table, { CellAlign } from 'basics/Table';
 
 import PublicKeyWithIcon from 'components/PublicKeyWithIcon';
 
@@ -37,56 +37,11 @@ const Title = styled.h5`
     font-size: 2rem;
     line-height: 2.8rem;
     color: ${COLORS.textPrimary};
+    margin-bottom: 1.6rem;
 `;
 const VotesList = styled.div`
     display: flex;
     flex-direction: column;
-`;
-
-const HeaderRow = styled.div`
-    display: flex;
-    height: 5.2rem;
-`;
-
-const Cell = styled.div`
-    display: flex;
-    flex: 1;
-    align-items: center;
-`;
-
-const CellDate = styled(Cell)`
-    flex: 2.2;
-    margin-right: 0.3rem;
-`;
-const CellAcc = styled(Cell)`
-    flex: 4.5;
-    min-width: 21.5rem;
-
-    ${respondDown(Breakpoints.md)`
-        flex: 3;
-        min-width: unset;
-    `}
-`;
-const CellSolution = styled(Cell)`
-    flex: 2.2;
-`;
-const CellAmount = styled(Cell)`
-    flex: 4;
-    justify-content: flex-end;
-    text-align: right;
-`;
-const VoteRow = styled.div`
-    display: flex;
-    height: 5rem;
-    font-size: 1.6rem;
-    line-height: 2.8rem;
-
-    color: ${COLORS.textTertiary};
-
-    ${respondDown(Breakpoints.md)`
-        font-size: 1.2rem;
-        line-height: 1.4rem;
-    `}
 `;
 
 const ExternalLink = styled.a`
@@ -96,35 +51,26 @@ const ExternalLink = styled.a`
     cursor: pointer;
 `;
 
-enum SortingHeaderPosition {
-    left = 'left',
-    right = 'right',
-}
-
-const SortingHeader = styled.button<{ $position: SortingHeaderPosition }>`
-    background: none;
-    border: none;
-    cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
-    padding: 0;
-    margin: 0;
-    width: 100%;
-    height: 100%;
-
+const Account = styled.div`
     display: flex;
     align-items: center;
-    justify-content: ${({ $position }) => {
-        if ($position === SortingHeaderPosition.right) return 'flex-end';
-        if ($position === SortingHeaderPosition.left) return 'flex-start';
-        return 'center';
-    }};
+    min-width: 21.5rem;
 
-    color: ${COLORS.textGray};
-    & > svg {
-        margin-left: 0.4rem;
-    }
-    &:hover {
-        color: ${COLORS.purple500};
-    }
+    ${respondDown(Breakpoints.md)`
+        min-width: unset;
+    `}
+`;
+
+const Amount = styled.div`
+    display: flex;
+    align-items: center;
+    text-align: right;
+`;
+
+const TotalShare = styled.div`
+    display: flex;
+    align-items: center;
+    font-weight: 700;
 `;
 
 const LoaderContainer = styled.div`
@@ -157,10 +103,30 @@ const onVoteLinkClick = (url: string) => {
 };
 
 const PAGE_SIZE = 10;
+const SHARE_SORT = 'share';
 
-const Votes = (): React.ReactNode => {
+type VoteSortColumn = VoteFields | typeof SHARE_SORT;
+
+const getVoteShare = (amount: string, totalVotingPower: number) => {
+    const share = (Number(amount) / totalVotingPower) * 100;
+
+    if (!Number.isFinite(share)) {
+        return '—';
+    }
+
+    const roundedShare = roundToPrecision(share, 2);
+
+    if (share > 0 && Number(roundedShare) === 0) {
+        return '<0.01%';
+    }
+
+    return `${roundedShare}%`;
+};
+
+const Votes = ({ proposal }: { proposal: Proposal }): React.ReactNode => {
     const [updateIndex, setUpdateIndex] = useState(0);
     const [sort, setSort] = useState(VoteFields.date);
+    const [activeSortColumn, setActiveSortColumn] = useState<VoteSortColumn>(VoteFields.date);
     const [isReversedSort, setIsReversedSort] = useState(false);
 
     const [votes, setVotes] = useState<Vote[] | null>(null);
@@ -184,12 +150,18 @@ const Votes = (): React.ReactNode => {
         return () => clearInterval(interval);
     }, []);
 
-    const changeSort = (newSort: VoteFields) => {
-        const isEqualSort = sort === newSort;
+    const changeSort = (newSort: VoteFields, sortColumn: VoteSortColumn = newSort) => {
+        const isEqualSort = activeSortColumn === sortColumn;
         setSort(newSort);
+        setActiveSortColumn(sortColumn);
         setPage(1);
         setIsReversedSort(isEqualSort ? !isReversedSort : false);
     };
+
+    const totalVotingPower =
+        Number(proposal.vote_for_result) +
+        Number(proposal.vote_against_result) +
+        Number(proposal.vote_abstain_result ?? 0);
 
     if (!votes) {
         return (
@@ -207,88 +179,124 @@ const Votes = (): React.ReactNode => {
         <VotesBlock>
             <Title>Votes ({totalVotes})</Title>
             <VotesList>
-                <HeaderRow>
-                    <CellDate>
-                        <SortingHeader
-                            $position={SortingHeaderPosition.left}
-                            onClick={() => changeSort(VoteFields.date)}
-                        >
-                            Date{' '}
-                            <IconSort
-                                isEnabled={sort === VoteFields.date}
-                                isReversed={isReversedSort}
-                            />
-                        </SortingHeader>
-                    </CellDate>
-                    <CellAcc>
-                        <SortingHeader
-                            $position={SortingHeaderPosition.left}
-                            onClick={() => changeSort(VoteFields.account)}
-                        >
-                            Account{' '}
-                            <IconSort
-                                isEnabled={sort === VoteFields.account}
-                                isReversed={isReversedSort}
-                            />
-                        </SortingHeader>
-                    </CellAcc>
-                    <CellSolution>
-                        <SortingHeader
-                            $position={SortingHeaderPosition.left}
-                            onClick={() => changeSort(VoteFields.solution)}
-                        >
-                            Vote{' '}
-                            <IconSort
-                                isEnabled={sort === VoteFields.solution}
-                                isReversed={isReversedSort}
-                            />
-                        </SortingHeader>
-                    </CellSolution>
-                    <CellAmount>
-                        <SortingHeader
-                            $position={SortingHeaderPosition.right}
-                            onClick={() => changeSort(VoteFields.amount)}
-                        >
-                            Voted{' '}
-                            <IconSort
-                                isEnabled={sort === VoteFields.amount}
-                                isReversed={isReversedSort}
-                            />
-                        </SortingHeader>
-                    </CellAmount>
-                </HeaderRow>
-                {votes?.map(vote => {
-                    const {
-                        account_issuer: account,
-                        vote_choice: voteChoice,
-                        amount,
-                        transaction_link: txLink,
-                        created_at: date,
-                    } = vote;
-                    return (
-                        <VoteRow key={txLink}>
-                            <CellDate>
-                                {getDateString(new Date(date).getTime(), {
-                                    withTime: true,
-                                    withoutYear: true,
-                                })}
-                            </CellDate>
-                            <CellAcc>
-                                <PublicKeyWithIcon pubKey={account} narrowForMobile />
-                            </CellAcc>
-                            <CellSolution>
-                                <Solution choice={voteChoice} />
-                            </CellSolution>
-                            <CellAmount>
-                                {formatBalance(amount, true)}
-                                {vote.asset_code === GD_ICE_CODE ? <GdIceLogo /> : <IceLogo />}
-                                <ExternalLink onClick={() => onVoteLinkClick(txLink)}>
-                                    <ExternalLinkIcon />
-                                </ExternalLink>
-                            </CellAmount>
-                        </VoteRow>
-                    );
-                })}
+                <Table
+                    head={[
+                        {
+                            children: 'Date',
+                            flexSize: 2.2,
+                            sort: {
+                                onClick: () => changeSort(VoteFields.date),
+                                isEnabled: activeSortColumn === VoteFields.date,
+                                isReversed: isReversedSort,
+                            },
+                        },
+                        {
+                            children: 'Account',
+                            flexSize: 4.5,
+                            sort: {
+                                onClick: () => changeSort(VoteFields.account),
+                                isEnabled: activeSortColumn === VoteFields.account,
+                                isReversed: isReversedSort,
+                            },
+                        },
+                        {
+                            children: 'Vote',
+                            flexSize: 2.2,
+                            sort: {
+                                onClick: () => changeSort(VoteFields.solution),
+                                isEnabled: activeSortColumn === VoteFields.solution,
+                                isReversed: isReversedSort,
+                            },
+                        },
+                        {
+                            children: 'Voted',
+                            flexSize: 3,
+                            align: CellAlign.Right,
+                            sort: {
+                                onClick: () => changeSort(VoteFields.amount),
+                                isEnabled: activeSortColumn === VoteFields.amount,
+                                isReversed: isReversedSort,
+                            },
+                        },
+                        {
+                            children: '% of Total',
+                            flexSize: 2,
+                            align: CellAlign.Right,
+                            sort: {
+                                onClick: () => changeSort(VoteFields.amount, SHARE_SORT),
+                                isEnabled: activeSortColumn === SHARE_SORT,
+                                isReversed: isReversedSort,
+                            },
+                        },
+                    ]}
+                    body={votes.map(vote => {
+                        const {
+                            account_issuer: account,
+                            vote_choice: voteChoice,
+                            amount,
+                            transaction_link: txLink,
+                            created_at: date,
+                        } = vote;
+
+                        return {
+                            key: txLink,
+                            isNarrow: true,
+                            mobileBackground: COLORS.gray50,
+                            rowItems: [
+                                {
+                                    children: getDateString(new Date(date).getTime(), {
+                                        withTime: true,
+                                        withoutYear: true,
+                                    }),
+                                    flexSize: 2.2,
+                                    label: 'Date:',
+                                },
+                                {
+                                    children: (
+                                        <Account>
+                                            <PublicKeyWithIcon pubKey={account} narrowForMobile />
+                                        </Account>
+                                    ),
+                                    flexSize: 4.5,
+                                    label: 'Account:',
+                                },
+                                {
+                                    children: <Solution choice={voteChoice} />,
+                                    flexSize: 2.2,
+                                    label: 'Vote:',
+                                },
+                                {
+                                    children: (
+                                        <Amount>
+                                            {formatBalance(amount, true)}
+                                            {vote.asset_code === GD_ICE_CODE ? (
+                                                <GdIceLogo />
+                                            ) : (
+                                                <IceLogo />
+                                            )}
+                                        </Amount>
+                                    ),
+                                    flexSize: 3,
+                                    align: CellAlign.Right,
+                                    label: 'Voted:',
+                                },
+                                {
+                                    children: (
+                                        <TotalShare>
+                                            {getVoteShare(amount, totalVotingPower)}
+                                            <ExternalLink onClick={() => onVoteLinkClick(txLink)}>
+                                                <ExternalLinkIcon />
+                                            </ExternalLink>
+                                        </TotalShare>
+                                    ),
+                                    flexSize: 2,
+                                    align: CellAlign.Right,
+                                    label: '% of Total:',
+                                },
+                            ],
+                        };
+                    })}
+                />
                 <Pagination
                     pageSize={PAGE_SIZE}
                     currentPage={page}

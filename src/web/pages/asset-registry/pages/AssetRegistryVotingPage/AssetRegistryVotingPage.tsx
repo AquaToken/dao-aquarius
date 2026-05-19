@@ -190,7 +190,7 @@ const AssetRegistryVotingPage = (): ReactElement => {
                                 <ResultsBlock>
                                     <CurrentResults proposal={proposal} />
                                     <Divider />
-                                    <Votes />
+                                    <Votes proposal={proposal} />
                                 </ResultsBlock>
                             </SectionCard>
                         )}

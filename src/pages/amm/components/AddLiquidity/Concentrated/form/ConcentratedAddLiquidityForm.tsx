@@ -10,6 +10,7 @@ import PageLoader from 'basics/loaders/PageLoader';
 
 import ConcentratedAddLiquidityPoolInfo from './ConcentratedAddLiquidityPoolInfo';
 import AddLiquidityAmountsSection from './sections/AddLiquidityAmountsSection';
+import AddLiquidityEstimateSummary from './sections/AddLiquidityEstimateSummary';
 import AddLiquidityPriceRangeSection from './sections/AddLiquidityPriceRangeSection';
 
 import { useConcentratedAddLiquidityForm } from '../hooks/useConcentratedAddLiquidityForm';
@@ -32,6 +33,10 @@ export type ConcentratedAddLiquidityFormData = {
 type ConcentratedAddLiquidityFormProps = {
     pool: PoolExtended;
     onDataChange?: (data: ConcentratedAddLiquidityFormData) => void;
+    initialRange?: {
+        tickLower: number;
+        tickUpper: number;
+    };
     initialTickSpacing?: number | null;
     skipPoolDataLoading?: boolean;
     disableNetworkEstimate?: boolean;
@@ -40,16 +45,19 @@ type ConcentratedAddLiquidityFormProps = {
 const ConcentratedAddLiquidityForm = ({
     pool,
     onDataChange,
+    initialRange,
     initialTickSpacing,
     skipPoolDataLoading,
     disableNetworkEstimate,
 }: ConcentratedAddLiquidityFormProps): React.ReactNode => {
     const form = useConcentratedAddLiquidityForm({
         pool,
+        initialRange,
         initialTickSpacing,
         skipPoolDataLoading,
         disableNetworkEstimate,
     });
+    const hasLockedRange = Boolean(initialRange);
     const hasIncentiveTps = Object.values(pool.incentive_tps_per_token || {}).some(
         value => Number(value) > 0,
     );
@@ -124,37 +132,52 @@ const ConcentratedAddLiquidityForm = ({
                                 onAmount1Change={form.handleAmount1Change}
                             />
 
-                            <AddLiquidityPriceRangeSection
-                                pool={pool}
-                                isEmptyPool={form.isEmptyPool}
-                                hasBothPositiveAmounts={form.hasBothPositiveAmounts}
-                                referencePriceValue={form.referencePriceValue}
-                                currentTick={form.currentTick}
-                                referenceExactTick={form.referenceExactTick}
-                                activeDepositPreset={form.activeDepositPreset}
-                                canUseRangeControls={form.canUseRangeControls}
-                                hasTickRange={form.hasTickRange}
-                                tickLower={form.tickLower}
-                                tickUpper={form.tickUpper}
-                                tickSpacing={form.tickSpacing}
-                                minTickBound={form.minTickBound}
-                                maxTickBound={form.maxTickBound}
-                                isMinScientific={form.isMinScientific}
-                                isMaxScientific={form.isMaxScientific}
-                                minPriceInput={form.minPriceInput}
-                                maxPriceInput={form.maxPriceInput}
-                                disableLowerUpByReference={form.disableLowerUpByReference}
-                                disableUpperDownByReference={form.disableUpperDownByReference}
-                                depositEstimate={form.depositEstimate}
-                                onPreset={form.handlePreset}
-                                onChartRangeChange={form.handleChartRangeChange}
-                                onStepLowerDown={form.handleStepLowerDown}
-                                onStepLowerUp={form.handleStepLowerUp}
-                                onStepUpperDown={form.handleStepUpperDown}
-                                onStepUpperUp={form.handleStepUpperUp}
-                                onMinPriceChange={form.handleMinPriceChange}
-                                onMaxPriceChange={form.handleMaxPriceChange}
-                            />
+                            {hasLockedRange ? (
+                                <AddLiquidityEstimateSummary
+                                    pool={pool}
+                                    isEmptyPool={form.isEmptyPool}
+                                    hasTickRange={form.hasTickRange}
+                                    tickLower={form.tickLower}
+                                    tickUpper={form.tickUpper}
+                                    minTickBound={form.minTickBound}
+                                    maxTickBound={form.maxTickBound}
+                                    minPriceInput={form.minPriceInput}
+                                    maxPriceInput={form.maxPriceInput}
+                                    depositEstimate={form.depositEstimate}
+                                />
+                            ) : (
+                                <AddLiquidityPriceRangeSection
+                                    pool={pool}
+                                    isEmptyPool={form.isEmptyPool}
+                                    hasBothPositiveAmounts={form.hasBothPositiveAmounts}
+                                    referencePriceValue={form.referencePriceValue}
+                                    currentTick={form.currentTick}
+                                    referenceExactTick={form.referenceExactTick}
+                                    activeDepositPreset={form.activeDepositPreset}
+                                    canUseRangeControls={form.canUseRangeControls}
+                                    hasTickRange={form.hasTickRange}
+                                    tickLower={form.tickLower}
+                                    tickUpper={form.tickUpper}
+                                    tickSpacing={form.tickSpacing}
+                                    minTickBound={form.minTickBound}
+                                    maxTickBound={form.maxTickBound}
+                                    isMinScientific={form.isMinScientific}
+                                    isMaxScientific={form.isMaxScientific}
+                                    minPriceInput={form.minPriceInput}
+                                    maxPriceInput={form.maxPriceInput}
+                                    disableLowerUpByReference={form.disableLowerUpByReference}
+                                    disableUpperDownByReference={form.disableUpperDownByReference}
+                                    depositEstimate={form.depositEstimate}
+                                    onPreset={form.handlePreset}
+                                    onChartRangeChange={form.handleChartRangeChange}
+                                    onStepLowerDown={form.handleStepLowerDown}
+                                    onStepLowerUp={form.handleStepLowerUp}
+                                    onStepUpperDown={form.handleStepUpperDown}
+                                    onStepUpperUp={form.handleStepUpperUp}
+                                    onMinPriceChange={form.handleMinPriceChange}
+                                    onMaxPriceChange={form.handleMaxPriceChange}
+                                />
+                            )}
 
                             {shouldShowPoolInfo && (
                                 <ConcentratedAddLiquidityPoolInfo

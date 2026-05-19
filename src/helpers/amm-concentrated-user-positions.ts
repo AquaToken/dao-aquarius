@@ -91,11 +91,14 @@ export const loadConcentratedUserPositions = async (
                     withdrawEstimates,
                 );
                 const feeAmounts = mapAmountsByTokenContract(feeTokens, feeEstimates);
+                const positionFees = pool.tokens.map(
+                    token => feeAmounts.get(token.contract) || '0',
+                );
 
-                const tokenEstimates = pool.tokens.map(token =>
+                const tokenEstimates = pool.tokens.map((token, index) =>
                     BigNumber.maximum(
                         new BigNumber(withdrawAmounts.get(token.contract) || '0').minus(
-                            feeAmounts.get(token.contract) || '0',
+                            positionFees[index] || '0',
                         ),
                         0,
                     ).toFixed(),
@@ -118,6 +121,7 @@ export const loadConcentratedUserPositions = async (
                     tickUpper: position.tickUpper,
                     liquidity: String(position.liquidity || '0'),
                     tokenEstimates,
+                    feeEstimates: positionFees,
                     liquidityUsd: liquidityUsd.toNumber(),
                 } satisfies UserDistributionPositionDetail;
             } catch {
@@ -127,6 +131,7 @@ export const loadConcentratedUserPositions = async (
                     tickUpper: position.tickUpper,
                     liquidity: String(position.liquidity || '0'),
                     tokenEstimates: pool.tokens.map(() => '0'),
+                    feeEstimates: pool.tokens.map(() => '0'),
                     liquidityUsd: 0,
                 } satisfies UserDistributionPositionDetail;
             }

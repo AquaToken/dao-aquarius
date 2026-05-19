@@ -2,16 +2,12 @@ import * as React from 'react';
 
 import Table, { CellAlign } from 'basics/Table';
 
-import { COLORS } from 'styles/style-constants';
-
 import ProposalStatus from 'pages/governance/components/GovernanceMainPage/ProposalStatus/ProposalStatus';
 
 import {
     Header,
     HistoryTable,
-    SupportedByInner,
-    SupportedByOuter,
-    SupportedByProgress,
+    SupportedByPercent,
     Value,
     VoteTitle,
 } from './AssetRegistryVoteHistory.styled';
@@ -23,7 +19,7 @@ type AssetRegistryVoteHistoryProps = {
     rows: AssetRegistryHistoryEntry[];
 };
 
-const SupportedByBar = ({
+const Result = ({
     voteForResult,
     voteAgainstResult,
     voteAbstainResult,
@@ -41,16 +37,8 @@ const SupportedByBar = ({
     }
 
     const percentFor = (voteFor / totalVotes) * 100;
-    const percentForAndAbstain = ((voteFor + voteAbstain) / totalVotes) * 100;
 
-    return (
-        <SupportedByProgress>
-            <SupportedByOuter>
-                <SupportedByInner $width={`${percentForAndAbstain}%`} $color={COLORS.gray100} />
-                <SupportedByInner $width={`${percentFor}%`} $color={COLORS.purple500} />
-            </SupportedByOuter>
-        </SupportedByProgress>
-    );
+    return <SupportedByPercent>{percentFor.toFixed(2)} %</SupportedByPercent>;
 };
 
 const AssetRegistryVoteHistory = ({ rows }: AssetRegistryVoteHistoryProps) => (
@@ -86,7 +74,7 @@ const AssetRegistryVoteHistory = ({ rows }: AssetRegistryVoteHistoryProps) => (
                         },
                         {
                             children: (
-                                <SupportedByBar
+                                <Result
                                     voteForResult={row.voteForResult}
                                     voteAgainstResult={row.voteAgainstResult}
                                     voteAbstainResult={row.voteAbstainResult}

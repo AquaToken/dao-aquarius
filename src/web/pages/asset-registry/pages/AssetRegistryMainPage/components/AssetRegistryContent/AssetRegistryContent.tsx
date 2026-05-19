@@ -13,6 +13,7 @@ import AssetRegistryMyVotesList from '../AssetRegistryMyVotesList/AssetRegistryM
 import AssetRegistrySidebar from '../AssetRegistrySidebar/AssetRegistrySidebar';
 
 type AssetRegistryContentProps = {
+    topContent?: React.ReactNode;
     items: RegistryAsset[];
     voteProposals: RegistryProposalPreview[];
     isVotesMode: boolean;
@@ -20,10 +21,12 @@ type AssetRegistryContentProps = {
     marketStats: RegistryAssetMarketStatsMap;
     isMarketStatsLoading: boolean;
     upcomingVotes: UpcomingVoteData[];
+    isUpcomingVotesLoading: boolean;
     toolbar: React.ReactNode;
 };
 
 const AssetRegistryContent = ({
+    topContent,
     items,
     voteProposals,
     isVotesMode,
@@ -31,10 +34,12 @@ const AssetRegistryContent = ({
     marketStats,
     isMarketStatsLoading,
     upcomingVotes,
+    isUpcomingVotesLoading,
     toolbar,
 }: AssetRegistryContentProps) => (
     <Layout>
         <LeftColumn>
+            {topContent}
             {toolbar}
             {isVotesMode ? (
                 <AssetRegistryMyVotesList proposals={voteProposals} isLoading={isVotesLoading} />
@@ -50,6 +55,7 @@ const AssetRegistryContent = ({
             marketStats={marketStats}
             isMarketStatsLoading={isMarketStatsLoading}
             upcomingVotes={upcomingVotes}
+            isUpcomingVotesLoading={isUpcomingVotesLoading}
         />
     </Layout>
 );
