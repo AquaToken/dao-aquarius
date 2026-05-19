@@ -29,6 +29,7 @@ export const API_URLS = {
         soroban: 'https://soroban-rpc.aqua.network/',
         ammAqua: 'https://amm-api.aqua.network',
         governance: 'https://governance-api.aqua.network/api',
+        iceApproval: 'https://ice-approval.aqua.network/',
     },
     [ENV_TESTNET]: {
         onRampProxy: 'https://soroban-on-ramp-testnet.aqua.network',
@@ -36,5 +37,6 @@ export const API_URLS = {
         soroban: 'https://soroban-testnet.stellar.org:443/',
         ammAqua: 'https://amm-api-testnet.aqua.network',
         governance: 'https://governance-api-testnet.aqua.network/api',
+        iceApproval: 'https://ice-approval-testnet.aqua.network/',
     },
 };

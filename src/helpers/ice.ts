@@ -1,3 +1,4 @@
+import { API_URLS } from 'constants/api';
 import {
     D_ICE_CODE,
     DOWN_ICE_CODE,
@@ -9,6 +10,8 @@ import {
 } from 'constants/assets-env';
 import { MAX_X_UPVOTE_ICE_BOOST } from 'constants/ice';
 
+import { getEnv } from 'helpers/env';
+
 import { ClassicToken } from 'types/token';
 
 export const getIceMaxApy = ({
@@ -19,25 +22,27 @@ export const getIceMaxApy = ({
     inPercent?: boolean;
 }): number => (inPercent ? apy * 100 * MAX_X_UPVOTE_ICE_BOOST : apy * MAX_X_UPVOTE_ICE_BOOST);
 
+const getIceApproveUrl = (path: string) => `${API_URLS[getEnv()].iceApproval}${path}`;
+
 export const getIceApproveEndpoint = (asset: ClassicToken): string => {
     if (asset.code === ICE_CODE && asset.issuer === ICE_ISSUER) {
-        return 'https://ice-approval.aqua.network/api/v1/ice/tx-approve/';
+        return getIceApproveUrl('api/v1/ice/tx-approve/');
     }
     if (asset.code === UP_ICE_CODE && asset.issuer === ICE_ISSUER) {
-        return 'https://ice-approval.aqua.network/api/v2/upvote-ice/tx-approve/';
+        return getIceApproveUrl('api/v2/upvote-ice/tx-approve/');
     }
     if (asset.code === D_ICE_CODE && asset.issuer === ICE_ISSUER) {
-        return 'https://ice-approval.aqua.network/api/v2/delegated-ice/tx-approve/';
+        return getIceApproveUrl('api/v2/delegated-ice/tx-approve/');
     }
     if (asset.code === DOWN_ICE_CODE && asset.issuer === ICE_ISSUER) {
-        return 'https://ice-approval.aqua.network/api/v2/downvote-ice/tx-approve/';
+        return getIceApproveUrl('api/v2/downvote-ice/tx-approve/');
     }
     if (asset.code === GOV_ICE_CODE && asset.issuer === ICE_ISSUER) {
-        return 'https://ice-approval.aqua.network/api/v2/govern-ice/tx-approve/';
+        return getIceApproveUrl('api/v2/govern-ice/tx-approve/');
     }
 
     if (asset.code === GD_ICE_CODE && asset.issuer === ICE_ISSUER) {
-        return 'https://ice-approval.aqua.network/api/v2/delegated-govern-ice/tx-approve/';
+        return getIceApproveUrl('api/v2/delegated-govern-ice/tx-approve/');
     }
 
     throw new Error('Unknown asset');
