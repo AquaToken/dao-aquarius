@@ -29,6 +29,7 @@ export const API_URLS = {
         votingTracker: 'https://voting-tracker.aqua.network/api/voting-snapshot/',
         reward: 'https://reward-api.aqua.network/api/',
         bribes: 'https://bribes-api.aqua.network/api/',
+        profile: 'https://profile-api.aqua.network/api/',
     },
     [ENV_TESTNET]: {
         onRampProxy: 'https://soroban-on-ramp-testnet.aqua.network',
@@ -41,5 +42,6 @@ export const API_URLS = {
         votingTracker: 'https://voting-tracker-testnet.aqua.network/api/voting-snapshot/',
         reward: 'https://reward-api-testnet.aqua.network/api/',
         bribes: 'https://bribes-api-testnet.aqua.network/api/',
+        profile: 'https://profile-api-testnet.aqua.network/api/',
     },
 };
