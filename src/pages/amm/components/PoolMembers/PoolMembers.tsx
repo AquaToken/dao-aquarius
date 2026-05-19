@@ -64,6 +64,10 @@ const LabelInner = styled.div`
     ${FONT_SIZE.sm};
 `;
 
+const Value = styled.span`
+    white-space: nowrap;
+`;
+
 const PoolMembers = ({
     poolId,
     totalShare,
@@ -178,7 +182,7 @@ const PoolMembers = ({
                             },
                             {
                                 children: (
-                                    <span>
+                                    <Value>
                                         {contractValueToFormattedAmount(
                                             member.balance,
                                             shareTokenDecimals,
@@ -210,7 +214,7 @@ const PoolMembers = ({
                                                 %)
                                             </>
                                         )}
-                                    </span>
+                                    </Value>
                                 ),
                                 flexSize: 0.4,
                                 align: CellAlign.Right,
