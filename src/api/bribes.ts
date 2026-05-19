@@ -1,10 +1,11 @@
 import axios from 'axios';
 
-import { BRIBES_API_URL, MARKET_KEY_API_URL, VOTING_TRACKER_API_URL } from 'constants/api';
+import { BRIBES_API_URL, VOTING_TRACKER_API_URL } from 'constants/api';
 import { BribeSortFields, BribesTypes, BribesWeeksFilters } from 'constants/bribes';
 
 import { getAssetString } from 'helpers/assets';
 import { getNextWeekStartFromString } from 'helpers/date';
+import { getMarketKeysUrl } from 'helpers/url';
 
 import type { UpcomingBribe } from 'types/bribes';
 import type { ClassicToken } from 'types/token';
@@ -21,7 +22,7 @@ export const getMarketPair = async (
 ): Promise<MarketKey | null> => {
     try {
         const { data } = await axios.get<MarketKey>(
-            `${MARKET_KEY_API_URL}${getAssetString(base)}-${getAssetString(counter)}`,
+            `${getMarketKeysUrl()}${getAssetString(base)}-${getAssetString(counter)}`,
         );
         return data;
     } catch {
@@ -50,7 +51,7 @@ const processBribes = async (
     // Fetch market key and voting data in parallel
     const [marketsVotesRes, marketsKeysRes] = await Promise.all([
         axios.get<ListResponse<MarketVotes>>(VOTING_TRACKER_API_URL, { params: votesParams }),
-        axios.get<ListResponse<MarketKey>>(MARKET_KEY_API_URL, { params: keysParams }),
+        axios.get<ListResponse<MarketKey>>(getMarketKeysUrl(), { params: keysParams }),
     ]);
 
     const marketsVotes = marketsVotesRes.data.results;

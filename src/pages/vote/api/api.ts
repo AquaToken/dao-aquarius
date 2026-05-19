@@ -4,6 +4,7 @@ import { BRIBES_API_URL } from 'constants/api';
 
 import { getAssetString } from 'helpers/assets';
 import { createAsset } from 'helpers/token';
+import { getMarketKeysUrl } from 'helpers/url';
 
 import { AssetSimple } from 'store/assetsStore/types';
 
@@ -18,7 +19,6 @@ import {
     UpcomingBribe,
 } from './types';
 
-const marketKeysUrl = 'https://marketkeys-tracker.aqua.network/api/market-keys/';
 const votingTrackerUrl = 'https://voting-tracker.aqua.network/api/voting-snapshot/';
 const rewardsApi =
     'https://reward-api.aqua.network/api/rewards/?ordering=-daily_total_reward&page=1&page_size=200';
@@ -47,7 +47,7 @@ export const getMarketsMap = async (marketKeys: string[]): Promise<Map<string, M
     });
 
     const markets = await axios
-        .get<ListResponse<MarketKey>>(marketKeysUrl, { params })
+        .get<ListResponse<MarketKey>>(getMarketKeysUrl(), { params })
         .then(res => res.data.results);
 
     return markets.reduce((acc, marketKey) => {
@@ -66,7 +66,7 @@ const addKeysToMarketVotes = async (votes: MarketVotes[], count) => {
     });
 
     const [marketsKeys, bribes] = await Promise.all([
-        axios.get<ListResponse<MarketKey>>(marketKeysUrl, { params }),
+        axios.get<ListResponse<MarketKey>>(getMarketKeysUrl(), { params }),
         axios.get<ListResponse<MarketBribes>>(`${BRIBES_API_URL}bribes/?limit=200`, {
             params: bribesParams,
         }),
@@ -138,10 +138,10 @@ export const validateMarketKeys = async (keys: string[]): Promise<MarketKey[]> =
     });
 
     const [marketKeysUp, marketKeysDown] = await Promise.all([
-        axios.get<ListResponse<MarketKey>>(`${marketKeysUrl}?limit=200`, {
+        axios.get<ListResponse<MarketKey>>(`${getMarketKeysUrl()}?limit=200`, {
             params: paramsUp,
         }),
-        axios.get<ListResponse<MarketKey>>(`${marketKeysUrl}?limit=200`, {
+        axios.get<ListResponse<MarketKey>>(`${getMarketKeysUrl()}?limit=200`, {
             params: paramsDown,
         }),
     ]);
@@ -209,7 +209,7 @@ export const getPairsWithBribes = async (pageSize: number, page: number) => {
         axios.get<ListResponse<MarketVotes>>(votingTrackerUrl, {
             params: votesParams,
         }),
-        axios.get<ListResponse<MarketKey>>(marketKeysUrl, { params: keysParams }),
+        axios.get<ListResponse<MarketKey>>(getMarketKeysUrl(), { params: keysParams }),
     ]);
 
     const pairs = bribes.data.results
@@ -246,7 +246,7 @@ export const getFilteredPairsList = async (
         marketParams.append('page', page.toString());
 
         const result = await axios
-            .get<ListResponse<MarketKey>>(`${marketKeysUrl}search/`, {
+            .get<ListResponse<MarketKey>>(`${getMarketKeysUrl()}search/`, {
                 params: marketParams,
             })
             .then(({ data }) => data);
@@ -256,7 +256,7 @@ export const getFilteredPairsList = async (
     } else {
         const marketKey = await axios
             .get<MarketKey>(
-                `${marketKeysUrl}${getAssetParam(baseAsset)}-${getAssetParam(counterAsset)}`,
+                `${getMarketKeysUrl()}${getAssetParam(baseAsset)}-${getAssetParam(counterAsset)}`,
             )
             .then(({ data }) => data)
             .catch(() => null);

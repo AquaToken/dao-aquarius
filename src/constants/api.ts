@@ -10,7 +10,6 @@ export const API_ASSETS_LIST_URL = 'https://fed.stellarterm.com/issuer_orgs/';
 export const API_ASSETS_INFO = 'https://assets.aqua.network/api/v1/assets/';
 
 export const BRIBES_API_URL = 'https://bribes-api.aqua.network/api/';
-export const MARKET_KEY_API_URL = 'https://marketkeys-tracker.aqua.network/api/market-keys/';
 export const VOTING_TRACKER_API_URL = 'https://voting-tracker.aqua.network/api/voting-snapshot/';
 
 export const LOBSTR_VAULT_API_URL = 'https://vault.lobstr.co/api/transactions/';
@@ -30,6 +29,7 @@ export const API_URLS = {
         ammAqua: 'https://amm-api.aqua.network',
         governance: 'https://governance-api.aqua.network/api',
         iceApproval: 'https://ice-approval.aqua.network/',
+        marketKeys: 'https://marketkeys-tracker.aqua.network/api/market-keys/',
     },
     [ENV_TESTNET]: {
         onRampProxy: 'https://soroban-on-ramp-testnet.aqua.network',
@@ -38,5 +38,6 @@ export const API_URLS = {
         ammAqua: 'https://amm-api-testnet.aqua.network',
         governance: 'https://governance-api-testnet.aqua.network/api',
         iceApproval: 'https://ice-approval-testnet.aqua.network/',
+        marketKeys: 'https://marketkeys-tracker-testnet.aqua.network/api/market-keys/',
     },
 };
