@@ -61,8 +61,8 @@ const MIGRATION_STATUS_CONTENT = {
     },
     [AssetMigrationStatusStage.migrationScheduled]: {
         badgeLabel: 'Migration Scheduled',
-        title: `Whitelisted Rewards Going Live on ${MIGRATION_GO_LIVE_DATE}`,
-        description: `On ${MIGRATION_GO_LIVE_DATE}, Aquarius will switch to whitelisted-only rewards. Only markets containing whitelisted assets will be eligible for AQUA rewards from that point on.`,
+        title: `Whitelisted-Only Rewards: ${MIGRATION_GO_LIVE_DATE}`,
+        description: `Starting ${MIGRATION_GO_LIVE_DATE}, only markets with whitelisted assets will earn AQUA rewards.`,
     },
     [AssetMigrationStatusStage.live]: {
         badgeLabel: 'Live',
