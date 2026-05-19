@@ -40,11 +40,11 @@ enum AssetMigrationStatusStage {
 const ASSET_MIGRATION_TOTAL_ASSETS_TARGET = 15;
 const ASSET_MIGRATION_REWARD_TARGET = 50;
 const ASSET_MIGRATION_PROPOSAL_ID = '125';
-const MIGRATION_GO_LIVE_DATE = '01 Jul, 2026';
+const MIGRATION_GO_LIVE_DATE = '01 Jun, 2026';
 const manualMigrationStatusStage:
     | AssetMigrationStatusStage.migrationScheduled
     | AssetMigrationStatusStage.live
-    | null = null;
+    | null = AssetMigrationStatusStage.migrationScheduled;
 
 const MIGRATION_STATUS_CONTENT = {
     [AssetMigrationStatusStage.awaitingThreshold]: {
@@ -89,7 +89,7 @@ const AssetRegistryMigrationStatus = ({
     const isThresholdReached =
         approvedAssetsPercent >= 100 ||
         Number(rewardsAlignmentPercent ?? 0) >= ASSET_MIGRATION_REWARD_TARGET;
-    const resolvedMigrationStatusStage =
+    const resolvedMigrationStatusStage: AssetMigrationStatusStage =
         manualMigrationStatusStage ??
         (isThresholdReached
             ? AssetMigrationStatusStage.thresholdReached
