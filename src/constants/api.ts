@@ -27,8 +27,7 @@ export const API_URLS = {
         iceApproval: 'https://ice-approval.aqua.network/',
         marketKeys: 'https://marketkeys-tracker.aqua.network/api/market-keys/',
         votingTracker: 'https://voting-tracker.aqua.network/api/voting-snapshot/',
-        rewards: 'https://reward-api.aqua.network/api/rewards/',
-        rewardQuest: 'https://reward-api.aqua.network/api/quest/',
+        reward: 'https://reward-api.aqua.network/api/',
         bribes: 'https://bribes-api.aqua.network/api/',
     },
     [ENV_TESTNET]: {
@@ -40,8 +39,7 @@ export const API_URLS = {
         iceApproval: 'https://ice-approval-testnet.aqua.network/',
         marketKeys: 'https://marketkeys-tracker-testnet.aqua.network/api/market-keys/',
         votingTracker: 'https://voting-tracker-testnet.aqua.network/api/voting-snapshot/',
-        rewards: 'https://reward-api-testnet.aqua.network/api/rewards/',
-        rewardQuest: 'https://reward-api-testnet.aqua.network/api/quest/',
+        reward: 'https://reward-api-testnet.aqua.network/api/',
         bribes: 'https://bribes-api-testnet.aqua.network/api/',
     },
 };
