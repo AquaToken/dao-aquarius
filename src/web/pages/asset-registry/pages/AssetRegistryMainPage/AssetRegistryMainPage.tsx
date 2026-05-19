@@ -25,17 +25,20 @@ import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 
 import Search from 'assets/icons/actions/icon-search-16.svg';
 
+import { Button } from 'basics/buttons';
 import { Input } from 'basics/inputs';
 
 import { PageContainer } from 'styles/commonPageStyles';
 import { COLORS } from 'styles/style-constants';
 
+import { ExperimentalFeatureModalBackground } from 'pages/amm/components/ExperimentalFeatureModal/ExperimentalFeatureModal';
 import { Rewards } from 'pages/vote/api/types';
 
 import {
     FilterGroup,
     FilterSelect,
     MainSection,
+    PageHeader,
     SearchInputWrap,
     Title,
     Toolbar,
@@ -50,6 +53,7 @@ import {
 } from './AssetRegistryMainPage.types';
 import AssetRegistryContent from './components/AssetRegistryContent/AssetRegistryContent';
 import AssetRegistryMigrationStatus from './components/AssetRegistryMigrationStatus/AssetRegistryMigrationStatus';
+import CreateProposalComingSoonModal from './components/CreateProposalComingSoonModal/CreateProposalComingSoonModal';
 
 const FILTER_OPTIONS: Option<AssetRegistryFilter>[] = [
     { label: 'All', value: AssetRegistryFilter.all },
@@ -443,6 +447,15 @@ const AssetRegistryMainPage = () => {
         setFilter(value);
     };
 
+    const openCreateProposalModal = () => {
+        ModalService.openModal(
+            CreateProposalComingSoonModal,
+            {},
+            false,
+            <ExperimentalFeatureModalBackground />,
+        );
+    };
+
     const isVotesMode =
         filter === AssetRegistryFilter.myVotes || filter === AssetRegistryFilter.history;
     const voteProposals =
@@ -456,7 +469,12 @@ const AssetRegistryMainPage = () => {
                 <AssetRegistryContent
                     topContent={
                         <>
-                            <Title>Asset Registry</Title>
+                            <PageHeader>
+                                <Title>Asset Registry</Title>
+
+                                <Button onClick={openCreateProposalModal}>Create Proposal</Button>
+                            </PageHeader>
+
                             <AssetRegistryMigrationStatus
                                 whitelistedAssetsCount={whitelistedRegistryAssets.length}
                                 totalAmmRewardsAmount={totalAmmRewardsAmount}

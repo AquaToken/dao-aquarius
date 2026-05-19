@@ -16,6 +16,15 @@ export const MainSection = styled.section`
     `}
 `;
 
+export const PageHeader = styled.div`
+    ${flexRowSpaceBetween};
+
+    ${respondDown(Breakpoints.sm)`
+        flex-direction: column;
+        gap: 3.2rem;
+    `}
+`;
+
 export const Title = styled.h1`
     ${FONT_SIZE.xxl};
     margin: 0;
