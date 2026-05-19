@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { getDelegatees, getMyDelegatees } from 'api/delegate';
 
-import { ICE_TO_DELEGATE } from 'constants/assets';
+import { getIceToDelegate } from 'constants/assets';
 import { DELEGATE_MARKER_KEY } from 'constants/stellar-accounts';
 
 import { formatBalance } from 'helpers/format-number';
@@ -20,16 +20,16 @@ import { StellarEvents } from 'services/stellar/events/events';
 import { Delegatee as DelegateeType } from 'types/delegate';
 import { ClaimableBalance } from 'types/stellar';
 
-import ChooseLoginMethodModal from 'modals/auth/ChooseLoginMethodModal';
-import DelegateClaimModal from 'modals/DelegateClaimModal';
-import DelegateModal from 'modals/DelegateModal';
-
 import PlusIcon from 'assets/icons/nav/icon-plus-16.svg';
 import Ice from 'assets/tokens/ice-logo.svg';
 
 import BlankButton from 'basics/buttons/BlankButton';
 import Identicon from 'basics/Identicon';
 import { PageLoader } from 'basics/loaders';
+
+import ChooseLoginMethodModal from 'modals/auth/ChooseLoginMethodModal';
+import DelegateClaimModal from 'modals/DelegateClaimModal';
+import DelegateModal from 'modals/DelegateModal';
 
 import { flexAllCenter, respondDown, textEllipsis } from 'styles/mixins';
 import { Breakpoints, COLORS } from 'styles/style-constants';
@@ -457,7 +457,9 @@ const Delegations = (): React.ReactNode => {
                 </Head>
 
                 {rows.map(({ destination, delegatee, amounts }) => {
-                    const visibleAmounts = ICE_TO_DELEGATE.filter(asset => Number(amounts[asset]));
+                    const visibleAmounts = getIceToDelegate().filter(asset =>
+                        Number(amounts[asset]),
+                    );
 
                     return (
                         <Row key={destination}>
