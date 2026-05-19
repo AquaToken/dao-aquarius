@@ -172,17 +172,36 @@ export const getPoolMembersCount = async (id: string): Promise<{ membersCount: n
     }
 };
 
+export type PoolEventsFilters = {
+    eventTypes?: string;
+    address?: string;
+    ledgerCloseAtGte?: string;
+    ledgerCloseAtLte?: string;
+};
+
 export const getPoolEvents = async (
     id: string,
     page: number,
     size: number,
+    filters?: PoolEventsFilters,
 ): Promise<{ events: PoolEvent[]; total: number; page: number }> => {
     const baseUrl = getAmmAquaUrl();
 
     try {
-        const { data } = await axios.get<ListResponse<PoolEvent>>(
-            `${baseUrl}/events/pool/${id}/?size=${size}&page=${page}`,
-        );
+        const { data } = await axios.get<ListResponse<PoolEvent>>(`${baseUrl}/events/pool/${id}/`, {
+            params: {
+                size,
+                page,
+                ...(filters?.eventTypes && { event_type__in: filters.eventTypes }),
+                ...(filters?.address && { address: filters.address }),
+                ...(filters?.ledgerCloseAtGte && {
+                    ledger_close_at__gte: filters.ledgerCloseAtGte,
+                }),
+                ...(filters?.ledgerCloseAtLte && {
+                    ledger_close_at__lte: filters.ledgerCloseAtLte,
+                }),
+            },
+        });
         return { events: data.items, total: data.total, page: data.page };
     } catch {
         return { events: [], total: 0, page: 1 };
@@ -219,7 +238,7 @@ export const getUserHistory = async (
         {
             params: {
                 size: 500,
-                ...(event && { event_type__in: filter }),
+                ...(filter && { event_type__in: filter }),
             },
         },
     );
