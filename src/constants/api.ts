@@ -4,12 +4,9 @@ export const API_LIMIT = 200;
 
 export const API_URL_STELLAR_EXPERT = 'https://api.stellar.expert/';
 export const API_URL_ICE_LOCKER = 'https://ice-distributor.aqua.network/api';
-export const API_REWARDS_BACKEND = 'https://reward-api.aqua.network/api/rewards/';
 export const API_CMC = 'https://cmc.aqua.network/api';
 export const API_ASSETS_LIST_URL = 'https://fed.stellarterm.com/issuer_orgs/';
 export const API_ASSETS_INFO = 'https://assets.aqua.network/api/v1/assets/';
-
-export const BRIBES_API_URL = 'https://bribes-api.aqua.network/api/';
 
 export const LOBSTR_VAULT_API_URL = 'https://vault.lobstr.co/api/transactions/';
 
@@ -30,6 +27,9 @@ export const API_URLS = {
         iceApproval: 'https://ice-approval.aqua.network/',
         marketKeys: 'https://marketkeys-tracker.aqua.network/api/market-keys/',
         votingTracker: 'https://voting-tracker.aqua.network/api/voting-snapshot/',
+        rewards: 'https://reward-api.aqua.network/api/rewards/',
+        rewardQuest: 'https://reward-api.aqua.network/api/quest/',
+        bribes: 'https://bribes-api.aqua.network/api/',
     },
     [ENV_TESTNET]: {
         onRampProxy: 'https://soroban-on-ramp-testnet.aqua.network',
@@ -40,5 +40,8 @@ export const API_URLS = {
         iceApproval: 'https://ice-approval-testnet.aqua.network/',
         marketKeys: 'https://marketkeys-tracker-testnet.aqua.network/api/market-keys/',
         votingTracker: 'https://voting-tracker-testnet.aqua.network/api/voting-snapshot/',
+        rewards: 'https://reward-api-testnet.aqua.network/api/rewards/',
+        rewardQuest: 'https://reward-api-testnet.aqua.network/api/quest/',
+        bribes: 'https://bribes-api-testnet.aqua.network/api/',
     },
 };

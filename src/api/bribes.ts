@@ -1,11 +1,10 @@
 import axios from 'axios';
 
-import { BRIBES_API_URL } from 'constants/api';
 import { BribeSortFields, BribesTypes, BribesWeeksFilters } from 'constants/bribes';
 
 import { getAssetString } from 'helpers/assets';
 import { getNextWeekStartFromString } from 'helpers/date';
-import { getMarketKeysUrl, getVotingTrackerUrl } from 'helpers/url';
+import { getBribesUrl, getMarketKeysUrl, getVotingTrackerUrl } from 'helpers/url';
 
 import type { UpcomingBribe } from 'types/bribes';
 import type { ClassicToken } from 'types/token';
@@ -108,7 +107,7 @@ export const getUpcomingBribes = async (
 
         // Fetch pending bribes
         const { data } = await axios.get<ListResponse<UpcomingBribe>>(
-            `${BRIBES_API_URL}pending-bribes/`,
+            `${getBribesUrl()}pending-bribes/`,
             { params },
         );
 

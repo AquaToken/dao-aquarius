@@ -9,6 +9,9 @@ export const getAmmAquaUrl = () => API_URLS[getEnv()].ammAqua;
 export const getGovernanceUrl = () => API_URLS[getEnv()].governance;
 export const getMarketKeysUrl = () => API_URLS[getEnv()].marketKeys;
 export const getVotingTrackerUrl = () => API_URLS[getEnv()].votingTracker;
+export const getRewardsUrl = () => API_URLS[getEnv()].rewards;
+export const getRewardQuestUrl = () => API_URLS[getEnv()].rewardQuest;
+export const getBribesUrl = () => API_URLS[getEnv()].bribes;
 
 export const getOnRampWidgetUrl = (params): string => {
     const urlParams = new URLSearchParams(params).toString();

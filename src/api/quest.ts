@@ -1,18 +1,17 @@
-// https://reward-api.aqua.network/api/quest/participant/GB7FLFH2GJ7NRJEOI377AQIMTO67PJC3REC7QROARUU7MTJHERN2YBCL/status/
-// https://reward-api.aqua.network/api/quest/confirm-participation/
-
 import { Memo, MemoType, Operation, Transaction } from '@stellar/stellar-sdk';
 import axios from 'axios';
+
+import { getRewardQuestUrl } from 'helpers/url';
 
 import { StellarService } from 'services/globalServices';
 
 import { ChallengeResponse, ListResponse, QuestTaskStatus } from 'types/quest';
 
-const API_URL = 'https://reward-api.aqua.network/api/quest/';
-
 export const getQuestStatus = (accountId: string): Promise<QuestTaskStatus[]> =>
     axios
-        .get<ListResponse<QuestTaskStatus>>(`${API_URL}participant/${accountId}/status/`)
+        .get<ListResponse<QuestTaskStatus>>(
+            `${getRewardQuestUrl()}participant/${accountId}/status/`,
+        )
         .then(({ data }) => data.results)
         .catch(() => null);
 
@@ -20,7 +19,7 @@ export const getChallenge = (
     accountId: string,
 ): Promise<Transaction<Memo<MemoType>, Operation[]>> =>
     axios
-        .get<ChallengeResponse>(`${API_URL}confirm-participation?account=${accountId}`)
+        .get<ChallengeResponse>(`${getRewardQuestUrl()}confirm-participation?account=${accountId}`)
         .then(
             ({ data }) =>
                 StellarService.tx.buildTxFromXdr(data.transaction) as Transaction<
@@ -33,7 +32,7 @@ export const sendSignedChallenge = (xdr: string) => {
     const body = JSON.stringify({ transaction: xdr });
     const headers = { 'Content-Type': 'application/json' };
     return axios
-        .post(`${API_URL}confirm-participation/`, body, { headers })
+        .post(`${getRewardQuestUrl()}confirm-participation/`, body, { headers })
         .then(({ data }) => data)
         .catch(e => {
             const errorText = e.response?.data
